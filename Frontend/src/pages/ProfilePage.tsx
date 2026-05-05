@@ -6,10 +6,18 @@ import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { fetchOrders, Order } from "@/lib/api";
-import { User, Package, Heart, MapPin, ChevronDown } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
+import { User, Package, Heart, MapPin, ChevronDown, Lock, LogOut } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api-client";
+import { toast } from "sonner";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
-type AccountTab = "profile" | "orders" | "wishlist";
+type AccountTab = "profile" | "password" | "orders" | "wishlist";
 
 const statusColors: Record<string, string> = {
   processing: "bg-warning/10 text-warning border-warning/30",
@@ -28,26 +36,122 @@ const getStepIndex = (order: Order) => {
   return idx >= 0 ? idx : 0;
 };
 
+const updateProfileSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters").max(60, "Name must be at most 60 characters"),
+  email: z.string().email("Please enter a valid email address"),
+});
+
+const updatePasswordSchema = z
+  .object({
+    passwordCurrent: z.string().min(1, "Current password is required"),
+    password: z.string().min(8, "New password must be at least 8 characters"),
+    passwordConfirm: z.string().min(8, "Please confirm your new password"),
+  })
+  .refine((data) => data.password === data.passwordConfirm, {
+    message: "New passwords do not match",
+    path: ["passwordConfirm"],
+  });
+
 const ProfilePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<AccountTab>("profile");
   const [orders, setOrders] = useState<Order[]>([]);
-  const [orderGroup, setOrderGroup] = useState<"active" | "completed">(
-    "active",
-  );
+  const [orderGroup, setOrderGroup] = useState<"active" | "completed">("active");
   const [openOrderId, setOpenOrderId] = useState<string | null>(null);
   const { favorites } = useFavorites();
+  
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { user, isLoading, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isLoading, isAuthenticated, navigate]);
 
   useEffect(() => {
     fetchOrders().then(setOrders);
   }, []);
 
   useEffect(() => {
-    const tab = searchParams.get("tab");
-    if (tab === "orders" || tab === "wishlist" || tab === "profile") {
+    const tab = searchParams.get("tab") as AccountTab;
+    if (tab === "orders" || tab === "wishlist" || tab === "profile" || tab === "password") {
       setActiveTab(tab);
     }
   }, [searchParams]);
+
+  const profileForm = useForm<z.infer<typeof updateProfileSchema>>({
+    resolver: zodResolver(updateProfileSchema),
+    defaultValues: {
+      name: user?.name || "",
+      email: user?.email || "",
+    },
+  });
+
+  useEffect(() => {
+    if (user) {
+      profileForm.reset({
+        name: user.name,
+        email: user.email,
+      });
+    }
+  }, [user, profileForm]);
+
+  const passwordForm = useForm<z.infer<typeof updatePasswordSchema>>({
+    resolver: zodResolver(updatePasswordSchema),
+    defaultValues: {
+      passwordCurrent: "",
+      password: "",
+      passwordConfirm: "",
+    },
+  });
+
+  const updateProfileMutation = useMutation({
+    mutationFn: (values: z.infer<typeof updateProfileSchema>) =>
+      apiFetch("/api/v1/users/updateMe", {
+        method: "PATCH",
+        body: JSON.stringify(values),
+      }),
+    onSuccess: (data) => {
+      toast.success("Profile updated successfully!");
+      queryClient.setQueryData(["currentUser"], data.data.user);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const updatePasswordMutation = useMutation({
+    mutationFn: (values: z.infer<typeof updatePasswordSchema>) =>
+      apiFetch("/api/v1/auth/updateMyPassword", {
+        method: "PATCH",
+        body: JSON.stringify(values),
+      }),
+    onSuccess: (data) => {
+      toast.success("Password updated successfully!");
+      queryClient.setQueryData(["currentUser"], data.data.user);
+      passwordForm.reset();
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const logoutMutation = useMutation({
+    mutationFn: () =>
+      apiFetch("/api/v1/auth/logout", {
+        method: "POST",
+      }),
+    onSuccess: () => {
+      toast.success("Logged out successfully");
+      queryClient.setQueryData(["currentUser"], null);
+      navigate("/login");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
 
   const filteredOrders = useMemo(() => {
     if (orderGroup === "completed") {
@@ -62,15 +166,31 @@ const ProfilePage = () => {
 
   const sidebarItems = [
     { key: "profile" as const, icon: User, label: "Profile" },
+    { key: "password" as const, icon: Lock, label: "Password" },
     { key: "orders" as const, icon: Package, label: "Orders" },
     { key: "wishlist" as const, icon: Heart, label: "Wishlist" },
   ];
 
+  if (isLoading || !user) {
+    return <div className="p-8 text-center">Loading profile...</div>;
+  }
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <h1 className="text-3xl font-display font-bold text-foreground mb-8">
-        My Profile
-      </h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-display font-bold text-foreground">
+          My Profile
+        </h1>
+        <Button
+          variant="outline"
+          className="gap-2"
+          onClick={() => logoutMutation.mutate()}
+          disabled={logoutMutation.isPending}
+        >
+          <LogOut className="h-4 w-4" />
+          {logoutMutation.isPending ? "Logging out..." : "Logout"}
+        </Button>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[220px_minmax(0,1fr)] gap-8">
         <aside className="space-y-2 self-start md:sticky md:top-24">
@@ -91,88 +211,150 @@ const ProfilePage = () => {
         <section className="bg-card rounded-lg border border-border p-6">
           {activeTab === "profile" && (
             <>
-              <h2 className="font-display font-semibold text-foreground mb-6">
+              <h2 className="font-display font-semibold text-foreground mb-6 text-xl">
                 Personal Information
               </h2>
-              <form className="space-y-4">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
-                    <User className="h-8 w-8 text-primary" />
+              <Form {...profileForm}>
+                <form
+                  onSubmit={profileForm.handleSubmit((values) =>
+                    updateProfileMutation.mutate(values)
+                  )}
+                  className="space-y-4 max-w-md"
+                >
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+                      {user.photo !== 'default.jpg' ? (
+                        <img src={`/api/v1/public/img/users/${user.photo}`} alt={user.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <User className="h-8 w-8 text-primary" />
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground">{user.name}</h3>
+                      <p className="text-sm text-muted-foreground">{user.email}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">John Doe</h3>
-                    <p className="text-sm text-muted-foreground">
-                      john@example.com
-                    </p>
-                  </div>
-                </div>
+                  <FormField
+                    control={profileForm.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Full Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={profileForm.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit" disabled={updateProfileMutation.isPending} className="mt-4">
+                    {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
+                  </Button>
+                </form>
+              </Form>
+
+              {/* The existing dummy Shipping address could go here, omitting for brevity or keeping as UI mockup */}
+              <div className="mt-8 border-t border-border pt-6 max-w-xl">
+                <h3 className="mb-4 inline-flex items-center gap-2 font-display text-lg font-semibold text-foreground">
+                  <MapPin className="h-4 w-4 text-primary" /> Shipping Details (Mock)
+                </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-foreground">First Name</Label>
-                    <Input defaultValue="John" className="bg-background" />
+                  <div className="sm:col-span-2">
+                    <Label className="text-foreground">Street Address</Label>
+                    <Input defaultValue="123 Innovation Drive" className="bg-background" disabled />
                   </div>
                   <div>
-                    <Label className="text-foreground">Last Name</Label>
-                    <Input defaultValue="Doe" className="bg-background" />
+                    <Label className="text-foreground">City</Label>
+                    <Input defaultValue="San Francisco" className="bg-background" disabled />
+                  </div>
+                  <div>
+                    <Label className="text-foreground">State</Label>
+                    <Input defaultValue="CA" className="bg-background" disabled />
+                  </div>
+                  <div>
+                    <Label className="text-foreground">Postal Code</Label>
+                    <Input defaultValue="94105" className="bg-background" disabled />
+                  </div>
+                  <div>
+                    <Label className="text-foreground">Country</Label>
+                    <Input defaultValue="United States" className="bg-background" disabled />
                   </div>
                 </div>
-                <div>
-                  <Label className="text-foreground">Email</Label>
-                  <Input
-                    type="email"
-                    defaultValue="john@example.com"
-                    className="bg-background"
-                  />
-                </div>
-                <div>
-                  <Label className="text-foreground">Phone</Label>
-                  <Input
-                    defaultValue="+1 (555) 123-4567"
-                    className="bg-background"
-                  />
-                </div>
+              </div>
+            </>
+          )}
 
-                <div className="mt-8 border-t border-border pt-6">
-                  <h3 className="mb-4 inline-flex items-center gap-2 font-display text-lg font-semibold text-foreground">
-                    <MapPin className="h-4 w-4 text-primary" /> Shipping Details
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="sm:col-span-2">
-                      <Label className="text-foreground">Street Address</Label>
-                      <Input
-                        defaultValue="123 Innovation Drive"
-                        className="bg-background"
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-foreground">City</Label>
-                      <Input
-                        defaultValue="San Francisco"
-                        className="bg-background"
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-foreground">State</Label>
-                      <Input defaultValue="CA" className="bg-background" />
-                    </div>
-                    <div>
-                      <Label className="text-foreground">Postal Code</Label>
-                      <Input defaultValue="94105" className="bg-background" />
-                    </div>
-                    <div>
-                      <Label className="text-foreground">Country</Label>
-                      <Input
-                        defaultValue="United States"
-                        className="bg-background"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-                  Save Changes
-                </Button>
-              </form>
+          {activeTab === "password" && (
+            <>
+              <h2 className="font-display font-semibold text-foreground mb-6 text-xl">
+                Change Password
+              </h2>
+              <Form {...passwordForm}>
+                <form
+                  onSubmit={passwordForm.handleSubmit((values) =>
+                    updatePasswordMutation.mutate(values)
+                  )}
+                  className="space-y-4 max-w-md"
+                >
+                  <FormField
+                    control={passwordForm.control}
+                    name="passwordCurrent"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Current Password</FormLabel>
+                        <FormControl>
+                          <Input type="password" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={passwordForm.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>New Password</FormLabel>
+                        <FormControl>
+                          <Input type="password" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={passwordForm.control}
+                    name="passwordConfirm"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Confirm New Password</FormLabel>
+                        <FormControl>
+                          <Input type="password" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit" disabled={updatePasswordMutation.isPending} className="mt-4">
+                    {updatePasswordMutation.isPending
+                      ? "Updating..."
+                      : "Update Password"}
+                  </Button>
+                </form>
+              </Form>
             </>
           )}
 

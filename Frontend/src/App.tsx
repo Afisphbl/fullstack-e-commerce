@@ -1,11 +1,13 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
+import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { CompareProvider } from "@/contexts/CompareContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { AdminAuthProvider, useAdminAuth } from "@/contexts/AdminAuthContext";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -35,6 +37,10 @@ import AdminPOSPage from "./pages/admin/AdminPOSPage";
 import AdminSummaryPage from "./pages/admin/AdminSummaryPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -55,16 +61,50 @@ const StorefrontLayout = ({ children }: { children: React.ReactNode }) => (
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <TooltipProvider>
-        <CartProvider>
+    <AuthProvider>
+      <ThemeProvider>
+        <TooltipProvider>
+          <CartProvider>
           <FavoritesProvider>
             <CompareProvider>
               <AdminAuthProvider>
                 <Toaster />
+                <SonnerToaster />
                 <BrowserRouter>
                   <Routes>
                     {/* Storefront */}
+                    <Route
+                      path="/login"
+                      element={
+                        <StorefrontLayout>
+                          <Login />
+                        </StorefrontLayout>
+                      }
+                    />
+                    <Route
+                      path="/signup"
+                      element={
+                        <StorefrontLayout>
+                          <Signup />
+                        </StorefrontLayout>
+                      }
+                    />
+                    <Route
+                      path="/forgot-password"
+                      element={
+                        <StorefrontLayout>
+                          <ForgotPassword />
+                        </StorefrontLayout>
+                      }
+                    />
+                    <Route
+                      path="/reset-password/:token"
+                      element={
+                        <StorefrontLayout>
+                          <ResetPassword />
+                        </StorefrontLayout>
+                      }
+                    />
                     <Route
                       path="/"
                       element={
@@ -216,6 +256,7 @@ const App = () => (
         </CartProvider>
       </TooltipProvider>
     </ThemeProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
