@@ -1,0 +1,69 @@
+[
+  {
+    "_id": "664200000000000000000101",
+    "name": "Wireless Noise Cancelling Headphones",
+    "description": "Premium wireless headphones with active noise cancellation and 30-hour battery life.",
+    "price": 299.99,
+    "category": "664200000000000000000001",
+    "stock": 50,
+    "sold": 150,
+    "status": "active",
+    "imageCover": "product-headphone-cover.jpg",
+    "images": ["product-headphone-1.jpg", "product-headphone-2.jpg"],
+    "isFeatured": true,
+    "ratingsAverage": 4.5,
+    "ratingsQuantity": 2
+  },
+  {
+    "_id": "664200000000000000000102",
+    "name": "Smart Fitness Watch",
+    "description": "Advanced fitness tracker with heart rate monitor, GPS, and water resistance up to 50m.",
+    "price": 199.50,
+    "discountPrice": 149.99,
+    "category": "664200000000000000000004",
+    "stock": 200,
+    "sold": 45,
+    "status": "active",
+    "imageCover": "product-watch-cover.jpg",
+    "isFeatured": true,
+    "ratingsAverage": 4.0,
+    "ratingsQuantity": 1
+  },
+  {
+    "_id": "664200000000000000000103",
+    "name": "Men's Classic Leather Jacket",
+    "description": "Genuine leather jacket with a timeless design. Perfect for casual or semi-formal wear.",
+    "price": 150.00,
+    "category": "664200000000000000000002",
+    "stock": 30,
+    "sold": 12,
+    "status": "active",
+    "imageCover": "product-jacket-cover.jpg",
+    "ratingsAverage": 5.0,
+    "ratingsQuantity": 1
+  },
+  {
+    "_id": "664200000000000000000104",
+    "name": "Minimalist Wooden Desk",
+    "description": "Sleek and modern wooden desk for your home office. Easy to assemble.",
+    "price": 350.00,
+    "category": "664200000000000000000003",
+    "stock": 15,
+    "sold": 8,
+    "status": "active",
+    "imageCover": "product-desk-cover.jpg",
+    "isFeatured": false
+  },
+  {
+    "_id": "664200000000000000000105",
+    "name": "The Great Gatsby - Hardcover",
+    "description": "Classic novel by F. Scott Fitzgerald. A must-read for any literature enthusiast.",
+    "price": 25.00,
+    "category": "664200000000000000000005",
+    "stock": 100,
+    "sold": 300,
+    "status": "active",
+    "imageCover": "product-book-cover.jpg",
+    "isFeatured": true
+  }
+]

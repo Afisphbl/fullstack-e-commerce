@@ -1,0 +1,56 @@
+[
+  {
+    "_id": "664200000000000000000010",
+    "name": "Super Admin",
+    "email": "superadmin@ecom.dev",
+    "password": "superadmin1234",
+    "passwordConfirm": "superadmin1234",
+    "role": "super-admin",
+    "photo": "default.jpg"
+  },
+  {
+    "_id": "664200000000000000000011",
+    "name": "Admin User",
+    "email": "admin@ecom.dev",
+    "password": "admin1234",
+    "passwordConfirm": "admin1234",
+    "role": "admin",
+    "photo": "default.jpg"
+  },
+  {
+    "_id": "664200000000000000000012",
+    "name": "Manager User",
+    "email": "manager@ecom.dev",
+    "password": "manager1234",
+    "passwordConfirm": "manager1234",
+    "role": "manager",
+    "photo": "default.jpg"
+  },
+  {
+    "_id": "664200000000000000000013",
+    "name": "Alice Johnson",
+    "email": "alice@ecom.dev",
+    "password": "user1234",
+    "passwordConfirm": "user1234",
+    "role": "user",
+    "photo": "default.jpg"
+  },
+  {
+    "_id": "664200000000000000000014",
+    "name": "Bob Smith",
+    "email": "bob@ecom.dev",
+    "password": "user1234",
+    "passwordConfirm": "user1234",
+    "role": "user",
+    "photo": "default.jpg"
+  },
+  {
+    "_id": "664200000000000000000015",
+    "name": "Carol White",
+    "email": "carol@ecom.dev",
+    "password": "user1234",
+    "passwordConfirm": "user1234",
+    "role": "user",
+    "photo": "default.jpg"
+  }
+]

@@ -1,0 +1,340 @@
+[
+  {
+    "id": "1",
+    "name": "NeoVolt Pro X1 Laptop",
+    "slug": "neovolt-pro-x1-laptop",
+    "price": 1499.99,
+    "originalPrice": 1799.99,
+    "category": "laptops",
+    "brand": "NeoVolt",
+    "rating": 4.8,
+    "reviews": 342,
+    "image": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600",
+    "images": [
+      "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600",
+      "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=600"
+    ],
+    "description": "The NeoVolt Pro X1 delivers unmatched performance with its 14-core processor, 32GB DDR5 RAM, and stunning 4K OLED display. Built for creators and professionals who demand the best.",
+    "specs": {
+      "Processor": "Intel Core i9-14900HX",
+      "RAM": "32GB DDR5",
+      "Storage": "1TB NVMe SSD",
+      "Display": "15.6\" 4K OLED",
+      "Battery": "100Wh",
+      "Weight": "1.8kg"
+    },
+    "stock": 45,
+    "featured": true,
+    "isNew": true,
+    "tags": ["gaming", "professional", "4k"]
+  },
+  {
+    "id": "2",
+    "name": "CyberBuds Ultra ANC",
+    "slug": "cyberbuds-ultra-anc",
+    "price": 249.99,
+    "originalPrice": 299.99,
+    "category": "audio",
+    "brand": "CyberSound",
+    "rating": 4.6,
+    "reviews": 1205,
+    "image": "https://images.unsplash.com/photo-1590658268037-6bf12f032f55?w=600",
+    "images": [
+      "https://images.unsplash.com/photo-1590658268037-6bf12f032f55?w=600",
+      "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=600"
+    ],
+    "description": "Immerse yourself in pure sound with CyberBuds Ultra. Featuring advanced active noise cancellation, spatial audio, and 40-hour battery life.",
+    "specs": {
+      "Driver": "11mm Custom",
+      "ANC": "Hybrid Active",
+      "Battery": "40 hours",
+      "Connectivity": "Bluetooth 5.3",
+      "Codec": "LDAC, AAC",
+      "Water Resistance": "IPX5"
+    },
+    "stock": 200,
+    "featured": true,
+    "isNew": false,
+    "tags": ["wireless", "noise-cancelling", "premium"]
+  },
+  {
+    "id": "3",
+    "name": "QuantumView 8K Monitor",
+    "slug": "quantumview-8k-monitor",
+    "price": 2199.99,
+    "originalPrice": null,
+    "category": "monitors",
+    "brand": "QuantumView",
+    "rating": 4.9,
+    "reviews": 89,
+    "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600",
+    "images": [
+      "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600"
+    ],
+    "description": "Experience visuals like never before with the QuantumView 8K Monitor. Mini-LED backlighting, 1000 nits brightness, and 1ms response time.",
+    "specs": {
+      "Resolution": "7680 x 4320",
+      "Panel": "Mini-LED IPS",
+      "Refresh Rate": "120Hz",
+      "Response Time": "1ms",
+      "HDR": "HDR1000",
+      "Size": "32\""
+    },
+    "stock": 12,
+    "featured": true,
+    "isNew": true,
+    "tags": ["8k", "professional", "hdr"]
+  },
+  {
+    "id": "4",
+    "name": "TitanGrip Mechanical Keyboard",
+    "slug": "titangrip-mechanical-keyboard",
+    "price": 179.99,
+    "originalPrice": 219.99,
+    "category": "accessories",
+    "brand": "TitanGrip",
+    "rating": 4.7,
+    "reviews": 876,
+    "image": "https://images.unsplash.com/photo-1511467687858-23d96c529e2b?w=600",
+    "images": [
+      "https://images.unsplash.com/photo-1511467687858-23d96c529e2b?w=600"
+    ],
+    "description": "The TitanGrip features hot-swappable switches, per-key RGB, and an aircraft-grade aluminum frame. Type with precision and style.",
+    "specs": {
+      "Switches": "Hot-swappable",
+      "Layout": "75%",
+      "Backlight": "Per-key RGB",
+      "Connectivity": "USB-C / Wireless",
+      "Battery": "4000mAh",
+      "Frame": "Aluminum"
+    },
+    "stock": 150,
+    "featured": false,
+    "isNew": false,
+    "tags": ["mechanical", "rgb", "wireless"]
+  },
+  {
+    "id": "5",
+    "name": "PhantomX Gaming Phone",
+    "slug": "phantomx-gaming-phone",
+    "price": 999.99,
+    "originalPrice": 1099.99,
+    "category": "phones",
+    "brand": "PhantomX",
+    "rating": 4.5,
+    "reviews": 567,
+    "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600",
+    "images": [
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600"
+    ],
+    "description": "Dominate mobile gaming with the PhantomX. Snapdragon 8 Gen 3, 165Hz AMOLED, shoulder triggers, and active cooling system.",
+    "specs": {
+      "Processor": "Snapdragon 8 Gen 3",
+      "RAM": "16GB",
+      "Storage": "512GB",
+      "Display": "6.8\" 165Hz AMOLED",
+      "Battery": "6000mAh",
+      "Camera": "108MP + 50MP + 12MP"
+    },
+    "stock": 78,
+    "featured": true,
+    "isNew": true,
+    "tags": ["gaming", "5g", "fast-charging"]
+  },
+  {
+    "id": "6",
+    "name": "ArcReactor Power Bank 30K",
+    "slug": "arcreactor-power-bank-30k",
+    "price": 89.99,
+    "originalPrice": null,
+    "category": "accessories",
+    "brand": "ArcReactor",
+    "rating": 4.4,
+    "reviews": 2100,
+    "image": "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=600",
+    "images": [
+      "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=600"
+    ],
+    "description": "Never run out of power with the ArcReactor 30,000mAh power bank. Supports 100W PD fast charging and can charge a laptop.",
+    "specs": {
+      "Capacity": "30,000mAh",
+      "Output": "100W PD",
+      "Ports": "2x USB-C, 1x USB-A",
+      "Weight": "550g",
+      "Display": "LED Indicator",
+      "Passthrough": "Yes"
+    },
+    "stock": 300,
+    "featured": false,
+    "isNew": false,
+    "tags": ["portable", "fast-charging", "laptop"]
+  },
+  {
+    "id": "7",
+    "name": "NebulaCam 360 Pro",
+    "slug": "nebulacam-360-pro",
+    "price": 449.99,
+    "originalPrice": 549.99,
+    "category": "cameras",
+    "brand": "NebulaCam",
+    "rating": 4.3,
+    "reviews": 234,
+    "image": "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600",
+    "images": [
+      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600"
+    ],
+    "description": "Capture every angle with the NebulaCam 360 Pro. Dual 8K lenses, FlowState stabilization, and invisible selfie stick technology.",
+    "specs": {
+      "Resolution": "Dual 8K",
+      "Stabilization": "FlowState 3.0",
+      "Waterproof": "IPX8 (10m)",
+      "Battery": "1800mAh",
+      "Storage": "microSD up to 1TB",
+      "Weight": "180g"
+    },
+    "stock": 55,
+    "featured": false,
+    "isNew": true,
+    "tags": ["360", "action", "waterproof"]
+  },
+  {
+    "id": "8",
+    "name": "HoloTab S9 Tablet",
+    "slug": "holotab-s9-tablet",
+    "price": 799.99,
+    "originalPrice": 899.99,
+    "category": "tablets",
+    "brand": "HoloTab",
+    "rating": 4.6,
+    "reviews": 445,
+    "image": "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600",
+    "images": [
+      "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600"
+    ],
+    "description": "The HoloTab S9 redefines tablets with its M3 chip, 12.9\" Liquid Retina display, and all-day battery life. Perfect for work and play.",
+    "specs": {
+      "Processor": "M3 Chip",
+      "RAM": "16GB",
+      "Storage": "256GB",
+      "Display": "12.9\" Liquid Retina",
+      "Battery": "10,500mAh",
+      "Stylus": "Included"
+    },
+    "stock": 90,
+    "featured": true,
+    "isNew": false,
+    "tags": ["tablet", "creative", "stylus"]
+  },
+  {
+    "id": "9",
+    "name": "SpectraWatch Ultra",
+    "slug": "spectrawatch-ultra",
+    "price": 599.99,
+    "originalPrice": null,
+    "category": "wearables",
+    "brand": "Spectra",
+    "rating": 4.7,
+    "reviews": 678,
+    "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600",
+    "images": [
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600"
+    ],
+    "description": "The SpectraWatch Ultra combines premium health tracking with a stunning AMOLED display. Titanium build, 14-day battery, and dive-rated to 100m.",
+    "specs": {
+      "Display": "1.5\" AMOLED",
+      "Material": "Titanium",
+      "Battery": "14 days",
+      "Water Rating": "100m",
+      "Sensors": "SpO2, ECG, Temp",
+      "GPS": "Dual-band"
+    },
+    "stock": 120,
+    "featured": true,
+    "isNew": true,
+    "tags": ["smartwatch", "fitness", "health"]
+  },
+  {
+    "id": "10",
+    "name": "ThunderDock USB-C Hub",
+    "slug": "thunderdock-usb-c-hub",
+    "price": 129.99,
+    "originalPrice": 159.99,
+    "category": "accessories",
+    "brand": "ThunderDock",
+    "rating": 4.5,
+    "reviews": 1543,
+    "image": "https://images.unsplash.com/photo-1625842268584-8f3296236761?w=600",
+    "images": [
+      "https://images.unsplash.com/photo-1625842268584-8f3296236761?w=600"
+    ],
+    "description": "Expand your connectivity with the ThunderDock 12-in-1 USB-C Hub. Supports dual 4K displays, 100W passthrough, and 10Gbps data transfer.",
+    "specs": {
+      "Ports": "12-in-1",
+      "Video": "Dual 4K@60Hz",
+      "Data": "10Gbps USB 3.2",
+      "Power": "100W Passthrough",
+      "Ethernet": "Gigabit",
+      "Card Reader": "SD/microSD"
+    },
+    "stock": 250,
+    "featured": false,
+    "isNew": false,
+    "tags": ["hub", "usb-c", "thunderbolt"]
+  },
+  {
+    "id": "11",
+    "name": "VortexAir Drone X500",
+    "slug": "vortexair-drone-x500",
+    "price": 1299.99,
+    "originalPrice": 1499.99,
+    "category": "drones",
+    "brand": "VortexAir",
+    "rating": 4.8,
+    "reviews": 156,
+    "image": "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=600",
+    "images": [
+      "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=600"
+    ],
+    "description": "Capture breathtaking aerial footage with the VortexAir X500. 8K camera, 45-minute flight time, obstacle avoidance, and waypoint navigation.",
+    "specs": {
+      "Camera": "8K / 4K@120fps",
+      "Flight Time": "45 minutes",
+      "Range": "15km",
+      "Obstacle Avoidance": "Omnidirectional",
+      "GPS": "RTK Precision",
+      "Weight": "899g"
+    },
+    "stock": 30,
+    "featured": true,
+    "isNew": true,
+    "tags": ["drone", "8k", "aerial"]
+  },
+  {
+    "id": "12",
+    "name": "EchoSphere Smart Speaker",
+    "slug": "echosphere-smart-speaker",
+    "price": 199.99,
+    "originalPrice": null,
+    "category": "audio",
+    "brand": "EchoSphere",
+    "rating": 4.4,
+    "reviews": 890,
+    "image": "https://images.unsplash.com/photo-1543512214-318c7553f230?w=600",
+    "images": [
+      "https://images.unsplash.com/photo-1543512214-318c7553f230?w=600"
+    ],
+    "description": "Room-filling 360° sound meets AI intelligence. The EchoSphere adapts to your room acoustics and supports multi-room audio.",
+    "specs": {
+      "Drivers": "4x full-range + 1x sub",
+      "Audio": "360° Spatial",
+      "Assistant": "Multi-assistant",
+      "Connectivity": "WiFi 6E, BT 5.3",
+      "Smart Home": "Matter, Zigbee",
+      "Power": "40W"
+    },
+    "stock": 175,
+    "featured": false,
+    "isNew": false,
+    "tags": ["smart-speaker", "ai", "multi-room"]
+  }
+]

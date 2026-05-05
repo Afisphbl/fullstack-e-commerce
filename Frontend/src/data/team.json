@@ -1,0 +1,6 @@
+[
+  { "id": "1", "name": "Alex Nakamura", "role": "CEO & Founder", "bio": "Visionary tech entrepreneur with 15+ years in consumer electronics. Previously led product at Tesla.", "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300" },
+  { "id": "2", "name": "Sarah Chen", "role": "CTO", "bio": "Former Google engineer specializing in AI and cloud architecture. PhD from MIT.", "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300" },
+  { "id": "3", "name": "Marcus Rivera", "role": "Head of Design", "bio": "Award-winning designer who previously shaped experiences at Apple and Figma.", "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300" },
+  { "id": "4", "name": "Emily Watson", "role": "VP of Operations", "bio": "Supply chain expert with experience at Amazon. Ensures products reach customers fast.", "image": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300" }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "1",
+    "slug": "future-of-quantum-computing",
+    "title": "The Future of Quantum Computing in Consumer Electronics",
+    "excerpt": "Quantum computing is no longer confined to research labs. Discover how it will reshape everyday devices by 2027.",
+    "content": "Quantum computing has been making headlines for years, but recent breakthroughs are bringing it closer to consumer applications than ever before. Companies like IBM, Google, and startups are racing to create quantum processors small enough to integrate into everyday devices.\n\nThe implications are staggering: imagine smartphones that can process complex AI models locally, laptops that can simulate molecular structures in real-time, and security systems that are virtually unbreakable.\n\nKey developments to watch include quantum error correction advances, room-temperature quantum chips, and hybrid classical-quantum architectures that could appear in premium devices as early as 2027.\n\nFor consumers, this means faster processing, better AI assistants, and revolutionary new applications we haven't even imagined yet.",
+    "author": "Sarah Chen",
+    "date": "2026-04-01",
+    "image": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800",
+    "category": "Technology",
+    "readTime": "5 min"
+  },
+  {
+    "id": "2",
+    "slug": "best-laptops-2026",
+    "title": "Top 10 Laptops of 2026: A Comprehensive Guide",
+    "excerpt": "From ultrabooks to powerhouses, we've tested the best laptops money can buy this year.",
+    "content": "The laptop market in 2026 is more exciting than ever. With the introduction of next-gen processors from Intel and AMD, along with revolutionary display technologies, consumers have never had better options.\n\nOur top pick is the NeoVolt Pro X1, which combines incredible performance with a stunning 4K OLED display. For budget-conscious buyers, the TechWave EcoBook offers surprising performance at half the price.\n\nKey trends this year include AI-powered battery optimization, foldable displays going mainstream, and sustainability-focused designs using recycled materials.",
+    "author": "Marcus Rivera",
+    "date": "2026-03-15",
+    "image": "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=800",
+    "category": "Reviews",
+    "readTime": "8 min"
+  },
+  {
+    "id": "3",
+    "slug": "smart-home-security-guide",
+    "title": "Ultimate Smart Home Security Guide for 2026",
+    "excerpt": "Protect your connected home with our comprehensive guide to the latest smart security solutions.",
+    "content": "As our homes become smarter, security becomes more critical. This guide covers everything from smart locks and cameras to AI-powered monitoring systems.\n\nThe key is layered security: combine physical deterrents with digital monitoring, encrypted communications, and AI threat detection. We recommend starting with a quality mesh network, then adding cameras, sensors, and a central hub.\n\nTop recommendations include the SecureNest AI Camera System and the VaultLock Pro smart lock series.",
+    "author": "Emily Watson",
+    "date": "2026-03-28",
+    "image": "https://images.unsplash.com/photo-1558002038-1055907df827?w=800",
+    "category": "Guides",
+    "readTime": "6 min"
+  },
+  {
+    "id": "4",
+    "slug": "sustainable-tech-revolution",
+    "title": "The Sustainable Tech Revolution: Eco-Friendly Electronics",
+    "excerpt": "How the electronics industry is embracing sustainability without compromising performance.",
+    "content": "Sustainability is no longer optional in tech. Major manufacturers are adopting recycled materials, modular designs, and carbon-neutral manufacturing processes.\n\nFrom phones made with ocean-recovered plastics to laptops designed for easy repair and upgrade, the industry is finally taking environmental responsibility seriously. This shift is driven by both consumer demand and regulatory requirements.\n\nNotable examples include the FairPhone 7, which uses 100% recycled rare earth metals, and the GreenBook laptop series, which offers a 10-year upgrade guarantee.",
+    "author": "David Park",
+    "date": "2026-03-10",
+    "image": "https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=800",
+    "category": "Industry",
+    "readTime": "4 min"
+  }
+]

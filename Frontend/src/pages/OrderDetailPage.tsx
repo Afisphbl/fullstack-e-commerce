@@ -1,0 +1,76 @@
+import React, { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { fetchOrderById, Order } from '@/lib/api';
+import { Badge } from '@/components/ui/badge';
+import { ChevronLeft, MapPin, Package } from 'lucide-react';
+
+const statusColors: Record<string, string> = {
+  processing: 'bg-warning/10 text-warning border-warning/30',
+  shipped: 'bg-info/10 text-info border-info/30',
+  delivered: 'bg-success/10 text-success border-success/30',
+};
+
+const OrderDetailPage = () => {
+  const { id } = useParams<{ id: string }>();
+  const [order, setOrder] = useState<Order | null>(null);
+  useEffect(() => { if (id) fetchOrderById(id).then(o => setOrder(o || null)); }, [id]);
+
+  if (!order) return <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">Loading...</div>;
+
+  return (
+    <div className="container mx-auto px-4 py-8 max-w-3xl">
+      <Link to="/orders" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-6">
+        <ChevronLeft className="h-4 w-4" /> Back to Orders
+      </Link>
+
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-2xl font-display font-bold text-foreground">{order.id}</h1>
+        <Badge className={`${statusColors[order.status]} border capitalize`}>{order.status}</Badge>
+      </div>
+
+      <div className="bg-card rounded-lg border border-border p-6 mb-6">
+        <h2 className="font-display font-semibold text-foreground mb-4">Items</h2>
+        {order.items.map(item => (
+          <div key={item.productId} className="flex items-center gap-4 py-3 border-b border-border last:border-0">
+            <img src={item.image} alt={item.name} className="w-16 h-16 rounded object-cover" />
+            <div className="flex-1">
+              <p className="font-medium text-foreground">{item.name}</p>
+              <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+            </div>
+            <span className="font-display font-bold text-foreground">${(item.price * item.quantity).toFixed(2)}</span>
+          </div>
+        ))}
+        <div className="border-t border-border pt-4 mt-4 flex justify-between">
+          <span className="font-display font-semibold text-foreground">Total</span>
+          <span className="font-display font-bold text-foreground text-lg">${order.total.toFixed(2)}</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-card rounded-lg border border-border p-6">
+          <h3 className="font-display font-semibold text-foreground mb-3 flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" /> Shipping</h3>
+          <p className="text-sm text-muted-foreground">{order.shippingAddress}</p>
+          {order.trackingNumber && <p className="text-sm text-muted-foreground mt-2">Tracking: {order.trackingNumber}</p>}
+          <p className="text-sm text-muted-foreground mt-1">Est. Delivery: {order.estimatedDelivery}</p>
+        </div>
+
+        <div className="bg-card rounded-lg border border-border p-6">
+          <h3 className="font-display font-semibold text-foreground mb-3 flex items-center gap-2"><Package className="h-4 w-4 text-primary" /> Timeline</h3>
+          <div className="space-y-3">
+            {order.timeline.map((t, i) => (
+              <div key={i} className="flex gap-3">
+                <div className={`w-2.5 h-2.5 rounded-full mt-1.5 ${i === order.timeline.length - 1 ? 'bg-primary' : 'bg-muted-foreground/30'}`} />
+                <div>
+                  <p className="text-sm font-medium text-foreground">{t.description}</p>
+                  <p className="text-xs text-muted-foreground">{t.date}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default OrderDetailPage;

@@ -1,0 +1,26 @@
+[
+  {
+    "review": "Amazing sound quality! The noise cancellation is top notch.",
+    "rating": 5,
+    "product": "664200000000000000000101",
+    "user": "664200000000000000000013"
+  },
+  {
+    "review": "Good headphones, but a bit heavy for long sessions.",
+    "rating": 4,
+    "product": "664200000000000000000101",
+    "user": "664200000000000000000014"
+  },
+  {
+    "review": "Tracks my runs perfectly. Battery life is decent.",
+    "rating": 4,
+    "product": "664200000000000000000102",
+    "user": "664200000000000000000015"
+  },
+  {
+    "review": "Absolutely love this jacket. Fits perfectly.",
+    "rating": 5,
+    "product": "664200000000000000000103",
+    "user": "664200000000000000000013"
+  }
+]

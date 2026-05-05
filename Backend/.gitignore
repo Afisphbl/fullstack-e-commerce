@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Environment
+config.env
+.env
+.env.*
+
+# Logs
+logs/*.log
+logs/*.gz
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Build
+dist/
+build/
+
+# Uploads
+public/uploads/

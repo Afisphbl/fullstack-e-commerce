@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "C:\\Users\\YES-COMPUTER-ET\\Documents\\Projects\\e-commerce-api\\Backend\\logs\\.851b1a59c4d8544c99bba95ef6a5e50fdc6dd3c2-audit.json",
+    "files": [
+        {
+            "date": 1778003240317,
+            "name": "C:\\Users\\YES-COMPUTER-ET\\Documents\\Projects\\e-commerce-api\\Backend\\logs\\combined-2026-05-05.log",
+            "hash": "b09d7413a217c8ff65bfcbb2fb5e4b497548672db03216a73392c9122364c84e"
+        }
+    ],
+    "hashType": "sha256"
+}
