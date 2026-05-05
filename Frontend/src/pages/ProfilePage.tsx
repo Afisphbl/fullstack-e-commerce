@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/ProductCard";
 import { useFavorites } from "@/contexts/FavoritesContext";
@@ -39,6 +38,11 @@ const getStepIndex = (order: Order) => {
 const updateProfileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(60, "Name must be at most 60 characters"),
   email: z.string().email("Please enter a valid email address"),
+  street: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  zip: z.string().optional(),
+  country: z.string().optional(),
 });
 
 const updatePasswordSchema = z
@@ -71,8 +75,10 @@ const ProfilePage = () => {
   }, [isLoading, isAuthenticated, navigate]);
 
   useEffect(() => {
-    fetchOrders().then(setOrders);
-  }, []);
+    if (user?.role === "user") {
+      fetchOrders().then(setOrders).catch(() => {});
+    }
+  }, [user?.role]);
 
   useEffect(() => {
     const tab = searchParams.get("tab") as AccountTab;
@@ -84,16 +90,27 @@ const ProfilePage = () => {
   const profileForm = useForm<z.infer<typeof updateProfileSchema>>({
     resolver: zodResolver(updateProfileSchema),
     defaultValues: {
-      name: user?.name || "",
-      email: user?.email || "",
+      name: "",
+      email: "",
+      street: "",
+      city: "",
+      state: "",
+      zip: "",
+      country: "",
     },
   });
 
   useEffect(() => {
     if (user) {
+      const address = user.addresses?.[0] || {};
       profileForm.reset({
         name: user.name,
         email: user.email,
+        street: address.street || "",
+        city: address.city || "",
+        state: address.state || "",
+        zip: address.zip || "",
+        country: address.country || "",
       });
     }
   }, [user, profileForm]);
@@ -108,11 +125,30 @@ const ProfilePage = () => {
   });
 
   const updateProfileMutation = useMutation({
-    mutationFn: (values: z.infer<typeof updateProfileSchema>) =>
-      apiFetch("/api/v1/users/updateMe", {
+    mutationFn: (values: z.infer<typeof updateProfileSchema>) => {
+      const payload: any = {
+        name: values.name,
+        email: values.email,
+      };
+      
+      // Send addresses array if any address field is filled, or if they just want to save
+      if (values.street || values.city || values.state || values.zip || values.country) {
+        payload.addresses = [{
+          label: "Home",
+          street: values.street || "",
+          city: values.city || "",
+          state: values.state || "",
+          zip: values.zip || "",
+          country: values.country || "",
+          isDefault: true
+        }];
+      }
+
+      return apiFetch("/api/v1/users/updateMe", {
         method: "PATCH",
-        body: JSON.stringify(values),
-      }),
+        body: JSON.stringify(payload),
+      });
+    },
     onSuccess: (data) => {
       toast.success("Profile updated successfully!");
       queryClient.setQueryData(["currentUser"], data.data.user);
@@ -164,15 +200,18 @@ const ProfilePage = () => {
     );
   }, [orders, orderGroup]);
 
+  if (isLoading || !user) {
+    return <div className="p-8 text-center">Loading profile...</div>;
+  }
+
   const sidebarItems = [
     { key: "profile" as const, icon: User, label: "Profile" },
     { key: "password" as const, icon: Lock, label: "Password" },
-    { key: "orders" as const, icon: Package, label: "Orders" },
-    { key: "wishlist" as const, icon: Heart, label: "Wishlist" },
   ];
 
-  if (isLoading || !user) {
-    return <div className="p-8 text-center">Loading profile...</div>;
+  if (user.role === "user") {
+    sidebarItems.push({ key: "orders" as const, icon: Package, label: "Orders" });
+    sidebarItems.push({ key: "wishlist" as const, icon: Heart, label: "Wishlist" });
   }
 
   return (
@@ -210,91 +249,152 @@ const ProfilePage = () => {
 
         <section className="bg-card rounded-lg border border-border p-6">
           {activeTab === "profile" && (
-            <>
-              <h2 className="font-display font-semibold text-foreground mb-6 text-xl">
-                Personal Information
-              </h2>
-              <Form {...profileForm}>
-                <form
-                  onSubmit={profileForm.handleSubmit((values) =>
-                    updateProfileMutation.mutate(values)
-                  )}
-                  className="space-y-4 max-w-md"
-                >
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
-                      {user.photo !== 'default.jpg' ? (
-                        <img src={`/api/v1/public/img/users/${user.photo}`} alt={user.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <User className="h-8 w-8 text-primary" />
+            <Form {...profileForm}>
+              <form
+                onSubmit={profileForm.handleSubmit((values) =>
+                  updateProfileMutation.mutate(values)
+                )}
+                className="space-y-8"
+              >
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Left Column: Personal Information */}
+                  <div className="space-y-4">
+                    <h2 className="font-display font-semibold text-foreground mb-6 text-xl">
+                      Personal Information
+                    </h2>
+                    
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+                        {user.photo !== 'default.jpg' ? (
+                          <img src={`/api/v1/public/img/users/${user.photo}`} alt={user.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <User className="h-8 w-8 text-primary" />
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-foreground">{user.name}</h3>
+                        <p className="text-sm text-muted-foreground">{user.email}</p>
+                        <Badge variant="outline" className="mt-1 uppercase text-[10px]">{user.role}</Badge>
+                      </div>
+                    </div>
+
+                    <FormField
+                      control={profileForm.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Full Name</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )}
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">{user.name}</h3>
-                      <p className="text-sm text-muted-foreground">{user.email}</p>
-                    </div>
+                    />
+                    <FormField
+                      control={profileForm.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
-                  <FormField
-                    control={profileForm.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Full Name</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={profileForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit" disabled={updateProfileMutation.isPending} className="mt-4">
+
+                  {/* Right Column: Shipping Details (Users Only) */}
+                  {user.role === "user" && (
+                    <div className="space-y-4">
+                      <h2 className="font-display font-semibold text-foreground mb-6 text-xl flex items-center gap-2">
+                        <MapPin className="h-5 w-5 text-primary" /> Shipping Details
+                      </h2>
+                      
+                      <FormField
+                        control={profileForm.control}
+                        name="street"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Street Address</FormLabel>
+                            <FormControl>
+                              <Input placeholder="123 Main St" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={profileForm.control}
+                          name="city"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>City</FormLabel>
+                              <FormControl>
+                                <Input placeholder="New York" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={profileForm.control}
+                          name="state"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>State/Province</FormLabel>
+                              <FormControl>
+                                <Input placeholder="NY" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={profileForm.control}
+                          name="zip"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Postal Code</FormLabel>
+                              <FormControl>
+                                <Input placeholder="10001" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={profileForm.control}
+                          name="country"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Country</FormLabel>
+                              <FormControl>
+                                <Input placeholder="United States" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex justify-end border-t border-border pt-6">
+                  <Button type="submit" disabled={updateProfileMutation.isPending}>
                     {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
                   </Button>
-                </form>
-              </Form>
-
-              {/* The existing dummy Shipping address could go here, omitting for brevity or keeping as UI mockup */}
-              <div className="mt-8 border-t border-border pt-6 max-w-xl">
-                <h3 className="mb-4 inline-flex items-center gap-2 font-display text-lg font-semibold text-foreground">
-                  <MapPin className="h-4 w-4 text-primary" /> Shipping Details (Mock)
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="sm:col-span-2">
-                    <Label className="text-foreground">Street Address</Label>
-                    <Input defaultValue="123 Innovation Drive" className="bg-background" disabled />
-                  </div>
-                  <div>
-                    <Label className="text-foreground">City</Label>
-                    <Input defaultValue="San Francisco" className="bg-background" disabled />
-                  </div>
-                  <div>
-                    <Label className="text-foreground">State</Label>
-                    <Input defaultValue="CA" className="bg-background" disabled />
-                  </div>
-                  <div>
-                    <Label className="text-foreground">Postal Code</Label>
-                    <Input defaultValue="94105" className="bg-background" disabled />
-                  </div>
-                  <div>
-                    <Label className="text-foreground">Country</Label>
-                    <Input defaultValue="United States" className="bg-background" disabled />
-                  </div>
                 </div>
-              </div>
-            </>
+              </form>
+            </Form>
           )}
 
           {activeTab === "password" && (
@@ -358,7 +458,7 @@ const ProfilePage = () => {
             </>
           )}
 
-          {activeTab === "orders" && (
+          {activeTab === "orders" && user.role === "user" && (
             <>
               <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h2 className="font-display text-xl font-semibold text-foreground">
@@ -486,7 +586,7 @@ const ProfilePage = () => {
             </>
           )}
 
-          {activeTab === "wishlist" && (
+          {activeTab === "wishlist" && user.role === "user" && (
             <>
               <h2 className="mb-6 font-display text-xl font-semibold text-foreground">
                 My Wishlist ({favorites.length})

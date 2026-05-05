@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,7 +8,7 @@ import { CartProvider } from "@/contexts/CartContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { CompareProvider } from "@/contexts/CompareContext";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { AdminAuthProvider, useAdminAuth } from "@/contexts/AdminAuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/layout/CartDrawer";
@@ -45,8 +45,11 @@ import ResetPassword from "./pages/ResetPassword";
 const queryClient = new QueryClient();
 
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAdminAuth();
-  if (!isAuthenticated) return <AdminLoginPage />;
+  const { user, isAuthenticated, isLoading } = useAuth();
+  if (isLoading) return <div className="p-8 text-center flex-1">Loading...</div>;
+  if (!isAuthenticated || !user || user.role === "user") {
+    return <Navigate to="/login" replace />;
+  }
   return <>{children}</>;
 };
 
@@ -67,10 +70,9 @@ const App = () => (
           <CartProvider>
           <FavoritesProvider>
             <CompareProvider>
-              <AdminAuthProvider>
-                <Toaster />
-                <SonnerToaster />
-                <BrowserRouter>
+              <Toaster />
+              <SonnerToaster />
+              <BrowserRouter>
                   <Routes>
                     {/* Storefront */}
                     <Route
@@ -250,7 +252,6 @@ const App = () => (
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </BrowserRouter>
-              </AdminAuthProvider>
             </CompareProvider>
           </FavoritesProvider>
         </CartProvider>
