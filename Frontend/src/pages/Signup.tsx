@@ -52,7 +52,11 @@ export default function Signup() {
     onSuccess: (data) => {
       toast.success("Account created successfully!");
       queryClient.setQueryData(["currentUser"], data.data.user);
-      navigate("/profile");
+      if (data.data.user.role !== "user") {
+        navigate("/admin");
+      } else {
+        navigate("/profile");
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message);

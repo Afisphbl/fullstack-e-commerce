@@ -110,22 +110,12 @@ export const Header = () => {
               )}
             </button>
             <NavLink
-              to="/profile"
-              title="Profile"
+              to={user && user.role !== "user" ? "/admin" : "/profile"}
+              title={user && user.role !== "user" ? "Admin Dashboard" : "Profile"}
               className={({ isActive }) => `p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`}
             >
               <User className="h-5 w-5" />
             </NavLink>
-            
-            {user && user.role !== "user" && (
-              <NavLink
-                to="/admin"
-                title="Admin Dashboard"
-                className={({ isActive }) => `p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`}
-              >
-                <Shield className="h-5 w-5" />
-              </NavLink>
-            )}
 
             <Button
               variant="ghost"

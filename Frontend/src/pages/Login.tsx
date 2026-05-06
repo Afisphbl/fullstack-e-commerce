@@ -43,7 +43,11 @@ export default function Login() {
     onSuccess: (data) => {
       toast.success("Login successful!");
       queryClient.setQueryData(["currentUser"], data.data.user);
-      navigate("/profile");
+      if (data.data.user.role !== "user") {
+        navigate("/admin");
+      } else {
+        navigate("/profile");
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message);
