@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { isAdminRole } from "@/lib/roles";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -43,7 +44,7 @@ export default function Login() {
     onSuccess: (data) => {
       toast.success("Login successful!");
       queryClient.setQueryData(["currentUser"], data.data.user);
-      if (data.data.user.role !== "user") {
+      if (isAdminRole(data.data.user.role)) {
         navigate("/admin");
       } else {
         navigate("/profile");

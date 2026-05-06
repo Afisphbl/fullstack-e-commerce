@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { isAdminRole } from "@/lib/roles";
 
 const signupSchema = z
   .object({
@@ -52,7 +53,7 @@ export default function Signup() {
     onSuccess: (data) => {
       toast.success("Account created successfully!");
       queryClient.setQueryData(["currentUser"], data.data.user);
-      if (data.data.user.role !== "user") {
+      if (isAdminRole(data.data.user.role)) {
         navigate("/admin");
       } else {
         navigate("/profile");

@@ -133,15 +133,21 @@ const ProfilePage = () => {
       
       // Send addresses array if any address field is filled, or if they just want to save
       if (values.street || values.city || values.state || values.zip || values.country) {
-        payload.addresses = [{
-          label: "Home",
+        const existingAddresses = user?.addresses || [];
+        const existingAddress = existingAddresses[0] || {};
+        
+        const updatedFirstAddress = {
+          ...existingAddress,
           street: values.street || "",
           city: values.city || "",
           state: values.state || "",
           zip: values.zip || "",
           country: values.country || "",
-          isDefault: true
-        }];
+        };
+
+        payload.addresses = existingAddresses.length > 0
+          ? [updatedFirstAddress, ...existingAddresses.slice(1)]
+          : [updatedFirstAddress];
       }
 
       return apiFetch("/api/v1/users/updateMe", {

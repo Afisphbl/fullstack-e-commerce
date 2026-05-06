@@ -17,6 +17,7 @@ import { useCompare } from "@/contexts/CompareContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import { isAdminRole } from "@/lib/roles";
 
 const navLinks = [
   { to: "/", label: "Home" },
@@ -110,8 +111,8 @@ export const Header = () => {
               )}
             </button>
             <NavLink
-              to={user && user.role !== "user" ? "/admin" : "/profile"}
-              title={user && user.role !== "user" ? "Admin Dashboard" : "Profile"}
+              to={isAdminRole(user?.role) ? "/admin" : "/profile"}
+              title={isAdminRole(user?.role) ? "Admin Dashboard" : "Profile"}
               className={({ isActive }) => `p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`}
             >
               <User className="h-5 w-5" />

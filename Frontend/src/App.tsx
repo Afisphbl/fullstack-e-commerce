@@ -27,7 +27,6 @@ import ProfilePage from "./pages/ProfilePage";
 import OrdersPage from "./pages/OrdersPage";
 import OrderDetailPage from "./pages/OrderDetailPage";
 import TrackOrderPage from "./pages/TrackOrderPage";
-import AdminLoginPage from "./pages/admin/AdminLoginPage";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProductsPage from "./pages/admin/AdminProductsPage";
@@ -41,13 +40,14 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import { isAdminRole } from "@/lib/roles";
 
 const queryClient = new QueryClient();
 
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isAuthenticated, isLoading } = useAuth();
   if (isLoading) return <div className="p-8 text-center flex-1">Loading...</div>;
-  if (!isAuthenticated || !user || user.role === "user") {
+  if (!isAuthenticated || !user || !isAdminRole(user.role)) {
     return <Navigate to="/login" replace />;
   }
   return <>{children}</>;

@@ -25,4 +25,4 @@ build/
 # Uploads
 public/uploads/
 
-
+logs/*.json
