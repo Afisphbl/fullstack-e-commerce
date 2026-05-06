@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import {
   ShoppingCart,
@@ -9,12 +9,13 @@ import {
   Moon,
   GitCompare,
   User,
+  Shield,
 } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useCompare } from "@/contexts/CompareContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
@@ -31,6 +32,7 @@ export const Header = () => {
   const { favorites } = useFavorites();
   const { compareList } = useCompare();
   const { theme, toggleTheme } = useTheme();
+  const { user } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -60,6 +62,7 @@ export const Header = () => {
             <Button
               variant="ghost"
               size="icon"
+              title="Toggle Theme"
               onClick={toggleTheme}
               className="text-muted-foreground hover:text-primary"
             >
@@ -69,9 +72,10 @@ export const Header = () => {
                 <Moon className="h-4 w-4" />
               )}
             </Button>
-            <Link
+            <NavLink
               to="/compare"
-              className="relative p-2 text-muted-foreground hover:text-primary transition-colors"
+              title="Compare"
+              className={({ isActive }) => `relative p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`}
             >
               <GitCompare className="h-5 w-5" />
               {compareList.length > 0 && (
@@ -79,10 +83,11 @@ export const Header = () => {
                   {compareList.length}
                 </span>
               )}
-            </Link>
-            <Link
+            </NavLink>
+            <NavLink
               to="/favorites"
-              className="relative p-2 text-muted-foreground hover:text-primary transition-colors"
+              title="Favorites"
+              className={({ isActive }) => `relative p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`}
             >
               <Heart className="h-5 w-5" />
               {favorites.length > 0 && (
@@ -90,9 +95,10 @@ export const Header = () => {
                   {favorites.length}
                 </span>
               )}
-            </Link>
+            </NavLink>
             <button
               onClick={openCart}
+              title="Cart"
               className="relative p-2 text-muted-foreground hover:text-primary transition-colors"
               aria-label="Open cart"
             >
@@ -103,15 +109,18 @@ export const Header = () => {
                 </span>
               )}
             </button>
-            <Link
-              to="/profile"
-              className="p-2 text-muted-foreground hover:text-primary transition-colors"
+            <NavLink
+              to={user && user.role !== "user" ? "/admin" : "/profile"}
+              title={user && user.role !== "user" ? "Admin Dashboard" : "Profile"}
+              className={({ isActive }) => `p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`}
             >
               <User className="h-5 w-5" />
-            </Link>
+            </NavLink>
+
             <Button
               variant="ghost"
               size="icon"
+              title="Menu"
               className="md:hidden text-muted-foreground"
               onClick={() => setMobileOpen(!mobileOpen)}
             >

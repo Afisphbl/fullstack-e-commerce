@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { Link, NavLink, useLocation, Outlet } from "react-router-dom";
-import { useAdminAuth } from "@/contexts/AdminAuthContext";
+import { Link, NavLink, useLocation, Outlet, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api-client";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -41,10 +44,27 @@ const pageTitles: Record<string, string> = {
 };
 
 const AdminLayout = () => {
-  const { user, logout } = useAdminAuth();
+  const { user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [collapsed, setCollapsed] = useState(false);
+
+  const logoutMutation = useMutation({
+    mutationFn: () =>
+      apiFetch("/api/v1/auth/logout", {
+        method: "POST",
+      }),
+    onSuccess: () => {
+      toast.success("Logged out successfully");
+      queryClient.setQueryData(["currentUser"], null);
+      navigate("/login");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
 
   const currentTitle = pageTitles[location.pathname] || "Admin";
 
@@ -131,7 +151,8 @@ const AdminLayout = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={logout}
+              onClick={() => logoutMutation.mutate()}
+              disabled={logoutMutation.isPending}
               className={`${collapsed ? "w-full" : "flex-1"} text-destructive hover:text-destructive`}
             >
               <LogOut className="h-4 w-4" />
