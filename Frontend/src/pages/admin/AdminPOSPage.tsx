@@ -15,7 +15,7 @@ const AdminPOSPage = () => {
   const [search, setSearch] = useState('');
   const [cart, setCart] = useState<POSItem[]>([]);
 
-  useEffect(() => { fetchProducts().then(setProducts); }, []);
+  useEffect(() => { fetchProducts().then(res => setProducts(res.products)); }, []);
 
   const filtered = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
   const total = cart.reduce((s, i) => s + i.product.price * i.quantity, 0);

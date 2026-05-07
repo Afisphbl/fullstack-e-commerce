@@ -1,0 +1,84 @@
+[
+  {
+    "_id": "664200000000000000000201",
+    "product": "664200000000000000000101",
+    "details": [
+      {
+        "group": "Audio",
+        "specs": [
+          { "name": "Driver Type", "value": "40mm Dome Type" },
+          { "name": "Frequency Response", "value": "4Hz - 40,000Hz" },
+          { "name": "Noise Cancelling", "value": "Yes (Active)" }
+        ]
+      },
+      {
+        "group": "Battery",
+        "specs": [
+          { "name": "Life", "value": "Up to 30 hours" },
+          { "name": "Charge Time", "value": "3 hours" }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000000202",
+    "product": "664200000000000000000102",
+    "details": [
+      {
+        "group": "Display",
+        "specs": [
+          { "name": "Type", "value": "AMOLED" },
+          { "name": "Size", "value": "1.4 inch" }
+        ]
+      },
+      {
+        "group": "Sensors",
+        "specs": [
+          { "name": "Heart Rate", "value": "Yes" },
+          { "name": "GPS", "value": "Built-in" }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000000203",
+    "product": "664200000000000000000103",
+    "details": [
+      {
+        "group": "Material",
+        "specs": [
+          { "name": "Outer", "value": "100% Genuine Leather" },
+          { "name": "Inner Lining", "value": "Viscose" }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000000204",
+    "product": "664200000000000000000104",
+    "details": [
+      {
+        "group": "Dimensions",
+        "specs": [
+          { "name": "Width", "value": "120 cm" },
+          { "name": "Depth", "value": "60 cm" },
+          { "name": "Height", "value": "75 cm" }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000000205",
+    "product": "664200000000000000000105",
+    "details": [
+      {
+        "group": "Book Details",
+        "specs": [
+          { "name": "Format", "value": "Hardcover" },
+          { "name": "Pages", "value": "180" },
+          { "name": "Language", "value": "English" }
+        ]
+      }
+    ]
+  }
+]

@@ -12,7 +12,8 @@
     "images": ["product-headphone-1.jpg", "product-headphone-2.jpg"],
     "isFeatured": true,
     "ratingsAverage": 4.5,
-    "ratingsQuantity": 2
+    "ratingsQuantity": 2,
+    "specification": "664200000000000000000201"
   },
   {
     "_id": "664200000000000000000102",
@@ -27,7 +28,8 @@
     "imageCover": "product-watch-cover.jpg",
     "isFeatured": true,
     "ratingsAverage": 4.0,
-    "ratingsQuantity": 1
+    "ratingsQuantity": 1,
+    "specification": "664200000000000000000202"
   },
   {
     "_id": "664200000000000000000103",
@@ -40,7 +42,8 @@
     "status": "active",
     "imageCover": "product-jacket-cover.jpg",
     "ratingsAverage": 5.0,
-    "ratingsQuantity": 1
+    "ratingsQuantity": 1,
+    "specification": "664200000000000000000203"
   },
   {
     "_id": "664200000000000000000104",
@@ -52,7 +55,8 @@
     "sold": 8,
     "status": "active",
     "imageCover": "product-desk-cover.jpg",
-    "isFeatured": false
+    "isFeatured": false,
+    "specification": "664200000000000000000204"
   },
   {
     "_id": "664200000000000000000105",
@@ -64,6 +68,7 @@
     "sold": 300,
     "status": "active",
     "imageCover": "product-book-cover.jpg",
-    "isFeatured": true
+    "isFeatured": true,
+    "specification": "664200000000000000000205"
   }
 ]

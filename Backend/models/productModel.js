@@ -67,6 +67,10 @@ const productSchema = new mongoose.Schema(
     },
     isFeatured: { type: Boolean, default: false },
     createdBy: { type: mongoose.Schema.ObjectId, ref: 'User' },
+    specification: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Specification',
+    },
   },
   {
     timestamps: true,
@@ -99,9 +103,12 @@ productSchema.pre('save', function (next) {
   next();
 });
 
-// ─── Query middleware — populate category ─────────────────────────────────────
+// ─── Query middleware — populate category and specification ──────────────────
 productSchema.pre(/^find/, function (next) {
-  this.populate({ path: 'category', select: 'name slug' });
+  this.populate({ path: 'category', select: 'name slug' }).populate({
+    path: 'specification',
+    select: '-product -__v',
+  });
   next();
 });
 
