@@ -97,14 +97,15 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
         email: values.email,
       };
 
-      // Send addresses array if any address field is filled
-      if (
+      // Handle address updates: send addresses if any field is filled, or clear if user had addresses but all fields are now empty
+      const hasAnyAddressField =
         values.street ||
         values.city ||
         values.state ||
         values.zip ||
-        values.country
-      ) {
+        values.country;
+
+      if (hasAnyAddressField) {
         const existingAddresses = user?.addresses || [];
         const existingAddress = existingAddresses[0] || {};
 
@@ -121,6 +122,9 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
           existingAddresses.length > 0
             ? [updatedFirstAddress, ...existingAddresses.slice(1)]
             : [updatedFirstAddress];
+      } else if (user?.addresses && user.addresses.length > 0) {
+        // User had addresses but all fields are now empty - clear addresses
+        payload.addresses = [];
       }
 
       return apiFetch("/api/v1/users/updateMe", {

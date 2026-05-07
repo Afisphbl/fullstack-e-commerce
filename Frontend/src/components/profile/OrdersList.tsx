@@ -1,6 +1,8 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { fetchOrders, Order } from "@/lib/api";
 import { OrderCard } from "./OrderCard";
+import { Button } from "@/components/ui/button";
+import { AlertCircle } from "lucide-react";
 
 export const OrdersList = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -8,22 +10,25 @@ export const OrdersList = () => {
     "active"
   );
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  const loadOrders = useCallback(async () => {
+    setError(null);
+    setIsLoading(true);
+    try {
+      const data = await fetchOrders();
+      setOrders(data);
+    } catch (error) {
+      console.error("Failed to fetch orders:", error);
+      setError(error instanceof Error ? error : new Error("Failed to fetch orders"));
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const loadOrders = async () => {
-      setIsLoading(true);
-      try {
-        const data = await fetchOrders();
-        setOrders(data);
-      } catch (error) {
-        console.error("Failed to fetch orders:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     loadOrders();
-  }, []);
+  }, [loadOrders]);
 
   const filteredOrders = useMemo(() => {
     if (orderGroup === "completed") {
@@ -72,7 +77,16 @@ export const OrdersList = () => {
       </div>
 
       <div className="space-y-4">
-        {isLoading ? (
+        {error ? (
+          <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-8 text-center">
+            <AlertCircle className="mx-auto h-8 w-8 text-destructive mb-3" />
+            <p className="text-destructive font-medium mb-2">Failed to load orders</p>
+            <p className="text-sm text-muted-foreground mb-4">{error.message}</p>
+            <Button onClick={loadOrders} variant="outline" size="sm">
+              Retry
+            </Button>
+          </div>
+        ) : isLoading ? (
           <p className="rounded-lg border border-dashed border-border p-8 text-center text-muted-foreground">
             Loading orders...
           </p>
