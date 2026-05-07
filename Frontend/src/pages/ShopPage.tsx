@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/pagination";
 import { Search, SlidersHorizontal, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 
 const ProductSkeleton = () => (
   <div className="rounded-xl border border-border bg-card/90 p-3 space-y-4">
@@ -312,9 +313,9 @@ const ShopPage = () => {
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {isLoading ? (
-              Array.from({ length: pageSize }).map((_, i) => (
-                <ProductSkeleton key={i} />
-              ))
+              <div className="col-span-full py-12">
+                <LoadingSpinner label="Hunting for the best electronics..." />
+              </div>
             ) : products.length > 0 ? (
               products.map((product) => (
                 <ProductCard key={product.id} product={product} />

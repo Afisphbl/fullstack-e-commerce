@@ -31,6 +31,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 
 const REVENUE_DATA = [
   { name: 'Jan', current: 4000, previous: 2400 },
@@ -67,7 +68,11 @@ const AdminDashboard = () => {
   }, []);
 
   if (loading || !data) {
-    return <div className="p-8 text-center animate-pulse">Loading dashboard data...</div>;
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <LoadingSpinner size="lg" label="Preparing your dashboard overview..." />
+      </div>
+    );
   }
 
   const statCards = [

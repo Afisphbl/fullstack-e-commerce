@@ -72,7 +72,12 @@ const userSchema = new mongoose.Schema(
     },
     passwordConfirm: {
       type: String,
-      required: [true, 'Please confirm your password.'],
+      required: [
+        function () {
+          return this.isNew || this.isModified('password');
+        },
+        'Please confirm your password.',
+      ],
       validate: {
         // Only runs on CREATE & SAVE — not on findOneAndUpdate
         validator: function (val) {
@@ -151,7 +156,7 @@ userSchema.pre(/^find/, function (next) {
 userSchema.pre('save', function (next) {
   if (this.status === 'suspended') {
     this.active = false;
-  } else if (this.status === 'active') {
+  } else if (this.status === 'active' || this.status === 'pending') {
     this.active = true;
   }
   next();

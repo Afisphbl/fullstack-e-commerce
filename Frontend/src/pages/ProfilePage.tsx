@@ -16,6 +16,8 @@ import { apiFetch } from "@/lib/api-client";
 import { toast } from "sonner";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+
 type AccountTab = "profile" | "password" | "orders" | "wishlist";
 
 const statusColors: Record<string, string> = {
@@ -144,7 +146,7 @@ const ProfilePage = () => {
           zip: values.zip || "",
           country: values.country || "",
         };
-
+        
         payload.addresses = existingAddresses.length > 0
           ? [updatedFirstAddress, ...existingAddresses.slice(1)]
           : [updatedFirstAddress];
@@ -207,7 +209,11 @@ const ProfilePage = () => {
   }, [orders, orderGroup]);
 
   if (isLoading || !user) {
-    return <div className="p-8 text-center">Loading profile...</div>;
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <LoadingSpinner size="lg" label="Loading your profile details..." />
+      </div>
+    );
   }
 
   const sidebarItems = [

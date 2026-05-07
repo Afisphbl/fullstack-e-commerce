@@ -22,6 +22,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import StarRating from "@/components/StarRating";
 import { toast } from "sonner";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 
 const ProductDetailSkeleton = () => (
   <div className="container mx-auto px-4 py-8 animate-pulse">
@@ -167,7 +168,14 @@ const ProductDetailPage = () => {
 
 
 
-  if (isLoading) return <ProductDetailSkeleton />;
+  if (isLoading) return (
+    <div className="flex min-h-[600px] flex-col items-center justify-center">
+      <LoadingSpinner size="xl" label="Fetching product details..." />
+      <div className="mt-8 w-full max-w-4xl opacity-50 grayscale pointer-events-none">
+        <ProductDetailSkeleton />
+      </div>
+    </div>
+  );
 
   if (!product)
     return (
@@ -513,9 +521,10 @@ const ProductDetailPage = () => {
 
                 <Button 
                   type="submit" 
-                  className="w-full" 
+                  className="w-full gap-2" 
                   disabled={isSubmittingReview || newComment.trim().length < 10}
                 >
+                  {isSubmittingReview ? <LoadingSpinner size="sm" className="py-0" /> : null}
                   {isSubmittingReview ? "Saving..." : (existingReview ? "Update Review" : "Submit Review")}
                 </Button>
               </form>

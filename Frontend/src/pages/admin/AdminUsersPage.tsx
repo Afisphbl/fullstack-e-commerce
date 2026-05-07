@@ -20,6 +20,9 @@ import {
   Trash2,
   UserCog,
   Users,
+  Loader2,
+  MoreHorizontal,
+  MoreVertical
 } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import {
@@ -62,6 +65,15 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -381,14 +393,10 @@ const AdminUsersPage = () => {
   });
 
   const toggleStatusMutation = useMutation({
-    mutationFn: ({ user, nextStatus }: { user: AdminUser; nextStatus: "active" | "suspended" }) =>
+    mutationFn: ({ user, nextStatus }: { user: AdminUser; nextStatus: AdminUserStatus }) =>
       updateAdminUser(user.id, { status: nextStatus }),
     onSuccess: (_, variables) => {
-      toast.success(
-        variables.nextStatus === "suspended"
-          ? "Account suspended"
-          : "Account reactivated",
-      );
+      toast.success(`Status updated to ${variables.nextStatus}`);
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     },
     onError: (error: Error) => {
@@ -630,8 +638,8 @@ const AdminUsersPage = () => {
                   <tbody className="divide-y divide-border/70 bg-card">
                     {isLoading ? (
                       <tr>
-                        <td colSpan={7} className="px-4 py-16 text-center text-sm text-muted-foreground">
-                          Loading user data from the backend...
+                        <td colSpan={7}>
+                          <LoadingSpinner label="Loading user data from the backend..." />
                         </td>
                       </tr>
                     ) : users.length === 0 ? (
@@ -693,51 +701,73 @@ const AdminUsersPage = () => {
                           <td className="hidden px-4 py-4 text-sm text-muted-foreground xl:table-cell">
                             {formatDateTime(user.lastLogin)}
                           </td>
-                          <td className="px-4 py-4">
-                            <div className="flex justify-end gap-2">
-                              <IconButton
-                                label="View"
-                                onClick={() => {
-                                  setSelectedUser(user);
-                                  setDetailsOpen(true);
-                                }}
-                              >
-                                <Eye className="h-4 w-4" />
-                              </IconButton>
-                              <IconButton label="Edit" onClick={() => openEditDialog(user)}>
-                                <Pencil className="h-4 w-4" />
-                              </IconButton>
-                              <IconButton
-                                label={user.status === "suspended" ? "Activate" : "Suspend"}
-                                onClick={() =>
-                                  toggleStatusMutation.mutate({
-                                    user,
-                                    nextStatus: user.status === "suspended" ? "active" : "suspended",
-                                  })
-                                }
-                              >
-                                {user.status === "suspended" ? (
-                                  <Shield className="h-4 w-4" />
-                                ) : (
-                                  <ShieldAlert className="h-4 w-4" />
-                                )}
-                              </IconButton>
-                              <Button
-                                asChild
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="h-9 w-9 rounded-xl border border-transparent text-muted-foreground transition-all hover:border-border/70 hover:bg-background hover:text-foreground"
-                                title="Email"
-                              >
-                                <a href={`mailto:${user.email}`} aria-label={`Email ${user.name}`}>
-                                  <Mail className="h-4 w-4" />
-                                </a>
-                              </Button>
-                              <IconButton label="Delete" onClick={() => setDeleteTarget(user)}>
-                                <Trash2 className="h-4 w-4" />
-                              </IconButton>
-                            </div>
+                          <td className="px-4 py-4 text-right">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  className="h-9 w-9 rounded-xl border border-transparent p-0 transition-all hover:border-border/70 hover:bg-background"
+                                >
+                                  <span className="sr-only">Open menu</span>
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 shadow-xl border-border/50">
+                                <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Actions</DropdownMenuLabel>
+                                <DropdownMenuItem
+                                  className="rounded-xl px-3 py-2.5 transition-colors focus:bg-primary/5 focus:text-primary"
+                                  onClick={() => {
+                                    setSelectedUser(user);
+                                    setDetailsOpen(true);
+                                  }}
+                                >
+                                  <Eye className="mr-2 h-4 w-4" />
+                                  <span>View Profile</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  className="rounded-xl px-3 py-2.5 transition-colors focus:bg-primary/5 focus:text-primary"
+                                  onClick={() => openEditDialog(user)}
+                                >
+                                  <Pencil className="mr-2 h-4 w-4" />
+                                  <span>Edit User</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="rounded-xl px-3 py-2.5 transition-colors focus:bg-primary/5 focus:text-primary" asChild>
+                                  <a href={`mailto:${user.email}`}>
+                                    <Mail className="mr-2 h-4 w-4" />
+                                    <span>Send Email</span>
+                                  </a>
+                                </DropdownMenuItem>
+
+                                <DropdownMenuSeparator className="my-2 bg-border/50" />
+                                <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Change Status</DropdownMenuLabel>
+                                <div className="px-2 py-1">
+                                  <Select
+                                    value={user.status}
+                                    onValueChange={(val) => toggleStatusMutation.mutate({ user, nextStatus: val as AdminUserStatus })}
+                                  >
+                                    <SelectTrigger className="h-9 w-full rounded-xl border-border/50 bg-muted/20 text-xs focus:ring-0 focus:ring-offset-0">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-xl border-border/50 shadow-xl">
+                                      {STATUSES.filter(s => s.value !== 'all').map((s) => (
+                                        <SelectItem key={s.value} value={s.value} className="rounded-lg text-xs">
+                                          {s.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+
+                                <DropdownMenuSeparator className="my-2 bg-border/50" />
+                                <DropdownMenuItem
+                                  className="rounded-xl px-3 py-2.5 text-rose-600 transition-colors focus:bg-rose-50 focus:text-rose-700 dark:text-rose-400 dark:focus:bg-rose-950/30"
+                                  onClick={() => setDeleteTarget(user)}
+                                >
+                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  <span>Delete User</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </td>
                         </tr>
                       ))

@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { fetchOrderById, Order } from '@/lib/api';
 import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, MapPin, Package } from 'lucide-react';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 
 const statusColors: Record<string, string> = {
   processing: 'bg-warning/10 text-warning border-warning/30',
@@ -15,7 +16,11 @@ const OrderDetailPage = () => {
   const [order, setOrder] = useState<Order | null>(null);
   useEffect(() => { if (id) fetchOrderById(id).then(o => setOrder(o || null)); }, [id]);
 
-  if (!order) return <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">Loading...</div>;
+  if (!order) return (
+    <div className="flex min-h-[400px] items-center justify-center">
+      <LoadingSpinner label="Loading order details..." />
+    </div>
+  );
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">

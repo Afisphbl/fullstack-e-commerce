@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { fetchOrderById, Order } from '@/lib/api';
 import { ChevronLeft, Package, Truck, CheckCircle, Clock, MapPin } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 
 const trackingSteps = [
   { key: 'ordered', label: 'Ordered', icon: Package },
@@ -17,7 +18,11 @@ const TrackOrderPage = () => {
   const [order, setOrder] = useState<Order | null>(null);
   useEffect(() => { if (id) fetchOrderById(id).then(o => setOrder(o || null)); }, [id]);
 
-  if (!order) return <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">Loading...</div>;
+  if (!order) return (
+    <div className="flex min-h-[400px] items-center justify-center">
+      <LoadingSpinner label="Fetching your order status..." />
+    </div>
+  );
 
   const completedStatuses = order.timeline.map(t => t.status);
   const currentStepIndex = trackingSteps.findIndex(s => s.key === completedStatuses[completedStatuses.length - 1]);

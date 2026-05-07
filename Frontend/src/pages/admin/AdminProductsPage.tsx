@@ -13,6 +13,8 @@ import {
   SpecGroup
 } from "@/lib/api";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -281,7 +283,7 @@ const AdminProductsPage = () => {
           </thead>
           <tbody className="divide-y divide-border">
             {productsLoading ? (
-              <tr><td colSpan={6} className="p-8 text-center text-muted-foreground">Loading products...</td></tr>
+              <tr><td colSpan={6}><LoadingSpinner label="Loading products..." /></td></tr>
             ) : filtered.length === 0 ? (
               <tr><td colSpan={6} className="p-8 text-center text-muted-foreground">No products found.</td></tr>
             ) : (
