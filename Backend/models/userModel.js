@@ -6,6 +6,10 @@ const crypto = require('crypto');
 const validator = require('validator');
 const ROLES = require('../constants/roles');
 
+const STAFF_DEPARTMENTS = ['sales', 'support', 'delivery', 'inventory'];
+const ACCOUNT_STATUSES = ['active', 'suspended', 'pending'];
+const ACCESS_LEVELS = ['standard', 'elevated', 'full'];
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -31,6 +35,34 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: Object.values(ROLES),
       default: ROLES.USER,
+    },
+    phone: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    status: {
+      type: String,
+      enum: ACCOUNT_STATUSES,
+      default: 'active',
+    },
+    department: {
+      type: String,
+      enum: [...STAFF_DEPARTMENTS, null],
+      default: null,
+    },
+    permissions: {
+      type: [String],
+      default: [],
+    },
+    accessLevel: {
+      type: String,
+      enum: ACCESS_LEVELS,
+      default: 'standard',
+    },
+    lastLogin: {
+      type: Date,
+      default: null,
     },
     password: {
       type: String,
@@ -80,6 +112,9 @@ const userSchema = new mongoose.Schema(
 // ─── Indexes ──────────────────────────────────────────────────────────────────
 // email is already indexed via unique:true — only add non-unique indexes here
 userSchema.index({ role: 1 });
+userSchema.index({ status: 1 });
+userSchema.index({ department: 1 });
+userSchema.index({ name: 'text', email: 'text', phone: 'text' });
 
 // ─── Virtuals ─────────────────────────────────────────────────────────────────
 userSchema.virtual('orders', {
@@ -107,7 +142,18 @@ userSchema.pre('save', function (next) {
 
 // Filter inactive users from all find queries
 userSchema.pre(/^find/, function (next) {
-  this.find({ active: { $ne: false } });
+  if (!this.getOptions().includeInactive) {
+    this.find({ active: { $ne: false } });
+  }
+  next();
+});
+
+userSchema.pre('save', function (next) {
+  if (this.status === 'suspended') {
+    this.active = false;
+  } else if (this.status === 'active') {
+    this.active = true;
+  }
   next();
 });
 

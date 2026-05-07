@@ -121,6 +121,52 @@ export interface TeamMember {
   image: string;
 }
 
+export type AdminUserRole = "user" | "manager" | "admin" | "super-admin";
+export type AdminUserStatus = "active" | "suspended" | "pending";
+export type StaffDepartment = "sales" | "support" | "delivery" | "inventory" | null;
+export type StaffAccessLevel = "standard" | "elevated" | "full";
+
+export interface AdminUser {
+  _id: string;
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  photo: string;
+  role: AdminUserRole;
+  status: AdminUserStatus;
+  active: boolean;
+  department: StaffDepartment;
+  permissions: string[];
+  accessLevel: StaffAccessLevel;
+  createdAt: string;
+  updatedAt: string;
+  lastLogin: string | null;
+}
+
+export interface AdminUserAnalytics {
+  totalUsers: number;
+  activeUsers: number;
+  totalStaff: number;
+  newUsersThisMonth: number;
+}
+
+export interface AdminUserEvent {
+  id: string;
+  type: string;
+  title: string;
+  time: string;
+}
+
+export interface AdminUsersResponse {
+  users: AdminUser[];
+  total: number;
+  page: number;
+  limit: number;
+  analytics: AdminUserAnalytics;
+  recentEvents: AdminUserEvent[];
+}
+
 const mapProduct = (p: any): Product => {
   const mapImage = (img: string | undefined) => {
     if (!img) return 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600';
@@ -206,6 +252,17 @@ const mapCategory = (c: any): Category => ({
   // Backend category might not have icon/count, providing defaults
   icon: c.icon || "Laptop",
   count: c.count || 0,
+});
+
+const mapAdminUser = (user: any): AdminUser => ({
+  ...user,
+  id: user._id || user.id,
+  phone: user.phone || "",
+  photo: user.photo || "",
+  permissions: Array.isArray(user.permissions) ? user.permissions : [],
+  department: user.department || null,
+  accessLevel: user.accessLevel || "standard",
+  lastLogin: user.lastLogin || null,
 });
 
 
@@ -454,5 +511,53 @@ export const fetchAdminDashboardData = async () => {
     recentOrders: orders.slice(0, 5),
     revenue: orders.reduce((acc, curr) => acc + curr.total, 0),
   };
+};
+
+export const fetchAdminUsers = async (
+  params: Record<string, string | number | boolean> = {},
+): Promise<AdminUsersResponse> => {
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      query.set(key, String(value));
+    }
+  });
+
+  const data = await apiFetch(`/api/v1/users?${query.toString()}`);
+  return {
+    users: data.data.data.map(mapAdminUser),
+    total: data.total,
+    page: data.page,
+    limit: data.limit,
+    analytics: data.data.analytics,
+    recentEvents: data.data.meta?.recentEvents || [],
+  };
+};
+
+export const createAdminUser = async (payload: Record<string, unknown>) => {
+  const data = await apiFetch("/api/v1/users", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+
+  return mapAdminUser(data.data.data);
+};
+
+export const updateAdminUser = async (
+  id: string,
+  payload: Record<string, unknown>,
+) => {
+  const data = await apiFetch(`/api/v1/users/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+
+  return mapAdminUser(data.data.data);
+};
+
+export const deleteAdminUser = async (id: string) => {
+  await apiFetch(`/api/v1/users/${id}`, {
+    method: "DELETE",
+  });
 };
 

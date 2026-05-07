@@ -28,6 +28,9 @@ const login = async ({ email, password }, res, next) => {
   if (!user || !(await user.correctPassword(password, user.password)))
     return next(new AppError(MESSAGES.INVALID_CREDENTIALS, 401));
 
+  user.lastLogin = new Date();
+  await user.save({ validateBeforeSave: false });
+
   sendTokenResponse(user, 200, res);
 };
 
