@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { AdminUser } from "@/lib/api";
 import {
   AlertDialog,
@@ -22,8 +22,34 @@ export const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
   onConfirm,
   onCancel,
 }) => {
+  const [isConfirming, setIsConfirming] = useState(false);
+
+  // Reset the flag when dialog opens
+  useEffect(() => {
+    if (user) {
+      setIsConfirming(false);
+    }
+  }, [user]);
+
+  const handleConfirm = () => {
+    if (user) {
+      setIsConfirming(true);
+      onConfirm(user.id);
+    }
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open && !isConfirming) {
+      onCancel();
+    }
+    // Reset flag after dialog closes
+    if (!open) {
+      setIsConfirming(false);
+    }
+  };
+
   return (
-    <AlertDialog open={!!user} onOpenChange={(open) => !open && onCancel()}>
+    <AlertDialog open={!!user} onOpenChange={handleOpenChange}>
       <AlertDialogContent className="rounded-[24px] border-none">
         <AlertDialogHeader>
           <AlertDialogTitle>Delete this user?</AlertDialogTitle>
@@ -35,7 +61,7 @@ export const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
           <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
           <AlertDialogAction
             className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            onClick={() => user && onConfirm(user.id)}
+            onClick={handleConfirm}
           >
             Delete User
           </AlertDialogAction>
