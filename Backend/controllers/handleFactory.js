@@ -28,9 +28,14 @@ exports.updateOne = (Model) =>
     const doc = await Model.findById(req.params.id);
     if (!doc) return next(new AppError(MESSAGES.NOT_FOUND, 404));
 
-    // Update document with request body
+    // Filter out internal or sensitive fields to prevent mass-assignment
+    const forbiddenFields = ['_id', '__v', 'createdAt', 'updatedAt', 'password'];
+    
+    // Update document with request body, skipping forbidden fields
     Object.keys(req.body).forEach(key => {
-      doc[key] = req.body[key];
+      if (!forbiddenFields.includes(key)) {
+        doc[key] = req.body[key];
+      }
     });
 
     await doc.save();

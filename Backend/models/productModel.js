@@ -98,16 +98,22 @@ productSchema.virtual('inStock').get(function () {
 
 // ─── Pre-save middleware ──────────────────────────────────────────────────────
 productSchema.pre('save', function (next) {
-  this.slug = slugify(this.name, { lower: true, strict: true });
-
-  // Calculate discount price if percentage is provided
-  if (this.discountPercent > 0) {
-    this.priceDiscount = Number((this.price * (1 - this.discountPercent / 100)).toFixed(2));
-  } else if (this.discountPercent === 0) {
-    this.priceDiscount = undefined;
+  if (this.isModified('name')) {
+    this.slug = slugify(this.name, { lower: true, strict: true });
   }
 
+  // Sync discount price if percentage is provided or changed
+  if (this.isModified('price') || this.isModified('discountPercent')) {
+    if (this.discountPercent && this.discountPercent > 0) {
+      this.priceDiscount = Number((this.price * (1 - this.discountPercent / 100)).toFixed(2));
+    } else {
+      this.priceDiscount = undefined;
+    }
+  }
+
+  // Always update finalPrice to match the source of truth
   this.finalPrice = this.priceDiscount ?? this.price;
+  
   next();
 });
 

@@ -9,6 +9,7 @@ import {
   deleteProduct,
   createSpecification,
   updateSpecification,
+  deleteSpecification,
   SpecGroup
 } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -51,7 +52,7 @@ const productSchema = z.object({
   imageCover: z.string().url("Must be a valid URL"),
   images: z.string().optional(), // Comma separated for now
   tags: z.string().optional(), // Comma separated
-  status: z.enum(["active", "draft", "out_of_stock"]),
+  status: z.enum(["active", "inactive", "out_of_stock", "archived"]),
   isFeatured: z.boolean().default(false),
   // Specification groups
   specGroups: z.array(z.object({
@@ -150,34 +151,66 @@ const AdminProductsPage = () => {
 
   const saveMutation = useMutation({
     mutationFn: async (values: ProductFormValues) => {
+      // 1. Prepare Product Payload (Strip specGroups)
+      const { specGroups, ...productData } = values;
       const payload = {
-        ...values,
+        ...productData,
         images: values.images ? values.images.split(",").map(s => s.trim()) : [],
         tags: values.tags ? values.tags.split(",").map(s => s.trim()) : [],
       };
 
       if (editingProduct) {
-        // 1. Update Product
+        // --- UPDATE FLOW ---
+        // Capture original state for rollback if needed
+        const originalProductData = {
+          name: editingProduct.name,
+          description: editingProduct.description,
+          shortDescription: editingProduct.shortDescription,
+          price: editingProduct.price,
+          discountPercent: editingProduct.discountPercent,
+          stock: editingProduct.stock,
+          category: typeof editingProduct.category === 'object' ? (editingProduct.category as any)._id || (editingProduct.category as any).id : editingProduct.category,
+          brand: editingProduct.brand,
+          imageCover: editingProduct.imageCover,
+          images: editingProduct.images,
+          tags: editingProduct.tags,
+          status: (editingProduct as any).status || "active",
+          isFeatured: editingProduct.isFeatured
+        };
+
         const updated = await updateProduct(editingProduct.id, payload);
         
-        // 2. Update/Create Specification
-        if (values.specGroups && values.specGroups.length > 0) {
-          if (editingProduct.specification) {
-            await updateSpecification(editingProduct.specification._id || editingProduct.specification.id, { details: values.specGroups });
-          } else {
-            await createSpecification({ product: editingProduct.id, details: values.specGroups });
+        try {
+          if (specGroups && specGroups.length > 0) {
+            if (editingProduct.specification) {
+              await updateSpecification(editingProduct.specification._id || editingProduct.specification.id, { details: specGroups });
+            } else {
+              await createSpecification({ product: editingProduct.id, details: specGroups });
+            }
+          } else if (editingProduct.specification) {
+            // specGroups empty, but spec exists -> delete it
+            await deleteSpecification(editingProduct.specification._id || editingProduct.specification.id);
           }
+          return updated;
+        } catch (specError) {
+          // Rollback product update on specification failure
+          await updateProduct(editingProduct.id, originalProductData);
+          throw specError;
         }
-        return updated;
       } else {
-        // 1. Create Product
+        // --- CREATE FLOW ---
         const created = await createProduct(payload);
         
-        // 2. Create Specification if any
-        if (values.specGroups && values.specGroups.length > 0) {
-          await createSpecification({ product: created.id, details: values.specGroups });
+        try {
+          if (specGroups && specGroups.length > 0) {
+            await createSpecification({ product: created.id, details: specGroups });
+          }
+          return created;
+        } catch (specError) {
+          // Rollback: Delete orphaned product on specification failure
+          await deleteProduct(created.id);
+          throw specError;
         }
-        return created;
       }
     },
     onSuccess: () => {
@@ -205,6 +238,7 @@ const AdminProductsPage = () => {
   const filtered = productsData?.products.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
   ) || [];
+  
 
   return (
     <div className="space-y-6">
@@ -268,7 +302,9 @@ const AdminProductsPage = () => {
                   </td>
                   <td className="p-4">
                     <div className="text-sm font-medium text-foreground">${p.price}</div>
-                    {p.priceDiscount && <div className="text-xs text-muted-foreground line-through">${p.priceDiscount}</div>}
+                    {p.originalPrice && p.originalPrice !== p.price && (
+                      <div className="text-xs text-muted-foreground line-through">${p.originalPrice}</div>
+                    )}
                   </td>
                   <td className="p-4">
                     <Badge variant={p.stock > 10 ? "secondary" : "destructive"} className="font-mono">
@@ -397,8 +433,9 @@ const AdminProductsPage = () => {
                               </FormControl>
                               <SelectContent>
                                 <SelectItem value="active">Active</SelectItem>
-                                <SelectItem value="draft">Draft</SelectItem>
+                                <SelectItem value="inactive">Inactive</SelectItem>
                                 <SelectItem value="out_of_stock">Out of Stock</SelectItem>
+                                <SelectItem value="archived">Archived</SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />

@@ -121,7 +121,7 @@ const mapProduct = (p: any): Product => {
     if (!img) return 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600';
     if (img.startsWith('http') || img.startsWith('data:')) return img;
     if (img.startsWith('/')) return img;
-    return `/public/img/products/${img}`;
+    return `/img/products/${img}`;
   };
 
   return {
@@ -133,7 +133,7 @@ const mapProduct = (p: any): Product => {
     featured: p.isFeatured !== undefined ? p.isFeatured : p.featured,
     category: p.category, 
     originalPrice: p.priceDiscount ? p.price : null,
-    price: p.finalPrice || p.price,
+    price: p.finalPrice ?? p.price,
     specs: (() => {
       const flatSpecs = p.attributes ? { ...p.attributes } : (p.specs || {});
       if (p.specification && typeof p.specification === 'object' && p.specification.details) {
@@ -151,20 +151,27 @@ const mapProduct = (p: any): Product => {
     ratingsAverage: p.ratingsAverage || 0,
     ratingsQuantity: p.ratingsQuantity || 0,
     sold: p.sold || 0,
-    isNew: p.isNew !== undefined ? p.isNew : true, 
+    isNew: p.isNew !== undefined ? p.isNew : false, 
   };
 };
 
 const mapOrder = (o: any): Order => ({
   id: o._id || o.id,
   userId: typeof o.user === 'object' ? o.user._id : o.user,
-  items: o.orderItems.map((i: any) => ({
-    productId: i.product,
-    name: i.name,
-    quantity: i.quantity,
-    price: i.price,
-    image: i.imageCover ? `/public/img/products/${i.imageCover}` : '',
-  })),
+  items: o.orderItems.map((i: any) => {
+    const img = i.imageCover || i.image;
+    const mappedImage = img && (img.startsWith('http') || img.startsWith('data:') || img.startsWith('/')) 
+      ? img 
+      : img ? `/img/products/${img}` : '';
+
+    return {
+      productId: i.product,
+      name: i.name,
+      quantity: i.quantity,
+      price: i.price,
+      image: mappedImage,
+    };
+  }),
   total: o.totalPrice,
   status: o.orderStatus === 'pending' ? 'placed' : o.orderStatus,
   date: new Date(o.createdAt).toLocaleDateString(),
@@ -290,6 +297,12 @@ export const updateSpecification = async (id: string, specData: { details: SpecG
     body: JSON.stringify(specData),
   });
   return data.data.data;
+};
+
+export const deleteSpecification = async (id: string) => {
+  await apiFetch(`/api/v1/specifications/${id}`, {
+    method: "DELETE",
+  });
 };
 
 // Categories
