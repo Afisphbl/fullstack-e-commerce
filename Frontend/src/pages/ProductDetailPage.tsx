@@ -265,9 +265,13 @@ const ProductDetailPage = () => {
             )}
           </div>
 
-          <p className="text-muted-foreground mb-6 leading-relaxed">
-            {product.description}
-          </p>
+          <div className="text-muted-foreground mb-6 leading-relaxed space-y-2">
+            {product.description?.split(/\.(?!\d)/).filter(s => s.trim()).map((sentence, i) => (
+              <p key={i}>
+                {sentence.trim()}.
+              </p>
+            ))}
+          </div>
 
           <div className="flex items-center gap-1 mb-2 text-sm">
             <span

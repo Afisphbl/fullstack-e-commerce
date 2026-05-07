@@ -28,13 +28,16 @@ export interface Product {
   name: string;
   slug: string;
   price: number;
+  priceDiscount?: number;
+  discountPercent?: number;
   originalPrice: number | null;
-  category: any; // Can be string or object
+  category: any; 
   brand: string;
   image: string;
   imageCover?: string;
   images: string[];
   description: string;
+  shortDescription?: string;
   specs: Record<string, string>;
   stock: number;
   featured: boolean;
@@ -45,6 +48,7 @@ export interface Product {
   ratingsQuantity: number;
   sold: number;
   specification?: Specification;
+  status?: string;
 }
 
 export interface Category {
@@ -112,32 +116,44 @@ export interface TeamMember {
   image: string;
 }
 
-const mapProduct = (p: any): Product => ({
-  ...p,
-  id: p._id || p.id,
-  image: p.imageCover ? `/public/img/products/${p.imageCover}` : p.image,
-  featured: p.isFeatured !== undefined ? p.isFeatured : p.featured,
-  category: typeof p.category === 'object' ? p.category.slug : p.category,
-  originalPrice: p.priceDiscount ? p.price : null,
-  price: p.finalPrice || p.price,
-  // Ensure default values for properties not in backend
-  specs: (() => {
-    const flatSpecs = p.attributes ? { ...p.attributes } : (p.specs || {});
-    if (p.specification && p.specification.details) {
-      p.specification.details.forEach((group: any) => {
-        group.specs.forEach((spec: any) => {
-          flatSpecs[spec.name] = spec.value;
+const mapProduct = (p: any): Product => {
+  const mapImage = (img: string | undefined) => {
+    if (!img) return 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600';
+    if (img.startsWith('http') || img.startsWith('data:')) return img;
+    if (img.startsWith('/')) return img;
+    return `/public/img/products/${img}`;
+  };
+
+  return {
+    ...p,
+    id: p._id || p.id,
+    image: mapImage(p.imageCover || p.image),
+    imageCover: p.imageCover,
+    images: Array.isArray(p.images) ? p.images.map(mapImage) : [],
+    featured: p.isFeatured !== undefined ? p.isFeatured : p.featured,
+    category: p.category, 
+    originalPrice: p.priceDiscount ? p.price : null,
+    price: p.finalPrice || p.price,
+    specs: (() => {
+      const flatSpecs = p.attributes ? { ...p.attributes } : (p.specs || {});
+      if (p.specification && typeof p.specification === 'object' && p.specification.details) {
+        p.specification.details.forEach((group: any) => {
+          if (group.specs) {
+            group.specs.forEach((spec: any) => {
+              flatSpecs[spec.name] = spec.value;
+            });
+          }
         });
-      });
-    }
-    return flatSpecs;
-  })(),
-  specification: p.specification,
-  ratingsAverage: p.ratingsAverage || 0,
-  ratingsQuantity: p.ratingsQuantity || 0,
-  sold: p.sold || 0,
-  isNew: p.isNew !== undefined ? p.isNew : true, 
-});
+      }
+      return flatSpecs;
+    })(),
+    specification: p.specification,
+    ratingsAverage: p.ratingsAverage || 0,
+    ratingsQuantity: p.ratingsQuantity || 0,
+    sold: p.sold || 0,
+    isNew: p.isNew !== undefined ? p.isNew : true, 
+  };
+};
 
 const mapOrder = (o: any): Order => ({
   id: o._id || o.id,
@@ -236,6 +252,44 @@ export const fetchProductsByCategory = async (
 ): Promise<Product[]> => {
   const result = await fetchProducts({ category });
   return result.products;
+};
+
+export const createProduct = async (productData: any) => {
+  const data = await apiFetch("/api/v1/products", {
+    method: "POST",
+    body: JSON.stringify(productData),
+  });
+  return mapProduct(data.data.data);
+};
+
+export const updateProduct = async (id: string, productData: any) => {
+  const data = await apiFetch(`/api/v1/products/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(productData),
+  });
+  return mapProduct(data.data.data);
+};
+
+export const deleteProduct = async (id: string) => {
+  await apiFetch(`/api/v1/products/${id}`, {
+    method: "DELETE",
+  });
+};
+
+export const createSpecification = async (specData: { product: string; details: SpecGroup[] }) => {
+  const data = await apiFetch("/api/v1/specifications", {
+    method: "POST",
+    body: JSON.stringify(specData),
+  });
+  return data.data.data;
+};
+
+export const updateSpecification = async (id: string, specData: { details: SpecGroup[] }) => {
+  const data = await apiFetch(`/api/v1/specifications/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(specData),
+  });
+  return data.data.data;
 };
 
 // Categories

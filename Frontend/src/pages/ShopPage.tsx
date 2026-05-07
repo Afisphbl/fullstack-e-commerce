@@ -47,8 +47,8 @@ const ShopPage = () => {
     searchParams.get("category") || "all",
   );
   const [selectedBrand, setSelectedBrand] = useState("all");
-  const [priceCap, setPriceCap] = useState(2500);
-  const [maxPrice, setMaxPrice] = useState(2500);
+  const [priceCap, setPriceCap] = useState(10000);
+  const [maxPrice, setMaxPrice] = useState(10000);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [discountOnly, setDiscountOnly] = useState(false);
   const [newOnly, setNewOnly] = useState(false);
@@ -78,8 +78,10 @@ const ShopPage = () => {
         if (selectedCategory !== "all") backendParams.category = selectedCategory;
         if (selectedBrand !== "all") backendParams.brand = selectedBrand;
         
-        // Price filtering
-        backendParams["price[lte]"] = maxPrice;
+        // Price filtering - only apply if user has narrowed the range
+        if (maxPrice < 10000) {
+          backendParams["finalPrice[lte]"] = maxPrice;
+        }
         
         if (inStockOnly) backendParams["stock[gt]"] = 0;
         

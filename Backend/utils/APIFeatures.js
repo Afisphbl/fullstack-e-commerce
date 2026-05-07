@@ -60,6 +60,7 @@ class APIFeatures {
       parsed.$text = { $search: this.queryString.search };
     }
 
+    this._filter = parsed;
     this.query = this.query.find(parsed);
     return this;
   }

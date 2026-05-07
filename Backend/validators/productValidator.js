@@ -10,9 +10,7 @@ const createProductRules = [
   body('price').notEmpty().withMessage('Price is required.')
     .isFloat({ min: 0 }).withMessage('Price must be a non-negative number.'),
   body('priceDiscount').optional()
-    .isFloat({ min: 0 }).withMessage('Discount must be non-negative.')
-    .custom((val, { req }) => +val < +req.body.price)
-    .withMessage('Discount price must be below the regular price.'),
+    .isFloat({ min: 0 }).withMessage('Discount must be non-negative.'),
   body('stock').notEmpty().withMessage('Stock is required.')
     .isInt({ min: 0 }).withMessage('Stock must be a non-negative integer.'),
   body('category').notEmpty().withMessage('Category is required.')

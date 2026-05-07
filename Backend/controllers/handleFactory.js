@@ -25,11 +25,15 @@ exports.deleteOne = (Model) =>
 // ─── updateOne ────────────────────────────────────────────────────────────────
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const doc = await Model.findById(req.params.id);
     if (!doc) return next(new AppError(MESSAGES.NOT_FOUND, 404));
+
+    // Update document with request body
+    Object.keys(req.body).forEach(key => {
+      doc[key] = req.body[key];
+    });
+
+    await doc.save();
 
     res.status(200).json({
       status: 'success',
@@ -91,7 +95,7 @@ exports.getAll = (Model) =>
     const docs = await features.query.lean({ virtuals: false });
     const total = await Model.countDocuments({
       ...filter,
-      ...features._appliedFilter,
+      ...features._filter,
     });
 
     res.status(200).json({

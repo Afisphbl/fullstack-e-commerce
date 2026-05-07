@@ -27,12 +27,12 @@ const productSchema = new mongoose.Schema(
     priceDiscount: {
       type: Number,
       min: [0, 'Discount must be non-negative.'],
-      validate: {
-        validator: function (val) {
-          return val < this.price;
-        },
-        message: 'Discount price ({VALUE}) must be below the regular price.',
-      },
+    },
+    discountPercent: {
+      type: Number,
+      min: [0, 'Discount percentage must be non-negative.'],
+      max: [100, 'Discount percentage cannot exceed 100.'],
+      default: 0
     },
     finalPrice: { type: Number }, // computed in pre-save
     stock: {
@@ -99,6 +99,14 @@ productSchema.virtual('inStock').get(function () {
 // ─── Pre-save middleware ──────────────────────────────────────────────────────
 productSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true, strict: true });
+
+  // Calculate discount price if percentage is provided
+  if (this.discountPercent > 0) {
+    this.priceDiscount = Number((this.price * (1 - this.discountPercent / 100)).toFixed(2));
+  } else if (this.discountPercent === 0) {
+    this.priceDiscount = undefined;
+  }
+
   this.finalPrice = this.priceDiscount ?? this.price;
   next();
 });
