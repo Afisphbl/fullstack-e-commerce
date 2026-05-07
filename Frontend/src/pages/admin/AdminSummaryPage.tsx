@@ -6,9 +6,9 @@ const AdminSummaryPage = () => {
   const [data, setData] = useState({ products: 0, orders: 0, revenue: 0, categories: 0, avgOrder: 0 });
 
   useEffect(() => {
-    Promise.all([fetchProducts(), fetchOrders(), fetchCategories()]).then(([p, o, c]) => {
+    Promise.all([fetchProducts(), fetchOrders(), fetchCategories()]).then(([pRes, o, c]) => {
       const revenue = o.reduce((s, x) => s + x.total, 0);
-      setData({ products: p.length, orders: o.length, revenue, categories: c.length, avgOrder: revenue / (o.length || 1) });
+      setData({ products: pRes.products.length, orders: o.length, revenue, categories: c.length, avgOrder: revenue / (o.length || 1) });
     });
   }, []);
 

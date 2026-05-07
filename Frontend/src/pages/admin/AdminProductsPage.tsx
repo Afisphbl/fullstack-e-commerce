@@ -22,7 +22,7 @@ const AdminProductsPage = () => {
   const [editing, setEditing] = useState<Product | null>(null);
 
   useEffect(() => {
-    fetchProducts().then(setProducts);
+    fetchProducts().then((res) => setProducts(res.products));
   }, []);
 
   const filtered = products.filter((p) =>

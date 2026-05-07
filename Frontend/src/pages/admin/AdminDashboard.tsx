@@ -6,8 +6,8 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState({ products: 0, orders: 0, revenue: 0, categories: 0 });
 
   useEffect(() => {
-    Promise.all([fetchProducts(), fetchOrders(), fetchCategories()]).then(([p, o, c]) => {
-      setStats({ products: p.length, orders: o.length, revenue: o.reduce((s, x) => s + x.total, 0), categories: c.length });
+    Promise.all([fetchProducts(), fetchOrders(), fetchCategories()]).then(([pRes, o, c]) => {
+      setStats({ products: pRes.products.length, orders: o.length, revenue: o.reduce((s, x) => s + x.total, 0), categories: c.length });
     });
   }, []);
 

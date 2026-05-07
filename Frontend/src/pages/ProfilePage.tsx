@@ -272,8 +272,9 @@ const ProfilePage = () => {
                     <div className="flex items-center gap-4 mb-6">
                       <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
                         {user.photo !== 'default.jpg' ? (
-                          <img src={`/api/v1/public/img/users/${user.photo}`} alt={user.name} className="w-full h-full object-cover" />
+                          <img src={`/public/img/users/${user.photo}`} alt={user.name} className="w-full h-full object-cover" />
                         ) : (
+
                           <User className="h-8 w-8 text-primary" />
                         )}
                       </div>

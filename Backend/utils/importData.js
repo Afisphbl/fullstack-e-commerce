@@ -21,6 +21,7 @@ const Category = require('../models/categoryModel');
 const Review   = require('../models/reviewModel');
 const Order    = require('../models/orderModel');
 const Coupon   = require('../models/couponModel');
+const Specification = require('../models/specificationModel');
 
 // ─── Connect ──────────────────────────────────────────────────────────────────
 const connectDB = async () => {
@@ -46,12 +47,14 @@ const importData = async () => {
     const products   = loadJSON('products.json');
     const reviews    = loadJSON('reviews.json');
     const coupons    = loadJSON('coupons.json');
+    const specifications = loadJSON('specifications.json');
 
     if (categories) await Category.create(categories, { validateBeforeSave: false });
     if (users)      await User.create(users,      { validateBeforeSave: false });
     if (products)   await Product.create(products, { validateBeforeSave: false });
     if (reviews)    await Review.create(reviews,   { validateBeforeSave: false });
     if (coupons)    await Coupon.create(coupons,   { validateBeforeSave: false });
+    if (specifications) await Specification.create(specifications, { validateBeforeSave: false });
 
     logger.info('✅  Data imported successfully.');
   } catch (err) {
@@ -72,6 +75,7 @@ const deleteData = async () => {
       Review.deleteMany(),
       Order.deleteMany(),
       Coupon.deleteMany(),
+      Specification.deleteMany(),
     ]);
     logger.info('🗑️  All data deleted successfully.');
   } catch (err) {

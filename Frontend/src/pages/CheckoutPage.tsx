@@ -1,30 +1,77 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
+import { createOrder } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { CreditCard, Check } from "lucide-react";
+import { CreditCard, Check, Loader2 } from "lucide-react";
 
 const CheckoutPage = () => {
   const { items, total, clearCart } = useCart();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [shippingInfo, setShippingInfo] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    address: "",
+    city: "",
+    state: "",
+    zip: "",
+    country: "USA", // Default
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setShippingInfo((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (step < 3) {
       setStep(step + 1);
       return;
     }
-    toast({
-      title: "Order Placed!",
-      description:
-        "Your order has been placed successfully. Check your email for confirmation.",
-    });
-    clearCart();
-    navigate("/orders");
+
+    setLoading(true);
+    try {
+      const orderData = {
+        orderItems: items.map((i) => ({
+          product: i.product.id,
+          quantity: i.quantity,
+        })),
+        shippingAddress: {
+          street: shippingInfo.address,
+          city: shippingInfo.city,
+          state: shippingInfo.state,
+          zip: shippingInfo.zip,
+          country: shippingInfo.country,
+        },
+        paymentMethod: "card", // Mock for now
+        itemsPrice: total,
+      };
+
+      await createOrder(orderData);
+
+      toast({
+        title: "Order Placed!",
+        description:
+          "Your order has been placed successfully. Check your email for confirmation.",
+      });
+      clearCart();
+      navigate("/orders");
+    } catch (error: any) {
+      toast({
+        title: "Order Failed",
+        description: error.message || "Failed to place order. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (items.length === 0) {
@@ -76,33 +123,76 @@ const CheckoutPage = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="text-foreground">First Name</Label>
-                  <Input required className="bg-background" />
+                  <Input
+                    name="firstName"
+                    value={shippingInfo.firstName}
+                    onChange={handleInputChange}
+                    required
+                    className="bg-background"
+                  />
                 </div>
                 <div>
                   <Label className="text-foreground">Last Name</Label>
-                  <Input required className="bg-background" />
+                  <Input
+                    name="lastName"
+                    value={shippingInfo.lastName}
+                    onChange={handleInputChange}
+                    required
+                    className="bg-background"
+                  />
                 </div>
               </div>
               <div>
                 <Label className="text-foreground">Email</Label>
-                <Input type="email" required className="bg-background" />
+                <Input
+                  name="email"
+                  type="email"
+                  value={shippingInfo.email}
+                  onChange={handleInputChange}
+                  required
+                  className="bg-background"
+                />
               </div>
               <div>
                 <Label className="text-foreground">Address</Label>
-                <Input required className="bg-background" />
+                <Input
+                  name="address"
+                  value={shippingInfo.address}
+                  onChange={handleInputChange}
+                  required
+                  className="bg-background"
+                />
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label className="text-foreground">City</Label>
-                  <Input required className="bg-background" />
+                  <Input
+                    name="city"
+                    value={shippingInfo.city}
+                    onChange={handleInputChange}
+                    required
+                    className="bg-background"
+                  />
                 </div>
                 <div>
                   <Label className="text-foreground">State</Label>
-                  <Input required className="bg-background" />
+                  <Input
+                    name="state"
+                    value={shippingInfo.state}
+                    onChange={handleInputChange}
+                    required
+                    className="bg-background"
+                  />
                 </div>
                 <div>
                   <Label className="text-foreground">ZIP</Label>
-                  <Input required className="bg-background" />
+                  <Input
+                    name="zip"
+                    value={shippingInfo.zip}
+                    onChange={handleInputChange}
+                    required
+                    className="bg-background"
+                  />
                 </div>
               </div>
             </div>
@@ -184,9 +274,15 @@ const CheckoutPage = () => {
             )}
             <Button
               type="submit"
+              disabled={loading}
               className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 shadow-neon"
             >
-              {step < 3 ? (
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Placing
+                  Order...
+                </>
+              ) : step < 3 ? (
                 "Continue"
               ) : (
                 <>

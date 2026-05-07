@@ -15,7 +15,12 @@ export default defineConfig(({ mode }) => ({
         target: "http://localhost:5000",
         changeOrigin: true,
       },
+      "/public": {
+        target: "http://localhost:5000",
+        changeOrigin: true,
+      },
     },
+
   },
   plugins: [react()].filter(Boolean),
   resolve: {

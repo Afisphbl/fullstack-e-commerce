@@ -4,28 +4,54 @@ import blogsData from "@/data/blogs.json";
 import ordersData from "@/data/orders.json";
 import faqsData from "@/data/faqs.json";
 import teamData from "@/data/team.json";
+import { apiFetch } from "./api-client";
+
+export interface SpecDetail {
+  name: string;
+  value: string;
+}
+
+export interface SpecGroup {
+  group: string;
+  specs: SpecDetail[];
+}
+
+export interface Specification {
+  id: string;
+  _id?: string;
+  details: SpecGroup[];
+}
 
 export interface Product {
   id: string;
+  _id?: string;
   name: string;
   slug: string;
   price: number;
   originalPrice: number | null;
-  category: string;
+  category: any; // Can be string or object
   brand: string;
   image: string;
+  imageCover?: string;
   images: string[];
   description: string;
   specs: Record<string, string>;
   stock: number;
   featured: boolean;
+  isFeatured?: boolean;
   isNew: boolean;
   tags: string[];
+  ratingsAverage: number;
+  ratingsQuantity: number;
+  sold: number;
+  specification?: Specification;
 }
 
 export interface Category {
   id: string;
+  _id?: string;
   name: string;
+  slug: string;
   icon: string;
   count: number;
   image: string;
@@ -86,80 +112,223 @@ export interface TeamMember {
   image: string;
 }
 
-const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const mapProduct = (p: any): Product => ({
+  ...p,
+  id: p._id || p.id,
+  image: p.imageCover ? `/public/img/products/${p.imageCover}` : p.image,
+  featured: p.isFeatured !== undefined ? p.isFeatured : p.featured,
+  category: typeof p.category === 'object' ? p.category.slug : p.category,
+  originalPrice: p.priceDiscount ? p.price : null,
+  price: p.finalPrice || p.price,
+  // Ensure default values for properties not in backend
+  specs: (() => {
+    let flatSpecs = p.attributes ? Object.fromEntries(p.attributes) : (p.specs || {});
+    if (p.specification && p.specification.details) {
+      p.specification.details.forEach((group: any) => {
+        group.specs.forEach((spec: any) => {
+          flatSpecs[spec.name] = spec.value;
+        });
+      });
+    }
+    return flatSpecs;
+  })(),
+  specification: p.specification,
+  ratingsAverage: p.ratingsAverage || 0,
+  ratingsQuantity: p.ratingsQuantity || 0,
+  sold: p.sold || 0,
+  isNew: p.isNew !== undefined ? p.isNew : true, 
+});
+
+const mapOrder = (o: any): Order => ({
+  id: o._id || o.id,
+  userId: typeof o.user === 'object' ? o.user._id : o.user,
+  items: o.orderItems.map((i: any) => ({
+    productId: i.product,
+    name: i.name,
+    quantity: i.quantity,
+    price: i.price,
+    image: i.imageCover ? `/public/img/products/${i.imageCover}` : '',
+  })),
+  total: o.totalPrice,
+  status: o.orderStatus === 'pending' ? 'placed' : o.orderStatus,
+  date: new Date(o.createdAt).toLocaleDateString(),
+  shippingAddress: `${o.shippingAddress.street}, ${o.shippingAddress.city}, ${o.shippingAddress.zip}`,
+  trackingNumber: null,
+  estimatedDelivery: o.deliveredAt ? new Date(o.deliveredAt).toLocaleDateString() : 'TBD',
+  timeline: [],
+});
+
+
+
+const mapCategory = (c: any): Category => ({
+  ...c,
+  id: c.slug || c._id || c.id,
+  // Backend category might not have icon/count, providing defaults
+  icon: c.icon || "Laptop",
+  count: c.count || 0,
+});
+
 
 // Products
-export const fetchProducts = async (): Promise<Product[]> => {
-  await delay(100);
-  return productsData as Product[];
+export const fetchProducts = async (params: Record<string, string | number | boolean> = {}): Promise<{ products: Product[], total: number, page: number, limit: number }> => {
+  try {
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        query.set(key, String(value));
+      }
+    });
+    
+    const data = await apiFetch(`/api/v1/products?${query.toString()}`);
+    return {
+      products: data.data.data.map(mapProduct),
+      total: data.total,
+      page: data.page,
+      limit: data.limit
+    };
+  } catch (error) {
+    console.error("Failed to fetch products:", error);
+    return {
+      products: productsData.map(mapProduct),
+      total: productsData.length,
+      page: 1,
+      limit: productsData.length
+    };
+  }
 };
 
 export const fetchProductBySlug = async (
   slug: string,
 ): Promise<Product | undefined> => {
-  await delay(100);
-  return (productsData as Product[]).find((p) => p.slug === slug);
+  try {
+    const res = await apiFetch(`/api/v1/products?slug=${slug}`);
+    if (res.data.data.length > 0) {
+      return mapProduct(res.data.data[0]);
+    }
+    return undefined;
+  } catch (error) {
+    return productsData.find((p) => p.slug === slug) as Product | undefined;
+  }
 };
 
 export const fetchProductById = async (
   id: string,
 ): Promise<Product | undefined> => {
-  await delay(100);
-  return (productsData as Product[]).find((p) => p.id === id);
+  try {
+    const res = await apiFetch(`/api/v1/products/${id}`);
+    return mapProduct(res.data.data);
+  } catch (error) {
+    return (productsData as any[]).find((p) => p.id === id || p._id === id);
+  }
 };
 
 export const fetchFeaturedProducts = async (): Promise<Product[]> => {
-  await delay(100);
-  return (productsData as Product[]).filter((p) => p.featured);
+  try {
+    const res = await apiFetch("/api/v1/products/featured");
+    return res.data.products.map(mapProduct);
+  } catch (error) {
+    return (productsData as any[]).filter((p) => p.featured || p.isFeatured).map(mapProduct);
+  }
 };
 
 export const fetchProductsByCategory = async (
   category: string,
 ): Promise<Product[]> => {
-  await delay(100);
-  return (productsData as Product[]).filter((p) => p.category === category);
+  const result = await fetchProducts({ category });
+  return result.products;
 };
 
 // Categories
 export const fetchCategories = async (): Promise<Category[]> => {
-  await delay(100);
-  return categoriesData as Category[];
+  try {
+    const res = await apiFetch("/api/v1/categories");
+    return res.data.data.map(mapCategory);
+  } catch (error) {
+    console.error("Failed to fetch categories:", error);
+    return categoriesData.map(mapCategory);
+  }
 };
+
+// Reviews
+export const fetchReviewsByProduct = async (productId: string, page = 1, limit = 10) => {
+  try {
+    const data = await apiFetch(`/api/v1/products/${productId}/reviews?page=${page}&limit=${limit}&sort=-createdAt`);
+    return {
+      reviews: data.data.data,
+      total: data.total,
+      page: data.page,
+      limit: data.limit
+    };
+  } catch (error) {
+    console.error("Error fetching reviews:", error);
+    return { reviews: [], total: 0, page, limit };
+  }
+};
+
+export const createReview = async (productId: string, reviewData: { rating: number; review: string }) => {
+  return await apiFetch(`/api/v1/products/${productId}/reviews`, {
+    method: "POST",
+    body: JSON.stringify(reviewData),
+  });
+};
+
+export const updateReview = async (productId: string, reviewId: string, reviewData: { rating?: number; review?: string }) => {
+  return await apiFetch(`/api/v1/products/${productId}/reviews/${reviewId}`, {
+    method: "PATCH",
+    body: JSON.stringify(reviewData),
+  });
+};
+
 
 // Blogs
 export const fetchBlogs = async (): Promise<Blog[]> => {
-  await delay(100);
   return blogsData as Blog[];
 };
 
 export const fetchBlogBySlug = async (
   slug: string,
 ): Promise<Blog | undefined> => {
-  await delay(100);
   return (blogsData as Blog[]).find((b) => b.slug === slug);
 };
 
 // Orders
 export const fetchOrders = async (): Promise<Order[]> => {
-  await delay(100);
-  return ordersData as Order[];
+  try {
+    const res = await apiFetch("/api/v1/orders");
+    return res.data.data.map(mapOrder);
+  } catch (error) {
+    console.error("Failed to fetch orders:", error);
+    return ordersData as Order[];
+  }
 };
 
 export const fetchOrderById = async (
   id: string,
 ): Promise<Order | undefined> => {
-  await delay(100);
-  return (ordersData as Order[]).find((o) => o.id === id);
+  try {
+    const res = await apiFetch(`/api/v1/orders/${id}`);
+    return mapOrder(res.data.data);
+  } catch (error) {
+    console.error("Failed to fetch order:", error);
+    return (ordersData as Order[]).find((o) => o.id === id);
+  }
 };
+
+export const createOrder = async (orderData: any) => {
+  return await apiFetch("/api/v1/orders", {
+    method: "POST",
+    body: JSON.stringify(orderData),
+  });
+};
+
 
 // FAQ
 export const fetchFAQs = async (): Promise<FAQ[]> => {
-  await delay(100);
   return faqsData as FAQ[];
 };
 
 // Team
 export const fetchTeam = async (): Promise<TeamMember[]> => {
-  await delay(100);
   return teamData as TeamMember[];
 };
+
