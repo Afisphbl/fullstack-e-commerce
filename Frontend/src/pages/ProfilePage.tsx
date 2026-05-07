@@ -202,7 +202,7 @@ const ProfilePage = () => {
       );
     }
     return orders.filter(
-      (o) => o.status === "processing" || o.status === "shipped",
+      (o) => o.status === "placed" || o.status === "processing" || o.status === "shipped",
     );
   }, [orders, orderGroup]);
 

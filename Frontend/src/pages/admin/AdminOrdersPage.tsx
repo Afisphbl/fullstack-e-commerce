@@ -7,6 +7,7 @@ import { Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const statusColors: Record<string, string> = {
+  placed: 'bg-primary/10 text-primary border-primary/30',
   processing: 'bg-warning/10 text-warning border-warning/30',
   shipped: 'bg-info/10 text-info border-info/30',
   delivered: 'bg-success/10 text-success border-success/30',
@@ -48,7 +49,7 @@ const AdminOrdersPage = () => {
                   <Select value={o.status} onValueChange={v => updateStatus(o.id, v)}>
                     <SelectTrigger className="w-32 h-8 text-xs"><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      {['processing', 'shipped', 'delivered', 'cancelled'].map(s => <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>)}
+                      {['placed', 'processing', 'shipped', 'delivered', 'cancelled'].map(s => <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </td>
