@@ -41,6 +41,7 @@ import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import { isAdminRole } from "@/lib/roles";
+import UserManagement from "./pages/admin/UserManagement";
 
 const queryClient = new QueryClient();
 
@@ -240,6 +241,7 @@ const App = () => (
                       <Route index element={<AdminDashboard />} />
                       <Route path="products" element={<AdminProductsPage />} />
                       <Route path="orders" element={<AdminOrdersPage />} />
+                      <Route path="users" element={<UserManagement />} />
                       <Route
                         path="categories"
                         element={<AdminCategoriesPage />}

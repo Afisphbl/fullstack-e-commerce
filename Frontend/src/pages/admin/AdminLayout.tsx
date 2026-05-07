@@ -21,12 +21,14 @@ import {
   PanelLeft,
   PanelLeftClose,
   Search,
+  User2
 } from "lucide-react";
 
 const navItems = [
   { to: "/admin", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/admin/products", icon: Package, label: "Products" },
   { to: "/admin/orders", icon: ShoppingCart, label: "Orders" },
+  {to:'/admin/users', icon:User2 , label:"Users"},
   { to: "/admin/categories", icon: Tag, label: "Categories" },
   { to: "/admin/pos", icon: Monitor, label: "POS" },
   { to: "/admin/summary", icon: BarChart3, label: "Summary" },
