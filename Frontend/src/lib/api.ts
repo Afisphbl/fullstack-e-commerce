@@ -43,6 +43,7 @@ export interface Product {
   featured: boolean;
   isFeatured?: boolean;
   isNew: boolean;
+  createdAt?: string;
   tags: string[];
   ratingsAverage: number;
   ratingsQuantity: number;
@@ -151,7 +152,15 @@ const mapProduct = (p: any): Product => {
     ratingsAverage: p.ratingsAverage || 0,
     ratingsQuantity: p.ratingsQuantity || 0,
     sold: p.sold || 0,
-    isNew: p.isNew !== undefined ? p.isNew : false, 
+    isNew: (() => {
+      if (!p.createdAt) return p.isNew === true;
+      const createdDate = new Date(p.createdAt);
+      const now = new Date();
+      const diffTime = now.getTime() - createdDate.getTime();
+      const diffDays = diffTime / (1000 * 60 * 60 * 24);
+      return diffDays >= 0 && diffDays <= 10;
+    })(),
+    createdAt: p.createdAt,
   };
 };
 

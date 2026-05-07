@@ -40,7 +40,7 @@ const Index = () => {
 
   useEffect(() => {
     fetchFeaturedProducts().then(setFeatured);
-    fetchProducts().then((res) =>
+    fetchProducts({ sort: "-createdAt", limit: 50 }).then((res) =>
       setNewArrivals(res.products.filter((product) => product.isNew)),
     );
     fetchCategories().then(setCategories);
