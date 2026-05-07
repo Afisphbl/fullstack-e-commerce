@@ -23,16 +23,21 @@ const ProfilePage = () => {
   }, [isLoading, isAuthenticated, navigate]);
 
   useEffect(() => {
+    if (!user) return;
+
     const tab = searchParams.get("tab") as AccountTab;
-    if (
-      tab === "orders" ||
-      tab === "wishlist" ||
-      tab === "profile" ||
-      tab === "password"
-    ) {
-      setActiveTab(tab);
+    let normalizedTab: AccountTab = "profile";
+
+    // Normalize tab based on validity and user role
+    if (tab === "profile" || tab === "password") {
+      normalizedTab = tab;
+    } else if ((tab === "orders" || tab === "wishlist") && user.role === "user") {
+      normalizedTab = tab;
     }
-  }, [searchParams]);
+    // Any unsupported or unauthorized tab defaults to "profile"
+
+    setActiveTab(normalizedTab);
+  }, [searchParams, user]);
 
   if (isLoading || !user) {
     return (
