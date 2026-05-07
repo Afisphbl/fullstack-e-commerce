@@ -332,3 +332,35 @@ export const fetchTeam = async (): Promise<TeamMember[]> => {
   return teamData as TeamMember[];
 };
 
+// Admin Stats
+export const fetchOrderStats = async () => {
+  const data = await apiFetch('/api/v1/orders/stats/overview');
+  return data.data.stats;
+};
+
+export const fetchProductStats = async () => {
+  const data = await apiFetch('/api/v1/products/stats');
+  return data.data.stats;
+};
+
+export const fetchAdminDashboardData = async () => {
+  const [orderStats, productStats, productsRes, orders, categories] = await Promise.all([
+    fetchOrderStats(),
+    fetchProductStats(),
+    fetchProducts({ limit: 10, sort: '-sold' }),
+    fetchOrders(),
+    fetchCategories(),
+  ]);
+
+  return {
+    orderStats,
+    productStats,
+    topProducts: productsRes.products,
+    totalOrders: orders.length,
+    totalProducts: productsRes.total,
+    totalCategories: categories.length,
+    recentOrders: orders.slice(0, 5),
+    revenue: orders.reduce((acc, curr) => acc + curr.total, 0),
+  };
+};
+
