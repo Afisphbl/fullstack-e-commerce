@@ -484,6 +484,7 @@ const ProductDetailPage = () => {
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-muted-foreground">Your Rating</label>
                   <StarRating 
+                    key={existingReview?._id || "new"}
                     defaultRating={newRating} 
                     onSetRating={setNewRating}
                     size={28}

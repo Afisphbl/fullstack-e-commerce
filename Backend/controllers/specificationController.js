@@ -18,6 +18,10 @@ exports.createSpecification = catchAsync(async (req, res, next) => {
     return next(new AppError('No product found with that ID', 404));
   }
 
+  if (product.specification) {
+    return next(new AppError('This product already has a specification.', 409));
+  }
+
   // 2. Create specification
   const doc = await Specification.create(req.body);
 

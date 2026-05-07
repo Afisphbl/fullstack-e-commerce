@@ -70,12 +70,15 @@ function StarIcon({
   size,
 }: StarIconProps) {
   return (
-    <span
-      role="button"
+    <button
+      type="button"
+      aria-label={full ? "Selected star" : "Unselected star"}
       onClick={onRate}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className="cursor-pointer transition-transform hover:scale-110 active:scale-95"
+      onFocus={onMouseEnter}
+      onBlur={onMouseLeave}
+      className="cursor-pointer transition-transform hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
     >
       <Star
         size={size}
@@ -83,6 +86,6 @@ function StarIcon({
         stroke={color}
         strokeWidth={full ? 0 : 1.5}
       />
-    </span>
+    </button>
   );
 }

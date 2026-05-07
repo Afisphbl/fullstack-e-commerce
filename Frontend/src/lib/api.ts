@@ -122,7 +122,7 @@ const mapProduct = (p: any): Product => ({
   price: p.finalPrice || p.price,
   // Ensure default values for properties not in backend
   specs: (() => {
-    let flatSpecs = p.attributes ? Object.fromEntries(p.attributes) : (p.specs || {});
+    const flatSpecs = p.attributes ? { ...p.attributes } : (p.specs || {});
     if (p.specification && p.specification.details) {
       p.specification.details.forEach((group: any) => {
         group.specs.forEach((spec: any) => {

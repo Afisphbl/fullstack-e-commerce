@@ -72,6 +72,7 @@ const ShopPage = () => {
         const backendParams: Record<string, any> = {
           page: currentPage,
           limit: pageSize,
+          search: search || undefined,
         };
 
         if (selectedCategory !== "all") backendParams.category = selectedCategory;
@@ -108,7 +109,7 @@ const ShopPage = () => {
       }
     };
     loadData();
-  }, [currentPage, pageSize, selectedCategory, selectedBrand, maxPrice, inStockOnly, sortBy]);
+  }, [currentPage, pageSize, selectedCategory, selectedBrand, maxPrice, inStockOnly, sortBy, search]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -118,6 +119,7 @@ const ShopPage = () => {
     selectedBrand,
     maxPrice,
     inStockOnly,
+    search,
   ]);
 
   const brands = [...new Set(products.map((product) => product.brand))].sort(

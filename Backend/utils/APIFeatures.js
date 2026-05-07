@@ -25,7 +25,7 @@ class APIFeatures {
 
   // ── Filter ────────────────────────────────────────────────────────────────
   filter() {
-    const excluded = ['page', 'sort', 'limit', 'fields'];
+    const excluded = ['page', 'sort', 'limit', 'fields', 'search'];
     const queryObj = { ...this.queryString };
     excluded.forEach((f) => delete queryObj[f]);
 
@@ -53,6 +53,11 @@ class APIFeatures {
           delete parsed[key];
         }
       }
+    }
+    
+    // Add text search if requested
+    if (this.queryString.search) {
+      parsed.$text = { $search: this.queryString.search };
     }
 
     this.query = this.query.find(parsed);
