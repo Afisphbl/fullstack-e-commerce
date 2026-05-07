@@ -1,13 +1,22 @@
 import { Link } from "react-router-dom";
 import { ProductCard } from "@/components/ProductCard";
 import { Product } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
+import { isAdminRole } from "@/lib/roles";
 
 interface RelatedProductsProps {
   products: Product[];
 }
 
 export const RelatedProducts = ({ products }: RelatedProductsProps) => {
-  if (products.length === 0) return null;
+  const { user } = useAuth();
+  
+  // Filter out zero-stock products for non-admin users
+  const visibleProducts = products.filter(
+    (product) => product.stock > 0 || isAdminRole(user?.role)
+  );
+
+  if (visibleProducts.length === 0) return null;
 
   return (
     <div className="rounded-xl border border-border bg-card/50 p-6">
@@ -28,7 +37,7 @@ export const RelatedProducts = ({ products }: RelatedProductsProps) => {
         </Link>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {products.map((p) => (
+        {visibleProducts.map((p) => (
           <ProductCard key={p.id} product={p} />
         ))}
       </div>

@@ -27,7 +27,12 @@ export const ReviewsList = ({
   reviewLimit,
   onPageChange,
 }: ReviewsListProps) => {
-  const totalPages = Math.ceil(totalReviews / reviewLimit);
+  // Guard against invalid reviewLimit to prevent division by zero
+  const safeLimit = Math.max(1, reviewLimit);
+  const totalPages = Math.max(1, Math.ceil(totalReviews / safeLimit));
+  
+  // Clamp currentPage to valid range
+  const safePage = Math.max(1, Math.min(currentPage, totalPages));
 
   return (
     <div>
@@ -77,24 +82,24 @@ export const ReviewsList = ({
           ))}
 
           {/* Review Pagination */}
-          {totalReviews > reviewLimit && (
+          {totalReviews > safeLimit && (
             <div className="flex justify-center gap-2 mt-8">
               <Button
                 variant="outline"
                 size="sm"
-                disabled={currentPage === 1}
-                onClick={() => onPageChange(currentPage - 1)}
+                disabled={safePage === 1}
+                onClick={() => onPageChange(safePage - 1)}
               >
                 Previous
               </Button>
               <span className="flex items-center text-sm text-muted-foreground px-4">
-                Page {currentPage} of {totalPages}
+                Page {safePage} of {totalPages}
               </span>
               <Button
                 variant="outline"
                 size="sm"
-                disabled={currentPage === totalPages}
-                onClick={() => onPageChange(currentPage + 1)}
+                disabled={safePage === totalPages}
+                onClick={() => onPageChange(safePage + 1)}
               >
                 Next
               </Button>
