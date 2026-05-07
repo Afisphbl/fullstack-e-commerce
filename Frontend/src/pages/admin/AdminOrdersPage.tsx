@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { fetchOrders, Order } from '@/lib/api';
+import { fetchOrders, Order, updateOrder } from '@/lib/api';
+import { toast } from "sonner";
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -18,8 +19,14 @@ const AdminOrdersPage = () => {
   const [selected, setSelected] = useState<Order | null>(null);
   useEffect(() => { fetchOrders().then(setOrders); }, []);
 
-  const updateStatus = (id: string, status: string) => {
-    setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
+  const updateStatus = async (id: string, status: string) => {
+    try {
+      await updateOrder(id, { orderStatus: status });
+      setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
+      toast.success("Order status updated successfully");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to update order status");
+    }
   };
 
   return (
@@ -31,6 +38,7 @@ const AdminOrdersPage = () => {
           <thead className="bg-muted">
             <tr>
               <th className="text-left p-3 text-sm font-medium text-muted-foreground">Order ID</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground">User</th>
               <th className="text-left p-3 text-sm font-medium text-muted-foreground">Date</th>
               <th className="text-left p-3 text-sm font-medium text-muted-foreground">Items</th>
               <th className="text-left p-3 text-sm font-medium text-muted-foreground">Total</th>
@@ -42,6 +50,10 @@ const AdminOrdersPage = () => {
             {orders.map(o => (
               <tr key={o.id} className="border-t border-border hover:bg-muted/50">
                 <td className="p-3 text-sm font-medium text-foreground">{o.id}</td>
+                <td className="p-3">
+                  <div className="text-sm font-medium text-foreground">{o.user?.name || 'Unknown'}</div>
+                  <div className="text-xs text-muted-foreground">{o.user?.email || 'No email'}</div>
+                </td>
                 <td className="p-3 text-sm text-muted-foreground">{o.date}</td>
                 <td className="p-3 text-sm text-muted-foreground">{o.items.length} items</td>
                 <td className="p-3 text-sm font-medium text-foreground">${o.total.toFixed(2)}</td>
@@ -67,8 +79,11 @@ const AdminOrdersPage = () => {
           <DialogHeader><DialogTitle className="font-display text-foreground">Order {selected?.id}</DialogTitle></DialogHeader>
           {selected && (
             <div className="space-y-4">
-              <div className="text-sm"><span className="text-muted-foreground">Date:</span> <span className="text-foreground">{selected.date}</span></div>
-              <div className="text-sm"><span className="text-muted-foreground">Address:</span> <span className="text-foreground">{selected.shippingAddress}</span></div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-sm"><span className="text-muted-foreground">Customer:</span> <span className="text-foreground block">{selected.user?.name}</span><span className="text-xs text-muted-foreground">{selected.user?.email}</span></div>
+                <div className="text-sm"><span className="text-muted-foreground">Date:</span> <span className="text-foreground block">{selected.date}</span></div>
+              </div>
+              <div className="text-sm"><span className="text-muted-foreground">Address:</span> <span className="text-foreground block">{selected.shippingAddress}</span></div>
               <div>
                 <h4 className="text-sm font-medium text-foreground mb-2">Items</h4>
                 {selected.items.map(i => (

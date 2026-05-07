@@ -92,6 +92,10 @@ export interface OrderTimeline {
 export interface Order {
   id: string;
   userId: string;
+  user?: {
+    name: string;
+    email: string;
+  };
   items: OrderItem[];
   total: number;
   status: string;
@@ -167,6 +171,10 @@ const mapProduct = (p: any): Product => {
 const mapOrder = (o: any): Order => ({
   id: o._id || o.id,
   userId: typeof o.user === 'object' ? o.user._id : o.user,
+  user: typeof o.user === 'object' ? {
+    name: o.user.name,
+    email: o.user.email
+  } : undefined,
   items: o.orderItems.map((i: any) => {
     const img = i.imageCover || i.image;
     const mappedImage = img && (img.startsWith('http') || img.startsWith('data:') || img.startsWith('/')) 
@@ -395,6 +403,14 @@ export const createOrder = async (orderData: any) => {
     method: "POST",
     body: JSON.stringify(orderData),
   });
+};
+
+export const updateOrder = async (id: string, orderData: any) => {
+  const data = await apiFetch(`/api/v1/orders/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(orderData),
+  });
+  return mapOrder(data.data.data);
 };
 
 
