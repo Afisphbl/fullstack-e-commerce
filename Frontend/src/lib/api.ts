@@ -106,6 +106,21 @@ export interface Order {
   timeline: OrderTimeline[];
 }
 
+export interface User {
+  id: string;
+  _id?: string;
+  name: string;
+  email: string;
+  photo?: string;
+  role: string;
+  active: boolean;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  addresses?: any[];
+  wishlist?: any[];
+}
+
 export interface FAQ {
   id: string;
   question: string;
@@ -378,7 +393,7 @@ export const fetchBlogBySlug = async (
 // Orders
 export const fetchOrders = async (): Promise<Order[]> => {
   try {
-    const res = await apiFetch("/api/v1/orders");
+    const res = await apiFetch("/api/v1/orders?sort=-createdAt");
     return res.data.data.map(mapOrder);
   } catch (error) {
     console.error("Failed to fetch orders:", error);
@@ -423,6 +438,40 @@ export const fetchFAQs = async (): Promise<FAQ[]> => {
 export const fetchTeam = async (): Promise<TeamMember[]> => {
   return teamData as TeamMember[];
 };
+
+// Admin Users
+export const fetchUsers = async (filters: Record<string, string> = {}): Promise<User[]> => {
+  const query = new URLSearchParams(filters).toString();
+  const url = `/api/v1/users${query ? `?${query}` : ''}`;
+  const res = await apiFetch(url);
+  return res.data.data.map((u: any) => ({
+    ...u,
+    id: u._id || u.id,
+  }));
+};
+
+export const createUser = async (userData: any) => {
+  const res = await apiFetch('/api/v1/users', {
+    method: 'POST',
+    body: JSON.stringify(userData),
+  });
+  return res.data.data;
+};
+
+export const updateUser = async (id: string, userData: any) => {
+  const res = await apiFetch(`/api/v1/users/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(userData),
+  });
+  return res.data.data;
+};
+
+export const deleteUser = async (id: string) => {
+  await apiFetch(`/api/v1/users/${id}`, {
+    method: 'DELETE',
+  });
+};
+
 
 // Admin Stats
 export const fetchOrderStats = async () => {

@@ -10,12 +10,14 @@ const statusColors: Record<string, string> = {
   delivered: 'bg-success/10 text-success border-success/30',
 };
 
+import { LoadingPage } from "@/components/ui/loading-spinner";
+
 const OrderDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const [order, setOrder] = useState<Order | null>(null);
   useEffect(() => { if (id) fetchOrderById(id).then(o => setOrder(o || null)); }, [id]);
 
-  if (!order) return <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">Loading...</div>;
+  if (!order) return <LoadingPage />;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">

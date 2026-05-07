@@ -36,9 +36,15 @@ class APIFeatures {
     // ── Guard: remove fields whose schema path is an ObjectId ref but whose
     //    query value is not a valid ObjectId. This prevents CastErrors when a
     //    client sends a slug like ?category=electronics instead of an ID.
-    //    The route-level `resolveCategoryFilter` middleware should handle slug
-    //    resolution BEFORE this runs; this is a last-resort safety net.
     const parsed = JSON.parse(queryStr);
+
+    // Support comma-separated values (e.g. ?role=admin,manager)
+    for (const key of Object.keys(parsed)) {
+      if (typeof parsed[key] === 'string' && parsed[key].includes(',')) {
+        parsed[key] = { $in: parsed[key].split(',') };
+      }
+    }
+
     const schema = this.query.model?.schema;
     if (schema) {
       for (const key of Object.keys(parsed)) {

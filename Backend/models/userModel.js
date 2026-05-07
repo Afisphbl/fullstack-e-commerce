@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const validator = require('validator');
 const ROLES = require('../constants/roles');
+const { USER_STATUS } = require('../constants/enums');
 
 const userSchema = new mongoose.Schema(
   {
@@ -23,6 +24,16 @@ const userSchema = new mongoose.Schema(
       trim: true,
       validate: [validator.isEmail, 'Please provide a valid email.'],
     },
+    phone: {
+      type: String,
+      trim: true,
+    },
+    lastLogin: Date,
+    status: {
+      type: String,
+      enum: Object.values(USER_STATUS),
+      default: USER_STATUS.ACTIVE,
+    },
     photo: {
       type: String,
       default: 'default.jpg',
@@ -40,7 +51,12 @@ const userSchema = new mongoose.Schema(
     },
     passwordConfirm: {
       type: String,
-      required: [true, 'Please confirm your password.'],
+      required: [
+        function () {
+          return this.isNew || this.isModified('password');
+        },
+        'Please confirm your password.',
+      ],
       validate: {
         // Only runs on CREATE & SAVE — not on findOneAndUpdate
         validator: function (val) {

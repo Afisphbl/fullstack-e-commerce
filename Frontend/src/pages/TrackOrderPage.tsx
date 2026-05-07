@@ -15,9 +15,12 @@ const trackingSteps = [
 const TrackOrderPage = () => {
   const { id } = useParams<{ id: string }>();
   const [order, setOrder] = useState<Order | null>(null);
-  useEffect(() => { if (id) fetchOrderById(id).then(o => setOrder(o || null)); }, [id]);
 
-  if (!order) return <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">Loading...</div>;
+  useEffect(() => {
+    if (id) fetchOrderById(id).then(o => setOrder(o || null));
+  }, [id]);
+
+  if (!order) return <LoadingPage />;
 
   const completedStatuses = order.timeline.map(t => t.status);
   const currentStepIndex = trackingSteps.findIndex(s => s.key === completedStatuses[completedStatuses.length - 1]);

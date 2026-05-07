@@ -35,18 +35,20 @@ import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
 import AdminPOSPage from "./pages/admin/AdminPOSPage";
 import AdminSummaryPage from "./pages/admin/AdminSummaryPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
+import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import { isAdminRole } from "@/lib/roles";
+import { LoadingPage } from "@/components/ui/loading-spinner";
 
 const queryClient = new QueryClient();
 
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isAuthenticated, isLoading } = useAuth();
-  if (isLoading) return <div className="p-8 text-center flex-1">Loading...</div>;
+  if (isLoading) return <LoadingPage />;
   if (!isAuthenticated || !user || !isAdminRole(user.role)) {
     return <Navigate to="/login" replace />;
   }
@@ -246,6 +248,7 @@ const App = () => (
                       />
                       <Route path="pos" element={<AdminPOSPage />} />
                       <Route path="summary" element={<AdminSummaryPage />} />
+                      <Route path="users" element={<AdminUsersPage />} />
                       <Route path="settings" element={<AdminSettingsPage />} />
                     </Route>
 

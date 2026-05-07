@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { LoadingPage } from "@/components/ui/loading-spinner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -207,7 +208,7 @@ const ProfilePage = () => {
   }, [orders, orderGroup]);
 
   if (isLoading || !user) {
-    return <div className="p-8 text-center">Loading profile...</div>;
+    return <LoadingPage />;
   }
 
   const sidebarItems = [

@@ -10,12 +10,18 @@ interface POSItem {
   quantity: number;
 }
 
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+
 const AdminPOSPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState('');
   const [cart, setCart] = useState<POSItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => { fetchProducts().then(res => setProducts(res.products)); }, []);
+  useEffect(() => { 
+    setIsLoading(true);
+    fetchProducts().then(res => setProducts(res.products)).finally(() => setIsLoading(false)); 
+  }, []);
 
   const filtered = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
   const total = cart.reduce((s, i) => s + i.product.price * i.quantity, 0);
@@ -45,7 +51,11 @@ const AdminPOSPage = () => {
             <Input placeholder="Search products..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10 bg-card" />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {filtered.slice(0, 12).map(p => (
+            {isLoading ? (
+              <div className="col-span-full py-12 flex justify-center"><LoadingSpinner size={32} /></div>
+            ) : filtered.length === 0 ? (
+              <div className="col-span-full py-12 text-center text-muted-foreground">No products found</div>
+            ) : filtered.slice(0, 12).map(p => (
               <button key={p.id} onClick={() => addItem(p)} className="bg-card rounded-lg border border-border p-3 text-left hover:shadow-card hover:border-primary/30 transition-all">
                 <img src={p.image} alt={p.name} className="w-full aspect-square object-cover rounded-md mb-2" />
                 <p className="text-xs font-medium text-foreground line-clamp-1">{p.name}</p>

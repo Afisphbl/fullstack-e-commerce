@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { 
   fetchProducts, 
   Product, 
@@ -281,7 +282,7 @@ const AdminProductsPage = () => {
           </thead>
           <tbody className="divide-y divide-border">
             {productsLoading ? (
-              <tr><td colSpan={6} className="p-8 text-center text-muted-foreground">Loading products...</td></tr>
+              <tr><td colSpan={6} className="p-12 text-center"><div className="flex justify-center"><LoadingSpinner size={32} /></div></td></tr>
             ) : filtered.length === 0 ? (
               <tr><td colSpan={6} className="p-8 text-center text-muted-foreground">No products found.</td></tr>
             ) : (
