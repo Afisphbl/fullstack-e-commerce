@@ -6,8 +6,11 @@ import { ShopFilters } from "@/components/shop/ShopFilters";
 import { ShopToolbar } from "@/components/shop/ShopToolbar";
 import { ProductsGrid } from "@/components/shop/ProductsGrid";
 import { ShopPagination } from "@/components/shop/ShopPagination";
+import { useAuth } from "@/contexts/AuthContext";
+import { isAdminRole } from "@/lib/roles";
 
 const ShopPage = () => {
+  const { user } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -68,8 +71,13 @@ const ShopPage = () => {
           fetchCategories(),
         ]);
 
-        setProducts(productsRes.products);
-        setTotalProducts(productsRes.total);
+        // Filter out zero-stock products for non-admin users
+        const filteredProducts = productsRes.products.filter(
+          (product) => product.stock > 0 || isAdminRole(user?.role)
+        );
+
+        setProducts(filteredProducts);
+        setTotalProducts(filteredProducts.length);
         setCategories(categoriesRes);
 
         // Update price cap based on first fetch if needed
@@ -95,6 +103,7 @@ const ShopPage = () => {
     sortBy,
     search,
     priceCap,
+    user?.role,
   ]);
 
   useEffect(() => {

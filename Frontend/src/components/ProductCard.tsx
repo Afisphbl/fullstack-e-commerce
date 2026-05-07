@@ -5,6 +5,8 @@ import { Product } from "@/lib/api";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useCompare } from "@/contexts/CompareContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { isAdminRole } from "@/lib/roles";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -13,9 +15,16 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
+  const { user } = useAuth();
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { isInCompare, addToCompare, removeFromCompare } = useCompare();
+  
+  // Hide zero-stock products from non-admin users
+  if (product.stock === 0 && !isAdminRole(user?.role)) {
+    return null;
+  }
+  
   const discount = product.originalPrice
     ? Math.round((1 - product.price / product.originalPrice) * 100)
     : 0;
@@ -50,6 +59,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         </div>
         <div className="absolute right-2 top-2 flex flex-col gap-1">
           <button
+            type="button"
             onClick={() => toggleFavorite(product)}
             aria-label={
               isFavorite(product.id)
@@ -64,6 +74,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             />
           </button>
           <button
+            type="button"
             onClick={() =>
               isInCompare(product.id)
                 ? removeFromCompare(product.id)

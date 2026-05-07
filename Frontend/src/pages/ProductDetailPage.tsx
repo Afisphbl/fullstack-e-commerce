@@ -13,6 +13,7 @@ import {
   ProductDetailSkeleton,
 } from "@/components/product-detail";
 import { useAuth } from "@/contexts/AuthContext";
+import { isAdminRole } from "@/lib/roles";
 
 interface Review {
   _id: string;
@@ -36,74 +37,112 @@ const ProductDetailPage = () => {
   const [reviewPage, setReviewPage] = useState(1);
   const reviewLimit = 10;
 
-  const loadProductData = useCallback(async () => {
-    if (!slug) return;
+  const loadProductDetails = useCallback(async () => {
+    if (!slug) {
+      // Clear stale state when slug is missing
+      setProduct(null);
+      setRelated([]);
+      setIsLoading(false);
+      return;
+    }
     
     setIsLoading(true);
     try {
       const p = await fetchProductBySlug(slug);
-      if (p) {
-        setProduct(p);
-
-        // Fetch reviews and related products in parallel
-        const [reviewsRes, allProductsRes] = await Promise.all([
-          fetchReviewsByProduct(p.id, reviewPage, reviewLimit),
-          fetchProducts(),
-        ]);
-
-        setReviews(reviewsRes.reviews);
-        setTotalReviews(reviewsRes.total);
-
-        const allProducts = allProductsRes.products;
-
-        const scored = allProducts
-          .filter((x) => x.id !== p.id)
-          .map((item) => {
-            let score = 0;
-            if (item.category === p.category) score += 3;
-            if (item.brand === p.brand) score += 2;
-            const sharedTags =
-              item.tags?.filter((tag) => p.tags?.includes(tag)).length || 0;
-            score += sharedTags;
-            return { item, score };
-          })
-          .sort(
-            (a, b) =>
-              b.score - a.score ||
-              Number(b.item.isNew) - Number(a.item.isNew) ||
-              b.item.price - a.item.price,
-          )
-          .slice(0, 4)
-          .map((entry) => entry.item);
-        setRelated(scored);
+      if (!p) {
+        // Clear stale state when product not found
+        setProduct(null);
+        setRelated([]);
+        return;
       }
+
+      setProduct(p);
+
+      // Fetch related products
+      const allProductsRes = await fetchProducts();
+      const allProducts = allProductsRes.products;
+
+      const scored = allProducts
+        .filter((x) => x.id !== p.id)
+        .map((item) => {
+          let score = 0;
+          if (item.category === p.category) score += 3;
+          if (item.brand === p.brand) score += 2;
+          const sharedTags =
+            item.tags?.filter((tag) => p.tags?.includes(tag)).length || 0;
+          score += sharedTags;
+          return { item, score };
+        })
+        .sort(
+          (a, b) =>
+            b.score - a.score ||
+            Number(b.item.isNew) - Number(a.item.isNew) ||
+            b.item.price - a.item.price,
+        )
+        .slice(0, 4)
+        .map((entry) => entry.item);
+      setRelated(scored);
     } finally {
       setIsLoading(false);
     }
-  }, [slug, reviewPage, reviewLimit]);
+  }, [slug]);
 
+  const loadReviews = useCallback(async () => {
+    if (!slug || !product) {
+      // Clear reviews when slug is missing or product not loaded
+      setReviews([]);
+      setTotalReviews(0);
+      return;
+    }
+
+    try {
+      const reviewsRes = await fetchReviewsByProduct(
+        product.id,
+        reviewPage,
+        reviewLimit,
+      );
+      setReviews(reviewsRes.reviews);
+      setTotalReviews(reviewsRes.total);
+    } catch (error) {
+      console.error("Failed to load reviews:", error);
+      setReviews([]);
+      setTotalReviews(0);
+    }
+  }, [slug, product, reviewPage, reviewLimit]);
+
+  // Load product details when slug changes
   useEffect(() => {
     if (slug) {
-      loadProductData();
+      loadProductDetails();
     }
-  }, [slug, loadProductData]);
+  }, [slug, loadProductDetails]);
+
+  // Load reviews when product is loaded or review page changes
+  useEffect(() => {
+    if (product) {
+      loadReviews();
+    }
+  }, [product, loadReviews]);
 
   const existingReview = reviews.find((r) => r.user?._id === user?._id);
 
   const handleReviewSubmitted = async () => {
-    if (!product) return;
-    const reviewsRes = await fetchReviewsByProduct(
-      product.id,
-      reviewPage,
-      reviewLimit,
-    );
-    setReviews(reviewsRes.reviews);
-    setTotalReviews(reviewsRes.total);
+    // Reload reviews after submission
+    await loadReviews();
   };
 
   if (isLoading) return <ProductDetailSkeleton />;
 
   if (!product) {
+    return (
+      <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">
+        Product not found.
+      </div>
+    );
+  }
+
+  // Hide zero-stock products from non-admin users
+  if (product.stock === 0 && !isAdminRole(user?.role)) {
     return (
       <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">
         Product not found.

@@ -22,24 +22,31 @@ export const ProductActions = ({ product }: ProductActionsProps) => {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { isInCompare, addToCompare, removeFromCompare } = useCompare();
 
+  const handleAddToCart = () => {
+    if (product.stock === 0 || quantity > product.stock) return;
+    addToCart(product, quantity);
+  };
+
   return (
     <>
       <div className="flex items-center gap-4 mb-6">
         <div className="flex items-center border border-border rounded-md">
           <button
             type="button"
-            onClick={() => setQuantity(Math.max(1, quantity - 1))}
+            onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+            disabled={quantity <= 1}
             aria-label="Decrease quantity"
-            className="p-2 text-muted-foreground hover:text-foreground"
+            className="p-2 text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Minus className="h-4 w-4" />
           </button>
           <span className="px-4 font-medium text-foreground">{quantity}</span>
           <button
             type="button"
-            onClick={() => setQuantity(quantity + 1)}
+            onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
+            disabled={quantity >= product.stock || product.stock === 0}
             aria-label="Increase quantity"
-            className="p-2 text-muted-foreground hover:text-foreground"
+            className="p-2 text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Plus className="h-4 w-4" />
           </button>
@@ -48,11 +55,13 @@ export const ProductActions = ({ product }: ProductActionsProps) => {
 
       <div className="flex gap-3 mb-8">
         <Button
-          onClick={() => addToCart(product, quantity)}
+          onClick={handleAddToCart}
+          disabled={product.stock === 0 || quantity > product.stock}
           size="lg"
           className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 shadow-neon"
         >
-          <ShoppingCart className="h-5 w-5 mr-2" /> Add to Cart
+          <ShoppingCart className="h-5 w-5 mr-2" /> 
+          {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
         </Button>
         <Button
           variant="outline"

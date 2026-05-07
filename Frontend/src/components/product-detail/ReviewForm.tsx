@@ -37,8 +37,11 @@ export const ReviewForm = ({
     if (existingReview) {
       setRating(existingReview.rating);
       setComment(existingReview.review);
+    } else {
+      setRating(5);
+      setComment("");
     }
-  }, [existingReview]);
+  }, [existingReview, productId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

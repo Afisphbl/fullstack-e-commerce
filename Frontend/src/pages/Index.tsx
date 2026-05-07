@@ -10,8 +10,11 @@ import {
 } from "@/lib/api";
 import { ProductCard } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { isAdminRole } from "@/lib/roles";
 
 const Index = () => {
+  const { user } = useAuth();
   const [featured, setFeatured] = useState<Product[]>([]);
   const [newArrivals, setNewArrivals] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -39,12 +42,22 @@ const Index = () => {
   ];
 
   useEffect(() => {
-    fetchFeaturedProducts().then(setFeatured);
-    fetchProducts({ sort: "-createdAt", limit: 50 }).then((res) =>
-      setNewArrivals(res.products.filter((product) => product.isNew)),
-    );
+    fetchFeaturedProducts().then((products) => {
+      // Filter out zero-stock products for non-admin users
+      const filtered = products.filter(
+        (product) => product.stock > 0 || isAdminRole(user?.role)
+      );
+      setFeatured(filtered);
+    });
+    fetchProducts({ sort: "-createdAt", limit: 50 }).then((res) => {
+      // Filter out zero-stock products for non-admin users
+      const filtered = res.products.filter(
+        (product) => (product.isNew && product.stock > 0) || (product.isNew && isAdminRole(user?.role))
+      );
+      setNewArrivals(filtered);
+    });
     fetchCategories().then(setCategories);
-  }, []);
+  }, [user?.role]);
 
   useEffect(() => {
     const timer = setInterval(() => {
