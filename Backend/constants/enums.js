@@ -34,10 +34,17 @@ const COUPON_TYPE = Object.freeze({
   FIXED: 'fixed',
 });
 
+const USER_STATUS = Object.freeze({
+  ACTIVE: 'active',
+  SUSPENDED: 'suspended',
+  PENDING: 'pending',
+});
+
 module.exports = {
   ORDER_STATUS,
   PAYMENT_STATUS,
   PAYMENT_METHOD,
   PRODUCT_STATUS,
   COUPON_TYPE,
+  USER_STATUS,
 };

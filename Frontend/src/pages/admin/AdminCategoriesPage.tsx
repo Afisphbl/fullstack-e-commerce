@@ -7,12 +7,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+
 const AdminCategoriesPage = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Category | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => { fetchCategories().then(setCategories); }, []);
+  useEffect(() => { 
+    setIsLoading(true);
+    fetchCategories().then(setCategories).finally(() => setIsLoading(false)); 
+  }, []);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +54,9 @@ const AdminCategoriesPage = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {categories.map(cat => (
+        {isLoading ? (
+          <div className="col-span-full py-12 flex justify-center"><LoadingSpinner size={32} /></div>
+        ) : categories.map(cat => (
           <div key={cat.id} className="bg-card rounded-lg border border-border p-4 flex items-center gap-4">
             <img src={cat.image} alt={cat.name} className="w-16 h-16 rounded-lg object-cover" />
             <div className="flex-1">

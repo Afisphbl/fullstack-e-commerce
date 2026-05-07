@@ -19,7 +19,7 @@ router.route('/')
 router.get('/:id', orderController.getOrder);
 
 // ── Admin / Manager ───────────────────────────────────────────────────────────
-router.use(restrictTo(ROLES.ADMIN, ROLES.MANAGER, ROLES.SUPER_ADMIN));
+router.use(restrictTo(ROLES.ADMIN, ROLES.MANAGER, ROLES.STAFF, ROLES.SUPER_ADMIN));
 
 router.get('/stats/overview', orderController.getOrderStats);
 router.patch('/:id/deliver', orderController.markDelivered);

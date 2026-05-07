@@ -21,12 +21,14 @@ import {
   PanelLeft,
   PanelLeftClose,
   Search,
+  Users,
 } from "lucide-react";
 
 const navItems = [
   { to: "/admin", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/admin/products", icon: Package, label: "Products" },
   { to: "/admin/orders", icon: ShoppingCart, label: "Orders" },
+  { to: "/admin/users", icon: Users, label: "Users" },
   { to: "/admin/categories", icon: Tag, label: "Categories" },
   { to: "/admin/pos", icon: Monitor, label: "POS" },
   { to: "/admin/summary", icon: BarChart3, label: "Summary" },
@@ -37,6 +39,7 @@ const pageTitles: Record<string, string> = {
   "/admin": "Dashboard",
   "/admin/products": "Products",
   "/admin/orders": "Orders",
+  "/admin/users": "Users",
   "/admin/categories": "Categories",
   "/admin/pos": "POS",
   "/admin/summary": "Summary",

@@ -4,8 +4,9 @@ import { toast } from "sonner";
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Eye } from 'lucide-react';
+import { Eye, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 const statusColors: Record<string, string> = {
   placed: 'bg-primary/10 text-primary border-primary/30',
@@ -17,7 +18,12 @@ const statusColors: Record<string, string> = {
 const AdminOrdersPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selected, setSelected] = useState<Order | null>(null);
-  useEffect(() => { fetchOrders().then(setOrders); }, []);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => { 
+    setIsLoading(true);
+    fetchOrders().then(setOrders).finally(() => setIsLoading(false)); 
+  }, []);
 
   const updateStatus = async (id: string, status: string) => {
     try {
@@ -31,7 +37,9 @@ const AdminOrdersPage = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-display font-bold text-foreground mb-6">Orders</h1>
+      <h1 className="text-2xl font-display font-bold text-foreground mb-6">
+        Order Management {orders.length > 0 && `(${orders.length})`}
+      </h1>
 
       <div className="bg-card rounded-lg border border-border overflow-hidden">
         <table className="w-full">
@@ -47,29 +55,83 @@ const AdminOrdersPage = () => {
             </tr>
           </thead>
           <tbody>
-            {orders.map(o => (
-              <tr key={o.id} className="border-t border-border hover:bg-muted/50">
-                <td className="p-3 text-sm font-medium text-foreground">{o.id}</td>
-                <td className="p-3">
-                  <div className="text-sm font-medium text-foreground">{o.user?.name || 'Unknown'}</div>
-                  <div className="text-xs text-muted-foreground">{o.user?.email || 'No email'}</div>
-                </td>
-                <td className="p-3 text-sm text-muted-foreground">{o.date}</td>
-                <td className="p-3 text-sm text-muted-foreground">{o.items.length} items</td>
-                <td className="p-3 text-sm font-medium text-foreground">${o.total.toFixed(2)}</td>
-                <td className="p-3">
-                  <Select value={o.status} onValueChange={v => updateStatus(o.id, v)}>
-                    <SelectTrigger className="w-32 h-8 text-xs"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {['placed', 'processing', 'shipped', 'delivered', 'cancelled'].map(s => <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </td>
-                <td className="p-3 text-right">
-                  <Button variant="ghost" size="sm" onClick={() => setSelected(o)} className="text-muted-foreground hover:text-primary"><Eye className="h-4 w-4" /></Button>
+            {isLoading ? (
+              <tr>
+                <td colSpan={7} className="p-12 text-center">
+                  <div className="flex justify-center">
+                    <LoadingSpinner size={32} />
+                  </div>
                 </td>
               </tr>
-            ))}
+            ) : orders.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="p-24 text-center text-muted-foreground">
+                  <div className="flex flex-col items-center gap-2">
+                    <ShoppingCart className="h-8 w-8 opacity-20" />
+                    <p>No orders found</p>
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              orders.map((o) => (
+                <tr
+                  key={o.id}
+                  className="border-t border-border hover:bg-muted/50"
+                >
+                  <td className="p-3 text-sm font-medium text-foreground">
+                    {o.id}
+                  </td>
+                  <td className="p-3">
+                    <div className="text-sm font-medium text-foreground">
+                      {o.user?.name || "Unknown"}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {o.user?.email || "No email"}
+                    </div>
+                  </td>
+                  <td className="p-3 text-sm text-muted-foreground">{o.date}</td>
+                  <td className="p-3 text-sm text-muted-foreground">
+                    {o.items?.length || 0} items
+                  </td>
+                  <td className="p-3 text-sm font-medium text-foreground">
+                    ${(o.total || 0).toFixed(2)}
+                  </td>
+                  <td className="p-3">
+                    <Select
+                      value={o.status}
+                      onValueChange={(v) => updateStatus(o.id, v)}
+                    >
+                      <SelectTrigger className="w-32 h-8 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {[
+                          "placed",
+                          "processing",
+                          "shipped",
+                          "delivered",
+                          "cancelled",
+                        ].map((s) => (
+                          <SelectItem key={s} value={s} className="capitalize">
+                            {s}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </td>
+                  <td className="p-3 text-right">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelected(o)}
+                      className="text-muted-foreground hover:text-primary"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

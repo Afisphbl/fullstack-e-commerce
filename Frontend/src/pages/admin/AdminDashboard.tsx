@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { LoadingPage } from "@/components/ui/loading-spinner";
 import { fetchAdminDashboardData, Product, Order } from '@/lib/api';
 import { 
   DollarSign, 
@@ -67,7 +68,7 @@ const AdminDashboard = () => {
   }, []);
 
   if (loading || !data) {
-    return <div className="p-8 text-center animate-pulse">Loading dashboard data...</div>;
+    return <div className="p-8 flex justify-center items-center min-h-[300px]"><LoadingPage /></div>;
   }
 
   const statCards = [

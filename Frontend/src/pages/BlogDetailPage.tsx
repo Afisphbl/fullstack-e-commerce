@@ -3,12 +3,14 @@ import { useParams, Link } from 'react-router-dom';
 import { fetchBlogBySlug, Blog } from '@/lib/api';
 import { Calendar, Clock, ChevronLeft, User } from 'lucide-react';
 
+import { LoadingPage } from "@/components/ui/loading-spinner";
+
 const BlogDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const [blog, setBlog] = useState<Blog | null>(null);
   useEffect(() => { if (slug) fetchBlogBySlug(slug).then(b => setBlog(b || null)); }, [slug]);
 
-  if (!blog) return <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">Loading...</div>;
+  if (!blog) return <LoadingPage />;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">

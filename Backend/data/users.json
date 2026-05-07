@@ -6,6 +6,8 @@
     "password": "superadmin1234",
     "passwordConfirm": "superadmin1234",
     "role": "super-admin",
+    "status": "active",
+    "phone": "+1234567890",
     "photo": "default.jpg"
   },
   {
@@ -15,6 +17,8 @@
     "password": "admin1234",
     "passwordConfirm": "admin1234",
     "role": "admin",
+    "status": "active",
+    "phone": "+1234567891",
     "photo": "default.jpg"
   },
   {
@@ -24,6 +28,8 @@
     "password": "manager1234",
     "passwordConfirm": "manager1234",
     "role": "manager",
+    "status": "active",
+    "phone": "+1234567892",
     "photo": "default.jpg"
   },
   {
@@ -33,6 +39,8 @@
     "password": "user1234",
     "passwordConfirm": "user1234",
     "role": "user",
+    "status": "active",
+    "phone": "+1234567893",
     "photo": "default.jpg"
   },
   {
@@ -42,6 +50,8 @@
     "password": "user1234",
     "passwordConfirm": "user1234",
     "role": "user",
+    "status": "suspended",
+    "phone": "+1234567894",
     "photo": "default.jpg"
   },
   {
@@ -51,6 +61,8 @@
     "password": "user1234",
     "passwordConfirm": "user1234",
     "role": "user",
+    "status": "pending",
+    "phone": "+1234567895",
     "photo": "default.jpg"
   }
 ]

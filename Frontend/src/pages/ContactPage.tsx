@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -78,7 +79,11 @@ const ContactPage = () => {
             disabled={loading}
             className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-neon"
           >
-            <Send className="h-4 w-4 mr-2" />{" "}
+            {loading ? (
+              <LoadingSpinner size={16} className="mr-2 text-primary-foreground" />
+            ) : (
+              <Send className="h-4 w-4 mr-2" />
+            )}
             {loading ? "Sending..." : "Send Message"}
           </Button>
         </form>
