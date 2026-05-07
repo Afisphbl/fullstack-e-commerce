@@ -1,4 +1,12 @@
-# AdminUsersPage Refactoring Summary
+# Admin Pages Refactoring Summary
+
+## Table of Contents
+1. [AdminUsersPage Refactoring](#adminuserspage-refactoring)
+2. [AdminProductsPage Refactoring](#adminproductspage-refactoring)
+
+---
+
+# AdminUsersPage Refactoring
 
 ## Overview
 The AdminUsersPage component has been successfully refactored from a monolithic 1378-line file into smaller, reusable components with separated concerns and custom hooks for logic management.
@@ -130,3 +138,211 @@ import { AdminUsersPage } from "@/pages/admin/AdminUsersPage";
 - URL state management preserved
 - All mutations work identically
 - Styling and UI unchanged
+
+
+---
+
+# AdminProductsPage Refactoring
+
+## Overview
+The AdminProductsPage component has been successfully refactored from a monolithic 600+ line file into smaller, focused components with separated concerns and custom hooks for logic management.
+
+## New Component Structure
+
+### Components (`Frontend/src/components/admin/products/`)
+
+#### Display Components
+- **ProductPageHeader.tsx** - Header with product count and "Add Product" button
+- **ProductSearchBar.tsx** - Search input with icon
+- **ProductTable.tsx** - Main table wrapper with loading/error states
+- **ProductTableRow.tsx** - Individual product row with edit/delete actions
+
+#### Form Components
+- **ProductFormDialog.tsx** - Main dialog wrapper with tabs
+- **ProductFormGeneralTab.tsx** - General info form fields (name, brand, category, status, descriptions, featured toggle)
+- **ProductFormInventoryTab.tsx** - Pricing and stock fields
+- **ProductFormMediaTab.tsx** - Image URL fields
+- **ProductFormSpecsTab.tsx** - Specifications management with groups
+- **ProductSpecificationFields.tsx** - Dynamic spec fields within a group
+
+### Custom Hooks (`Frontend/src/components/admin/products/hooks/`)
+
+- **useProductFilters.ts** - Manages search state and filtered products
+- **useProductMutations.ts** - Handles all product mutations (create, update, delete) with specification rollback logic
+- **useProductForm.ts** - Manages form state with react-hook-form, validation with zod, and specification groups
+
+## Benefits of Refactoring
+
+### 1. **Improved Maintainability**
+- Each component has a single, clear responsibility
+- Form tabs are separated into individual components
+- Easier to locate and modify specific sections
+
+### 2. **Better Reusability**
+- Form tab components can be reused in other product-related features
+- Hooks can be shared across different product management pages
+- Specification fields component is fully reusable
+
+### 3. **Enhanced Testability**
+- Smaller components are easier to unit test
+- Hooks can be tested independently
+- Form validation logic is isolated
+
+### 4. **Cleaner Code Organization**
+- Form logic separated from presentation
+- Custom hooks encapsulate complex state management
+- Specification rollback logic centralized in mutations hook
+
+### 5. **Better Type Safety**
+- ProductFormValues type exported from useProductForm
+- Proper TypeScript interfaces for all props
+- No more `any` types in component props
+
+### 6. **Improved Developer Experience**
+- Clear component boundaries
+- Self-documenting code structure
+- Easy to understand data flow
+
+## Component Responsibilities
+
+### Main Page (AdminProductsPage.tsx)
+- Orchestrates all sub-components
+- Manages local UI state (dialog open/close, editing product)
+- Coordinates data fetching
+- ~50 lines (down from 600+)
+
+### ProductFormDialog
+- Manages tabbed interface
+- Coordinates form submission
+- Handles dialog open/close state
+- Integrates all form tab components
+
+### Form Tab Components
+- **GeneralTab**: Product name, brand, category, status, descriptions, featured toggle
+- **InventoryTab**: Price, discount percentage, stock quantity
+- **MediaTab**: Cover image and gallery images
+- **SpecsTab**: Dynamic specification groups with add/remove functionality
+
+### Custom Hooks
+
+#### useProductForm
+- Manages form state with react-hook-form
+- Handles validation with zod schema
+- Manages specification groups with useFieldArray
+- Auto-resets form when editing product changes
+
+#### useProductMutations
+- Centralizes create/update/delete logic
+- Implements specification rollback on failure
+- Handles success/error notifications
+- Invalidates queries on success
+
+#### useProductFilters
+- Manages search state
+- Filters products by name
+- Returns memoized filtered results
+
+## File Size Comparison
+
+| File | Before | After |
+|------|--------|-------|
+| AdminProductsPage.tsx | 600+ lines | ~50 lines |
+| Total (all files) | 600+ lines | ~800 lines |
+
+*Note: While total lines increased, the code is now much more maintainable, testable, and reusable.*
+
+## Key Features Preserved
+
+### Specification Management
+- Dynamic specification groups
+- Add/remove groups and specs
+- Rollback on specification save failure
+- Proper handling of create/update/delete flows
+
+### Form Validation
+- Zod schema validation
+- Required field validation
+- URL validation for images
+- Number range validation
+
+### Data Flow
+- Product creation with specifications
+- Product update with specification sync
+- Specification deletion when empty
+- Rollback on failure
+
+## Usage Example
+
+```tsx
+import AdminProductsPage from "@/pages/admin/AdminProductsPage";
+
+// The page now uses composition:
+<AdminProductsPage>
+  <ProductPageHeader totalProducts={...} onAddProduct={...} />
+  <ProductSearchBar value={...} onChange={...} />
+  <ProductTable products={...} isLoading={...} onEdit={...} onDelete={...} />
+  <ProductFormDialog 
+    open={...} 
+    onOpenChange={...} 
+    editingProduct={...} 
+    categories={...} 
+    onSuccess={...} 
+  />
+</AdminProductsPage>
+```
+
+## Component Exports
+
+All components and hooks are exported from `Frontend/src/components/admin/products/index.ts`:
+
+```tsx
+// Components
+export { ProductPageHeader } from "./ProductPageHeader";
+export { ProductSearchBar } from "./ProductSearchBar";
+export { ProductTable } from "./ProductTable";
+export { ProductTableRow } from "./ProductTableRow";
+export { ProductFormDialog } from "./ProductFormDialog";
+export { ProductFormGeneralTab } from "./ProductFormGeneralTab";
+export { ProductFormInventoryTab } from "./ProductFormInventoryTab";
+export { ProductFormMediaTab } from "./ProductFormMediaTab";
+export { ProductFormSpecsTab } from "./ProductFormSpecsTab";
+export { ProductSpecificationFields } from "./ProductSpecificationFields";
+
+// Hooks
+export { useProductFilters } from "./hooks/useProductFilters";
+export { useProductForm } from "./hooks/useProductForm";
+export { useProductMutations } from "./hooks/useProductMutations";
+```
+
+## Future Improvements
+
+1. **Add unit tests** for each component and hook
+2. **Implement React.memo** for performance optimization
+3. **Add image upload functionality** instead of URL input
+4. **Add drag-and-drop** for specification reordering
+5. **Implement bulk actions** (delete, status change)
+6. **Add product preview** before saving
+7. **Add validation for duplicate product names**
+8. **Implement optimistic updates** for better UX
+
+## Migration Notes
+
+- All functionality remains the same
+- No breaking changes to the API
+- All mutations work identically
+- Styling and UI unchanged
+- Specification rollback logic preserved
+- Form validation rules unchanged
+
+## Comparison with AdminUsersPage Pattern
+
+Both refactorings follow the same architectural pattern:
+
+1. **Custom hooks for logic** (filters, mutations, form state)
+2. **Small, focused components** (header, search, table, rows)
+3. **Separated form sections** (tabs/dialogs)
+4. **Centralized exports** (index.ts)
+5. **Type safety** (proper TypeScript interfaces)
+6. **Maintainability** (single responsibility principle)
+
+This consistency makes it easier for developers to work across different admin pages.
