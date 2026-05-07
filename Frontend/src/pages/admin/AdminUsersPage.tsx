@@ -27,6 +27,7 @@ import {
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import {
   AdminUser,
+  AdminUserStatus,
   createAdminUser,
   deleteAdminUser,
   fetchAdminUsers,
@@ -253,7 +254,7 @@ const AdminUsersPage = () => {
     }
   }, [deferredSearch, searchParamString, searchParams, setSearchParams]);
 
-  const { data, isLoading, isFetching } = useQuery({
+  const { data, isLoading, isFetching, isError, error, refetch } = useQuery({
     queryKey: ["admin-users", tab, role, status, department, page, deferredSearch],
     queryFn: () =>
       fetchAdminUsers({
@@ -406,17 +407,48 @@ const AdminUsersPage = () => {
 
   const exportCsv = async () => {
     try {
-      const exportData = await fetchAdminUsers({
+      // Fetch all users by paginating through results
+      let allUsers: AdminUser[] = [];
+      let currentPage = 1;
+      const pageLimit = 100;
+      let totalUsers = 0;
+
+      // Fetch first page to get total count
+      const firstPageData = await fetchAdminUsers({
         tab,
         role,
         status,
         department,
-        page: 1,
-        limit: 100,
+        page: currentPage,
+        limit: pageLimit,
         search: deferredSearch,
       });
 
-      const rows = exportData.users.map((user) => ({
+      allUsers = firstPageData.users;
+      totalUsers = firstPageData.total;
+      const totalPages = Math.ceil(totalUsers / pageLimit);
+
+      // Fetch remaining pages if needed
+      while (currentPage < totalPages) {
+        currentPage++;
+        const pageData = await fetchAdminUsers({
+          tab,
+          role,
+          status,
+          department,
+          page: currentPage,
+          limit: pageLimit,
+          search: deferredSearch,
+        });
+        allUsers = [...allUsers, ...pageData.users];
+      }
+
+      if (allUsers.length === 0) {
+        toast.info("No users to export");
+        return;
+      }
+
+      const rows = allUsers.map((user) => ({
         name: user.name,
         email: user.email,
         phone: user.phone,
@@ -456,7 +488,7 @@ const AdminUsersPage = () => {
       link.download = `admin-users-${new Date().toISOString().slice(0, 10)}.csv`;
       link.click();
       URL.revokeObjectURL(url);
-      toast.success("CSV export started");
+      toast.success(`Exported ${allUsers.length} user${allUsers.length !== 1 ? 's' : ''} to CSV`);
     } catch (error) {
       toast.error("Failed to export users");
     }
@@ -640,6 +672,29 @@ const AdminUsersPage = () => {
                       <tr>
                         <td colSpan={7}>
                           <LoadingSpinner label="Loading user data from the backend..." />
+                        </td>
+                      </tr>
+                    ) : isError ? (
+                      <tr>
+                        <td colSpan={7} className="px-4 py-16">
+                          <div className="flex flex-col items-center justify-center gap-4 text-center">
+                            <ShieldAlert className="h-12 w-12 text-rose-500" />
+                            <div>
+                              <p className="text-sm font-medium text-foreground">
+                                Failed to load users
+                              </p>
+                              <p className="mt-1 text-sm text-muted-foreground">
+                                {error instanceof Error ? error.message : "An unexpected error occurred"}
+                              </p>
+                            </div>
+                            <Button
+                              variant="outline"
+                              className="rounded-xl"
+                              onClick={() => refetch()}
+                            >
+                              Try Again
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     ) : users.length === 0 ? (

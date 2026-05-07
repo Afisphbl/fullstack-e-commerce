@@ -14,11 +14,52 @@ const statusColors: Record<string, string> = {
 const OrderDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const [order, setOrder] = useState<Order | null>(null);
-  useEffect(() => { if (id) fetchOrderById(id).then(o => setOrder(o || null)); }, [id]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadOrder = async () => {
+    if (!id) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await fetchOrderById(id);
+      setOrder(data || null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load order details');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadOrder();
+  }, [id]);
+
+  if (loading) return (
+    <div className="flex min-h-[400px] items-center justify-center">
+      <LoadingSpinner label="Loading order details..." />
+    </div>
+  );
+
+  if (error) return (
+    <div className="flex min-h-[400px] items-center justify-center">
+      <div className="text-center space-y-4">
+        <p className="text-destructive font-medium">Error loading order</p>
+        <p className="text-sm text-muted-foreground">{error}</p>
+        <button
+          type="button"
+          onClick={loadOrder}
+          className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
+  );
 
   if (!order) return (
     <div className="flex min-h-[400px] items-center justify-center">
-      <LoadingSpinner label="Loading order details..." />
+      <p className="text-muted-foreground">Order not found</p>
     </div>
   );
 

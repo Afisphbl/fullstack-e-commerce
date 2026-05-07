@@ -6,6 +6,7 @@ const AppError = require('../utils/AppError');
 const { sendTokenResponse } = require('../middleware/auth');
 const { sendPasswordResetEmail, sendWelcomeEmail } = require('../utils/email');
 const MESSAGES = require('../constants/messages');
+const logger = require('../logs/logger');
 
 // ─── signup ───────────────────────────────────────────────────────────────────
 const signup = async (body, res) => {
@@ -28,8 +29,12 @@ const login = async ({ email, password }, res, next) => {
   if (!user || !(await user.correctPassword(password, user.password)))
     return next(new AppError(MESSAGES.INVALID_CREDENTIALS, 401));
 
-  user.lastLogin = new Date();
-  await user.save({ validateBeforeSave: false });
+  // Non-blocking lastLogin update - don't fail auth if this fails
+  User.updateOne({ _id: user._id }, { $set: { lastLogin: new Date() } })
+    .catch((err) => {
+      // Log error but don't block authentication
+      logger.error('Failed to update lastLogin:', err);
+    });
 
   sendTokenResponse(user, 200, res);
 };

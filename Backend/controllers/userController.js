@@ -118,20 +118,34 @@ exports.getAllUsers = catchAsync(async (req, res) => {
   if (department && department !== 'all') filter.department = department;
 
   if (tab === 'staff') {
-    filter.role = { $in: STAFF_ROLES };
+    // Intersect the selected role with STAFF_ROLES
+    let intersection = STAFF_ROLES;
+    if (filter.role) {
+      const existingRoles = Array.isArray(filter.role?.$in)
+        ? filter.role.$in
+        : [filter.role];
+      intersection = STAFF_ROLES.filter((r) => existingRoles.includes(r));
+    }
+    filter.role = { $in: intersection };
   } else if (tab === 'users') {
     filter.role = ROLES.USER;
   }
 
   if (search) {
+    // Escape regex metacharacters to prevent regex injection
+    const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedSearch = escapeRegex(search);
     filter.$or = [
-      { name: { $regex: search, $options: 'i' } },
-      { email: { $regex: search, $options: 'i' } },
-      { phone: { $regex: search, $options: 'i' } },
+      { name: { $regex: escapedSearch, $options: 'i' } },
+      { email: { $regex: escapedSearch, $options: 'i' } },
+      { phone: { $regex: escapedSearch, $options: 'i' } },
     ];
   }
 
-  const [users, total, allUsers] = await Promise.all([
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const [users, total, analytics, recentUsers] = await Promise.all([
     User.find(filter)
       .setOptions({ includeInactive: true })
       .select('+active')
@@ -139,17 +153,43 @@ exports.getAllUsers = catchAsync(async (req, res) => {
       .skip(skip)
       .limit(limit),
     User.countDocuments(filter),
+    // Use aggregation for analytics instead of loading all users
+    User.aggregate([
+      { $match: {} },
+      {
+        $facet: {
+          totalUsers: [{ $count: 'count' }],
+          activeUsers: [
+            { $match: { active: { $ne: false } } },
+            { $count: 'count' },
+          ],
+          totalStaff: [
+            { $match: { role: { $in: STAFF_ROLES } } },
+            { $count: 'count' },
+          ],
+          newUsersThisMonth: [
+            { $match: { createdAt: { $gte: startOfMonth } } },
+            { $count: 'count' },
+          ],
+        },
+      },
+    ]),
+    // Fetch only recent users for events
     User.find({})
       .setOptions({ includeInactive: true })
-      .select('+active'),
+      .select('+active')
+      .sort('-updatedAt')
+      .limit(5),
   ]);
 
-  const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const normalizedUsers = allUsers.map(serializeUser);
-  const staffUsers = normalizedUsers.filter((user) =>
-    STAFF_ROLES.includes(user.role)
-  );
+  // Extract analytics counts from aggregation result
+  const analyticsData = analytics[0];
+  const analyticsMetrics = {
+    totalUsers: analyticsData.totalUsers[0]?.count || 0,
+    activeUsers: analyticsData.activeUsers[0]?.count || 0,
+    totalStaff: analyticsData.totalStaff[0]?.count || 0,
+    newUsersThisMonth: analyticsData.newUsersThisMonth[0]?.count || 0,
+  };
 
   res.status(200).json({
     status: 'success',
@@ -160,33 +200,22 @@ exports.getAllUsers = catchAsync(async (req, res) => {
     limit,
     data: {
       data: users.map(serializeUser),
-      analytics: {
-        totalUsers: normalizedUsers.length,
-        activeUsers: normalizedUsers.filter((user) => user.status === 'active')
-          .length,
-        totalStaff: staffUsers.length,
-        newUsersThisMonth: normalizedUsers.filter(
-          (user) => new Date(user.createdAt) >= startOfMonth
-        ).length,
-      },
+      analytics: analyticsMetrics,
       meta: {
-        recentEvents: normalizedUsers
-          .sort(
-            (a, b) =>
-              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-          )
-          .slice(0, 5)
-          .map((user) => ({
-            id: user._id,
+        recentEvents: recentUsers.map((user) => {
+          const serialized = serializeUser(user);
+          return {
+            id: serialized._id,
             type:
-              user.status === 'suspended'
+              serialized.status === 'suspended'
                 ? 'account-suspended'
-                : STAFF_ROLES.includes(user.role)
+                : STAFF_ROLES.includes(serialized.role)
                   ? 'staff-update'
                   : 'user-update',
-            title: `${user.name} was updated`,
-            time: user.updatedAt,
-          })),
+            title: `${serialized.name} was updated`,
+            time: serialized.updatedAt,
+          };
+        }),
       },
     },
   });
