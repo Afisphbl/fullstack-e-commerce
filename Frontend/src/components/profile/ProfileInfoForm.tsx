@@ -2,7 +2,9 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { User as UserIcon, MapPin } from "lucide-react";
+import { User as UserIcon, MapPin, Camera } from "lucide-react";
+import { ProfilePictureUpload } from "./ProfilePictureUpload";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -156,26 +158,22 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
               Personal Information
             </h2>
 
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
-                {user.photo !== "default.jpg" ? (
-                  <img
-                    src={`/public/img/users/${user.photo}`}
-                    alt={user.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <UserIcon className="h-8 w-8 text-primary" />
-                )}
-              </div>
-              <div>
-                <h3 className="font-semibold text-foreground">{user.name}</h3>
-                <p className="text-sm text-muted-foreground">{user.email}</p>
-                <Badge variant="outline" className="mt-1 uppercase text-[10px]">
-                  {user.role}
-                </Badge>
-              </div>
+            <div className="mb-8">
+              <ProfilePictureUpload
+                userName={user.name}
+                currentPhoto={
+                  user.photo === 'default.jpg' 
+                    ? undefined 
+                    : user.photo.startsWith('http') 
+                      ? user.photo 
+                      : `/public/img/users/${user.photo}`
+                }
+                onUploadSuccess={(newPhoto) => {
+                  queryClient.setQueryData(["currentUser"], { ...user, photo: newPhoto });
+                }}
+              />
             </div>
+
 
             <FormField
               control={profileForm.control}
