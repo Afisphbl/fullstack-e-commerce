@@ -62,8 +62,21 @@ const protect = catchAsync(async (req, res, next) => {
   }
 
   // 3) Check user still exists
-  const currentUser = await User.findById(decoded.id).select('+passwordChangedAt');
+  const currentUser = await User.findById(decoded.id)
+    .select('+passwordChangedAt +active')
+    .setOptions({ includeInactive: true });
+
   if (!currentUser) return next(new AppError(MESSAGES.TOKEN_INVALID, 401));
+
+  // 3.5) Check if user account is suspended or inactive
+  if (currentUser.status === 'suspended' || currentUser.active === false) {
+    return next(
+      new AppError(
+        'Your account has been suspended. Please contact support for assistance.',
+        403
+      )
+    );
+  }
 
   // 4) Check password not changed after token issued
   if (currentUser.changedPasswordAfter(decoded.iat))
