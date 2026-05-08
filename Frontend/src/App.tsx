@@ -51,6 +51,10 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   if (!isAuthenticated || !user || !isAdminRole(user.role)) {
     return <Navigate to="/login" replace />;
   }
+  // Prevent suspended admins from accessing admin pages
+  if (user.status === "suspended") {
+    return <Navigate to="/login" replace />;
+  }
   return <>{children}</>;
 };
 

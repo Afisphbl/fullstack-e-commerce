@@ -18,6 +18,7 @@ export interface User {
   email: string;
   role: string;
   photo: string;
+  status?: string;
   addresses?: Address[];
 }
 

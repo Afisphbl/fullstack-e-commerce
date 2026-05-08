@@ -114,13 +114,15 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               </span>
             )}
           </div>
-          <Button
-            size="sm"
-            onClick={() => addToCart(product)}
-            className="h-8 px-3 bg-primary text-primary-foreground hover:bg-primary/90 text-xs"
-          >
-            <ShoppingCart className="mr-1 h-3.5 w-3.5" /> Add
-          </Button>
+          {!isAdminRole(user?.role) && (
+            <Button
+              size="sm"
+              onClick={() => addToCart(product)}
+              className="h-8 px-3 bg-primary text-primary-foreground hover:bg-primary/90 text-xs"
+            >
+              <ShoppingCart className="mr-1 h-3.5 w-3.5" /> Add
+            </Button>
+          )}
         </div>
       </div>
     </article>
