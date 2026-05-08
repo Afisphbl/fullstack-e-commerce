@@ -24,10 +24,19 @@ const signup = async (body, res) => {
 const login = async ({ email, password }, res, next) => {
   if (!email || !password)
     return next(new AppError(MESSAGES.INVALID_CREDENTIALS, 400));
-
-  const user = await User.findOne({ email }).select('+password');
+  
+  // Include inactive users to check if they're suspended
+  const user = await User.findOne({ email })
+    .select('+password +active')
+    .setOptions({ includeInactive: true });
+    
   if (!user || !(await user.correctPassword(password, user.password)))
     return next(new AppError(MESSAGES.INVALID_CREDENTIALS, 401));
+
+  // Check if user account is suspended
+  if (user.status === 'suspended' || user.active === false) {
+    return next(new AppError('Your account has been suspended. Please contact support for assistance.', 403));
+  }
 
   // Non-blocking lastLogin update - don't fail auth if this fails
   User.updateOne({ _id: user._id }, { $set: { lastLogin: new Date() } })
