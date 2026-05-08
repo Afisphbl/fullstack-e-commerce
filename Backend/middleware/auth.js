@@ -12,28 +12,28 @@ const MESSAGES = require('../constants/messages');
 const signToken = (id) =>
   jwt.sign({ id }, config.jwtSecret, { expiresIn: config.jwtExpiresIn });
 
-// ─── Send token response (cookie + JSON) ──────────────────────────────────────
+// ─── Send token response (cookie only) ────────────────────────────────────────
 const sendTokenResponse = (user, statusCode, res) => {
   const token = signToken(user._id);
 
   const cookieOptions = {
     expires: new Date(
       Date.now() +
-        parseInt(process.env.JWT_EXPIRES_IN_DAYS, 10) * 24 * 60 * 60 * 1000
+        parseInt(process.env.JWT_EXPIRES_IN_DAYS || '7', 10) * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
-    sameSite: 'strict',
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
   };
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
   res.cookie('jwt', token, cookieOptions);
 
   // Remove password from output
   user.password = undefined;
 
+  // DO NOT send token in response body - it's in the cookie
   res.status(statusCode).json({
     status: 'success',
-    token,
     data: { user },
   });
 };

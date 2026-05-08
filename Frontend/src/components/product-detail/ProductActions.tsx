@@ -11,6 +11,8 @@ import { Product } from "@/lib/api";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useCompare } from "@/contexts/CompareContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { isAdminRole } from "@/lib/roles";
 
 interface ProductActionsProps {
   product: Product;
@@ -18,6 +20,7 @@ interface ProductActionsProps {
 
 export const ProductActions = ({ product }: ProductActionsProps) => {
   const [quantity, setQuantity] = useState(1);
+  const { user } = useAuth();
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { isInCompare, addToCompare, removeFromCompare } = useCompare();
@@ -26,6 +29,43 @@ export const ProductActions = ({ product }: ProductActionsProps) => {
     if (product.stock === 0 || quantity > product.stock) return;
     addToCart(product, quantity);
   };
+
+  // Hide cart functionality for admin roles
+  if (isAdminRole(user?.role)) {
+    return (
+      <div className="flex gap-3 mb-8">
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={() => toggleFavorite(product)}
+          className={
+            isFavorite(product.id)
+              ? "border-destructive text-destructive"
+              : ""
+          }
+        >
+          <Heart
+            className="h-5 w-5"
+            fill={isFavorite(product.id) ? "currentColor" : "none"}
+          />
+        </Button>
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={() =>
+            isInCompare(product.id)
+              ? removeFromCompare(product.id)
+              : addToCompare(product)
+          }
+          className={
+            isInCompare(product.id) ? "border-primary text-primary" : ""
+          }
+        >
+          <GitCompare className="h-5 w-5" />
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <>

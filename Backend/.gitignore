@@ -26,3 +26,4 @@ build/
 public/uploads/
 
 logs/*.json
+test-cookie-auth.sh
