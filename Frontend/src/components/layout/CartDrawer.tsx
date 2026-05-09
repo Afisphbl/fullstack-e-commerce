@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Trash2, X, Loader2, Tag } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Sheet,
   SheetContent,
@@ -10,6 +12,23 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+
+// Skeleton loader component for cart items
+const CartItemSkeleton = () => (
+  <div className="rounded-lg border border-border bg-card p-3 animate-fade-in">
+    <div className="flex gap-3">
+      <Skeleton className="h-16 w-16 rounded-md" />
+      <div className="min-w-0 flex-1 space-y-2">
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-3 w-1/2" />
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-8 w-24 rounded-md" />
+          <Skeleton className="h-4 w-16" />
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
 export const CartDrawer = () => {
   const {
@@ -20,9 +39,34 @@ export const CartDrawer = () => {
     updateQuantity,
     clearCart,
     total,
+    subtotal,
+    discount,
+    couponCode,
+    applyCoupon,
+    removeCoupon,
     itemCount,
     closeCart,
+    isLoading,
   } = useCart();
+
+  const [couponInput, setCouponInput] = useState("");
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+
+  const handleApplyCoupon = async () => {
+    if (!couponInput.trim()) return;
+    
+    setIsApplyingCoupon(true);
+    try {
+      await applyCoupon(couponInput.trim());
+      setCouponInput("");
+    } finally {
+      setIsApplyingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = async () => {
+    await removeCoupon();
+  };
 
   const shipping = total > 100 || total === 0 ? 0 : 9.99;
   const tax = total * 0.08;
@@ -46,7 +90,13 @@ export const CartDrawer = () => {
           </SheetDescription>
         </SheetHeader>
 
-        {items.length === 0 ? (
+        {isLoading ? (
+          <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4" role="status" aria-live="polite" aria-label="Loading cart items">
+            <CartItemSkeleton />
+            <CartItemSkeleton />
+            <CartItemSkeleton />
+          </div>
+        ) : items.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
             <ShoppingBag className="mb-4 h-14 w-14 text-muted-foreground" />
             <p className="mb-2 text-lg font-semibold text-foreground">
@@ -65,13 +115,13 @@ export const CartDrawer = () => {
               {items.map(({ product, quantity }) => (
                 <div
                   key={product.id}
-                  className="rounded-lg border border-border bg-card p-3"
+                  className="rounded-lg border border-border bg-card p-3 animate-fade-in transition-all duration-300 ease-in-out hover:shadow-md"
                 >
                   <div className="flex gap-3">
                     <Link
                       to={`/product/${product.slug}`}
                       onClick={closeCart}
-                      className="h-16 w-16 overflow-hidden rounded-md"
+                      className="h-16 w-16 overflow-hidden rounded-md transition-transform duration-200 hover:scale-105"
                     >
                       <img
                         src={product.image}
@@ -84,14 +134,15 @@ export const CartDrawer = () => {
                         <Link
                           to={`/product/${product.slug}`}
                           onClick={closeCart}
-                          className="line-clamp-2 text-sm font-semibold text-foreground hover:text-primary"
+                          className="line-clamp-2 text-sm font-semibold text-foreground hover:text-primary transition-colors duration-200"
                         >
                           {product.name}
                         </Link>
                         <button
+                          type="button"
                           onClick={() => removeFromCart(product.id)}
-                          aria-label={`Remove ${product.name}`}
-                          className="text-muted-foreground transition-colors hover:text-destructive"
+                          aria-label={`Remove ${product.name} from cart`}
+                          className="text-muted-foreground transition-all duration-200 hover:text-destructive hover:scale-110"
                         >
                           <X className="h-4 w-4" />
                         </button>
@@ -100,30 +151,40 @@ export const CartDrawer = () => {
                         {product.brand}
                       </p>
                       <div className="mt-2 flex items-center justify-between">
-                        <div className="flex items-center rounded-md border border-border">
+                        <div className="flex items-center rounded-md border border-border transition-all duration-200 hover:border-primary">
                           <button
+                            type="button"
                             onClick={() =>
                               updateQuantity(product.id, quantity - 1)
                             }
-                            aria-label={`Decrease quantity for ${product.name}`}
-                            className="p-1.5 text-muted-foreground hover:text-foreground"
+                            aria-label={`Decrease quantity of ${product.name}`}
+                            className="p-1.5 text-muted-foreground hover:text-foreground transition-colors duration-150"
                           >
                             <Minus className="h-3.5 w-3.5" />
                           </button>
-                          <span className="px-2 text-sm font-medium text-foreground">
+                          <span 
+                            className="px-2 text-sm font-medium text-foreground transition-all duration-300"
+                            aria-live="polite"
+                            aria-label={`Quantity: ${quantity}`}
+                          >
                             {quantity}
                           </span>
                           <button
+                            type="button"
                             onClick={() =>
                               updateQuantity(product.id, quantity + 1)
                             }
-                            aria-label={`Increase quantity for ${product.name}`}
-                            className="p-1.5 text-muted-foreground hover:text-foreground"
+                            aria-label={`Increase quantity of ${product.name}`}
+                            className="p-1.5 text-muted-foreground hover:text-foreground transition-colors duration-150"
                           >
                             <Plus className="h-3.5 w-3.5" />
                           </button>
                         </div>
-                        <span className="text-sm font-bold text-foreground">
+                        <span 
+                          className="text-sm font-bold text-foreground transition-all duration-300"
+                          aria-live="polite"
+                          aria-label={`Item total: $${(product.price * quantity).toFixed(2)}`}
+                        >
                           ${(product.price * quantity).toFixed(2)}
                         </span>
                       </div>
@@ -134,11 +195,71 @@ export const CartDrawer = () => {
             </div>
 
             <div className="border-t border-border p-4">
+              {/* Coupon Input Section */}
+              {!couponCode && (
+                <div className="mb-4">
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Tag className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        type="text"
+                        placeholder="Enter coupon code"
+                        value={couponInput}
+                        onChange={(e) => setCouponInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleApplyCoupon();
+                          }
+                        }}
+                        className="pl-9"
+                        disabled={isApplyingCoupon}
+                      />
+                    </div>
+                    <Button
+                      onClick={handleApplyCoupon}
+                      disabled={!couponInput.trim() || isApplyingCoupon}
+                      className="min-w-[80px]"
+                    >
+                      {isApplyingCoupon ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        "Apply"
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Applied Coupon Display */}
+              {couponCode && (
+                <div className="mb-4 flex items-center justify-between rounded-lg border border-green-200 bg-green-50 p-3 dark:border-green-900 dark:bg-green-950">
+                  <div className="flex items-center gap-2">
+                    <Tag className="h-4 w-4 text-green-600 dark:text-green-400" />
+                    <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                      {couponCode}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveCoupon}
+                    className="text-sm text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200"
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
+
               <div className="mb-3 space-y-1.5 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span className="text-foreground">${total.toFixed(2)}</span>
+                  <span className="text-foreground">${(subtotal || total).toFixed(2)}</span>
                 </div>
+                {discount > 0 && (
+                  <div className="flex justify-between text-green-600 dark:text-green-400">
+                    <span>Discount</span>
+                    <span>-${discount.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Shipping</span>
                   <span className="text-foreground">
