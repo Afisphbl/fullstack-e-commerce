@@ -62,7 +62,11 @@ const AdminLayout = () => {
       }),
     onSuccess: () => {
       toast.success("Logged out successfully");
+      // Clear all user-related data from cache
       queryClient.setQueryData(["currentUser"], null);
+      queryClient.removeQueries({ queryKey: ["wishlist"] });
+      queryClient.removeQueries({ queryKey: ["cart"] });
+      queryClient.removeQueries({ queryKey: ["orders"] });
       navigate("/login");
     },
     onError: (error: Error) => {

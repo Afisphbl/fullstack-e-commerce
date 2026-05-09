@@ -12,7 +12,8 @@ import {
   ChevronRight,
   ArrowUpRight,
   MapPin,
-  Globe
+  Globe,
+  Heart
 } from 'lucide-react';
 import { 
   ResponsiveContainer, 
@@ -355,6 +356,87 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Most Wishlisted Products Section */}
+      {data.wishlistAnalytics && data.wishlistAnalytics.topWishlistedProducts.length > 0 && (
+        <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
+          <div className="p-6 flex items-center justify-between border-b border-border">
+            <div>
+              <h3 className="font-display font-bold text-foreground">Most Wishlisted Products</h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                Products customers love the most • {data.wishlistAnalytics.stats.totalWishlistItems} total items in wishlists
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <p className="text-xs text-muted-foreground">Avg per user</p>
+                <p className="text-sm font-bold text-foreground">{data.wishlistAnalytics.stats.avgWishlistSize.toFixed(1)} items</p>
+              </div>
+            </div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold border-b border-border">
+                  <th className="px-6 py-4">Product Name</th>
+                  <th className="px-6 py-4">Price</th>
+                  <th className="px-6 py-4 text-center">
+                    <div className="flex items-center justify-center gap-1">
+                      <Heart className="h-3 w-3" />
+                      <span>Wishlist Count</span>
+                    </div>
+                  </th>
+                  <th className="px-6 py-4 text-center">Popularity</th>
+                  <th className="px-6 py-4 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {data.wishlistAnalytics.topWishlistedProducts.map((item: any, index: number) => (
+                  <tr key={item.productId} className="hover:bg-muted/50 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="relative">
+                          <img src={item.productImage} alt={item.productName} className="w-10 h-10 rounded-lg object-cover bg-muted" />
+                          {index < 3 && (
+                            <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
+                              {index + 1}
+                            </div>
+                          )}
+                        </div>
+                        <span className="text-sm font-semibold text-foreground truncate max-w-[200px]">{item.productName}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-sm font-medium text-foreground">${item.productPrice}</td>
+                    <td className="px-6 py-4 text-center">
+                      <div className="flex items-center justify-center gap-1">
+                        <Heart className="h-4 w-4 fill-destructive text-destructive" />
+                        <span className="text-sm font-bold text-foreground">{item.wishlistCount}</span>
+                        <span className="text-xs text-muted-foreground">users</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-center gap-2">
+                        <Progress 
+                          value={(item.wishlistCount / data.wishlistAnalytics.topWishlistedProducts[0].wishlistCount) * 100} 
+                          className="h-2 w-24 bg-muted" 
+                        />
+                        <span className="text-xs font-medium text-muted-foreground">
+                          {Math.round((item.wishlistCount / data.wishlistAnalytics.topWishlistedProducts[0].wishlistCount) * 100)}%
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <button className="text-muted-foreground hover:text-foreground" aria-label="More actions">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

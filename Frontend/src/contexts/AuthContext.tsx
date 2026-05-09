@@ -36,6 +36,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     queryFn: () => apiFetch("/api/v1/users/me").then((res) => res.data.data),
     retry: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
   });
 
   const user = !isError && data ? data : null;

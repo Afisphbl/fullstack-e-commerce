@@ -28,6 +28,7 @@ const orderRoutes    = require('./routes/orderRoutes');
 const couponRoutes   = require('./routes/couponRoutes');
 const cartRoutes     = require('./routes/cartRoutes');
 const specificationRoutes = require('./routes/specificationRoutes');
+const wishlistRoutes = require('./routes/wishlistRoutes');
 
 // ── Error handling ────────────────────────────────────────────────────────────
 const globalErrorHandler = require('./middleware/errorHandler');
@@ -123,6 +124,7 @@ app.use(`${API_PREFIX}/orders`,     orderRoutes);
 app.use(`${API_PREFIX}/coupons`,    couponRoutes);
 app.use(`${API_PREFIX}/cart`,       cartRoutes);
 app.use(`${API_PREFIX}/specifications`, specificationRoutes);
+app.use(`${API_PREFIX}/wishlist`,   wishlistRoutes);
 
 // ── 404 — unmatched routes ────────────────────────────────────────────────────
 app.all('*', (req, res, next) => {
