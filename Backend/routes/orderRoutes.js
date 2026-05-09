@@ -18,13 +18,13 @@ router.route('/')
 
 router.get('/:id', orderController.getOrder);
 
-// ── Admin / Manager ───────────────────────────────────────────────────────────
-router.use(restrictTo(ROLES.ADMIN, ROLES.MANAGER, ROLES.SUPER_ADMIN));
+// ── Admin only ────────────────────────────────────────────────────────────────
+router.use(restrictTo(ROLES.ADMIN));
 
 router.get('/stats/overview', orderController.getOrderStats);
 router.patch('/:id/deliver', orderController.markDelivered);
 router.patch('/:id/pay',     orderController.markPaid);
 router.patch('/:id',         orderController.updateOrder);
-router.delete('/:id',        restrictTo(ROLES.ADMIN, ROLES.SUPER_ADMIN), orderController.deleteOrder);
+router.delete('/:id',        orderController.deleteOrder);
 
 module.exports = router;

@@ -7,7 +7,6 @@ interface UseUserExportParams {
   tab: string;
   role: string;
   status: string;
-  department: string;
   search: string;
 }
 
@@ -28,7 +27,6 @@ export const useUserExport = () => {
         tab: params.tab,
         role: params.role,
         status: params.status,
-        department: params.department,
         page: currentPage,
         limit: pageLimit,
         search: params.search,
@@ -45,7 +43,6 @@ export const useUserExport = () => {
           tab: params.tab,
           role: params.role,
           status: params.status,
-          department: params.department,
           page: currentPage,
           limit: pageLimit,
           search: params.search,
@@ -64,8 +61,6 @@ export const useUserExport = () => {
         phone: user.phone,
         role: roleLabel(user.role),
         status: user.status,
-        department: user.department || "",
-        accessLevel: user.accessLevel || "",
         createdAt: formatDate(user.createdAt),
         lastLogin: formatDateTime(user.lastLogin),
       }));
@@ -76,8 +71,6 @@ export const useUserExport = () => {
         phone: "",
         role: "",
         status: "",
-        department: "",
-        accessLevel: "",
         createdAt: "",
         lastLogin: "",
       });

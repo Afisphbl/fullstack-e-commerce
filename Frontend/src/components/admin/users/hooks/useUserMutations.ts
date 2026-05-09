@@ -13,10 +13,8 @@ interface UserFormPayload {
   email: string;
   phone?: string;
   photo?: string;
-  role: "user" | "manager" | "admin" | "super-admin";
+  role: "user" | "admin";
   status: AdminUserStatus;
-  department: "sales" | "support" | "delivery" | "inventory" | null;
-  accessLevel: "standard" | "elevated" | "full";
   permissions: string[];
   password?: string;
   passwordConfirm?: string;

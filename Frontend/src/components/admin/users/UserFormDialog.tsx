@@ -31,9 +31,7 @@ import {
 
 const ROLES = [
   { value: "user", label: "Customer" },
-  { value: "manager", label: "Staff" },
   { value: "admin", label: "Admin" },
-  { value: "super-admin", label: "Super Admin" },
 ] as const;
 
 const STATUSES = [
@@ -42,42 +40,17 @@ const STATUSES = [
   { value: "suspended", label: "Suspended" },
 ] as const;
 
-const DEPARTMENTS = [
-  { value: "sales", label: "Sales" },
-  { value: "support", label: "Support" },
-  { value: "delivery", label: "Delivery" },
-  { value: "inventory", label: "Inventory" },
-] as const;
-
-const ACCESS_LEVELS = [
-  { value: "standard", label: "Standard" },
-  { value: "elevated", label: "Elevated" },
-  { value: "full", label: "Full" },
-] as const;
-
 const userFormSchema = z.object({
   name: z.string().min(2, "Full name is required"),
   email: z.string().email("Enter a valid email"),
   phone: z.string().optional(),
   photo: z.any().optional(),
-  role: z.enum(["user", "manager", "admin", "super-admin"]),
+  role: z.enum(["user", "admin"]),
   status: z.enum(["active", "pending", "suspended"]),
-  department: z.enum(["sales", "support", "delivery", "inventory"]).nullable(),
-  accessLevel: z.enum(["standard", "elevated", "full"]),
   permissions: z.string().optional(),
   password: z.string().optional(),
   passwordConfirm: z.string().optional(),
 }).superRefine((values, ctx) => {
-  const isStaff = values.role !== "user";
-
-  if (isStaff && !values.department) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: ["department"],
-      message: "Department is required for staff members",
-    });
-  }
-
   if (values.password && values.password.length < 8) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
@@ -125,10 +98,8 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
       email: editingUser?.email || "",
       phone: editingUser?.phone || "",
       photo: editingUser?.photo || "",
-      role: editingUser?.role || (isStaffTab ? "manager" : "user"),
+      role: editingUser?.role || (isStaffTab ? "admin" : "user"),
       status: editingUser?.status || "active",
-      department: editingUser?.department || (isStaffTab ? "sales" : null),
-      accessLevel: editingUser?.accessLevel || "standard",
       permissions: editingUser?.permissions.join(", ") || "",
       password: "",
       passwordConfirm: "",
@@ -142,10 +113,8 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
         email: editingUser?.email || "",
         phone: editingUser?.phone || "",
         photo: editingUser?.photo || "",
-        role: editingUser?.role || (isStaffTab ? "manager" : "user"),
+        role: editingUser?.role || (isStaffTab ? "admin" : "user"),
         status: editingUser?.status || "active",
-        department: editingUser?.department || (isStaffTab ? "sales" : null),
-        accessLevel: editingUser?.accessLevel || "standard",
         permissions: editingUser?.permissions.join(", ") || "",
         password: "",
         passwordConfirm: "",
@@ -253,7 +222,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
               />
             </div>
 
-            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-5 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="role"
@@ -265,13 +234,10 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
                       onValueChange={(value) => {
                         field.onChange(value);
                         if (value === "user") {
-                          form.setValue("department", null);
-                          form.setValue("accessLevel", "standard");
                           form.setValue("permissions", "");
-                        } else if (!form.getValues("department")) {
-                          form.setValue("department", "sales");
                         }
                       }}
+                      disabled={!!editingUser}
                     >
                       <FormControl>
                         <SelectTrigger className="h-11 rounded-xl">
@@ -314,63 +280,6 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="department"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Department</FormLabel>
-                    <Select
-                      value={field.value ?? "none"}
-                      onValueChange={(value) => field.onChange(value === "none" ? null : value)}
-                      disabled={form.watch("role") === "user"}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="h-11 rounded-xl">
-                          <SelectValue placeholder="Select department" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="none">None</SelectItem>
-                        {DEPARTMENTS.map((item) => (
-                          <SelectItem key={item.value} value={item.value}>
-                            {item.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="accessLevel"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Access Level</FormLabel>
-                    <Select
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      disabled={form.watch("role") === "user"}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="h-11 rounded-xl">
-                          <SelectValue />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {ACCESS_LEVELS.map((item) => (
-                          <SelectItem key={item.value} value={item.value}>
-                            {item.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
 
             <FormField
@@ -389,7 +298,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
                     />
                   </FormControl>
                   <p className="text-xs text-muted-foreground">
-                    Enter comma-separated permissions for staff and admin roles.
+                    Enter comma-separated permissions for admin role.
                   </p>
                   <FormMessage />
                 </FormItem>

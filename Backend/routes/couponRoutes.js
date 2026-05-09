@@ -13,7 +13,7 @@ router.use(protect);
 router.post('/validate', couponController.validateCoupon);
 
 // ── Admin CRUD ────────────────────────────────────────────────────────────────
-router.use(restrictTo(ROLES.ADMIN, ROLES.SUPER_ADMIN));
+router.use(restrictTo(ROLES.ADMIN));
 
 router.route('/')
   .get(couponController.getAllCoupons)

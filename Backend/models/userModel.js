@@ -6,9 +6,7 @@ const crypto = require('crypto');
 const validator = require('validator');
 const ROLES = require('../constants/roles');
 
-const STAFF_DEPARTMENTS = ['sales', 'support', 'delivery', 'inventory'];
 const ACCOUNT_STATUSES = ['active', 'suspended', 'pending'];
-const ACCESS_LEVELS = ['standard', 'elevated', 'full'];
 
 const userSchema = new mongoose.Schema(
   {
@@ -46,19 +44,9 @@ const userSchema = new mongoose.Schema(
       enum: ACCOUNT_STATUSES,
       default: 'active',
     },
-    department: {
-      type: String,
-      enum: [...STAFF_DEPARTMENTS, null],
-      default: null,
-    },
     permissions: {
       type: [String],
       default: [],
-    },
-    accessLevel: {
-      type: String,
-      enum: ACCESS_LEVELS,
-      default: 'standard',
     },
     lastLogin: {
       type: Date,
@@ -118,7 +106,6 @@ const userSchema = new mongoose.Schema(
 // email is already indexed via unique:true — only add non-unique indexes here
 userSchema.index({ role: 1 });
 userSchema.index({ status: 1 });
-userSchema.index({ department: 1 });
 userSchema.index({ name: 'text', email: 'text', phone: 'text' });
 
 // ─── Virtuals ─────────────────────────────────────────────────────────────────

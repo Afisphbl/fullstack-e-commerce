@@ -11,9 +11,9 @@ const router = express.Router();
 router.get('/product/:productId', specificationController.getSpecificationByProduct);
 router.get('/:id', specificationController.getSpecification);
 
-// Protected routes (Admin/Manager/SuperAdmin)
+// Protected routes (Admin only)
 router.use(protect);
-router.use(restrictTo(ROLES.ADMIN, ROLES.MANAGER, ROLES.SUPER_ADMIN));
+router.use(restrictTo(ROLES.ADMIN));
 
 router.route('/')
   .get(specificationController.getAllSpecifications)

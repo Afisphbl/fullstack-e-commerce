@@ -9,7 +9,6 @@ export const useUserFilters = () => {
   const tab = searchParams.get("tab") || "all";
   const role = searchParams.get("role") || "all";
   const status = searchParams.get("status") || "all";
-  const department = searchParams.get("department") || "all";
   const page = Number(searchParams.get("page") || "1");
   const searchParamString = searchParams.toString();
 
@@ -49,7 +48,6 @@ export const useUserFilters = () => {
     tab,
     role,
     status,
-    department,
     page,
     updateParams,
   };
