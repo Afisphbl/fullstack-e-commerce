@@ -66,7 +66,10 @@ exports.createOne = (Model) =>
  */
 exports.getOne = (Model, populateOptions = null) =>
   catchAsync(async (req, res, next) => {
-    let query = Model.findById(req.params.id);
+    // Respect filterObj for ownership/access control (e.g., user can only see their own orders)
+    const filter = { _id: req.params.id, ...(req.filterObj || {}) };
+    
+    let query = Model.findOne(filter);
     if (populateOptions) query = query.populate(populateOptions);
 
     const doc = await query;

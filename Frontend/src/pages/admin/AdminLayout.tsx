@@ -123,9 +123,17 @@ const AdminLayout = () => {
           <div
             className={`flex items-center rounded-2xl bg-muted/40 ${collapsed ? "justify-center" : "gap-3"} px-3 py-3`}
           >
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-bold">
-              {user?.name?.[0]}
-            </div>
+            {user?.photo && user.photo !== 'default.jpg' ? (
+              <img
+                src={user.photo}
+                alt={user.name}
+                className="w-8 h-8 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-bold">
+                {user?.name?.[0]?.toUpperCase()}
+              </div>
+            )}
             {!collapsed && (
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">
@@ -190,12 +198,20 @@ const AdminLayout = () => {
                 )}
               </Button>
               <div className="hidden items-center gap-3 rounded-2xl border border-border/70 bg-card px-3 py-2 md:flex">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-                  {user?.name?.[0]}
-                </div>
+                {user?.photo && user.photo !== 'default.jpg' ? (
+                  <img
+                    src={user.photo}
+                    alt={user.name}
+                    className="h-9 w-9 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+                    {user?.name?.[0]?.toUpperCase()}
+                  </div>
+                )}
                 <div className="max-w-[160px]">
                   <p className="truncate text-sm font-medium text-foreground">{user?.name}</p>
-                  <p className="truncate text-xs text-muted-foreground">{user?.role}</p>
+                  <p className="truncate text-xs text-muted-foreground capitalize">{user?.role}</p>
                 </div>
               </div>
             </div>

@@ -16,7 +16,7 @@ router.route('/')
   .get(orderController.setUserFilter, orderController.getAllOrders)
   .post(createOrderRules, validate, orderController.createOrder);
 
-router.get('/:id', orderController.getOrder);
+router.get('/:id', orderController.setUserFilter, orderController.getOrder);
 
 // ── Admin only ────────────────────────────────────────────────────────────────
 router.use(restrictTo(ROLES.ADMIN));
