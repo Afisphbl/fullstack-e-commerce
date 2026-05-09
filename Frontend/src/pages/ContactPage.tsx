@@ -87,12 +87,12 @@ const ContactPage = () => {
 
         <div className="space-y-5">
           {[
-            { icon: Mail, title: "Email", info: "support@voltedge.com" },
-            { icon: Phone, title: "Phone", info: "+1 (555) 123-4567" },
+            { icon: Mail, title: "Email", info: "abuabdurehman0308@gmail.com" },
+            { icon: Phone, title: "Phone", info: "+251993877913" },
             {
               icon: MapPin,
               title: "Address",
-              info: "123 Innovation Drive, San Francisco, CA 94105",
+              info: "Addis Ababa, Ethiopia",
             },
           ].map(({ icon: Icon, title, info }) => (
             <div
@@ -140,8 +140,8 @@ const ContactPage = () => {
 
       <div className="mt-8 overflow-hidden rounded-2xl border border-border">
         <iframe
-          title="VoltEdge location"
-          src="https://www.google.com/maps?q=San%20Francisco%20CA&output=embed"
+          title="Our location"
+          src="https://www.google.com/maps?q=9.7719357,38.7388875&output=embed"
           width="100%"
           height="320"
           loading="lazy"
