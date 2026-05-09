@@ -59,7 +59,7 @@ const userFormSchema = z.object({
   name: z.string().min(2, "Full name is required"),
   email: z.string().email("Enter a valid email"),
   phone: z.string().optional(),
-  photo: z.string().optional(),
+  photo: z.any().optional(),
   role: z.enum(["user", "manager", "admin", "super-admin"]),
   status: z.enum(["active", "pending", "suspended"]),
   department: z.enum(["sales", "support", "delivery", "inventory"]).nullable(),
@@ -114,6 +114,10 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
   onSubmit,
   isPending,
 }) => {
+  const [previewUrl, setPreviewUrl] = React.useState<string | null>(
+    editingUser?.photo || null
+  );
+
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
@@ -146,6 +150,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
         password: "",
         passwordConfirm: "",
       });
+      setPreviewUrl(editingUser?.photo || null);
     }
   }, [open, editingUser, isStaffTab, form]);
 
@@ -209,11 +214,38 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
               <FormField
                 control={form.control}
                 name="photo"
-                render={({ field }) => (
+                render={({ field: { value, onChange, ...field } }) => (
                   <FormItem>
-                    <FormLabel>Profile Picture URL</FormLabel>
+                    <FormLabel>Profile Picture</FormLabel>
                     <FormControl>
-                      <Input {...field} className="h-11 rounded-xl" />
+                      <div className="flex items-center gap-4">
+                        {previewUrl && (
+                          <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-full border border-border/50 bg-muted/30">
+                            <img
+                              src={previewUrl}
+                              alt="Profile preview"
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                        )}
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          className="h-11 rounded-xl pt-[7px] text-sm file:mr-4 file:rounded-md file:border-0 file:bg-primary/10 file:px-3 file:py-1 file:text-xs file:font-medium file:text-primary hover:file:bg-primary/20"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              onChange(file);
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setPreviewUrl(reader.result as string);
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          } }
+                          {...field}
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

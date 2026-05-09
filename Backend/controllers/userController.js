@@ -38,8 +38,11 @@ const buildAdminUserPayload = (body, { isCreate = false } = {}) => {
     }
   });
 
-  if (Array.isArray(payload.permissions)) {
-    payload.permissions = payload.permissions
+  if (payload.permissions) {
+    const perms = Array.isArray(payload.permissions)
+      ? payload.permissions
+      : String(payload.permissions).split(',').filter(Boolean);
+    payload.permissions = perms
       .map((permission) => String(permission).trim())
       .filter(Boolean);
   }

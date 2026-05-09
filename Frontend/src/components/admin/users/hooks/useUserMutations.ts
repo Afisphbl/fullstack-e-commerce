@@ -31,12 +31,35 @@ export const useUserMutations = () => {
       payload,
     }: {
       editingUser: AdminUser | null;
-      payload: UserFormPayload;
+      payload: any; // Using any to allow File or string for photo
     }) => {
       if (!editingUser && (!payload.password || !payload.passwordConfirm)) {
         throw new Error("Password and confirmation are required for new users");
       }
 
+      // Check if we need to use FormData (e.g., if photo is a File)
+      const useFormData = payload.photo instanceof File;
+
+      if (useFormData) {
+        const formData = new FormData();
+        Object.entries(payload).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            if (Array.isArray(value)) {
+              // Append array items individually for multipart/form-data
+              value.forEach((val) => formData.append(key, val));
+            } else {
+              formData.append(key, value as string | Blob);
+            }
+          }
+        });
+
+        if (editingUser) {
+          return updateAdminUser(editingUser.id, formData);
+        }
+        return createAdminUser(formData);
+      }
+
+      // Fallback to JSON if no file is present
       if (editingUser) {
         return updateAdminUser(editingUser.id, payload);
       }

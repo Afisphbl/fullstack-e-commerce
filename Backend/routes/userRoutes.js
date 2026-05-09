@@ -31,11 +31,11 @@ router.use(restrictTo(ROLES.ADMIN, ROLES.SUPER_ADMIN));
 
 router.route('/')
   .get(userController.getAllUsers)
-  .post(userController.createUser);
+  .post(uploadUserPhoto, resizeUserPhoto, userController.createUser);
 
 router.route('/:id')
   .get(userController.getUser)
-  .patch(userController.updateUser)
+  .patch(uploadUserPhoto, resizeUserPhoto, userController.updateUser)
   .delete(userController.deleteUser);
 
 module.exports = router;

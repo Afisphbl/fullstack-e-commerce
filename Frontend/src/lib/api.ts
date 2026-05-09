@@ -534,10 +534,10 @@ export const fetchAdminUsers = async (
   };
 };
 
-export const createAdminUser = async (payload: Record<string, unknown>) => {
+export const createAdminUser = async (payload: Record<string, unknown> | FormData) => {
   const data = await apiFetch("/api/v1/users", {
     method: "POST",
-    body: JSON.stringify(payload),
+    body: payload instanceof FormData ? payload : JSON.stringify(payload),
   });
 
   return mapAdminUser(data.data.data);
@@ -545,11 +545,11 @@ export const createAdminUser = async (payload: Record<string, unknown>) => {
 
 export const updateAdminUser = async (
   id: string,
-  payload: Record<string, unknown>,
+  payload: Record<string, unknown> | FormData,
 ) => {
   const data = await apiFetch(`/api/v1/users/${id}`, {
     method: "PATCH",
-    body: JSON.stringify(payload),
+    body: payload instanceof FormData ? payload : JSON.stringify(payload),
   });
 
   return mapAdminUser(data.data.data);
