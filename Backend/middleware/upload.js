@@ -101,7 +101,7 @@ const resizeCategoryImage = catchAsync(async (req, res, next) => {
       const stream = cloudinary.uploader.upload_stream(
         {
           folder: 'e-commerce/categories',
-          public_id: `category-${Date.now()}`,
+          public_id: `category-${Date.now()}-${crypto.randomUUID()}`,
           format: 'jpg',
           resource_type: 'image',
         },

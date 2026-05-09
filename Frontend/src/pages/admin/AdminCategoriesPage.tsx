@@ -207,20 +207,21 @@ const AdminCategoriesPage = () => {
                       </button>
                     </div>
                   ) : (
-                    <div
-                      onClick={() => fileInputRef.current?.click()}
-                      className="w-32 h-32 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors"
+                    <label
+                      htmlFor="category-image-upload"
+                      className="w-32 h-32 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors focus-within:ring-2 focus-within:ring-primary"
                     >
                       <Upload className="h-8 w-8 text-muted-foreground mb-2" />
                       <span className="text-xs text-muted-foreground">Upload Image</span>
-                    </div>
+                    </label>
                   )}
                   <input
+                  id="category-image-upload"
                     ref={fileInputRef}
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
-                    className="hidden"
+                    className="sr-only"
                     disabled={isSubmitting}
                     aria-label="Upload category image"
                   />
