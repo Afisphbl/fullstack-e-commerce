@@ -1,6 +1,6 @@
-import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { Product } from "@/lib/api";
 import { ProductTableRow } from "./ProductTableRow";
+import { TableSkeleton } from "@/components/shared/TableSkeleton";
 
 interface ProductTableProps {
   products: Product[];
@@ -42,12 +42,9 @@ export const ProductTable = ({
         </thead>
         <tbody className="divide-y divide-border">
           {isLoading ? (
-            <tr>
-              <td colSpan={6}>
-                <LoadingSpinner label="Loading products..." />
-              </td>
-            </tr>
+            <TableSkeleton rows={10} columns={6} />
           ) : products.length === 0 ? (
+
             <tr>
               <td
                 colSpan={6}

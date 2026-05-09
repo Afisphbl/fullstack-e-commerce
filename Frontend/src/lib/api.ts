@@ -335,21 +335,22 @@ export const fetchProductsByCategory = async (
   return result.products;
 };
 
-export const createProduct = async (productData: any) => {
+export const createProduct = async (productData: any | FormData) => {
   const data = await apiFetch("/api/v1/products", {
     method: "POST",
-    body: JSON.stringify(productData),
+    body: productData instanceof FormData ? productData : JSON.stringify(productData),
   });
   return mapProduct(data.data.data);
 };
 
-export const updateProduct = async (id: string, productData: any) => {
+export const updateProduct = async (id: string, productData: any | FormData) => {
   const data = await apiFetch(`/api/v1/products/${id}`, {
     method: "PATCH",
-    body: JSON.stringify(productData),
+    body: productData instanceof FormData ? productData : JSON.stringify(productData),
   });
   return mapProduct(data.data.data);
 };
+
 
 export const deleteProduct = async (id: string) => {
   await apiFetch(`/api/v1/products/${id}`, {

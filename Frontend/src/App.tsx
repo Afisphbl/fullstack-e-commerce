@@ -42,12 +42,22 @@ import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import { isAdminRole } from "@/lib/roles";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 
 const queryClient = new QueryClient();
 
+
+
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isAuthenticated, isLoading } = useAuth();
-  if (isLoading) return <div className="p-8 text-center flex-1">Loading...</div>;
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <LoadingSpinner size="lg" label="Authenticating and loading your admin dashboard..." />
+      </div>
+    );
+  }
+
   if (!isAuthenticated || !user || !isAdminRole(user.role)) {
     return <Navigate to="/login" replace />;
   }

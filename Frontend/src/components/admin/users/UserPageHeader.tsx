@@ -9,9 +9,11 @@ interface UserPageHeaderProps {
     totalStaff: number;
     newUsersThisMonth: number;
   };
+  isLoading?: boolean;
 }
 
-export const UserPageHeader: React.FC<UserPageHeaderProps> = ({ analytics }) => {
+export const UserPageHeader: React.FC<UserPageHeaderProps> = ({ analytics, isLoading }) => {
+
   return (
     <section className="rounded-[28px] border border-border/70 bg-gradient-to-br from-card via-card to-primary/5 p-6 shadow-card">
       <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
@@ -36,25 +38,30 @@ export const UserPageHeader: React.FC<UserPageHeaderProps> = ({ analytics }) => 
             value={analytics.totalUsers}
             note="Across customers and internal teams"
             icon={<Users className="h-5 w-5" />}
+            isLoading={isLoading}
           />
           <UserStatsCard
             title="Active users"
             value={analytics.activeUsers}
             note="Eligible to access the platform"
             icon={<BadgeCheck className="h-5 w-5" />}
+            isLoading={isLoading}
           />
           <UserStatsCard
             title="Total staff"
             value={analytics.totalStaff}
             note="Admins, managers, and operations"
             icon={<UserCog className="h-5 w-5" />}
+            isLoading={isLoading}
           />
           <UserStatsCard
             title="New this month"
             value={analytics.newUsersThisMonth}
             note="Fresh registrations in the current month"
             icon={<Bell className="h-5 w-5" />}
+            isLoading={isLoading}
           />
+
         </div>
       </div>
     </section>

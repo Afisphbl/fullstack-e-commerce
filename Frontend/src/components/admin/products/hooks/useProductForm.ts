@@ -13,8 +13,15 @@ const productSchema = z.object({
   stock: z.coerce.number().min(0),
   category: z.string().min(1, "Category is required"),
   brand: z.string().min(1, "Brand is required"),
-  imageCover: z.string().url("Must be a valid URL"),
-  images: z.string().optional(),
+  imageCover: z.any().optional(),
+  images: z.any().optional().refine((val) => {
+    if (val instanceof FileList) return val.length <= 5;
+    if (typeof val === 'string') return val.split(',').filter(Boolean).length <= 5;
+    if (Array.isArray(val)) return val.length <= 5;
+    return true;
+  }, "Maximum 5 gallery images allowed"),
+
+
   tags: z.string().optional(),
   status: z.enum(["active", "inactive", "out_of_stock", "archived"]),
   isFeatured: z.boolean().default(false),

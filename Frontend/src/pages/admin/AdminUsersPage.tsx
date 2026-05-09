@@ -148,7 +148,9 @@ const AdminUsersPage = () => {
           totalStaff: data?.analytics.totalStaff || 0,
           newUsersThisMonth: data?.analytics.newUsersThisMonth || 0,
         }}
+        isLoading={isLoading}
       />
+
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
         <div className="overflow-hidden rounded-[28px] border border-border/70 bg-card shadow-card">

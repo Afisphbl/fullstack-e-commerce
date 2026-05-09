@@ -1,9 +1,9 @@
 import React from "react";
 import { ShieldAlert } from "lucide-react";
 import { AdminUser, AdminUserStatus } from "@/lib/api";
-import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import { UserTableRow } from "./UserTableRow";
+import { TableSkeleton } from "@/components/shared/TableSkeleton";
 
 interface UserTableProps {
   users: AdminUser[];
@@ -45,12 +45,9 @@ export const UserTable: React.FC<UserTableProps> = ({
           </thead>
           <tbody className="divide-y divide-border/70 bg-card">
             {isLoading ? (
-              <tr>
-                <td colSpan={7}>
-                  <LoadingSpinner label="Loading user data from the backend..." />
-                </td>
-              </tr>
+              <TableSkeleton rows={8} columns={7} />
             ) : isError ? (
+
               <tr>
                 <td colSpan={7} className="px-4 py-16">
                   <div className="flex flex-col items-center justify-center gap-4 text-center">

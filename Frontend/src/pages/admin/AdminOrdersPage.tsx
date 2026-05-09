@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { fetchOrders, Order, updateOrder } from '@/lib/api';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from "sonner";
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { TableSkeleton } from '@/components/shared/TableSkeleton';
 
 const statusColors: Record<string, string> = {
   placed: 'bg-primary/10 text-primary border-primary/30',
@@ -15,19 +17,30 @@ const statusColors: Record<string, string> = {
 };
 
 const AdminOrdersPage = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
   const [selected, setSelected] = useState<Order | null>(null);
-  useEffect(() => { fetchOrders().then(setOrders); }, []);
+  const queryClient = useQueryClient();
 
-  const updateStatus = async (id: string, status: string) => {
-    try {
-      await updateOrder(id, { orderStatus: status });
-      setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
+  const { data: orders = [], isLoading } = useQuery({
+    queryKey: ['adminOrders'],
+    queryFn: fetchOrders
+  });
+
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string, status: string }) => 
+      updateOrder(id, { orderStatus: status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminOrders'] });
       toast.success("Order status updated successfully");
-    } catch (error: any) {
+    },
+    onError: (error: any) => {
       toast.error(error.message || "Failed to update order status");
     }
+  });
+
+  const updateStatus = (id: string, status: string) => {
+    updateStatusMutation.mutate({ id, status });
   };
+
 
   return (
     <div>
@@ -47,8 +60,11 @@ const AdminOrdersPage = () => {
             </tr>
           </thead>
           <tbody>
-            {orders.map(o => (
+            {isLoading ? (
+              <TableSkeleton rows={8} columns={7} />
+            ) : orders.map(o => (
               <tr key={o.id} className="border-t border-border hover:bg-muted/50">
+
                 <td className="p-3 text-sm font-medium text-foreground">{o.id}</td>
                 <td className="p-3">
                   <div className="text-sm font-medium text-foreground">{o.user?.name || 'Unknown'}</div>

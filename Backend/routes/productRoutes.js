@@ -22,12 +22,13 @@ router.get('/stats',    protect, restrictTo(ROLES.ADMIN, ROLES.MANAGER), product
 
 router.route('/')
   .get(productController.resolveCategoryFilter, productController.getAllProducts)
-  .post(protect, restrictTo(ROLES.ADMIN, ROLES.MANAGER), createProductRules, validate, productController.createProduct);
+  .post(protect, restrictTo(ROLES.ADMIN, ROLES.MANAGER), uploadProductImages, resizeProductImages, createProductRules, validate, productController.createProduct);
 
 router.route('/:id')
   .get(productController.getProduct)
-  .patch(protect, restrictTo(ROLES.ADMIN, ROLES.MANAGER), updateProductRules, validate, productController.updateProduct)
+  .patch(protect, restrictTo(ROLES.ADMIN, ROLES.MANAGER), uploadProductImages, resizeProductImages, updateProductRules, validate, productController.updateProduct)
   .delete(protect, restrictTo(ROLES.ADMIN, ROLES.SUPER_ADMIN), productController.deleteProduct);
+
 
 // ── Image upload ──────────────────────────────────────────────────────────────
 router.patch(

@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { fetchProducts, Product } from '@/lib/api';
+import { useQuery } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, Plus, Minus, Trash2, CreditCard } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface POSItem {
   product: Product;
@@ -11,13 +13,17 @@ interface POSItem {
 }
 
 const AdminPOSPage = () => {
-  const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState('');
   const [cart, setCart] = useState<POSItem[]>([]);
 
-  useEffect(() => { fetchProducts().then(res => setProducts(res.products)); }, []);
+  const { data: productsData, isLoading } = useQuery({
+    queryKey: ['adminProducts'],
+    queryFn: () => fetchProducts({ limit: 100 })
+  });
 
+  const products = productsData?.products || [];
   const filtered = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
+
   const total = cart.reduce((s, i) => s + i.product.price * i.quantity, 0);
 
   const addItem = (product: Product) => {
@@ -45,8 +51,17 @@ const AdminPOSPage = () => {
             <Input placeholder="Search products..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10 bg-card" />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {filtered.slice(0, 12).map(p => (
+            {isLoading ? (
+              Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="bg-card rounded-lg border border-border p-3">
+                  <Skeleton className="w-full aspect-square rounded-md mb-2" />
+                  <Skeleton className="h-4 w-3/4 mb-2" />
+                  <Skeleton className="h-5 w-1/2" />
+                </div>
+              ))
+            ) : filtered.slice(0, 12).map(p => (
               <button key={p.id} onClick={() => addItem(p)} className="bg-card rounded-lg border border-border p-3 text-left hover:shadow-card hover:border-primary/30 transition-all">
+
                 <img src={p.image} alt={p.name} className="w-full aspect-square object-cover rounded-md mb-2" />
                 <p className="text-xs font-medium text-foreground line-clamp-1">{p.name}</p>
                 <p className="text-sm font-display font-bold text-primary">${p.price}</p>
