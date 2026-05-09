@@ -208,7 +208,7 @@ const mapProduct = (p: any): Product => {
       const now = new Date();
       const diffTime = now.getTime() - createdDate.getTime();
       const diffDays = diffTime / (1000 * 60 * 60 * 24);
-      return diffDays >= 0 && diffDays <= 10;
+      return diffDays >= 0 && diffDays <= 7;
     })(),
     createdAt: p.createdAt,
   };
@@ -246,13 +246,25 @@ const mapOrder = (o: any): Order => ({
 
 
 
-const mapCategory = (c: any): Category => ({
-  ...c,
-  id: c.slug || c._id || c.id,
-  // Backend category might not have icon/count, providing defaults
-  icon: c.icon || "Laptop",
-  count: c.count || 0,
-});
+const mapCategory = (c: any): Category => {
+  const mapCategoryImage = (img: string | undefined, name: string) => {
+    if (!img) {
+      return `https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600&q=80&sig=${name}`;
+    }
+    if (img.startsWith('http') || img.startsWith('data:')) return img;
+    if (img.startsWith('/')) return img;
+    return `/img/categories/${img}`;
+  };
+
+  return {
+    ...c,
+    id: c.slug || c._id || c.id,
+    icon: c.icon || "Laptop",
+    count: c.count || 0,
+    image: mapCategoryImage(c.image, c.name),
+  };
+};
+
 
 const mapAdminUser = (user: any): AdminUser => ({
   ...user,

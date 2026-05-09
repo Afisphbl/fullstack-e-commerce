@@ -185,9 +185,20 @@ export const ProductFormMediaTab = ({ control }: ProductFormMediaTabProps) => {
                   onChange={(e) => {
                     if (e.target.files) {
                       const newFiles = Array.from(e.target.files);
-                      const combined = [...galleryItems, ...newFiles].slice(0, 5);
-                      setGalleryItems(combined);
-                      onChange(combined);
+                      
+                      setGalleryItems(prev => {
+                        // Avoid duplicates if same file is selected again
+                        const uniqueNew = newFiles.filter(nf => 
+                          !prev.some(p => p instanceof File && p.name === nf.name && p.size === nf.size)
+                        );
+                        const combined = [...prev, ...uniqueNew].slice(0, 5);
+                        // Update form value
+                        onChange(combined);
+                        return combined;
+                      });
+                      
+                      // Reset input value to allow selecting same file again if deleted
+                      e.target.value = '';
                     }
                   }}
                 />

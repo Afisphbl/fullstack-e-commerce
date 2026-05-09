@@ -58,30 +58,38 @@ const ProductDetailPage = () => {
 
       setProduct(p);
 
-      // Fetch related products
-      const allProductsRes = await fetchProducts();
+      // Fetch related products from the same category
+      const getCategoryId = (cat: any) => typeof cat === 'object' ? cat?._id || cat?.id : cat;
+      const currentCatId = getCategoryId(p.category);
+
+      const allProductsRes = await fetchProducts({ category: currentCatId });
       const allProducts = allProductsRes.products;
 
       const scored = allProducts
         .filter((x) => x.id !== p.id)
         .map((item) => {
           let score = 0;
-          if (item.category === p.category) score += 3;
-          if (item.brand === p.brand) score += 2;
+          const itemCatId = getCategoryId(item.category);
+          
+          if (itemCatId === currentCatId) score += 10;
+          if (item.brand === p.brand) score += 5;
+          
           const sharedTags =
             item.tags?.filter((tag) => p.tags?.includes(tag)).length || 0;
           score += sharedTags;
+          
           return { item, score };
         })
+        .filter(entry => entry.score > 0) // Only show items with some similarity
         .sort(
           (a, b) =>
             b.score - a.score ||
-            Number(b.item.isNew) - Number(a.item.isNew) ||
-            b.item.price - a.item.price,
+            new Date(b.item.createdAt || 0).getTime() - new Date(a.item.createdAt || 0).getTime()
         )
         .slice(0, 4)
         .map((entry) => entry.item);
       setRelated(scored);
+
     } finally {
       setIsLoading(false);
     }

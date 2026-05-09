@@ -111,12 +111,36 @@ export const Header = () => {
               )}
             </button>
             <NavLink
-              to={isAdminRole(user?.role) ? "/admin" : "/profile"}
-              title={isAdminRole(user?.role) ? "Admin Dashboard" : "Profile"}
-              className={({ isActive }) => `p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`}
+              to={user ? (isAdminRole(user.role) ? "/admin" : "/profile") : "/auth/login"}
+              title={user ? (isAdminRole(user.role) ? "Admin Dashboard" : "Profile") : "Login / Register"}
+              className={({ isActive }) => 
+                `flex items-center gap-2 p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`
+              }
             >
-              <User className="h-5 w-5" />
+              {user ? (
+                <div className="flex items-center gap-2">
+                  <div className="h-7 w-7 rounded-full overflow-hidden border border-primary/20 bg-muted">
+                    {user.photo ? (
+                      <img 
+                        src={user.photo.startsWith('http') ? user.photo : `/img/users/${user.photo}`} 
+                        alt={user.name}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center bg-primary/10 text-primary text-[10px] font-bold">
+                        {user.name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                  <span className="hidden sm:inline text-xs font-semibold">
+                    {user.name.split(' ')[0]}
+                  </span>
+                </div>
+              ) : (
+                <User className="h-5 w-5" />
+              )}
             </NavLink>
+
 
             <Button
               variant="ghost"

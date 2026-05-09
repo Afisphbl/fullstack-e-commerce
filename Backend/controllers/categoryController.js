@@ -16,8 +16,37 @@ exports.getCategoryTree = catchAsync(async (req, res) => {
 });
 
 // ── Factory CRUD ──────────────────────────────────────────────────────────────
-exports.getAllCategories = factory.getAll(Category);
+exports.getAllCategories = catchAsync(async (req, res) => {
+  const categories = await Category.aggregate([
+    {
+      $lookup: {
+        from: 'products',
+        localField: '_id',
+        foreignField: 'category',
+        as: 'products',
+      },
+    },
+    {
+      $addFields: {
+        count: { $size: '$products' },
+      },
+    },
+    {
+      $project: {
+        products: 0,
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    results: categories.length,
+    data: { data: categories },
+  });
+});
+
 exports.getCategory     = factory.getOne(Category, { path: 'subCategories', select: 'name slug' });
+
 exports.createCategory  = factory.createOne(Category);
 exports.updateCategory  = factory.updateOne(Category);
 exports.deleteCategory  = factory.deleteOne(Category);
