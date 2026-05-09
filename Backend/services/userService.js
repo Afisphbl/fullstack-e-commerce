@@ -53,7 +53,10 @@ const removeFromWishlist = async (userId, productId) => {
 const getWishlist = async (userId) => {
   const user = await User.findById(userId)
     .select('wishlist')
-    .populate({ path: 'wishlist', select: 'name price imageCover ratingsAverage' });
+    .populate({ 
+      path: 'wishlist', 
+      select: 'name slug price finalPrice originalPrice imageCover ratingsAverage ratingsQuantity brand stock status isNew' 
+    });
   return user.wishlist;
 };
 

@@ -1,8 +1,17 @@
 import { ProductCard } from "@/components/ProductCard";
 import { useFavorites } from "@/contexts/FavoritesContext";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 
 export const WishlistGrid = () => {
-  const { favorites } = useFavorites();
+  const { favorites, isLoading } = useFavorites();
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[300px] items-center justify-center">
+        <LoadingSpinner size="lg" label="Loading your wishlist..." />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -16,7 +25,7 @@ export const WishlistGrid = () => {
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {favorites.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product.id || product._id} product={product} />
           ))}
         </div>
       )}

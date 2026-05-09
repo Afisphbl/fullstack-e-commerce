@@ -499,10 +499,16 @@ export const fetchProductStats = async () => {
   return data.data.stats;
 };
 
+export const fetchWishlistAnalytics = async () => {
+  const data = await apiFetch('/api/v1/wishlist/analytics');
+  return data.data.analytics;
+};
+
 export const fetchAdminDashboardData = async () => {
-  const [orderStats, productStats, productsRes, orders, categories] = await Promise.all([
+  const [orderStats, productStats, wishlistAnalytics, productsRes, orders, categories] = await Promise.all([
     fetchOrderStats(),
     fetchProductStats(),
+    fetchWishlistAnalytics(),
     fetchProducts({ limit: 10, sort: '-sold' }),
     fetchOrders(),
     fetchCategories(),
@@ -511,6 +517,7 @@ export const fetchAdminDashboardData = async () => {
   return {
     orderStats,
     productStats,
+    wishlistAnalytics,
     topProducts: productsRes.products,
     totalOrders: orders.length,
     totalProducts: productsRes.total,

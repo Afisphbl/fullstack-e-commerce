@@ -120,9 +120,9 @@ export const Header = () => {
               {user ? (
                 <div className="flex items-center gap-2">
                   <div className="h-7 w-7 rounded-full overflow-hidden border border-primary/20 bg-muted">
-                    {user.photo ? (
+                    {user.photo && user.photo !== 'default.jpg' ? (
                       <img 
-                        src={user.photo.startsWith('http') ? user.photo : `/img/users/${user.photo}`} 
+                        src={user.photo} 
                         alt={user.name}
                         className="h-full w-full object-cover"
                       />
