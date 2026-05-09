@@ -57,6 +57,9 @@ const getWishlist = async (userId) => {
       path: 'wishlist', 
       select: 'name slug price finalPrice originalPrice imageCover ratingsAverage ratingsQuantity brand stock status isNew' 
     });
+    if (!user) {
+    throw new AppError('User not found', 404);
+  }
   return user.wishlist;
 };
 
