@@ -76,7 +76,7 @@ const AdminUsersPage = () => {
     name: string;
     email: string;
     phone?: string;
-    photo?: string;
+    photo?: any;
     role: "user" | "manager" | "admin" | "super-admin";
     status: "active" | "pending" | "suspended";
     department: "sales" | "support" | "delivery" | "inventory" | null;
