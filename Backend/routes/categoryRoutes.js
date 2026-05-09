@@ -3,6 +3,7 @@
 const express = require('express');
 const categoryController = require('../controllers/categoryController');
 const { protect, restrictTo } = require('../middleware/auth');
+const { uploadCategoryImage, resizeCategoryImage } = require('../middleware/upload');
 const ROLES = require('../constants/roles');
 
 const router = express.Router();
@@ -12,11 +13,11 @@ router.get('/tree', categoryController.getCategoryTree);
 
 router.route('/')
   .get(categoryController.getAllCategories)
-  .post(protect, restrictTo(ROLES.ADMIN), categoryController.createCategory);
+  .post(protect, restrictTo(ROLES.ADMIN), uploadCategoryImage, resizeCategoryImage, categoryController.createCategory);
 
 router.route('/:id')
   .get(categoryController.getCategory)
-  .patch(protect, restrictTo(ROLES.ADMIN), categoryController.updateCategory)
+  .patch(protect, restrictTo(ROLES.ADMIN), uploadCategoryImage, resizeCategoryImage, categoryController.updateCategory)
   .delete(protect, restrictTo(ROLES.ADMIN), categoryController.deleteCategory);
 
 module.exports = router;

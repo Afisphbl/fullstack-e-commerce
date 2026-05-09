@@ -16,6 +16,12 @@ const MESSAGES = require('../constants/messages');
 // ─── deleteOne ────────────────────────────────────────────────────────────────
 exports.deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
+    // Validate MongoDB ObjectId format
+    const mongoose = require('mongoose');
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return next(new AppError(`Invalid ID format: ${req.params.id}`, 400));
+    }
+
     const doc = await Model.findByIdAndDelete(req.params.id);
     if (!doc) return next(new AppError(MESSAGES.NOT_FOUND, 404));
 
@@ -25,6 +31,12 @@ exports.deleteOne = (Model) =>
 // ─── updateOne ────────────────────────────────────────────────────────────────
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
+    // Validate MongoDB ObjectId format
+    const mongoose = require('mongoose');
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return next(new AppError(`Invalid ID format: ${req.params.id}`, 400));
+    }
+
     const doc = await Model.findById(req.params.id);
     if (!doc) return next(new AppError(MESSAGES.NOT_FOUND, 404));
 
@@ -66,6 +78,12 @@ exports.createOne = (Model) =>
  */
 exports.getOne = (Model, populateOptions = null) =>
   catchAsync(async (req, res, next) => {
+    // Validate MongoDB ObjectId format
+    const mongoose = require('mongoose');
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return next(new AppError(`Invalid ID format: ${req.params.id}`, 400));
+    }
+
     // Respect filterObj for ownership/access control (e.g., user can only see their own orders)
     const filter = { _id: req.params.id, ...(req.filterObj || {}) };
     

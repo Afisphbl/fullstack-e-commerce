@@ -254,7 +254,7 @@ const mapCategory = (c: any): Category => {
 
   return {
     ...c,
-    id: c.slug || c._id || c.id,
+    id: c._id || c.id,
     icon: c.icon || "Laptop",
     count: c.count || 0,
     image: mapCategoryImage(c.image, c.name),
@@ -395,6 +395,28 @@ export const fetchCategories = async (): Promise<Category[]> => {
     console.error("Failed to fetch categories:", error);
     return categoriesData.map(mapCategory);
   }
+};
+
+export const createCategory = async (categoryData: FormData) => {
+  const data = await apiFetch("/api/v1/categories", {
+    method: "POST",
+    body: categoryData,
+  });
+  return mapCategory(data.data.data);
+};
+
+export const updateCategory = async (id: string, categoryData: FormData) => {
+  const data = await apiFetch(`/api/v1/categories/${id}`, {
+    method: "PATCH",
+    body: categoryData,
+  });
+  return mapCategory(data.data.data);
+};
+
+export const deleteCategory = async (id: string) => {
+  await apiFetch(`/api/v1/categories/${id}`, {
+    method: "DELETE",
+  });
 };
 
 // Reviews

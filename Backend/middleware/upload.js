@@ -82,6 +82,46 @@ const uploadProductImages = upload.fields([
 
 ]);
 
+// ── Category image: single image ──────────────────────────────────────────────
+const uploadCategoryImage = upload.single('image');
+
+const resizeCategoryImage = catchAsync(async (req, res, next) => {
+  if (!req.file) return next();
+
+  // 1) Resize and format the image using sharp
+  const buffer = await sharp(req.file.buffer)
+    .resize(800, 800)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toBuffer();
+
+  // 2) Upload to Cloudinary using a promise-wrapped stream
+  const uploadToCloudinary = (imageBuffer) => {
+    return new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'e-commerce/categories',
+          public_id: `category-${Date.now()}`,
+          format: 'jpg',
+          resource_type: 'image',
+        },
+        (error, result) => {
+          if (error) return reject(new AppError('Error uploading to Cloudinary', 500));
+          resolve(result);
+        }
+      );
+      stream.end(imageBuffer);
+    });
+  };
+
+  const result = await uploadToCloudinary(buffer);
+
+  // 3) Store the Cloudinary URL in req.body.image for the controller
+  req.body.image = result.secure_url;
+
+  next();
+});
+
 const resizeProductImages = catchAsync(async (req, res, next) => {
   if (!req.files || (!req.files.imageCover && !req.files.images)) return next();
 
@@ -161,5 +201,7 @@ module.exports = {
   resizeProductImages,
   uploadUserPhoto,
   resizeUserPhoto,
+  uploadCategoryImage,
+  resizeCategoryImage,
 };
 
