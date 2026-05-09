@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Plus, Edit, Trash2, Upload, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Skeleton } from '@/components/ui/skeleton';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 const CategorySkeleton = () => (
   <div className="bg-card rounded-lg border border-border p-4 flex items-center gap-4">
@@ -24,6 +25,7 @@ const CategorySkeleton = () => (
 );
 
 const AdminCategoriesPage = () => {
+  usePageTitle("Admin - Categories");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Category | null>(null);
   const [categoryName, setCategoryName] = useState('');

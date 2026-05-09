@@ -4,8 +4,10 @@ import { fetchBlogs, Blog } from "@/lib/api";
 import { Calendar, Clock, ArrowRight, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const BlogPage = () => {
+  usePageTitle("Blog");
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");

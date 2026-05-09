@@ -8,8 +8,10 @@ import { ProfileInfoForm } from "@/components/profile/ProfileInfoForm";
 import { PasswordChangeForm } from "@/components/profile/PasswordChangeForm";
 import { OrdersList } from "@/components/profile/OrdersList";
 import { WishlistGrid } from "@/components/profile/WishlistGrid";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const ProfilePage = () => {
+  usePageTitle("My Account");
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<AccountTab>("profile");
 

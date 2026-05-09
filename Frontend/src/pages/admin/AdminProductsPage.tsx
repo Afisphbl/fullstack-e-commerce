@@ -9,8 +9,10 @@ import {
   useProductFilters,
   useProductMutations,
 } from "@/components/admin/products";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const AdminProductsPage = () => {
+  usePageTitle("Admin - Products");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 

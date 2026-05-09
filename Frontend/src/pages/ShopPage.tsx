@@ -8,8 +8,10 @@ import { ProductsGrid } from "@/components/shop/ProductsGrid";
 import { ShopPagination } from "@/components/shop/ShopPagination";
 import { useAuth } from "@/contexts/AuthContext";
 import { isAdminRole } from "@/lib/roles";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const ShopPage = () => {
+  usePageTitle("Shop");
   const { user } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);

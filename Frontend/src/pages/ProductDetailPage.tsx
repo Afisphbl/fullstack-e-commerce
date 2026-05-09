@@ -14,6 +14,7 @@ import {
 } from "@/components/product-detail";
 import { useAuth } from "@/contexts/AuthContext";
 import { isAdminRole } from "@/lib/roles";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 interface Review {
   _id: string;
@@ -33,6 +34,8 @@ const ProductDetailPage = () => {
   const [related, setRelated] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [reviews, setReviews] = useState<Review[]>([]);
+
+  usePageTitle(product?.name || "Product Details");
   const [totalReviews, setTotalReviews] = useState(0);
   const [reviewPage, setReviewPage] = useState(1);
   const reviewLimit = 10;

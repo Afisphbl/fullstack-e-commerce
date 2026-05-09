@@ -33,6 +33,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 const REVENUE_DATA = [
   { name: 'Jan', current: 4000, previous: 2400 },
@@ -58,6 +59,7 @@ const SOURCE_DATA = [
 ];
 
 const AdminDashboard = () => {
+  usePageTitle("Admin - Dashboard");
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 

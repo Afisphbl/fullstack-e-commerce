@@ -1,15 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { createOrder } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { CreditCard, Check, Loader2 } from "lucide-react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const CheckoutPage = () => {
-  const { items, total, clearCart } = useCart();
+  usePageTitle("Checkout");
+  const { items, total, subtotal, discount, couponCode, clearCart } = useCart();
+  const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -21,8 +25,32 @@ const CheckoutPage = () => {
     city: "",
     state: "",
     zip: "",
-    country: "USA", // Default
+    country: "USA",
   });
+
+  // Pre-fill user data when component mounts or user changes
+  useEffect(() => {
+    if (user) {
+      // Split name into first and last name
+      const nameParts = user.name.split(" ");
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(" ") || "";
+
+      // Get default address if available
+      const defaultAddress = user.addresses?.find(addr => addr.isDefault) || user.addresses?.[0];
+
+      setShippingInfo({
+        firstName,
+        lastName,
+        email: user.email,
+        address: defaultAddress?.street || "",
+        city: defaultAddress?.city || "",
+        state: defaultAddress?.state || "",
+        zip: defaultAddress?.zip || "",
+        country: defaultAddress?.country || "USA",
+      });
+    }
+  }, [user]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -33,6 +61,13 @@ const CheckoutPage = () => {
     e.preventDefault();
     if (step < 3) {
       setStep(step + 1);
+      return;
+    }
+
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      toast.error("Please log in to place an order");
+      navigate("/login");
       return;
     }
 
@@ -50,25 +85,17 @@ const CheckoutPage = () => {
           zip: shippingInfo.zip,
           country: shippingInfo.country,
         },
-        paymentMethod: "card", // Mock for now
-        itemsPrice: total,
+        paymentMethod: "card",
+        itemsPrice: subtotal || total,
       };
 
       await createOrder(orderData);
 
-      toast({
-        title: "Order Placed!",
-        description:
-          "Your order has been placed successfully. Check your email for confirmation.",
-      });
+      toast.success("Order placed successfully! Check your email for confirmation.");
       clearCart();
       navigate("/orders");
     } catch (error: any) {
-      toast({
-        title: "Order Failed",
-        description: error.message || "Failed to place order. Please try again.",
-        variant: "destructive",
-      });
+      toast.error(error.message || "Failed to place order. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -79,7 +106,9 @@ const CheckoutPage = () => {
     return null;
   }
 
-  const grandTotal = total + (total > 100 ? 0 : 9.99) + total * 0.08;
+  const shipping = total > 100 ? 0 : 9.99;
+  const tax = total * 0.08;
+  const grandTotal = total + shipping + tax;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -235,7 +264,7 @@ const CheckoutPage = () => {
               <h2 className="font-display font-semibold text-foreground mb-4">
                 Order Review
               </h2>
-              <div className="space-y-3">
+              <div className="space-y-3 mb-6">
                 {items.map(({ product, quantity }) => (
                   <div
                     key={product.id}
@@ -244,7 +273,7 @@ const CheckoutPage = () => {
                     <img
                       src={product.image}
                       alt={product.name}
-                      className="w-12 h-12 rounded object-cover"
+                      className="w-16 h-16 rounded object-cover"
                     />
                     <div className="flex-1">
                       <p className="text-sm font-medium text-foreground">
@@ -259,6 +288,22 @@ const CheckoutPage = () => {
                     </span>
                   </div>
                 ))}
+              </div>
+
+              {/* Shipping Info Summary */}
+              <div className="bg-muted/50 rounded-lg p-4 mb-4">
+                <h3 className="text-sm font-semibold text-foreground mb-2">Shipping To:</h3>
+                <p className="text-sm text-muted-foreground">
+                  {shippingInfo.firstName} {shippingInfo.lastName}
+                </p>
+                <p className="text-sm text-muted-foreground">{shippingInfo.email}</p>
+                <p className="text-sm text-muted-foreground">
+                  {shippingInfo.address}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {shippingInfo.city}, {shippingInfo.state} {shippingInfo.zip}
+                </p>
+                <p className="text-sm text-muted-foreground">{shippingInfo.country}</p>
               </div>
             </div>
           )}
@@ -296,30 +341,64 @@ const CheckoutPage = () => {
 
         <div className="bg-card rounded-lg border border-border p-6 h-fit">
           <h3 className="font-display font-semibold text-foreground mb-4">
-            Summary
+            Order Summary
           </h3>
-          <div className="space-y-2 text-sm">
+          <div className="space-y-2 text-sm mb-4">
             <div className="flex justify-between">
               <span className="text-muted-foreground">
-                Items ({items.length})
+                Items ({items.reduce((sum, item) => sum + item.quantity, 0)})
               </span>
-              <span className="text-foreground">${total.toFixed(2)}</span>
+              <span className="text-foreground">${(subtotal || total).toFixed(2)}</span>
             </div>
+            {discount > 0 && (
+              <>
+                <div className="flex justify-between text-green-600 dark:text-green-400">
+                  <span>Discount {couponCode && `(${couponCode})`}</span>
+                  <span>-${discount.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Subtotal after discount</span>
+                  <span className="text-foreground">${total.toFixed(2)}</span>
+                </div>
+              </>
+            )}
             <div className="flex justify-between">
               <span className="text-muted-foreground">Shipping</span>
               <span className="text-foreground">
-                {total > 100 ? "Free" : "$9.99"}
+                {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Tax</span>
-              <span className="text-foreground">
-                ${(total * 0.08).toFixed(2)}
-              </span>
+              <span className="text-muted-foreground">Tax (8%)</span>
+              <span className="text-foreground">${tax.toFixed(2)}</span>
             </div>
-            <div className="border-t border-border pt-2 flex justify-between font-display font-bold">
+            <div className="border-t border-border pt-2 flex justify-between font-display font-bold text-lg">
               <span className="text-foreground">Total</span>
               <span className="text-foreground">${grandTotal.toFixed(2)}</span>
+            </div>
+          </div>
+
+          {/* Cart Items Preview */}
+          <div className="border-t border-border pt-4">
+            <h4 className="text-xs font-semibold text-muted-foreground mb-3 uppercase">Items in Cart</h4>
+            <div className="space-y-2">
+              {items.map(({ product, quantity }) => (
+                <div key={product.id} className="flex items-center gap-2">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-10 h-10 rounded object-cover"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-foreground truncate">
+                      {product.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {quantity} × ${product.price.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

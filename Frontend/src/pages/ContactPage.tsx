@@ -15,8 +15,10 @@ import {
   Linkedin,
   Twitter,
 } from "lucide-react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const ContactPage = () => {
+  usePageTitle("Contact Us");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
