@@ -7,7 +7,7 @@ const MESSAGES = require('../constants/messages');
 const AppError = require('../utils/AppError');
 const ROLES = require('../constants/roles');
 
-const STAFF_ROLES = [ROLES.ADMIN, ROLES.MANAGER, ROLES.SUPER_ADMIN];
+const STAFF_ROLES = [ROLES.ADMIN];
 
 const serializeUser = (user) => {
   const doc = typeof user.toObject === 'function' ? user.toObject() : user;
@@ -27,9 +27,7 @@ const buildAdminUserPayload = (body, { isCreate = false } = {}) => {
     'photo',
     'role',
     'status',
-    'department',
     'permissions',
-    'accessLevel',
   ];
 
   allowedFields.forEach((field) => {
@@ -48,9 +46,7 @@ const buildAdminUserPayload = (body, { isCreate = false } = {}) => {
   }
 
   if (payload.role === ROLES.USER) {
-    payload.department = null;
     payload.permissions = [];
-    payload.accessLevel = 'standard';
   }
 
   if (payload.status === 'suspended') {
@@ -112,13 +108,11 @@ exports.getAllUsers = catchAsync(async (req, res) => {
   const filter = {};
   const role = req.query.role;
   const status = req.query.status;
-  const department = req.query.department;
   const tab = req.query.tab;
   const search = req.query.search?.trim();
 
   if (role && role !== 'all') filter.role = role;
   if (status && status !== 'all') filter.status = status;
-  if (department && department !== 'all') filter.department = department;
 
   if (tab === 'staff') {
     // Intersect the selected role with STAFF_ROLES

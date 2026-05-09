@@ -36,9 +36,7 @@ const statusClasses: Record<string, string> = {
 
 const roleClasses: Record<string, string> = {
   user: "border-slate-200 bg-slate-100 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200",
-  manager: "border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-900/60 dark:bg-sky-950/40 dark:text-sky-300",
   admin: "border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-900/60 dark:bg-violet-950/40 dark:text-violet-300",
-  "super-admin": "border-fuchsia-200 bg-fuchsia-50 text-fuchsia-700 dark:border-fuchsia-900/60 dark:bg-fuchsia-950/40 dark:text-fuchsia-300",
 };
 
 interface UserTableRowProps {
@@ -77,16 +75,9 @@ export const UserTableRow: React.FC<UserTableRowProps> = ({
         </button>
       </td>
       <td className="px-4 py-4">
-        <div className="space-y-2">
-          <Badge className={cn("rounded-full border px-3 py-1 text-xs font-medium", roleClasses[user.role])}>
-            {roleLabel(user.role)}
-          </Badge>
-          {user.department && (
-            <p className="text-xs capitalize text-muted-foreground">
-              {user.department}
-            </p>
-          )}
-        </div>
+        <Badge className={cn("rounded-full border px-3 py-1 text-xs font-medium", roleClasses[user.role])}>
+          {roleLabel(user.role)}
+        </Badge>
       </td>
       <td className="hidden px-4 py-4 text-sm text-muted-foreground lg:table-cell">
         {user.phone || "Not set"}

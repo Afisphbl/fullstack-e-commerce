@@ -121,10 +121,8 @@ export interface TeamMember {
   image: string;
 }
 
-export type AdminUserRole = "user" | "manager" | "admin" | "super-admin";
+export type AdminUserRole = "user" | "admin";
 export type AdminUserStatus = "active" | "suspended" | "pending";
-export type StaffDepartment = "sales" | "support" | "delivery" | "inventory" | null;
-export type StaffAccessLevel = "standard" | "elevated" | "full";
 
 export interface AdminUser {
   _id: string;
@@ -136,9 +134,7 @@ export interface AdminUser {
   role: AdminUserRole;
   status: AdminUserStatus;
   active: boolean;
-  department: StaffDepartment;
   permissions: string[];
-  accessLevel: StaffAccessLevel;
   createdAt: string;
   updatedAt: string;
   lastLogin: string | null;
@@ -272,8 +268,6 @@ const mapAdminUser = (user: any): AdminUser => ({
   phone: user.phone || "",
   photo: user.photo || "",
   permissions: Array.isArray(user.permissions) ? user.permissions : [],
-  department: user.department || null,
-  accessLevel: user.accessLevel || "standard",
   lastLogin: user.lastLogin || null,
 });
 

@@ -50,7 +50,7 @@ export const UserPageHeader: React.FC<UserPageHeaderProps> = ({ analytics, isLoa
           <UserStatsCard
             title="Total staff"
             value={analytics.totalStaff}
-            note="Admins, managers, and operations"
+            note="Admins and operations"
             icon={<UserCog className="h-5 w-5" />}
             isLoading={isLoading}
           />

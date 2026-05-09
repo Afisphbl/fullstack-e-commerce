@@ -27,7 +27,7 @@ router.post('/wishlist', userController.addToWishlist);
 router.delete('/wishlist/:productId', userController.removeFromWishlist);
 
 // ── Admin-only CRUD ───────────────────────────────────────────────────────────
-router.use(restrictTo(ROLES.ADMIN, ROLES.SUPER_ADMIN));
+router.use(restrictTo(ROLES.ADMIN));
 
 router.route('/')
   .get(userController.getAllUsers)

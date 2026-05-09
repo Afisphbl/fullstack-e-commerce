@@ -27,7 +27,5 @@ export const formatDateTime = (value?: string | null) => {
 
 export const roleLabel = (role: string) => {
   if (role === "user") return "Customer";
-  if (role === "manager") return "Staff";
-  if (role === "super-admin") return "Super Admin";
   return "Admin";
 };

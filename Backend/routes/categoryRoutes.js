@@ -12,11 +12,11 @@ router.get('/tree', categoryController.getCategoryTree);
 
 router.route('/')
   .get(categoryController.getAllCategories)
-  .post(protect, restrictTo(ROLES.ADMIN, ROLES.MANAGER), categoryController.createCategory);
+  .post(protect, restrictTo(ROLES.ADMIN), categoryController.createCategory);
 
 router.route('/:id')
   .get(categoryController.getCategory)
-  .patch(protect, restrictTo(ROLES.ADMIN, ROLES.MANAGER), categoryController.updateCategory)
-  .delete(protect, restrictTo(ROLES.ADMIN, ROLES.SUPER_ADMIN), categoryController.deleteCategory);
+  .patch(protect, restrictTo(ROLES.ADMIN), categoryController.updateCategory)
+  .delete(protect, restrictTo(ROLES.ADMIN), categoryController.deleteCategory);
 
 module.exports = router;

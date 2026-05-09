@@ -27,7 +27,6 @@ const AdminUsersPage = () => {
     tab,
     role,
     status,
-    department,
     page,
     updateParams,
   } = useUserFilters();
@@ -41,13 +40,12 @@ const AdminUsersPage = () => {
   const limit = 10;
 
   const { data, isLoading, isFetching, isError, error, refetch } = useQuery({
-    queryKey: ["admin-users", tab, role, status, department, page, deferredSearch],
+    queryKey: ["admin-users", tab, role, status, page, deferredSearch],
     queryFn: () =>
       fetchAdminUsers({
         tab,
         role,
         status,
-        department,
         page,
         limit,
         search: deferredSearch,
@@ -77,10 +75,8 @@ const AdminUsersPage = () => {
     email: string;
     phone?: string;
     photo?: any;
-    role: "user" | "manager" | "admin" | "super-admin";
+    role: "user" | "admin";
     status: "active" | "pending" | "suspended";
-    department: "sales" | "support" | "delivery" | "inventory" | null;
-    accessLevel: "standard" | "elevated" | "full";
     permissions?: string;
     password?: string;
     passwordConfirm?: string;
@@ -92,8 +88,6 @@ const AdminUsersPage = () => {
       photo: values.photo || "",
       role: values.role,
       status: values.status,
-      department: values.role === "user" ? null : values.department,
-      accessLevel: values.role === "user" ? "standard" : values.accessLevel,
       permissions:
         values.role === "user"
           ? []
@@ -134,7 +128,6 @@ const AdminUsersPage = () => {
       tab,
       role,
       status,
-      department,
       search: deferredSearch,
     });
   };
@@ -205,8 +198,6 @@ const AdminUsersPage = () => {
               onStatusChange={(value) => updateParams({ status: value, page: "1" })}
               role={role}
               onRoleChange={(value) => updateParams({ role: value, page: "1" })}
-              department={department}
-              onDepartmentChange={(value) => updateParams({ department: value, page: "1" })}
             />
 
             <UserTable

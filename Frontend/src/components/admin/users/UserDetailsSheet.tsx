@@ -59,7 +59,6 @@ export const UserDetailsSheet: React.FC<UserDetailsSheetProps> = ({
             <UserDetailCard label="Role" value={roleLabel(user.role)} />
             <UserDetailCard label="Status" value={user.status} />
             <UserDetailCard label="Phone" value={user.phone || "Not set"} />
-            <UserDetailCard label="Department" value={user.department || "None"} />
             <UserDetailCard label="Joined" value={formatDate(user.createdAt)} />
             <UserDetailCard label="Last Login" value={formatDateTime(user.lastLogin)} />
           </div>
