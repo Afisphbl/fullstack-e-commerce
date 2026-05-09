@@ -29,6 +29,7 @@ exports.getAllCategories = catchAsync(async (req, res) => {
     {
       $addFields: {
         count: { $size: '$products' },
+        id: { $toString: '$_id' }, // Add string version of _id for frontend
       },
     },
     {
