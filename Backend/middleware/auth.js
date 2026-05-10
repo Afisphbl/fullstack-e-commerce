@@ -31,9 +31,10 @@ const sendTokenResponse = (user, statusCode, res) => {
   // Remove password from output
   user.password = undefined;
 
-  // DO NOT send token in response body - it's in the cookie
+  // Send token in response body for cross-domain support
   res.status(statusCode).json({
     status: 'success',
+    token, // Include token for cross-domain authentication
     data: { user },
   });
 };

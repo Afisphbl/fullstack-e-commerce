@@ -1,3 +1,20 @@
+const API_BASE_URL = "https://api-wef5.onrender.com";
+
+// Token management
+const TOKEN_KEY = 'auth_token';
+
+export const setAuthToken = (token: string) => {
+  localStorage.setItem(TOKEN_KEY, token);
+};
+
+export const getAuthToken = (): string | null => {
+  return localStorage.getItem(TOKEN_KEY);
+};
+
+export const removeAuthToken = () => {
+  localStorage.removeItem(TOKEN_KEY);
+};
+
 export const apiFetch = async (url: string, options: RequestInit = {}) => {
   const isFormData = options.body instanceof FormData;
 
@@ -9,7 +26,16 @@ export const apiFetch = async (url: string, options: RequestInit = {}) => {
     headers["Content-Type"] = "application/json";
   }
 
-  const response = await fetch(url, {
+  // Add Authorization header if token exists
+  const token = getAuthToken();
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  // Prepend the base URL if the url doesn't already start with http
+  const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+
+  const response = await fetch(fullUrl, {
     ...options,
     headers,
     credentials: "include", // Essential for JWT cookies

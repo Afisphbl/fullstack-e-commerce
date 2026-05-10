@@ -3,7 +3,7 @@ import { Link, NavLink, useLocation, Outlet, useNavigate } from "react-router-do
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { apiFetch } from "@/lib/api-client";
+import { apiFetch, removeAuthToken } from "@/lib/api-client";
 import { getUnreadMessagesCount } from "@/lib/api";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -71,6 +71,8 @@ const AdminLayout = () => {
         method: "POST",
       }),
     onSuccess: () => {
+      // Remove the token from localStorage
+      removeAuthToken();
       toast.success("Logged out successfully");
       // Clear all user-related data from cache
       queryClient.setQueryData(["currentUser"], null);

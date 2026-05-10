@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiFetch } from "@/lib/api-client";
+import { apiFetch, removeAuthToken } from "@/lib/api-client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
@@ -15,6 +15,8 @@ export const ProfileHeader = () => {
         method: "POST",
       }),
     onSuccess: () => {
+      // Remove the token from localStorage
+      removeAuthToken();
       toast.success("Logged out successfully");
       // Clear all user-related data from cache
       queryClient.setQueryData(["currentUser"], null);
