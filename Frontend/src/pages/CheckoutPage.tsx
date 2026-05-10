@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { createOrder } from "@/lib/api";
+import { initializeChapaPayment } from "@/lib/payment-api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
-import { CreditCard, Check, Loader2 } from "lucide-react";
+import { CreditCard, Check, Loader2, Smartphone, Building2 } from "lucide-react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 
 const CheckoutPage = () => {
@@ -17,15 +19,17 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<string>("card");
   const [shippingInfo, setShippingInfo] = useState({
     firstName: "",
     lastName: "",
     email: "",
+    phone: "",
     address: "",
     city: "",
     state: "",
     zip: "",
-    country: "USA",
+    country: "Ethiopia",
   });
 
   // Pre-fill user data when component mounts or user changes
@@ -43,11 +47,12 @@ const CheckoutPage = () => {
         firstName,
         lastName,
         email: user.email,
+        phone: user.phone || "",
         address: defaultAddress?.street || "",
         city: defaultAddress?.city || "",
         state: defaultAddress?.state || "",
         zip: defaultAddress?.zip || "",
-        country: defaultAddress?.country || "USA",
+        country: defaultAddress?.country || "Ethiopia",
       });
     }
   }, [user]);
@@ -73,6 +78,14 @@ const CheckoutPage = () => {
 
     setLoading(true);
     try {
+      // Determine payment method based on selection
+      let orderPaymentMethod = paymentMethod;
+      if (paymentMethod === "chapa_cbe") {
+        orderPaymentMethod = "chapa_cbe";
+      } else if (paymentMethod === "chapa_telebirr") {
+        orderPaymentMethod = "chapa_telebirr";
+      }
+
       const orderData = {
         orderItems: items.map((i) => ({
           product: i.product.id,
@@ -85,15 +98,32 @@ const CheckoutPage = () => {
           zip: shippingInfo.zip,
           country: shippingInfo.country,
         },
-        paymentMethod: "card",
+        paymentMethod: orderPaymentMethod,
         itemsPrice: subtotal || total,
       };
 
-      await createOrder(orderData);
+      const orderResponse = await createOrder(orderData);
+      const orderId = orderResponse.data.order._id;
 
-      toast.success("Order placed successfully! Check your email for confirmation.");
-      clearCart();
-      navigate("/orders");
+      // If Chapa payment method, initialize payment
+      if (paymentMethod === "chapa_cbe" || paymentMethod === "chapa_telebirr") {
+        toast.success("Order created! Redirecting to payment...");
+        
+        try {
+          const paymentResponse = await initializeChapaPayment(orderId);
+          
+          // Redirect to Chapa checkout
+          window.location.href = paymentResponse.checkoutUrl;
+        } catch (paymentError: any) {
+          toast.error(paymentError.message || "Failed to initialize payment");
+          navigate(`/orders/${orderId}`);
+        }
+      } else {
+        // For other payment methods, just show success
+        toast.success("Order placed successfully! Check your email for confirmation.");
+        clearCart();
+        navigate("/orders");
+      }
     } catch (error: any) {
       toast.error(error.message || "Failed to place order. Please try again.");
     } finally {
@@ -183,6 +213,20 @@ const CheckoutPage = () => {
                 />
               </div>
               <div>
+                <Label className="text-foreground">Phone Number</Label>
+                <Input
+                  name="phone"
+                  type="tel"
+                  placeholder="09xxxxxxxx"
+                  value={shippingInfo.phone}
+                  onChange={handleInputChange}
+                  className="bg-background"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Required for Telebirr payments (format: 09xxxxxxxx)
+                </p>
+              </div>
+              <div>
                 <Label className="text-foreground">Address</Label>
                 <Input
                   name="address"
@@ -227,36 +271,111 @@ const CheckoutPage = () => {
             </div>
           )}
           {step === 2 && (
-            <div className="space-y-4">
+            <div className="space-y-6">
               <h2 className="font-display font-semibold text-foreground mb-4">
-                Payment Details
+                Payment Method
               </h2>
-              <div>
-                <Label className="text-foreground">Card Number</Label>
-                <Input
-                  placeholder="1234 5678 9012 3456"
-                  required
-                  className="bg-background"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-foreground">Expiry</Label>
-                  <Input
-                    placeholder="MM/YY"
-                    required
-                    className="bg-background"
-                  />
+              
+              <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
+                {/* Chapa Telebirr */}
+                <div className="flex items-center space-x-3 border border-border rounded-lg p-4 hover:bg-accent/50 transition-colors cursor-pointer">
+                  <RadioGroupItem value="chapa_telebirr" id="chapa_telebirr" />
+                  <Label
+                    htmlFor="chapa_telebirr"
+                    className="flex items-center gap-3 cursor-pointer flex-1"
+                  >
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                      <Smartphone className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-foreground">Telebirr</p>
+                      <p className="text-sm text-muted-foreground">
+                        Pay with Telebirr mobile money
+                      </p>
+                    </div>
+                  </Label>
                 </div>
-                <div>
-                  <Label className="text-foreground">CVC</Label>
-                  <Input placeholder="123" required className="bg-background" />
+
+                {/* Chapa CBE */}
+                <div className="flex items-center space-x-3 border border-border rounded-lg p-4 hover:bg-accent/50 transition-colors cursor-pointer">
+                  <RadioGroupItem value="chapa_cbe" id="chapa_cbe" />
+                  <Label
+                    htmlFor="chapa_cbe"
+                    className="flex items-center gap-3 cursor-pointer flex-1"
+                  >
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                      <Building2 className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-foreground">CBE Birr</p>
+                      <p className="text-sm text-muted-foreground">
+                        Pay with Commercial Bank of Ethiopia
+                      </p>
+                    </div>
+                  </Label>
                 </div>
-              </div>
-              <div>
-                <Label className="text-foreground">Name on Card</Label>
-                <Input required className="bg-background" />
-              </div>
+
+                {/* Credit/Debit Card */}
+                <div className="flex items-center space-x-3 border border-border rounded-lg p-4 hover:bg-accent/50 transition-colors cursor-pointer">
+                  <RadioGroupItem value="card" id="card" />
+                  <Label
+                    htmlFor="card"
+                    className="flex items-center gap-3 cursor-pointer flex-1"
+                  >
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                      <CreditCard className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-foreground">Credit/Debit Card</p>
+                      <p className="text-sm text-muted-foreground">
+                        Pay with Visa, Mastercard, or other cards
+                      </p>
+                    </div>
+                  </Label>
+                </div>
+              </RadioGroup>
+
+              {/* Show card details only if card is selected */}
+              {paymentMethod === "card" && (
+                <div className="space-y-4 mt-6 pt-6 border-t border-border">
+                  <h3 className="font-medium text-foreground">Card Details</h3>
+                  <div>
+                    <Label className="text-foreground">Card Number</Label>
+                    <Input
+                      placeholder="1234 5678 9012 3456"
+                      required
+                      className="bg-background"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-foreground">Expiry</Label>
+                      <Input
+                        placeholder="MM/YY"
+                        required
+                        className="bg-background"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-foreground">CVC</Label>
+                      <Input placeholder="123" required className="bg-background" />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-foreground">Name on Card</Label>
+                    <Input required className="bg-background" />
+                  </div>
+                </div>
+              )}
+
+              {/* Info for Chapa payments */}
+              {(paymentMethod === "chapa_cbe" || paymentMethod === "chapa_telebirr") && (
+                <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mt-6">
+                  <p className="text-sm text-blue-900 dark:text-blue-100">
+                    <strong>Note:</strong> You will be redirected to Chapa's secure payment page to complete your {paymentMethod === "chapa_telebirr" ? "Telebirr" : "CBE Birr"} payment.
+                  </p>
+                </div>
+              )}
             </div>
           )}
           {step === 3 && (

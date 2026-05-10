@@ -20,6 +20,8 @@ const PAYMENT_METHOD = Object.freeze({
   CARD: 'card',
   CASH_ON_DELIVERY: 'cash_on_delivery',
   BANK_TRANSFER: 'bank_transfer',
+  CHAPA_CBE: 'chapa_cbe',
+  CHAPA_TELEBIRR: 'chapa_telebirr',
 });
 
 const PRODUCT_STATUS = Object.freeze({

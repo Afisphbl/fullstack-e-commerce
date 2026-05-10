@@ -27,6 +27,7 @@ import ProfilePage from "./pages/ProfilePage";
 import OrdersPage from "./pages/OrdersPage";
 import OrderDetailPage from "./pages/OrderDetailPage";
 import TrackOrderPage from "./pages/TrackOrderPage";
+import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProductsPage from "./pages/admin/AdminProductsPage";
@@ -232,6 +233,14 @@ const App = () => (
                       element={
                         <StorefrontLayout>
                           <OrderDetailPage />
+                        </StorefrontLayout>
+                      }
+                    />
+                    <Route
+                      path="/payment/success/:orderId"
+                      element={
+                        <StorefrontLayout>
+                          <PaymentSuccessPage />
                         </StorefrontLayout>
                       }
                     />
