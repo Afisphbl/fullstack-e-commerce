@@ -64,6 +64,8 @@ const orderSchema = new mongoose.Schema(
       status: String,
       updateTime: String,
       emailAddress: String,
+      method: String,
+      reference: String,
     },
     orderStatus: {
       type: String,
