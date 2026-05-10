@@ -115,7 +115,9 @@ const CheckoutPage = () => {
           // Redirect to Chapa checkout
           window.location.href = paymentResponse.checkoutUrl;
         } catch (paymentError: any) {
-          toast.error(paymentError.message || "Failed to initialize payment");
+          console.error('Payment initialization error:', paymentError);
+          const errorMessage = paymentError?.message || paymentError?.toString() || "Failed to initialize payment";
+          toast.error(errorMessage);
           navigate(`/orders/${orderId}`);
         }
       } else {

@@ -70,14 +70,25 @@ const validatePaymentVerification = (verification, order) => {
 exports.initializeChapaPayment = catchAsync(async (req, res, next) => {
   const { orderId } = req.body;
 
+  console.log('💳 Payment initialization request:', { orderId, userId: req.user._id });
+
   // 1) Find the order
   const order = await Order.findById(orderId);
   if (!order) {
+    console.error('❌ Order not found:', orderId);
     return next(new AppError('Order not found', 404));
   }
 
+  console.log('✅ Order found:', { 
+    orderId: order._id, 
+    paymentMethod: order.paymentMethod,
+    totalPrice: order.totalPrice,
+    userId: order.user._id 
+  });
+
   // 2) Check if order belongs to user (unless admin)
   if (order.user._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+    console.error('❌ Permission denied:', { orderUser: order.user._id, requestUser: req.user._id });
     return next(new AppError('You do not have permission to pay for this order', 403));
   }
 
@@ -358,5 +369,21 @@ exports.getBanks = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     data: result,
+  });
+});
+
+// ── Check Chapa Configuration ─────────────────────────────────────────────────
+exports.checkChapaConfig = catchAsync(async (req, res, next) => {
+  const config = {
+    secretKeySet: !!process.env.CHAPA_SECRET_KEY,
+    baseUrl: process.env.CHAPA_BASE_URL || 'https://api.chapa.co/v1',
+    callbackUrl: process.env.CHAPA_CALLBACK_URL || 'NOT SET',
+    returnUrl: process.env.CHAPA_RETURN_URL || 'NOT SET',
+    webhookSecretSet: !!process.env.CHAPA_WEBHOOK_SECRET,
+  };
+
+  res.status(200).json({
+    status: 'success',
+    data: config,
   });
 });

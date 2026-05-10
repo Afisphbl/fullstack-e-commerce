@@ -29,28 +29,37 @@ const handleJWTExpiredError = () =>
 
 // ─── Dev response (full detail) ────────────────────────────────────────────────
 const sendErrorDev = (err, req, res) => {
-  logger.error(`${err.statusCode} — ${req.method} ${req.originalUrl} — ${err.message}`, {
-    stack: err.stack,
+  const errorMessage = err.message || 'Unknown error';
+  const errorStack = err.stack || 'No stack trace';
+  
+  logger.error(`${err.statusCode} — ${req.method} ${req.originalUrl} — ${errorMessage}`, {
+    stack: errorStack,
   });
+  
   res.status(err.statusCode).json({
     status: err.status,
-    message: err.message,
+    message: errorMessage,
     error: err,
-    stack: err.stack,
+    stack: errorStack,
   });
 };
 
 // ─── Prod response (safe detail only) ─────────────────────────────────────────
 const sendErrorProd = (err, req, res) => {
+  const errorMessage = err.message || 'Unknown error';
+  
   if (err.isOperational) {
-    logger.warn(`${err.statusCode} — ${req.method} ${req.originalUrl} — ${err.message}`);
+    logger.warn(`${err.statusCode} — ${req.method} ${req.originalUrl} — ${errorMessage}`);
     return res.status(err.statusCode).json({
       status: err.status,
-      message: err.message,
+      message: errorMessage,
     });
   }
   // Programming or unknown error — don't leak details
-  logger.error('UNEXPECTED ERROR', { message: err.message, stack: err.stack });
+  logger.error('UNEXPECTED ERROR', { 
+    message: errorMessage, 
+    stack: err.stack || 'No stack trace' 
+  });
   return res.status(500).json({
     status: 'error',
     message: 'Something went wrong. Please try again later.',

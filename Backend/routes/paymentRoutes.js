@@ -28,4 +28,7 @@ router.get('/currencies', paymentController.getSupportedCurrencies);
 // Get banks list
 router.get('/banks', paymentController.getBanks);
 
+// Check Chapa configuration (admin only)
+router.get('/chapa/config', restrictTo(ROLES.ADMIN), paymentController.checkChapaConfig);
+
 module.exports = router;
