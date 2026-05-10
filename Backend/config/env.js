@@ -20,6 +20,10 @@ const required = [
   'CLOUDINARY_CLOUD_NAME',
   'CLOUDINARY_API_KEY',
   'CLOUDINARY_API_SECRET',
+  'GMAIL_USER',
+  'GMAIL_APP_PASSWORD',
+  'EMAIL_FROM',
+  'OWNER_EMAIL',
 ];
 
 const missing = required.filter((key) => !process.env[key]);
@@ -34,10 +38,8 @@ module.exports = {
   jwtExpiresIn: `${process.env.JWT_EXPIRES_IN_DAYS}d`,
   adminSecret: process.env.ADMIN_SECRET,
   email: {
-    host: process.env.EMAIL_HOST,
-    port: parseInt(process.env.EMAIL_PORT, 10),
-    username: process.env.EMAIL_USERNAME,
-    password: process.env.EMAIL_PASSWORD,
+    username: process.env.GMAIL_USER,
+    password: process.env.GMAIL_APP_PASSWORD,
     from: process.env.EMAIL_FROM,
   },
   cloudinary: {

@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Link, NavLink, useLocation, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api-client";
+import { getUnreadMessagesCount } from "@/lib/api";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +24,7 @@ import {
   PanelLeftClose,
   Search,
   Bell,
+  MessageSquare,
 } from "lucide-react";
 
 const navItems = [
@@ -33,6 +35,7 @@ const navItems = [
   { to: "/admin/categories", icon: Tag, label: "Categories" },
   { to: "/admin/pos", icon: Monitor, label: "POS" },
   { to: "/admin/summary", icon: BarChart3, label: "Summary" },
+  { to: "/admin/messages", icon: MessageSquare, label: "Messages" },
   { to: "/admin/settings", icon: Settings, label: "Settings" },
 ];
 
@@ -44,6 +47,7 @@ const pageTitles: Record<string, string> = {
   "/admin/categories": "Categories",
   "/admin/pos": "POS",
   "/admin/summary": "Summary",
+  "/admin/messages": "Messages",
   "/admin/settings": "Settings",
 };
 
@@ -54,6 +58,12 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [collapsed, setCollapsed] = useState(false);
+
+  const { data: unreadCount = 0 } = useQuery({
+    queryKey: ["unreadMessagesCount"],
+    queryFn: getUnreadMessagesCount,
+    refetchInterval: 30000, // Check every 30s
+  });
 
   const logoutMutation = useMutation({
     mutationFn: () =>
@@ -108,17 +118,24 @@ const AdminLayout = () => {
         </div>
         <nav className="flex-1 space-y-1 p-4">
           {navItems.map(({ to, icon: Icon, label }) => {
+            const isMessages = to === "/admin/messages";
             return (
               <NavLink
                 key={to}
                 to={to}
                 end={to === "/admin"}
                 className={({ isActive }) =>
-                  `flex items-center ${collapsed ? "justify-center" : "gap-3"} rounded-2xl px-3 py-3 text-sm transition-all ${isActive ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`
+                  `flex items-center relative ${collapsed ? "justify-center" : "gap-3"} rounded-2xl px-3 py-3 text-sm transition-all ${isActive ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`
                 }
                 title={collapsed ? label : undefined}
               >
-                <Icon className="h-4 w-4" /> {!collapsed && label}
+                <Icon className="h-4 w-4" /> 
+                {!collapsed && <span className="flex-1">{label}</span>}
+                {isMessages && unreadCount > 0 && (
+                  <span className={`absolute flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground ${collapsed ? '-right-1 -top-1' : 'right-3'}`}>
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
               </NavLink>
             );
           })}

@@ -111,7 +111,7 @@ export const Header = () => {
               )}
             </button>
             <NavLink
-              to={user ? (isAdminRole(user.role) ? "/admin" : "/profile") : "/auth/login"}
+              to={user ? (isAdminRole(user.role) ? "/admin" : "/profile") : "/login"}
               title={user ? (isAdminRole(user.role) ? "Admin Dashboard" : "Profile") : "Login / Register"}
               className={({ isActive }) => 
                 `flex items-center gap-2 p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`

@@ -597,3 +597,66 @@ export const deleteAdminUser = async (id: string) => {
   });
 };
 
+// ── Messages ──────────────────────────────────────────────────────────────────
+
+export type MessageStatus = "unread" | "read" | "archived";
+
+export interface ContactMessage {
+  _id: string;
+  name: string;
+  email: string;
+  phone: string;
+  subject: string;
+  message: string;
+  status: MessageStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ContactFormPayload {
+  name: string;
+  email: string;
+  phone?: string;
+  subject: string;
+  message: string;
+}
+
+export const submitContactForm = async (payload: ContactFormPayload) => {
+  return await apiFetch("/api/v1/messages", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+};
+
+export const fetchAdminMessages = async (params: Record<string, string | number> = {}): Promise<{ messages: ContactMessage[]; total: number; page: number; limit: number }> => {
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      query.set(key, String(value));
+    }
+  });
+  const data = await apiFetch(`/api/v1/messages?${query.toString()}`);
+  return {
+    messages: data.data.data,
+    total: data.total,
+    page: data.page,
+    limit: data.limit,
+  };
+};
+
+export const markMessageAsRead = async (id: string) => {
+  return await apiFetch(`/api/v1/messages/${id}/read`, { method: "PATCH" });
+};
+
+export const archiveMessage = async (id: string) => {
+  return await apiFetch(`/api/v1/messages/${id}/archive`, { method: "PATCH" });
+};
+
+export const deleteMessage = async (id: string) => {
+  await apiFetch(`/api/v1/messages/${id}`, { method: "DELETE" });
+};
+
+export const getUnreadMessagesCount = async (): Promise<number> => {
+  const data = await apiFetch("/api/v1/messages/unread-count");
+  return data.data.count;
+};

@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import {
   Mail,
   Phone,
@@ -14,24 +18,61 @@ import {
   Instagram,
   Linkedin,
   Twitter,
+  CheckCircle2,
 } from "lucide-react";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { submitContactForm, ContactFormPayload } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
+
+const contactSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email"),
+  phone: z.string().optional(),
+  subject: z.string().min(3, "Subject must be at least 3 characters"),
+  message: z.string().min(10, "Message must be at least 10 characters"),
+});
+
+type ContactFormValues = z.infer<typeof contactSchema>;
 
 const ContactPage = () => {
   usePageTitle("Contact Us");
-  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
-      toast({
-        title: "Message Sent!",
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm<ContactFormValues>({
+    resolver: zodResolver(contactSchema),
+  });
+
+  useEffect(() => {
+    if (user) {
+      setValue("name", user.name || "");
+      setValue("email", user.email || "");
+    }
+  }, [user, setValue]);
+
+  const mutation = useMutation({
+    mutationFn: (payload: ContactFormPayload) => submitContactForm(payload),
+    onSuccess: () => {
+      toast.success("Message sent!", {
         description: "We'll get back to you within 24 hours.",
+        icon: <CheckCircle2 className="h-4 w-4 text-green-500" />,
       });
-      setLoading(false);
-      (e.target as HTMLFormElement).reset();
-    }, 1000);
+      reset();
+    },
+    onError: (error: Error) => {
+      toast.error("Failed to send message", {
+        description: error.message || "Please try again later.",
+      });
+    },
+  });
+
+  const onSubmit = (values: ContactFormValues) => {
+    mutation.mutate(values);
   };
 
   return (
@@ -48,40 +89,77 @@ const ContactPage = () => {
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_0.8fr]">
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
           className="space-y-4 rounded-2xl border border-border bg-card p-6 shadow-card"
         >
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <Label className="text-foreground">Full Name</Label>
-              <Input required className="mt-1 bg-background" />
+              <Input
+                {...register("name")}
+                placeholder="John Doe"
+                className="mt-1 bg-background"
+              />
+              {errors.name && (
+                <p className="mt-1 text-xs text-destructive">{errors.name.message}</p>
+              )}
             </div>
             <div>
               <Label className="text-foreground">Email</Label>
-              <Input type="email" required className="mt-1 bg-background" />
+              <Input
+                type="email"
+                {...register("email")}
+                placeholder="john@example.com"
+                className="mt-1 bg-background"
+              />
+              {errors.email && (
+                <p className="mt-1 text-xs text-destructive">{errors.email.message}</p>
+              )}
             </div>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <Label className="text-foreground">Phone</Label>
-              <Input className="mt-1 bg-background" />
+              <Label className="text-foreground">
+                Phone{" "}
+                <span className="text-muted-foreground text-xs">(optional)</span>
+              </Label>
+              <Input
+                {...register("phone")}
+                placeholder="+1 234 567 890"
+                className="mt-1 bg-background"
+              />
             </div>
             <div>
               <Label className="text-foreground">Subject</Label>
-              <Input required className="mt-1 bg-background" />
+              <Input
+                {...register("subject")}
+                placeholder="Order inquiry, product question..."
+                className="mt-1 bg-background"
+              />
+              {errors.subject && (
+                <p className="mt-1 text-xs text-destructive">{errors.subject.message}</p>
+              )}
             </div>
           </div>
           <div>
             <Label className="text-foreground">Message</Label>
-            <Textarea required rows={7} className="mt-1 bg-background" />
+            <Textarea
+              {...register("message")}
+              rows={7}
+              placeholder="Write your message here..."
+              className="mt-1 bg-background"
+            />
+            {errors.message && (
+              <p className="mt-1 text-xs text-destructive">{errors.message.message}</p>
+            )}
           </div>
           <Button
             type="submit"
-            disabled={loading}
+            disabled={mutation.isPending}
             className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-neon"
           >
-            <Send className="h-4 w-4 mr-2" />{" "}
-            {loading ? "Sending..." : "Send Message"}
+            <Send className="h-4 w-4 mr-2" />
+            {mutation.isPending ? "Sending..." : "Send Message"}
           </Button>
         </form>
 
@@ -89,11 +167,7 @@ const ContactPage = () => {
           {[
             { icon: Mail, title: "Email", info: "abuabdurehman0308@gmail.com" },
             { icon: Phone, title: "Phone", info: "+251993877913" },
-            {
-              icon: MapPin,
-              title: "Address",
-              info: "Addis Ababa, Ethiopia",
-            },
+            { icon: MapPin, title: "Address", info: "Addis Ababa, Ethiopia" },
           ].map(({ icon: Icon, title, info }) => (
             <div
               key={title}
