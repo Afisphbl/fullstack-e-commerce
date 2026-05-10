@@ -21,8 +21,10 @@ const submitContactFormRules = [
   body('phone')
     .optional({ checkFalsy: true })
     .trim()
-    .isMobilePhone('any', { strictMode: false })
-    .withMessage('Must be a valid phone number.'),
+    .isLength({ min: 7, max: 20 })
+    .withMessage('Phone number must be 7-20 characters.')
+    .matches(/^[\d\s\-\+\(\)]+$/)
+    .withMessage('Phone number can only contain digits, spaces, and +()-'),
   
   body('subject')
     .trim()

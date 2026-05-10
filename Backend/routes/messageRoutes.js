@@ -3,7 +3,7 @@
 const express = require('express');
 const messageController = require('../controllers/messageController');
 const { protect, restrictTo } = require('../middleware/auth');
-const { validate } = require('../middleware/validate');
+const validate = require('../middleware/validate');
 const { submitContactFormRules } = require('../validators/messageValidator');
 const ROLES = require('../constants/roles');
 

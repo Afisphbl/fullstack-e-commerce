@@ -82,15 +82,29 @@ exports.getAllMessages = catchAsync(async (req, res) => {
   // Get paginated messages
   const docs = await features.query.lean({ virtuals: false });
   
-  // Get total count
+  // Get total count (respects filters)
   const total = await Message.countDocuments({
     ...filter,
     ...features._filter,
   });
 
-  // Get aggregate counts by status (across all messages, not just current page)
+  // Get aggregate counts by status across ALL messages (ignore status filter)
+  // Only apply search filter if present, not status filter
+  const aggregateFilter = { ...filter };
+  const searchFilter = {};
+  
+  // Extract search filter from features._filter (if exists)
+  if (features._filter) {
+    Object.keys(features._filter).forEach(key => {
+      // Include all filters EXCEPT status
+      if (key !== 'status') {
+        searchFilter[key] = features._filter[key];
+      }
+    });
+  }
+
   const statusCounts = await Message.aggregate([
-    { $match: { ...filter, ...features._filter } },
+    { $match: { ...aggregateFilter, ...searchFilter } },
     { $group: { _id: '$status', count: { $sum: 1 } } },
   ]);
 
@@ -114,7 +128,7 @@ exports.getAllMessages = catchAsync(async (req, res) => {
     total,
     page: features._page,
     limit: features._limit,
-    countsByStatus, // Add aggregate counts
+    countsByStatus, // Add aggregate counts (across all statuses)
     data: { data: docs },
   });
 });
