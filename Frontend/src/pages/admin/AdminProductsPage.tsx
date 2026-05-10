@@ -15,16 +15,27 @@ const AdminProductsPage = () => {
   usePageTitle("Admin - Products");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedBrand, setSelectedBrand] = useState("all");
 
   const { data: productsData, isLoading: productsLoading } = useQuery({
-    queryKey: ["adminProducts"],
-    queryFn: () => fetchProducts({ limit: 100 }),
+    queryKey: ["adminProducts", selectedCategory, selectedBrand],
+    queryFn: () => fetchProducts({ 
+      limit: 100,
+      ...(selectedCategory !== "all" && { category: selectedCategory }),
+      ...(selectedBrand !== "all" && { brand: selectedBrand }),
+    }),
   });
 
-  const { data: categories } = useQuery({
+  const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
     queryFn: fetchCategories,
   });
+
+  // Extract unique brands from products
+  const brands = Array.from(
+    new Set(productsData?.products?.map((p) => p.brand).filter(Boolean) || [])
+  ).sort();
 
   const { search, setSearch, filteredProducts } = useProductFilters(
     productsData?.products
@@ -59,6 +70,12 @@ const AdminProductsPage = () => {
       <ProductPageHeader
         totalProducts={productsData?.total || 0}
         onAddProduct={handleAddProduct}
+        categories={categories}
+        brands={brands}
+        selectedCategory={selectedCategory}
+        selectedBrand={selectedBrand}
+        onCategoryChange={setSelectedCategory}
+        onBrandChange={setSelectedBrand}
       />
 
       <ProductSearchBar value={search} onChange={setSearch} />

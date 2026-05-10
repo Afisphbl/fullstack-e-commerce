@@ -59,13 +59,13 @@ export const Header = () => {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <Button
               variant="ghost"
               size="icon"
               title="Toggle Theme"
               onClick={toggleTheme}
-              className="text-muted-foreground hover:text-primary"
+              className="text-muted-foreground hover:text-primary h-9 w-9"
             >
               {theme === "dark" ? (
                 <Sun className="h-4 w-4" />
@@ -78,9 +78,9 @@ export const Header = () => {
               title="Compare"
               className={({ isActive }) => `relative p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`}
             >
-              <GitCompare className="h-5 w-5" />
+              <GitCompare className="h-4 w-4 sm:h-5 sm:w-5" />
               {compareList.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold">
+                <span className="absolute -top-0.5 -right-0.5 bg-accent text-accent-foreground text-[10px] rounded-full h-3.5 w-3.5 flex items-center justify-center font-bold">
                   {compareList.length}
                 </span>
               )}
@@ -90,9 +90,9 @@ export const Header = () => {
               title="Favorites"
               className={({ isActive }) => `relative p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`}
             >
-              <Heart className="h-5 w-5" />
+              <Heart className="h-4 w-4 sm:h-5 sm:w-5" />
               {favorites.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold">
+                <span className="absolute -top-0.5 -right-0.5 bg-destructive text-destructive-foreground text-[10px] rounded-full h-3.5 w-3.5 flex items-center justify-center font-bold">
                   {favorites.length}
                 </span>
               )}
@@ -103,9 +103,9 @@ export const Header = () => {
               className="relative p-2 text-muted-foreground hover:text-primary transition-colors"
               aria-label="Open cart"
             >
-              <ShoppingCart className="h-5 w-5" />
+              <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
               {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold">
+                <span className="absolute -top-0.5 -right-0.5 bg-primary text-primary-foreground text-[10px] rounded-full h-3.5 w-3.5 flex items-center justify-center font-bold">
                   {itemCount}
                 </span>
               )}
@@ -114,12 +114,12 @@ export const Header = () => {
               to={user ? (isAdminRole(user.role) ? "/admin" : "/profile") : "/login"}
               title={user ? (isAdminRole(user.role) ? "Admin Dashboard" : "Profile") : "Login / Register"}
               className={({ isActive }) => 
-                `flex items-center gap-2 p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`
+                `flex items-center gap-1 sm:gap-2 p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`
               }
             >
               {user ? (
-                <div className="flex items-center gap-2">
-                  <div className="h-7 w-7 rounded-full overflow-hidden border border-primary/20 bg-muted">
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <div className="h-6 w-6 sm:h-7 sm:w-7 rounded-full overflow-hidden border border-primary/20 bg-muted">
                     {user.photo && user.photo !== 'default.jpg' ? (
                       <img 
                         src={user.photo} 
@@ -137,7 +137,7 @@ export const Header = () => {
                   </span>
                 </div>
               ) : (
-                <User className="h-5 w-5" />
+                <User className="h-4 w-4 sm:h-5 sm:w-5" />
               )}
             </NavLink>
 
@@ -146,7 +146,7 @@ export const Header = () => {
               variant="ghost"
               size="icon"
               title="Menu"
-              className="md:hidden text-muted-foreground"
+              className="md:hidden text-muted-foreground h-9 w-9"
               onClick={() => setMobileOpen(!mobileOpen)}
             >
               {mobileOpen ? (

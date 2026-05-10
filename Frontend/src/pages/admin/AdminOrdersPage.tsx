@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Eye } from 'lucide-react';
+import { Eye, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TableSkeleton } from '@/components/shared/TableSkeleton';
 
@@ -18,12 +18,18 @@ const statusColors: Record<string, string> = {
 
 const AdminOrdersPage = () => {
   const [selected, setSelected] = useState<Order | null>(null);
+  const [statusFilter, setStatusFilter] = useState("all");
   const queryClient = useQueryClient();
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ['adminOrders'],
     queryFn: fetchOrders
   });
+
+  // Filter orders by status
+  const filteredOrders = statusFilter === "all" 
+    ? orders 
+    : orders.filter(order => order.status === statusFilter);
 
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string, status: string }) => 
@@ -43,26 +49,54 @@ const AdminOrdersPage = () => {
 
 
   return (
-    <div>
-      <h1 className="text-2xl font-display font-bold text-foreground mb-6">Orders</h1>
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h1 className="text-2xl font-display font-bold text-foreground">
+          Orders ({filteredOrders.length})
+        </h1>
+        
+        {/* Status Filter */}
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-muted-foreground" />
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Orders</SelectItem>
+              <SelectItem value="placed">Placed</SelectItem>
+              <SelectItem value="processing">Processing</SelectItem>
+              <SelectItem value="shipped">Shipped</SelectItem>
+              <SelectItem value="delivered">Delivered</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
 
-      <div className="bg-card rounded-lg border border-border overflow-hidden">
+      <div className="bg-card rounded-lg border border-border overflow-hidden overflow-x-auto">
         <table className="w-full">
           <thead className="bg-muted">
             <tr>
-              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Order ID</th>
-              <th className="text-left p-3 text-sm font-medium text-muted-foreground">User</th>
-              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Date</th>
-              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Items</th>
-              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Total</th>
-              <th className="text-left p-3 text-sm font-medium text-muted-foreground">Status</th>
-              <th className="text-right p-3 text-sm font-medium text-muted-foreground">Actions</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">Order ID</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">User</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">Date</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">Items</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">Total</th>
+              <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">Status</th>
+              <th className="text-right p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">Actions</th>
             </tr>
           </thead>
           <tbody>
             {isLoading ? (
               <TableSkeleton rows={8} columns={7} />
-            ) : orders.map(o => (
+            ) : filteredOrders.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="p-8 text-center text-muted-foreground">
+                  No orders found{statusFilter !== "all" && ` with status "${statusFilter}"`}
+                </td>
+              </tr>
+            ) : filteredOrders.map(o => (
               <tr key={o.id} className="border-t border-border hover:bg-muted/50">
 
                 <td className="p-3 text-sm font-medium text-foreground">{o.id}</td>

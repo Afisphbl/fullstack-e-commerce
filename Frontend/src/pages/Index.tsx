@@ -21,6 +21,9 @@ const Index = () => {
   const [newArrivals, setNewArrivals] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [slideIndex, setSlideIndex] = useState(0);
+  const [loadingFeatured, setLoadingFeatured] = useState(true);
+  const [loadingNewArrivals, setLoadingNewArrivals] = useState(true);
+  const [loadingCategories, setLoadingCategories] = useState(true);
 
   const heroSlides = [
     {
@@ -44,21 +47,31 @@ const Index = () => {
   ];
 
   useEffect(() => {
+    setLoadingFeatured(true);
     fetchFeaturedProducts().then((products) => {
       // Filter out zero-stock products for non-admin users
       const filtered = products.filter(
         (product) => product.stock > 0 || isAdminRole(user?.role)
       );
       setFeatured(filtered);
-    });
+      setLoadingFeatured(false);
+    }).catch(() => setLoadingFeatured(false));
+
+    setLoadingNewArrivals(true);
     fetchProducts({ sort: "-createdAt", limit: 50 }).then((res) => {
       // Filter out zero-stock products for non-admin users
       const filtered = res.products.filter(
         (product) => (product.isNew && product.stock > 0) || (product.isNew && isAdminRole(user?.role))
       );
       setNewArrivals(filtered);
-    });
-    fetchCategories().then(setCategories);
+      setLoadingNewArrivals(false);
+    }).catch(() => setLoadingNewArrivals(false));
+
+    setLoadingCategories(true);
+    fetchCategories().then((cats) => {
+      setCategories(cats);
+      setLoadingCategories(false);
+    }).catch(() => setLoadingCategories(false));
   }, [user?.role]);
 
   useEffect(() => {
@@ -197,28 +210,43 @@ const Index = () => {
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {categories.slice(0, 5).map((cat) => (
-              <Link
-                key={cat.id}
-                to={`/shop?category=${cat.id}`}
-                className="group relative rounded-lg overflow-hidden aspect-square"
-              >
-                <img
-                  src={cat.image}
-                  alt={cat.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent dark:from-white/80 dark:to-white/15" />
-                <div className="absolute bottom-3 left-3">
-                  <h3 className="font-display text-sm font-bold text-white dark:text-black">
-                    {cat.name}
-                  </h3>
-                  <p className="text-xs text-white/80 dark:text-black/80">
-                    {cat.count} products
-                  </p>
+            {loadingCategories ? (
+              // Skeleton loaders for categories
+              Array.from({ length: 5 }).map((_, idx) => (
+                <div
+                  key={idx}
+                  className="relative rounded-lg overflow-hidden aspect-square bg-muted animate-pulse"
+                >
+                  <div className="absolute bottom-3 left-3 space-y-2">
+                    <div className="h-4 w-24 bg-muted-foreground/20 rounded" />
+                    <div className="h-3 w-16 bg-muted-foreground/20 rounded" />
+                  </div>
                 </div>
-              </Link>
-            ))}
+              ))
+            ) : (
+              categories.slice(0, 5).map((cat) => (
+                <Link
+                  key={cat.id}
+                  to={`/shop?category=${cat.id}`}
+                  className="group relative rounded-lg overflow-hidden aspect-square"
+                >
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent dark:from-white/80 dark:to-white/15" />
+                  <div className="absolute bottom-3 left-3">
+                    <h3 className="font-display text-sm font-bold text-white dark:text-black">
+                      {cat.name}
+                    </h3>
+                    <p className="text-xs text-white/80 dark:text-black/80">
+                      {cat.count} products
+                    </p>
+                  </div>
+                </Link>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -238,9 +266,26 @@ const Index = () => {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featured.slice(0, 4).map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            {loadingFeatured ? (
+              // Skeleton loaders for products
+              Array.from({ length: 4 }).map((_, idx) => (
+                <div key={idx} className="rounded-lg border border-border bg-card overflow-hidden animate-pulse">
+                  <div className="aspect-square bg-muted" />
+                  <div className="p-4 space-y-3">
+                    <div className="h-4 bg-muted rounded w-3/4" />
+                    <div className="h-3 bg-muted rounded w-1/2" />
+                    <div className="flex items-center justify-between">
+                      <div className="h-5 bg-muted rounded w-20" />
+                      <div className="h-8 bg-muted rounded w-24" />
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              featured.slice(0, 4).map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -260,9 +305,26 @@ const Index = () => {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {newArrivals.slice(0, 4).map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            {loadingNewArrivals ? (
+              // Skeleton loaders for products
+              Array.from({ length: 4 }).map((_, idx) => (
+                <div key={idx} className="rounded-lg border border-border bg-card overflow-hidden animate-pulse">
+                  <div className="aspect-square bg-muted" />
+                  <div className="p-4 space-y-3">
+                    <div className="h-4 bg-muted rounded w-3/4" />
+                    <div className="h-3 bg-muted rounded w-1/2" />
+                    <div className="flex items-center justify-between">
+                      <div className="h-5 bg-muted rounded w-20" />
+                      <div className="h-8 bg-muted rounded w-24" />
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              newArrivals.slice(0, 4).map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            )}
           </div>
         </div>
       </section>

@@ -7,7 +7,6 @@ import { apiFetch, removeAuthToken } from "@/lib/api-client";
 import { getUnreadMessagesCount } from "@/lib/api";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   LayoutDashboard,
   Package,
@@ -22,7 +21,6 @@ import {
   Moon,
   PanelLeft,
   PanelLeftClose,
-  Search,
   Bell,
   MessageSquare,
 } from "lucide-react";
@@ -58,6 +56,7 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const { data: unreadCount = 0 } = useQuery({
     queryKey: ["unreadMessagesCount"],
@@ -90,8 +89,21 @@ const AdminLayout = () => {
 
   return (
     <div className="min-h-screen flex bg-[radial-gradient(circle_at_top,#dfe9ff_0%,transparent_28%),hsl(var(--background))]">
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+      
+      {/* Sidebar */}
       <aside
-        className={`${collapsed ? "w-20" : "w-72"} sticky top-0 h-screen border-r border-border/70 bg-card/95 backdrop-blur flex flex-col transition-all duration-300`}
+        className={`${
+          collapsed ? "w-20" : "w-72"
+        } ${
+          mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:translate-x-0 fixed lg:sticky top-0 h-screen border-r border-border/70 bg-card/95 backdrop-blur flex flex-col transition-all duration-300 z-50`}
       >
         <div className="border-b border-border/70 p-5">
           <div className="flex items-center justify-between gap-2">
@@ -105,7 +117,7 @@ const AdminLayout = () => {
               variant="ghost"
               size="icon"
               onClick={() => setCollapsed((v) => !v)}
-              className="text-muted-foreground"
+              className="text-muted-foreground hidden lg:flex"
             >
               {collapsed ? (
                 <PanelLeft className="h-4 w-4" />
@@ -118,7 +130,7 @@ const AdminLayout = () => {
             <p className="mt-1 text-xs text-muted-foreground">Commerce Control Center</p>
           )}
         </div>
-        <nav className="flex-1 space-y-1 p-4">
+        <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
           {navItems.map(({ to, icon: Icon, label }) => {
             const isMessages = to === "/admin/messages";
             return (
@@ -126,6 +138,7 @@ const AdminLayout = () => {
                 key={to}
                 to={to}
                 end={to === "/admin"}
+                onClick={() => setMobileMenuOpen(false)}
                 className={({ isActive }) =>
                   `flex items-center relative ${collapsed ? "justify-center" : "gap-3"} rounded-2xl px-3 py-3 text-sm transition-all ${isActive ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"}`
                 }
@@ -196,31 +209,35 @@ const AdminLayout = () => {
         </div>
       </aside>
 
-      <main className="flex-1 min-w-0">
+      <main className="flex-1 min-w-0 w-full lg:w-auto">
         <header className="sticky top-0 z-20 border-b border-border/70 bg-background/85 backdrop-blur">
-          <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-4">
-            <h1 className="text-xl font-display font-semibold text-foreground">
-              {currentTitle}
-            </h1>
+          <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-4">
             <div className="flex items-center gap-3">
-              <div className="relative w-64 max-w-[48vw]">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Global search..."
-                  className="h-11 rounded-2xl border-border/70 bg-card pl-9"
-                />
-              </div>
-              <Button variant="outline" size="icon" className="rounded-2xl" title="Notifications">
+              {/* Mobile Menu Button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setMobileMenuOpen(true)}
+                className="lg:hidden"
+              >
+                <PanelLeft className="h-5 w-5" />
+              </Button>
+              <h1 className="text-lg sm:text-xl font-display font-semibold text-foreground">
+                {currentTitle}
+              </h1>
+            </div>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Button variant="outline" size="icon" className="rounded-2xl h-9 w-9 sm:h-10 sm:w-10" title="Notifications">
                 <Bell className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="icon" onClick={toggleTheme} className="rounded-2xl">
+              <Button variant="outline" size="icon" onClick={toggleTheme} className="rounded-2xl h-9 w-9 sm:h-10 sm:w-10">
                 {theme === "dark" ? (
                   <Sun className="h-4 w-4" />
                 ) : (
                   <Moon className="h-4 w-4" />
                 )}
               </Button>
-              <div className="hidden items-center gap-3 rounded-2xl border border-border/70 bg-card px-3 py-2 md:flex">
+              <div className="hidden md:flex items-center gap-3 rounded-2xl border border-border/70 bg-card px-3 py-2">
                 {user?.photo && user.photo !== 'default.jpg' ? (
                   <img
                     src={user.photo}
@@ -240,7 +257,7 @@ const AdminLayout = () => {
             </div>
           </div>
         </header>
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           <Outlet />
         </div>
       </main>

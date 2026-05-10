@@ -88,7 +88,7 @@ const AdminDashboard = () => {
   return (
     <div className="space-y-8 pb-8 bg-background">
       {/* Top Section: Welcome and Controls */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-display font-bold text-foreground">Dashboard</h1>
           <p className="text-sm text-muted-foreground">Welcome back to your e-commerce overview.</p>
@@ -106,7 +106,7 @@ const AdminDashboard = () => {
             <Filter className="h-4 w-4" /> Filter
           </Button>
         </div>
-      </div>
+      </div> */}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
