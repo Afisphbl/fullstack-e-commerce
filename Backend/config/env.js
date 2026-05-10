@@ -1,14 +1,6 @@
 'use strict';
 
-const path = require('path');
-const dotenv = require('dotenv');
-
-const envFile = path.resolve(__dirname, '..', 'config.env');
-const result = dotenv.config({ path: envFile });
-
-if (result.error) {
-  throw new Error(`Failed to load env file at ${envFile}: ${result.error.message}`);
-}
+require('dotenv').config();
 
 const required = [
   'PORT',

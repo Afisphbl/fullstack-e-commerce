@@ -81,7 +81,7 @@ Request → Routes → Middleware (auth/validate/sanitize) → Controller (thin)
 cd Backend
 npm install
 
-# 2. Configure environment (edit config.env)
+# 2. Configure environment (copy .env.example to .env and edit)
 # 3. Start in development
 npm run dev
 
@@ -100,7 +100,7 @@ GET /api/v1/health
 
 ## Environment Variables
 
-Create / edit `Backend/config.env`:
+Create / edit `Backend/.env` (copy from `.env.example`):
 
 ```env
 PORT=5000
@@ -361,7 +361,7 @@ The system uses **Gmail SMTP** to send emails directly. See [GMAIL_SETUP.md](./G
 
 1. Enable 2-Factor Authentication on your Gmail account
 2. Generate an App Password at https://myaccount.google.com/apppasswords
-3. Update `config.env` with your Gmail credentials:
+3. Update `.env` with your Gmail credentials:
    ```env
    GMAIL_USER=your-email@gmail.com
    GMAIL_APP_PASSWORD=your-16-char-app-password
