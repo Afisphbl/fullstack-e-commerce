@@ -127,7 +127,7 @@ exports.initializeChapaPayment = catchAsync(async (req, res, next) => {
     returnUrl: `${process.env.CHAPA_RETURN_URL}/${order._id}`,
     customization: {
       title: 'E-Commerce Store',
-      description: `Payment for Order #${order._id}`,
+      description: 'Order Payment', // Simplified description
     },
   };
 

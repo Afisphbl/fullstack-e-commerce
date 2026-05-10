@@ -76,8 +76,8 @@ class ChapaService {
         return_url: returnUrl || process.env.CHAPA_RETURN_URL,
         customization: {
           title: customization.title || 'E-Commerce Payment',
-          description: customization.description || 'Payment for order',
-          logo: customization.logo,
+          description: customization.description || 'Payment',
+          ...(customization.logo && { logo: customization.logo }),
         },
       };
 

@@ -92,9 +92,9 @@ export const CartDrawer = () => {
 
         {isLoading ? (
           <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4" role="status" aria-live="polite" aria-label="Loading cart items">
-            <CartItemSkeleton />
-            <CartItemSkeleton />
-            <CartItemSkeleton />
+            <CartItemSkeleton key="skeleton-1" />
+            <CartItemSkeleton key="skeleton-2" />
+            <CartItemSkeleton key="skeleton-3" />
           </div>
         ) : items.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
