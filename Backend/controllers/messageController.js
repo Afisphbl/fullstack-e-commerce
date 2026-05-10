@@ -4,17 +4,16 @@ const Message = require('../models/messageModel');
 const factory = require('./handleFactory');
 const catchAsync = require('../utils/catchAsync');
 const { sendContactNotificationEmail } = require('../utils/email');
+const { hashIpAddress, extractIpAddress } = require('../utils/hashIp');
 const logger = require('../logs/logger');
 
 // ── Submit contact form (public) ──────────────────────────────────────────────
 exports.submitContactForm = catchAsync(async (req, res) => {
   const { name, email, phone, subject, message } = req.body;
 
-  // Capture IP for spam prevention
-  const ipAddress =
-    req.headers['x-forwarded-for']?.split(',')[0].trim() ||
-    req.socket?.remoteAddress ||
-    '';
+  // Extract and hash IP for spam prevention (privacy-preserving)
+  const ipAddress = extractIpAddress(req);
+  const hashedIp = hashIpAddress(ipAddress);
 
   const doc = await Message.create({
     name,
@@ -22,7 +21,7 @@ exports.submitContactForm = catchAsync(async (req, res) => {
     phone: phone || '',
     subject,
     message,
-    ipAddress,
+    hashedIp,
   });
 
   // Send email notification to owner — non-blocking
@@ -66,8 +65,61 @@ exports.archiveMessage = catchAsync(async (req, res, next) => {
 });
 
 // ── Admin CRUD ────────────────────────────────────────────────────────────────
-exports.getAllMessages = factory.getAll(Message);
-exports.getMessage    = factory.getOne(Message);
+// Custom getAll for messages with status counts
+exports.getAllMessages = catchAsync(async (req, res) => {
+  const Message = require('../models/messageModel');
+  const APIFeatures = require('../utils/APIFeatures');
+  const MESSAGES = require('../constants/messages');
+
+  const filter = req.filterObj || {};
+
+  const features = new APIFeatures(Message.find(filter), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+
+  // Get paginated messages
+  const docs = await features.query.lean({ virtuals: false });
+  
+  // Get total count
+  const total = await Message.countDocuments({
+    ...filter,
+    ...features._filter,
+  });
+
+  // Get aggregate counts by status (across all messages, not just current page)
+  const statusCounts = await Message.aggregate([
+    { $match: { ...filter, ...features._filter } },
+    { $group: { _id: '$status', count: { $sum: 1 } } },
+  ]);
+
+  // Convert to object format
+  const countsByStatus = {
+    unread: 0,
+    read: 0,
+    archived: 0,
+  };
+  
+  statusCounts.forEach(({ _id, count }) => {
+    if (_id && countsByStatus.hasOwnProperty(_id)) {
+      countsByStatus[_id] = count;
+    }
+  });
+
+  res.status(200).json({
+    status: 'success',
+    message: MESSAGES.FETCHED,
+    results: docs.length,
+    total,
+    page: features._page,
+    limit: features._limit,
+    countsByStatus, // Add aggregate counts
+    data: { data: docs },
+  });
+});
+
+exports.getMessage = factory.getOne(Message);
 exports.deleteMessage = factory.deleteOne(Message);
 
 // ── Unread count (for sidebar badge) ─────────────────────────────────────────

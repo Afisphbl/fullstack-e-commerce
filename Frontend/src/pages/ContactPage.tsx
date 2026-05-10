@@ -62,7 +62,13 @@ const ContactPage = () => {
         description: "We'll get back to you within 24 hours.",
         icon: <CheckCircle2 className="h-4 w-4 text-green-500" />,
       });
-      reset();
+      reset({
+        name: user?.name ?? "",
+        email: user?.email ?? "",
+        phone: "",
+        subject: "",
+        message: "",
+      });
     },
     onError: (error: Error) => {
       toast.error("Failed to send message", {

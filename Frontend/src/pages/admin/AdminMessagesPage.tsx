@@ -99,10 +99,12 @@ const AdminMessagesPage = () => {
   const messages = data?.messages || [];
   const total = data?.total || 0;
   const totalPages = Math.max(Math.ceil(total / limit), 1);
-  const unreadCount = messages.filter((m) => m.status === "unread").length;
+  const countsByStatus = data?.countsByStatus || { unread: 0, read: 0, archived: 0 };
+  const unreadCount = countsByStatus.unread;
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-messages"] });
+    queryClient.invalidateQueries({ queryKey: ["unreadMessagesCount"] });
   };
 
   const readMutation = useMutation({
@@ -169,9 +171,7 @@ const AdminMessagesPage = () => {
       {/* Stats Row */}
       <div className="grid grid-cols-3 gap-4">
         {(["unread", "read", "archived"] as MessageStatus[]).map((s) => {
-          const count = data
-            ? messages.filter((m) => m.status === s).length
-            : 0;
+          const count = countsByStatus[s];
           return (
             <button
               key={s}

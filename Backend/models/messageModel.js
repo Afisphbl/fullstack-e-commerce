@@ -40,9 +40,13 @@ const messageSchema = new mongoose.Schema(
       enum: MESSAGE_STATUSES,
       default: 'unread',
     },
-    ipAddress: {
+    hashedIp: {
       type: String,
-      select: false,
+      select: false, // Never expose in queries
+    },
+    expiresAt: {
+      type: Date,
+      default: () => new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days retention
     },
   },
   { timestamps: true }
@@ -52,6 +56,9 @@ const messageSchema = new mongoose.Schema(
 messageSchema.index({ status: 1 });
 messageSchema.index({ createdAt: -1 });
 messageSchema.index({ email: 1 });
+
+// TTL index: automatically delete documents after expiresAt date
+messageSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 const Message = mongoose.model('Message', messageSchema);
 module.exports = Message;

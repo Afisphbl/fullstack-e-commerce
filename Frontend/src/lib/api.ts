@@ -628,7 +628,13 @@ export const submitContactForm = async (payload: ContactFormPayload) => {
   });
 };
 
-export const fetchAdminMessages = async (params: Record<string, string | number> = {}): Promise<{ messages: ContactMessage[]; total: number; page: number; limit: number }> => {
+export const fetchAdminMessages = async (params: Record<string, string | number> = {}): Promise<{ 
+  messages: ContactMessage[]; 
+  total: number; 
+  page: number; 
+  limit: number;
+  countsByStatus: { unread: number; read: number; archived: number };
+}> => {
   const query = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== "") {
@@ -641,6 +647,7 @@ export const fetchAdminMessages = async (params: Record<string, string | number>
     total: data.total,
     page: data.page,
     limit: data.limit,
+    countsByStatus: data.countsByStatus || { unread: 0, read: 0, archived: 0 },
   };
 };
 

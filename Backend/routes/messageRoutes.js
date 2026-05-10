@@ -3,12 +3,14 @@
 const express = require('express');
 const messageController = require('../controllers/messageController');
 const { protect, restrictTo } = require('../middleware/auth');
+const { validate } = require('../middleware/validate');
+const { submitContactFormRules } = require('../validators/messageValidator');
 const ROLES = require('../constants/roles');
 
 const router = express.Router();
 
 // ── Public: anyone can submit a contact form ──────────────────────────────────
-router.post('/', messageController.submitContactForm);
+router.post('/', submitContactFormRules, validate, messageController.submitContactForm);
 
 // ── Admin only: manage messages ───────────────────────────────────────────────
 router.use(protect, restrictTo(ROLES.ADMIN));
