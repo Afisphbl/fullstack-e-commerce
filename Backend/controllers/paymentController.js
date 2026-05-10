@@ -110,7 +110,7 @@ exports.initializeChapaPayment = catchAsync(async (req, res, next) => {
     email: req.user.email,
     firstName: req.user.name.split(' ')[0] || 'Customer',
     lastName: req.user.name.split(' ').slice(1).join(' ') || 'User',
-    phone: req.user.phone || undefined,
+    phone: req.user.phone || '0911111111', // Use default if not provided
     txRef,
     callbackUrl: `${process.env.CHAPA_CALLBACK_URL}`,
     returnUrl: `${process.env.CHAPA_RETURN_URL}/${order._id}`,

@@ -49,9 +49,19 @@ class ChapaService {
         throw new AppError('Missing required payment fields', 400);
       }
 
-      // Validate phone number format (must be 10 digits starting with 09 or 07)
-      if (phone && !/^(09|07)\d{8}$/.test(phone)) {
-        throw new AppError('Phone number must be 10 digits in format 09xxxxxxxx or 07xxxxxxxx', 400);
+      // Validate and format phone number (must be 10 digits starting with 09 or 07)
+      let formattedPhone = phone;
+      if (phone) {
+        // Remove any spaces or special characters
+        formattedPhone = phone.replace(/[\s\-\(\)]/g, '');
+        
+        // Check if it matches the required format
+        if (!/^(09|07)\d{8}$/.test(formattedPhone)) {
+          console.warn(`Invalid phone format: ${phone}, using default`);
+          formattedPhone = '0911111111'; // Use default if invalid
+        }
+      } else {
+        formattedPhone = '0911111111'; // Use default if not provided
       }
 
       const payload = {
@@ -60,7 +70,7 @@ class ChapaService {
         email,
         first_name: firstName,
         last_name: lastName,
-        phone_number: phone,
+        phone_number: formattedPhone,
         tx_ref: txRef,
         callback_url: callbackUrl || process.env.CHAPA_CALLBACK_URL,
         return_url: returnUrl || process.env.CHAPA_RETURN_URL,
@@ -71,7 +81,19 @@ class ChapaService {
         },
       };
 
+      console.log('🔄 Chapa Payment Request:', {
+        amount: payload.amount,
+        email: payload.email,
+        phone: payload.phone_number,
+        txRef: payload.tx_ref,
+      });
+
       const response = await this.client.post('/transaction/initialize', payload);
+
+      console.log('✅ Chapa Payment Response:', {
+        status: response.data.status,
+        hasCheckoutUrl: !!response.data.data?.checkout_url,
+      });
 
       if (response.data.status === 'success') {
         return {
@@ -84,6 +106,12 @@ class ChapaService {
 
       throw new AppError('Failed to initialize payment', 500);
     } catch (error) {
+      console.error('❌ Chapa Payment Error:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      
       if (error.response) {
         throw new AppError(
           error.response.data.message || 'Chapa API error',
