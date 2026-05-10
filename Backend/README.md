@@ -69,7 +69,7 @@ Request → Routes → Middleware (auth/validate/sanitize) → Controller (thin)
 | HPP prevention     | hpp                              |
 | Logging            | Winston + winston-daily-rotate-file |
 | HTTP logging       | Morgan                           |
-| Email              | Nodemailer                       |
+| Email              | Nodemailer (Gmail SMTP)          |
 | Compression        | compression                      |
 
 ---
@@ -117,12 +117,17 @@ JWT_EXPIRES_IN_DAYS=7
 # Admin bootstrap
 ADMIN_SECRET=admin-portal-secret
 
-# Email (Mailtrap for dev / SendGrid for prod)
-EMAIL_HOST=sandbox.smtp.mailtrap.io
-EMAIL_PORT=25
-EMAIL_USERNAME=your_username
-EMAIL_PASSWORD=your_password
-EMAIL_FROM=E-Commerce API <noreply@ecom.dev>
+# Gmail SMTP Configuration
+# 1. Enable 2-Factor Authentication on your Gmail account
+# 2. Generate an App Password: https://myaccount.google.com/apppasswords
+# 3. Use your Gmail address as GMAIL_USER
+# 4. Use the generated 16-character App Password as GMAIL_APP_PASSWORD
+GMAIL_USER=your-email@gmail.com
+GMAIL_APP_PASSWORD=your-16-char-app-password
+EMAIL_FROM="E-Commerce Store <your-email@gmail.com>"
+OWNER_EMAIL=owner@gmail.com
+# Optional: Additional staff emails (comma-separated)
+# STAFF_EMAILS=staff1@gmail.com,staff2@gmail.com
 
 # Cloudinary (optional — for image uploads)
 CLOUDINARY_CLOUD_NAME=your_cloud
@@ -339,6 +344,37 @@ All list endpoints support:
 | CSRF (cookie)           | `httpOnly + sameSite: strict` cookies   |
 | Plaintext passwords     | bcryptjs cost factor 12                 |
 | Token after pw change   | `changedPasswordAfter()` check on every protected request |
+
+---
+
+## Email Configuration
+
+The system uses **Gmail SMTP** to send emails directly. See [GMAIL_SETUP.md](./GMAIL_SETUP.md) for detailed setup instructions.
+
+### Email Features
+
+1. **Welcome Email** - Automatically sent when a user signs up
+2. **Password Reset Email** - Sent when a user requests password reset
+3. **Contact Form Notifications** - Sent to owner and staff when someone submits the contact form
+
+### Quick Setup
+
+1. Enable 2-Factor Authentication on your Gmail account
+2. Generate an App Password at https://myaccount.google.com/apppasswords
+3. Update `config.env` with your Gmail credentials:
+   ```env
+   GMAIL_USER=your-email@gmail.com
+   GMAIL_APP_PASSWORD=your-16-char-app-password
+   EMAIL_FROM="E-Commerce Store <your-email@gmail.com>"
+   OWNER_EMAIL=owner@gmail.com
+   ```
+
+### Gmail Sending Limits
+
+- Free Gmail: 500 emails/day
+- Google Workspace: 2,000 emails/day
+
+For higher volumes, consider SendGrid, AWS SES, or Mailgun.
 
 ---
 
