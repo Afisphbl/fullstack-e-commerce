@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { verifyPaymentStatus } from "@/lib/payment-api";
+import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, Loader2, XCircle, Clock, Package } from "lucide-react";
@@ -10,6 +11,7 @@ const PaymentSuccessPage = () => {
   usePageTitle("Payment Status");
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
+  const { clearCart } = useCart();
   const [loading, setLoading] = useState(true);
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
   const [orderStatus, setOrderStatus] = useState<string | null>(null);
@@ -27,6 +29,11 @@ const PaymentSuccessPage = () => {
         const response = await verifyPaymentStatus(orderId);
         setPaymentStatus(response.paymentStatus);
         setOrderStatus(response.orderStatus);
+        
+        // Clear cart only if payment is successful
+        if (response.paymentStatus === "paid") {
+          clearCart();
+        }
       } catch (err: any) {
         setError(err.message || "Failed to verify payment");
       } finally {
@@ -35,7 +42,7 @@ const PaymentSuccessPage = () => {
     };
 
     verifyPayment();
-  }, [orderId]);
+  }, [orderId, clearCart]);
 
   if (loading) {
     return (
@@ -164,30 +171,55 @@ const PaymentSuccessPage = () => {
             <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
               <p className="text-sm text-red-900 dark:text-red-100">
                 <strong>Payment failed:</strong> Your payment could not be processed. 
-                Please try again or contact support if the problem persists.
+                Your order has been created but not paid. You can try paying again from your order details page.
               </p>
             </div>
           )}
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 pt-4">
-            <Button
-              asChild
-              variant="outline"
-              className="flex-1"
-            >
-              <Link to={`/orders/${orderId}`}>
-                View Order Details
-              </Link>
-            </Button>
-            <Button
-              asChild
-              className="flex-1"
-            >
-              <Link to="/shop">
-                Continue Shopping
-              </Link>
-            </Button>
+            {isFailed ? (
+              <>
+                <Button
+                  asChild
+                  variant="default"
+                  className="flex-1"
+                >
+                  <Link to={`/orders/${orderId}`}>
+                    Retry Payment
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="flex-1"
+                >
+                  <Link to="/orders">
+                    View All Orders
+                  </Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="flex-1"
+                >
+                  <Link to={`/orders/${orderId}`}>
+                    View Order Details
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  className="flex-1"
+                >
+                  <Link to="/shop">
+                    Continue Shopping
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Support Link */}

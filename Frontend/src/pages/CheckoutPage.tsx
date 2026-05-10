@@ -112,16 +112,18 @@ const CheckoutPage = () => {
         try {
           const paymentResponse = await initializeChapaPayment(orderId);
           
-          // Redirect to Chapa checkout
+          // Redirect to Chapa checkout - cart will be cleared after successful payment
           window.location.href = paymentResponse.checkoutUrl;
         } catch (paymentError: any) {
           console.error('Payment initialization error:', paymentError);
           const errorMessage = paymentError?.message || paymentError?.toString() || "Failed to initialize payment";
           toast.error(errorMessage);
-          navigate(`/orders/${orderId}`);
+          // Don't navigate away - let user try again or fix the issue
+          setLoading(false);
+          return;
         }
       } else {
-        // For other payment methods, just show success
+        // For other payment methods (cash on delivery, etc.), just show success
         toast.success("Order placed successfully! Check your email for confirmation.");
         clearCart();
         navigate("/orders");
