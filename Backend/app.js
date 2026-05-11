@@ -32,6 +32,15 @@ const wishlistRoutes = require('./routes/wishlistRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 
+// ── CMS Routes ────────────────────────────────────────────────────────────────
+const siteSettingsRoutes = require('./routes/siteSettingsRoutes');
+const heroSlideRoutes = require('./routes/heroSlideRoutes');
+const featureRoutes = require('./routes/featureRoutes');
+const pageContentRoutes = require('./routes/pageContentRoutes');
+const faqRoutes = require('./routes/faqRoutes');
+const socialLinkRoutes = require('./routes/socialLinkRoutes');
+const seoSettingsRoutes = require('./routes/seoSettingsRoutes');
+
 // ── Error handling ────────────────────────────────────────────────────────────
 const globalErrorHandler = require('./middleware/errorHandler');
 const AppError = require('./utils/AppError');
@@ -129,6 +138,15 @@ app.use(`${API_PREFIX}/specifications`, specificationRoutes);
 app.use(`${API_PREFIX}/wishlist`,   wishlistRoutes);
 app.use(`${API_PREFIX}/messages`,   messageRoutes);
 app.use(`${API_PREFIX}/payments`,   paymentRoutes);
+
+// ── CMS API routes ────────────────────────────────────────────────────────────
+app.use(`${API_PREFIX}/settings`,     siteSettingsRoutes);
+app.use(`${API_PREFIX}/hero-slides`,  heroSlideRoutes);
+app.use(`${API_PREFIX}/features`,     featureRoutes);
+app.use(`${API_PREFIX}/content`,      pageContentRoutes);
+app.use(`${API_PREFIX}/faqs`,         faqRoutes);
+app.use(`${API_PREFIX}/social-links`, socialLinkRoutes);
+app.use(`${API_PREFIX}/seo`,          seoSettingsRoutes);
 
 // ── 404 — unmatched routes ────────────────────────────────────────────────────
 app.all('*', (req, res, next) => {
