@@ -154,7 +154,7 @@ const DEFAULTS: SiteSettings = {
 
   taxRate: "8",
   freeShippingMin: "100",
-  currency: "USD",
+  currency: "ETB",
 
   maintenanceMode: false,
   emailNotifications: true,

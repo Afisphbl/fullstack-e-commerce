@@ -23,6 +23,7 @@ import {
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { submitContactForm, ContactFormPayload } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -37,6 +38,7 @@ type ContactFormValues = z.infer<typeof contactSchema>;
 const ContactPage = () => {
   usePageTitle("Contact Us");
   const { user } = useAuth();
+  const { settings } = useSiteSettings();
 
   const {
     register,
@@ -171,9 +173,9 @@ const ContactPage = () => {
 
         <div className="space-y-5">
           {[
-            { icon: Mail, title: "Email", info: "abuabdurehman0308@gmail.com" },
-            { icon: Phone, title: "Phone", info: "+251993877913" },
-            { icon: MapPin, title: "Address", info: "Addis Ababa, Ethiopia" },
+            { icon: Mail, title: "Email", info: settings.contactEmail },
+            { icon: Phone, title: "Phone", info: settings.contactPhone },
+            { icon: MapPin, title: "Address", info: settings.contactAddress },
           ].map(({ icon: Icon, title, info }) => (
             <div
               key={title}
@@ -193,26 +195,33 @@ const ContactPage = () => {
             <h3 className="mb-3 flex items-center gap-2 font-semibold text-foreground">
               <Clock3 className="h-4 w-4 text-primary" /> Working Hours
             </h3>
-            <div className="space-y-1.5 text-sm text-muted-foreground">
-              <p>Mon - Fri: 9:00 AM - 8:00 PM</p>
-              <p>Saturday: 10:00 AM - 6:00 PM</p>
-              <p>Sunday: 11:00 AM - 4:00 PM</p>
+            <div className="space-y-1.5 text-sm text-muted-foreground whitespace-pre-line">
+              {settings.workingHours}
             </div>
           </div>
 
           <div className="rounded-xl border border-border bg-card p-4">
             <h3 className="mb-3 font-semibold text-foreground">Follow Us</h3>
             <div className="flex items-center gap-2">
-              {[Facebook, Instagram, Linkedin, Twitter].map((Icon, idx) => (
-                <a
-                  key={idx}
-                  href="#"
-                  aria-label="Social link"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
-                >
-                  <Icon className="h-4 w-4" />
-                </a>
-              ))}
+              {[
+                { Icon: Facebook, url: settings.social.facebook },
+                { Icon: Instagram, url: settings.social.instagram },
+                { Icon: Linkedin, url: settings.social.linkedin },
+                { Icon: Twitter, url: settings.social.twitter },
+              ].map(({ Icon, url }, idx) => 
+                url ? (
+                  <a
+                    key={idx}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Social link"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                  >
+                    <Icon className="h-4 w-4" />
+                  </a>
+                ) : null
+              )}
             </div>
           </div>
         </div>
@@ -221,7 +230,7 @@ const ContactPage = () => {
       <div className="mt-8 overflow-hidden rounded-2xl border border-border">
         <iframe
           title="Our location"
-          src="https://www.google.com/maps?q=9.7719357,38.7388875&output=embed"
+          src={`https://www.google.com/maps?q=${settings.mapLat},${settings.mapLng}&output=embed`}
           width="100%"
           height="320"
           loading="lazy"
