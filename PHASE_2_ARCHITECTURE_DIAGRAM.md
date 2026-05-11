@@ -1,0 +1,474 @@
+# Phase 2: Frontend CMS Integration Architecture
+
+## 🏗️ Complete System Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         BACKEND (Phase 1)                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                       │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐              │
+│  │   MongoDB    │  │  Controllers │  │    Routes    │              │
+│  │   Database   │◄─┤   (7 new)    │◄─┤   (7 new)    │              │
+│  └──────────────┘  └──────────────┘  └──────┬───────┘              │
+│                                              │                       │
+│  Models:                                     │                       │
+│  • SiteSettings                              │                       │
+│  • HeroSlide                                 │                       │
+│  • Feature                                   │                       │
+│  • PageContent                               │                       │
+│  • FAQ                                       │                       │
+│  • SocialLink                                │                       │
+│  • SEOSettings                               │                       │
+│                                              │                       │
+└──────────────────────────────────────────────┼───────────────────────┘
+                                               │
+                                               │ REST API
+                                               │ /api/v1/*
+                                               │
+┌──────────────────────────────────────────────┼───────────────────────┐
+│                      FRONTEND (Phase 2)      │                       │
+├──────────────────────────────────────────────┼───────────────────────┤
+│                                              │                       │
+│  ┌───────────────────────────────────────────▼────────────────────┐ │
+│  │                    API Layer (api.ts)                          │ │
+│  │  • fetchSiteSettings()    • createHeroSlide()                 │ │
+│  │  • fetchHeroSlides()      • updateFeature()                   │ │
+│  │  • fetchFeatures()        • deleteFAQ()                       │ │
+│  │  • fetchPageContent()     • uploadLogo()                      │ │
+│  │  • fetchFAQs()            • ... 22 functions total            │ │
+│  └───────────────────────────┬────────────────────────────────────┘ │
+│                              │                                       │
+│  ┌───────────────────────────▼────────────────────────────────────┐ │
+│  │              React Query Hooks Layer                           │ │
+│  │                                                                 │ │
+│  │  ┌─────────────────┐  ┌─────────────────┐  ┌───────────────┐ │ │
+│  │  │useSiteSettings  │  │ useHeroSlides   │  │  useFeatures  │ │ │
+│  │  │• Query          │  │ • Query         │  │  • Query      │ │ │
+│  │  │• Update         │  │ • Create        │  │  • Create     │ │ │
+│  │  │• Upload Logo    │  │ • Update        │  │  • Update     │ │ │
+│  │  │• Upload Favicon │  │ • Delete        │  │  • Delete     │ │ │
+│  │  └─────────────────┘  └─────────────────┘  └───────────────┘ │ │
+│  │                                                                 │ │
+│  │  ┌─────────────────┐  ┌─────────────────┐  ┌───────────────┐ │ │
+│  │  │usePageContent   │  │    useFAQs      │  │useSocialLinks │ │ │
+│  │  │• Query          │  │ • Query         │  │  • Query      │ │ │
+│  │  │• Update         │  │ • Create        │  │  • Create     │ │ │
+│  │  │• Upload Image   │  │ • Update        │  │  • Update     │ │ │
+│  │  └─────────────────┘  │ • Delete        │  │  • Delete     │ │ │
+│  │                        └─────────────────┘  └───────────────┘ │ │
+│  │                                                                 │ │
+│  │  ┌─────────────────┐                                           │ │
+│  │  │ useSEOSettings  │                                           │ │
+│  │  │ • Query         │                                           │ │
+│  │  │ • Update        │                                           │ │
+│  │  │ • Upload OG Img │                                           │ │
+│  │  └─────────────────┘                                           │ │
+│  │                                                                 │ │
+│  │  Features:                                                      │ │
+│  │  • Automatic caching (5-10 min stale time)                    │ │
+│  │  • Query invalidation on mutations                            │ │
+│  │  • Optimistic updates                                          │ │
+│  │  • Error handling                                              │ │
+│  │  • Retry logic (1-2 retries)                                  │ │
+│  └─────────────────────────┬───────────────────────────────────────┘ │
+│                            │                                         │
+│  ┌─────────────────────────▼───────────────────────────────────────┐ │
+│  │                    Components Layer                              │ │
+│  │                                                                   │ │
+│  │  ┌──────────────────────────────────────────────────────────┐  │ │
+│  │  │                    Pages (4 refactored)                   │  │ │
+│  │  │                                                            │  │ │
+│  │  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │  │ │
+│  │  │  │   Homepage   │  │  About Page  │  │ Contact Page │  │  │ │
+│  │  │  │              │  │              │  │              │  │  │ │
+│  │  │  │ • Hero       │  │ • Hero       │  │ • Contact    │  │  │ │
+│  │  │  │ • Features   │  │ • Stats      │  │   Info       │  │  │ │
+│  │  │  │ • Categories │  │ • Values     │  │ • Working    │  │  │ │
+│  │  │  │ • Products   │  │ • Pillars    │  │   Hours      │  │  │ │
+│  │  │  │ • CTA        │  │              │  │ • Map        │  │  │ │
+│  │  │  └──────────────┘  └──────────────┘  └──────────────┘  │  │ │
+│  │  │                                                            │  │ │
+│  │  │  ┌──────────────┐                                         │  │ │
+│  │  │  │   FAQ Page   │                                         │  │ │
+│  │  │  │              │                                         │  │ │
+│  │  │  │ • Search     │                                         │  │ │
+│  │  │  │ • Categories │                                         │  │ │
+│  │  │  │ • Accordion  │                                         │  │ │
+│  │  │  └──────────────┘                                         │  │ │
+│  │  └────────────────────────────────────────────────────────────┘  │ │
+│  │                                                                   │ │
+│  │  ┌──────────────────────────────────────────────────────────┐  │ │
+│  │  │              Layout Components (2 updated)                │  │ │
+│  │  │                                                            │  │ │
+│  │  │  ┌──────────────┐              ┌──────────────┐          │  │ │
+│  │  │  │    Header    │              │    Footer    │          │  │ │
+│  │  │  │              │              │              │          │  │ │
+│  │  │  │ • Logo       │              │ • Logo       │          │  │ │
+│  │  │  │ • Site Name  │              │ • Site Name  │          │  │ │
+│  │  │  │ • Navigation │              │ • Contact    │          │  │ │
+│  │  │  │              │              │ • Social     │          │  │ │
+│  │  │  │              │              │ • Copyright  │          │  │ │
+│  │  │  └──────────────┘              └──────────────┘          │  │ │
+│  │  └────────────────────────────────────────────────────────────┘  │ │
+│  │                                                                   │ │
+│  │  ┌──────────────────────────────────────────────────────────┐  │ │
+│  │  │           Loading Components (3 new)                      │  │ │
+│  │  │                                                            │  │ │
+│  │  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │  │ │
+│  │  │  │HeroSkeleton  │  │Features      │  │Content       │  │  │ │
+│  │  │  │              │  │Skeleton      │  │Skeleton      │  │  │ │
+│  │  │  │ • Hero       │  │              │  │              │  │  │ │
+│  │  │  │   Layout     │  │ • 3-column   │  │ • Generic    │  │  │ │
+│  │  │  │ • Animated   │  │   Grid       │  │ • Reusable   │  │  │ │
+│  │  │  └──────────────┘  └──────────────┘  └──────────────┘  │  │ │
+│  │  └────────────────────────────────────────────────────────────┘  │ │
+│  └───────────────────────────────────────────────────────────────────┘ │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+## 🔄 Data Flow Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         User Interaction                             │
+└────────────────────────────────┬────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      Component Renders                               │
+│  • Calls React Query hook (e.g., useHeroSlides())                   │
+└────────────────────────────────┬────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      React Query Layer                               │
+│  • Checks cache (is data fresh?)                                    │
+│    ├─ YES → Return cached data                                      │
+│    └─ NO  → Continue to API call                                    │
+└────────────────────────────────┬────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      API Function Layer                              │
+│  • Calls apiFetch() with endpoint                                   │
+│  • Handles authentication                                            │
+│  • Transforms response data                                          │
+└────────────────────────────────┬────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      Backend API                                     │
+│  • Validates request                                                 │
+│  • Queries database                                                  │
+│  • Returns JSON response                                             │
+└────────────────────────────────┬────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      Response Processing                             │
+│  • API function transforms data                                      │
+│  • React Query caches result                                         │
+│  • Component receives data                                           │
+└────────────────────────────────┬────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      Component Updates                               │
+│  • isLoading: false                                                  │
+│  • data: populated                                                   │
+│  • Renders content                                                   │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+## 🎯 Loading State Flow
+
+```
+Component Mounts
+      │
+      ▼
+┌─────────────────┐
+│  isLoading: true│
+│  data: undefined│
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Render Skeleton │
+│  • HeroSkeleton │
+│  • Features...  │
+│  • Content...   │
+└────────┬────────┘
+         │
+         ▼
+   API Call Made
+         │
+         ▼
+┌─────────────────┐
+│ Response Received│
+└────────┬────────┘
+         │
+         ▼
+┌──────────────────┐
+│ isLoading: false │
+│ data: populated  │
+└────────┬─────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Render Content  │
+│  • Hero Section │
+│  • Features     │
+│  • etc.         │
+└─────────────────┘
+```
+
+## ⚠️ Error Handling Flow
+
+```
+API Call Made
+      │
+      ▼
+┌─────────────────┐
+│  Network Error? │
+└────────┬────────┘
+         │
+    ┌────┴────┐
+    │         │
+   YES       NO
+    │         │
+    ▼         ▼
+┌───────┐  ┌──────────┐
+│ Retry │  │ Success  │
+│ 1-2x  │  │ Return   │
+└───┬───┘  │ Data     │
+    │      └──────────┘
+    ▼
+┌─────────────────┐
+│ Still Failing?  │
+└────────┬────────┘
+         │
+    ┌────┴────┐
+    │         │
+   YES       NO
+    │         │
+    ▼         ▼
+┌───────┐  ┌──────────┐
+│ Use   │  │ Success  │
+│ Fall- │  │ Return   │
+│ back  │  │ Data     │
+└───────┘  └──────────┘
+```
+
+## 🔐 Type Safety Flow
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                      TypeScript Interfaces                           │
+│                                                                       │
+│  interface SiteSettings {                                            │
+│    _id: string;                                                      │
+│    siteName: string;                                                 │
+│    logo?: string;                                                    │
+│    // ... more fields                                                │
+│  }                                                                   │
+└────────────────────────────────┬────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      API Function                                    │
+│                                                                       │
+│  export const fetchSiteSettings =                                    │
+│    async (): Promise<SiteSettings> => {                             │
+│      // TypeScript knows return type                                 │
+│    }                                                                 │
+└────────────────────────────────┬────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      React Query Hook                                │
+│                                                                       │
+│  export function useSiteSettings():                                  │
+│    UseQueryResult<SiteSettings, Error> {                            │
+│      // TypeScript knows data type                                   │
+│    }                                                                 │
+└────────────────────────────────┬────────────────────────────────────┘
+                                 │
+                                 ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      Component                                       │
+│                                                                       │
+│  const { data } = useSiteSettings();                                │
+│  // TypeScript autocomplete for data.siteName, data.logo, etc.      │
+│  // Compile-time error if accessing non-existent field              │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+## 🚀 Mutation Flow (Admin Actions)
+
+```
+Admin Action (e.g., Update Settings)
+              │
+              ▼
+┌─────────────────────────────────┐
+│  Call Mutation Hook             │
+│  updateSettings.mutate(data)    │
+└──────────────┬──────────────────┘
+               │
+               ▼
+┌─────────────────────────────────┐
+│  Optimistic Update (Optional)   │
+│  • Update cache immediately     │
+│  • Show success state           │
+└──────────────┬──────────────────┘
+               │
+               ▼
+┌─────────────────────────────────┐
+│  API Call to Backend            │
+│  PATCH /api/v1/settings         │
+└──────────────┬──────────────────┘
+               │
+          ┌────┴────┐
+          │         │
+       SUCCESS    ERROR
+          │         │
+          ▼         ▼
+    ┌─────────┐  ┌──────────┐
+    │ Update  │  │ Rollback │
+    │ Cache   │  │ Cache    │
+    │         │  │ Show     │
+    │ Invali- │  │ Error    │
+    │ date    │  │          │
+    │ Queries │  │          │
+    └─────────┘  └──────────┘
+          │
+          ▼
+    ┌─────────────┐
+    │ UI Updates  │
+    │ Automatically│
+    └─────────────┘
+```
+
+## 📦 File Structure
+
+```
+Frontend/
+├── src/
+│   ├── lib/
+│   │   └── api.ts                    (22 API functions)
+│   │
+│   ├── hooks/
+│   │   ├── useSiteSettings.ts        (4 hooks)
+│   │   ├── useHeroSlides.ts          (6 hooks)
+│   │   ├── useFeatures.ts            (5 hooks)
+│   │   ├── usePageContent.ts         (3 hooks)
+│   │   ├── useFAQs.ts                (5 hooks)
+│   │   ├── useSocialLinks.ts         (4 hooks)
+│   │   └── useSEOSettings.ts         (3 hooks)
+│   │
+│   ├── components/
+│   │   ├── layout/
+│   │   │   ├── Header.tsx            (Updated)
+│   │   │   └── Footer.tsx            (Updated)
+│   │   │
+│   │   └── shared/
+│   │       ├── HeroSkeleton.tsx      (New)
+│   │       ├── FeaturesSkeleton.tsx  (New)
+│   │       └── ContentSkeleton.tsx   (New)
+│   │
+│   └── pages/
+│       ├── Index.tsx                 (Refactored)
+│       ├── AboutPage.tsx             (Refactored)
+│       ├── ContactPage.tsx           (Refactored)
+│       └── FAQPage.tsx               (Refactored)
+│
+└── Documentation/
+    ├── PHASE_2_IMPLEMENTATION_SUMMARY.md
+    ├── FRONTEND_CMS_INTEGRATION_GUIDE.md
+    ├── PHASE_2_COMPLETION_REPORT.md
+    └── PHASE_2_ARCHITECTURE_DIAGRAM.md
+```
+
+## 🎨 Component Hierarchy
+
+```
+App
+├── Header (CMS: logo, siteName)
+│   └── Navigation
+│
+├── Routes
+│   ├── Homepage
+│   │   ├── Hero (CMS: heroSlides)
+│   │   ├── Features (CMS: features)
+│   │   ├── Categories
+│   │   ├── Products
+│   │   └── CTA (CMS: pageContent)
+│   │
+│   ├── About
+│   │   ├── Hero (CMS: pageContent)
+│   │   ├── Stats (CMS: pageContent)
+│   │   ├── Values (CMS: pageContent)
+│   │   └── Pillars (CMS: pageContent)
+│   │
+│   ├── Contact
+│   │   ├── Form
+│   │   ├── Info (CMS: siteSettings)
+│   │   ├── Hours (CMS: siteSettings)
+│   │   ├── Social (CMS: socialLinks)
+│   │   └── Map (CMS: siteSettings)
+│   │
+│   └── FAQ
+│       ├── Search
+│       └── Accordion (CMS: faqs)
+│
+└── Footer (CMS: siteSettings, socialLinks)
+    ├── Brand
+    ├── Links
+    ├── Contact
+    └── Social
+```
+
+## 🔄 Cache Strategy
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                      React Query Cache                               │
+│                                                                       │
+│  ┌──────────────────────────────────────────────────────────────┐  │
+│  │  Query Key: ['siteSettings']                                  │  │
+│  │  Stale Time: 10 minutes                                       │  │
+│  │  Cache Time: 10 minutes                                       │  │
+│  │  Data: { siteName: 'VoltEdge', logo: '...', ... }           │  │
+│  └──────────────────────────────────────────────────────────────┘  │
+│                                                                       │
+│  ┌──────────────────────────────────────────────────────────────┐  │
+│  │  Query Key: ['heroSlides']                                    │  │
+│  │  Stale Time: 5 minutes                                        │  │
+│  │  Cache Time: 10 minutes                                       │  │
+│  │  Data: [{ title: '...', image: '...', ... }, ...]           │  │
+│  └──────────────────────────────────────────────────────────────┘  │
+│                                                                       │
+│  ┌──────────────────────────────────────────────────────────────┐  │
+│  │  Query Key: ['features']                                      │  │
+│  │  Stale Time: 10 minutes                                       │  │
+│  │  Cache Time: 10 minutes                                       │  │
+│  │  Data: [{ icon: 'Truck', title: '...', ... }, ...]          │  │
+│  └──────────────────────────────────────────────────────────────┘  │
+│                                                                       │
+│  ... (more cached queries)                                           │
+│                                                                       │
+└─────────────────────────────────────────────────────────────────────┘
+
+Benefits:
+• Reduces API calls (data served from cache)
+• Faster page loads (no network delay)
+• Better UX (instant updates)
+• Lower server load
+```
+
+---
+
+**Last Updated:** May 11, 2026  
+**Version:** 1.0.0  
+**Status:** Phase 2 Complete ✅

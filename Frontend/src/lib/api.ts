@@ -667,3 +667,321 @@ export const getUnreadMessagesCount = async (): Promise<number> => {
   const data = await apiFetch("/api/v1/messages/unread-count");
   return data.data.count;
 };
+
+// ── CMS API Functions ─────────────────────────────────────────────────────────
+
+// Site Settings
+export interface SiteSettings {
+  _id: string;
+  siteName: string;
+  tagline?: string;
+  logo?: string;
+  favicon?: string;
+  contactEmail: string;
+  contactPhone: string;
+  address: string;
+  mapCoordinates?: {
+    lat: number;
+    lng: number;
+  };
+  workingHours: {
+    day: string;
+    hours: string;
+    isOpen: boolean;
+  }[];
+  footerText?: string;
+  copyrightText: string;
+  updatedAt: string;
+}
+
+export const fetchSiteSettings = async (): Promise<SiteSettings> => {
+  const data = await apiFetch("/api/v1/settings");
+  return data.data.data;
+};
+
+export const updateSiteSettings = async (settingsData: Partial<SiteSettings>) => {
+  const data = await apiFetch("/api/v1/settings", {
+    method: "PATCH",
+    body: JSON.stringify(settingsData),
+  });
+  return data.data.data;
+};
+
+export const uploadLogo = async (file: File) => {
+  const formData = new FormData();
+  formData.append("logo", file);
+  const data = await apiFetch("/api/v1/settings/logo", {
+    method: "POST",
+    body: formData,
+  });
+  return data.data.data;
+};
+
+export const uploadFavicon = async (file: File) => {
+  const formData = new FormData();
+  formData.append("favicon", file);
+  const data = await apiFetch("/api/v1/settings/favicon", {
+    method: "POST",
+    body: formData,
+  });
+  return data.data.data;
+};
+
+// Hero Slides
+export interface HeroSlide {
+  _id: string;
+  title: string;
+  subtitle: string;
+  image: string;
+  buttonText?: string;
+  buttonLink?: string;
+  order: number;
+  isActive: boolean;
+  createdBy?: string;
+  createdAt: string;
+}
+
+export const fetchHeroSlides = async (): Promise<HeroSlide[]> => {
+  const data = await apiFetch("/api/v1/hero-slides");
+  return data.data.data;
+};
+
+export const fetchHeroSlidesAdmin = async (): Promise<HeroSlide[]> => {
+  const data = await apiFetch("/api/v1/hero-slides/admin");
+  return data.data.data;
+};
+
+export const createHeroSlide = async (slideData: FormData | Partial<HeroSlide>) => {
+  const data = await apiFetch("/api/v1/hero-slides", {
+    method: "POST",
+    body: slideData instanceof FormData ? slideData : JSON.stringify(slideData),
+  });
+  return data.data.data;
+};
+
+export const updateHeroSlide = async (id: string, slideData: FormData | Partial<HeroSlide>) => {
+  const data = await apiFetch(`/api/v1/hero-slides/${id}`, {
+    method: "PATCH",
+    body: slideData instanceof FormData ? slideData : JSON.stringify(slideData),
+  });
+  return data.data.data;
+};
+
+export const deleteHeroSlide = async (id: string) => {
+  await apiFetch(`/api/v1/hero-slides/${id}`, {
+    method: "DELETE",
+  });
+};
+
+export const reorderHeroSlides = async (id: string, newOrder: number) => {
+  const data = await apiFetch(`/api/v1/hero-slides/${id}/reorder`, {
+    method: "PATCH",
+    body: JSON.stringify({ order: newOrder }),
+  });
+  return data.data.data;
+};
+
+// Features
+export interface Feature {
+  _id: string;
+  icon: string;
+  title: string;
+  description: string;
+  order: number;
+  isActive: boolean;
+  createdBy?: string;
+  createdAt: string;
+}
+
+export const fetchFeatures = async (): Promise<Feature[]> => {
+  const data = await apiFetch("/api/v1/features");
+  return data.data.data;
+};
+
+export const fetchFeaturesAdmin = async (): Promise<Feature[]> => {
+  const data = await apiFetch("/api/v1/features/admin");
+  return data.data.data;
+};
+
+export const createFeature = async (featureData: Partial<Feature>) => {
+  const data = await apiFetch("/api/v1/features", {
+    method: "POST",
+    body: JSON.stringify(featureData),
+  });
+  return data.data.data;
+};
+
+export const updateFeature = async (id: string, featureData: Partial<Feature>) => {
+  const data = await apiFetch(`/api/v1/features/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(featureData),
+  });
+  return data.data.data;
+};
+
+export const deleteFeature = async (id: string) => {
+  await apiFetch(`/api/v1/features/${id}`, {
+    method: "DELETE",
+  });
+};
+
+// Page Content
+export interface PageContentSection {
+  key: string;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  image?: string;
+  buttonText?: string;
+  buttonLink?: string;
+  items?: any[];
+}
+
+export interface PageContent {
+  _id: string;
+  page: string;
+  sections: PageContentSection[];
+  updatedBy?: string;
+  updatedAt: string;
+}
+
+export const fetchPageContent = async (page: string): Promise<PageContent> => {
+  const data = await apiFetch(`/api/v1/page-content/${page}`);
+  return data.data.data;
+};
+
+export const updatePageContent = async (page: string, contentData: { sections: PageContentSection[] }) => {
+  const data = await apiFetch(`/api/v1/page-content/${page}`, {
+    method: "PATCH",
+    body: JSON.stringify(contentData),
+  });
+  return data.data.data;
+};
+
+export const uploadSectionImage = async (page: string, sectionKey: string, file: File) => {
+  const formData = new FormData();
+  formData.append("image", file);
+  formData.append("sectionKey", sectionKey);
+  const data = await apiFetch(`/api/v1/page-content/${page}/upload`, {
+    method: "POST",
+    body: formData,
+  });
+  return data.data.data;
+};
+
+// FAQs (Update existing)
+export interface FAQExtended extends FAQ {
+  _id: string;
+  order: number;
+  isActive: boolean;
+  createdBy?: string;
+  createdAt: string;
+}
+
+export const fetchFAQsFromAPI = async (): Promise<FAQExtended[]> => {
+  const data = await apiFetch("/api/v1/faqs");
+  return data.data.data;
+};
+
+export const fetchFAQsAdmin = async (): Promise<FAQExtended[]> => {
+  const data = await apiFetch("/api/v1/faqs/admin");
+  return data.data.data;
+};
+
+export const createFAQ = async (faqData: Partial<FAQExtended>) => {
+  const data = await apiFetch("/api/v1/faqs", {
+    method: "POST",
+    body: JSON.stringify(faqData),
+  });
+  return data.data.data;
+};
+
+export const updateFAQ = async (id: string, faqData: Partial<FAQExtended>) => {
+  const data = await apiFetch(`/api/v1/faqs/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(faqData),
+  });
+  return data.data.data;
+};
+
+export const deleteFAQ = async (id: string) => {
+  await apiFetch(`/api/v1/faqs/${id}`, {
+    method: "DELETE",
+  });
+};
+
+// Social Links
+export interface SocialLink {
+  _id: string;
+  platform: string;
+  url: string;
+  icon: string;
+  order: number;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export const fetchSocialLinks = async (): Promise<SocialLink[]> => {
+  const data = await apiFetch("/api/v1/social-links");
+  return data.data.data;
+};
+
+export const createSocialLink = async (linkData: Partial<SocialLink>) => {
+  const data = await apiFetch("/api/v1/social-links", {
+    method: "POST",
+    body: JSON.stringify(linkData),
+  });
+  return data.data.data;
+};
+
+export const updateSocialLink = async (id: string, linkData: Partial<SocialLink>) => {
+  const data = await apiFetch(`/api/v1/social-links/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(linkData),
+  });
+  return data.data.data;
+};
+
+export const deleteSocialLink = async (id: string) => {
+  await apiFetch(`/api/v1/social-links/${id}`, {
+    method: "DELETE",
+  });
+};
+
+// SEO Settings
+export interface SEOSettings {
+  _id: string;
+  page: string;
+  metaTitle: string;
+  metaDescription: string;
+  metaKeywords?: string[];
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: string;
+  twitterCard?: string;
+  canonicalUrl?: string;
+  updatedAt: string;
+}
+
+export const fetchSEOSettings = async (page: string): Promise<SEOSettings> => {
+  const data = await apiFetch(`/api/v1/seo-settings/${page}`);
+  return data.data.data;
+};
+
+export const updateSEOSettings = async (page: string, seoData: Partial<SEOSettings>) => {
+  const data = await apiFetch(`/api/v1/seo-settings/${page}`, {
+    method: "PATCH",
+    body: JSON.stringify(seoData),
+  });
+  return data.data.data;
+};
+
+export const uploadOGImage = async (page: string, file: File) => {
+  const formData = new FormData();
+  formData.append("ogImage", file);
+  const data = await apiFetch(`/api/v1/seo-settings/${page}/og-image`, {
+    method: "POST",
+    body: formData,
+  });
+  return data.data.data;
+};

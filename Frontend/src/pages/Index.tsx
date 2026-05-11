@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Zap, Shield, Truck, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronRight, Truck, Shield, Zap } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import {
   fetchFeaturedProducts,
   fetchCategories,
@@ -13,6 +14,11 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { isAdminRole } from "@/lib/roles";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { useHeroSlides } from "@/hooks/useHeroSlides";
+import { useFeatures } from "@/hooks/useFeatures";
+import { usePageContent } from "@/hooks/usePageContent";
+import { HeroSkeleton } from "@/components/shared/HeroSkeleton";
+import { FeaturesSkeleton } from "@/components/shared/FeaturesSkeleton";
 
 const Index = () => {
   usePageTitle("Home");
@@ -25,26 +31,40 @@ const Index = () => {
   const [loadingNewArrivals, setLoadingNewArrivals] = useState(true);
   const [loadingCategories, setLoadingCategories] = useState(true);
 
-  const heroSlides = [
+  // Fetch CMS content
+  const { data: heroSlides, isLoading: loadingHero, error: heroError } = useHeroSlides();
+  const { data: features, isLoading: loadingFeatures, error: featuresError } = useFeatures();
+  const { data: pageContent, isLoading: loadingContent } = usePageContent("home");
+
+  // Fallback hero slides if API fails
+  const defaultHeroSlides = [
     {
-      image:
-        "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=1200",
+      image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=1200",
       title: "Powerful Laptops",
       subtitle: "Built for creators and pros",
     },
     {
-      image:
-        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1200",
+      image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1200",
       title: "Smart Flagship Phones",
       subtitle: "Performance meets elegance",
     },
     {
-      image:
-        "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=1200",
+      image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=1200",
       title: "Ultra-Clear Displays",
       subtitle: "Visuals that redefine detail",
     },
   ];
+
+  // Fallback features if API fails
+  const defaultFeatures = [
+    { icon: "Truck", title: "Free Shipping", description: "On orders over $100" },
+    { icon: "Shield", title: "2 Year Warranty", description: "Extended protection" },
+    { icon: "Zap", title: "Fast Support", description: "24/7 expert help" },
+  ];
+
+  // Use CMS data or fallback
+  const displayHeroSlides = heroSlides && heroSlides.length > 0 ? heroSlides : defaultHeroSlides;
+  const displayFeatures = features && features.length > 0 ? features : defaultFeatures;
 
   useEffect(() => {
     setLoadingFeatured(true);
@@ -76,15 +96,30 @@ const Index = () => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setSlideIndex((prev) => (prev + 1) % heroSlides.length);
+      setSlideIndex((prev) => (prev + 1) % displayHeroSlides.length);
     }, 3500);
 
     return () => clearInterval(timer);
-  }, [heroSlides.length]);
+  }, [displayHeroSlides.length]);
+
+  // Get icon component dynamically
+  const getIconComponent = (iconName: string) => {
+    const Icon = (LucideIcons as any)[iconName];
+    return Icon || Zap;
+  };
+
+  // Get CTA content from page content
+  const ctaSection = pageContent?.sections?.find((s) => s.key === "cta");
+  const ctaTitle = ctaSection?.title || "Ready to Upgrade?";
+  const ctaDescription = ctaSection?.description || "Join thousands of tech enthusiasts who trust VoltEdge for the latest in consumer electronics.";
+  const ctaButtonText = ctaSection?.buttonText || "Explore Collection";
 
   return (
     <div className="min-h-screen">
       {/* Hero */}
+      {loadingHero ? (
+        <HeroSkeleton />
+      ) : (
       <section className="bg-gradient-hero text-primary-foreground relative overflow-hidden">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-20 left-10 w-72 h-72 bg-primary/30 rounded-full blur-3xl animate-float" />
@@ -128,11 +163,11 @@ const Index = () => {
 
             <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black/20 p-2 shadow-2xl">
               <div className="relative aspect-[16/11] overflow-hidden rounded-xl">
-                {heroSlides.map((slide, idx) => (
+                {displayHeroSlides.map((slide, idx) => (
                   <img
-                    key={slide.title}
-                    src={slide.image}
-                    alt={slide.title}
+                    key={idx}
+                    src={'image' in slide ? slide.image : slide.image}
+                    alt={'title' in slide ? slide.title : 'Hero slide'}
                     className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${idx === slideIndex ? "opacity-100" : "opacity-0"}`}
                   />
                 ))}
@@ -142,17 +177,18 @@ const Index = () => {
                     Featured
                   </p>
                   <h3 className="text-xl font-display font-bold text-white">
-                    {heroSlides[slideIndex].title}
+                    {'title' in displayHeroSlides[slideIndex] ? displayHeroSlides[slideIndex].title : ''}
                   </h3>
                   <p className="text-sm text-white/80">
-                    {heroSlides[slideIndex].subtitle}
+                    {'subtitle' in displayHeroSlides[slideIndex] ? displayHeroSlides[slideIndex].subtitle : ''}
                   </p>
                 </div>
               </div>
               <div className="mt-3 flex justify-center gap-1.5">
-                {heroSlides.map((_, idx) => (
+                {displayHeroSlides.map((_, idx) => (
                   <button
                     key={idx}
+                    type="button"
                     aria-label={`Go to hero slide ${idx + 1}`}
                     onClick={() => setSlideIndex(idx)}
                     className={`h-1.5 rounded-full transition-all ${idx === slideIndex ? "w-6 bg-white" : "w-2 bg-white/45"}`}
@@ -163,37 +199,33 @@ const Index = () => {
           </div>
         </div>
       </section>
+      )}
 
       {/* Features */}
+      {loadingFeatures ? (
+        <FeaturesSkeleton />
+      ) : (
       <section className="py-12 border-b border-border bg-card">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Truck,
-                title: "Free Shipping",
-                desc: "On orders over $100",
-              },
-              {
-                icon: Shield,
-                title: "2 Year Warranty",
-                desc: "Extended protection",
-              },
-              { icon: Zap, title: "Fast Support", desc: "24/7 expert help" },
-            ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="flex items-center gap-4">
-                <div className="p-3 rounded-lg bg-primary/10">
-                  <Icon className="h-6 w-6 text-primary" />
+            {displayFeatures.map((feature) => {
+              const Icon = getIconComponent('icon' in feature ? feature.icon : 'Zap');
+              return (
+                <div key={'_id' in feature ? feature._id : feature.title} className="flex items-center gap-4">
+                  <div className="p-3 rounded-lg bg-primary/10">
+                    <Icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">{feature.title}</h3>
+                    <p className="text-sm text-muted-foreground">{feature.description}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">{title}</h3>
-                  <p className="text-sm text-muted-foreground">{desc}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
+      )}
 
       {/* Categories */}
       <section className="py-16 bg-background">
@@ -336,19 +368,18 @@ const Index = () => {
         </div>
         <div className="container mx-auto px-4 text-center relative z-10">
           <h2 className="text-3xl font-display font-bold mb-4">
-            Ready to Upgrade?
+            {ctaTitle}
           </h2>
           <p className="text-primary-foreground/70 mb-8 max-w-xl mx-auto">
-            Join thousands of tech enthusiasts who trust VoltEdge for the latest
-            in consumer electronics.
+            {ctaDescription}
           </p>
           <Button
             asChild
             size="lg"
             className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-neon font-display text-sm"
           >
-            <Link to="/shop">
-              Explore Collection <ArrowRight className="ml-2 h-4 w-4" />
+            <Link to={ctaSection?.buttonLink || "/shop"}>
+              {ctaButtonText} <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
         </div>

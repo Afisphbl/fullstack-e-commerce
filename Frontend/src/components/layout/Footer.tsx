@@ -1,22 +1,45 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useSocialLinks } from "@/hooks/useSocialLinks";
 
 export const Footer = () => {
   const { openCart } = useCart();
+  
+  // Fetch site settings and social links
+  const { data: siteSettings } = useSiteSettings();
+  const { data: socialLinks } = useSocialLinks();
+  
+  const siteName = siteSettings?.siteName || "VOLTEDGE";
+  const logo = siteSettings?.logo;
+  const footerText = siteSettings?.footerText || "Your premium destination for cutting-edge electronics. Experience the future today.";
+  const copyrightText = siteSettings?.copyrightText || `© ${new Date().getFullYear()} VoltEdge. All rights reserved.`;
+  const contactEmail = siteSettings?.contactEmail || "support@voltedge.com";
+  const contactPhone = siteSettings?.contactPhone || "+1 (555) 123-4567";
+  const address = siteSettings?.address || "San Francisco, CA";
+  
+  // Get icon component dynamically
+  const getIconComponent = (iconName: string) => {
+    const Icon = (LucideIcons as any)[iconName];
+    return Icon || Mail;
+  };
 
   return (
     <footer className="bg-card border-t border-border mt-auto">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="font-display text-lg font-bold text-gradient mb-4">
-              VOLTEDGE
+            <h3 className="font-display text-lg font-bold text-gradient mb-4 flex items-center gap-2">
+              {logo && (
+                <img src={logo} alt={siteName} className="h-6 w-auto" />
+              )}
+              {!logo && siteName}
             </h3>
             <p className="text-sm text-muted-foreground">
-              Your premium destination for cutting-edge electronics. Experience
-              the future today.
+              {footerText}
             </p>
           </div>
           <div>
@@ -73,19 +96,38 @@ export const Footer = () => {
             </h4>
             <div className="flex flex-col gap-3 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-primary" /> support@voltedge.com
+                <Mail className="h-4 w-4 text-primary" /> {contactEmail}
               </div>
               <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-primary" /> +1 (555) 123-4567
+                <Phone className="h-4 w-4 text-primary" /> {contactPhone}
               </div>
               <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-primary" /> San Francisco, CA
+                <MapPin className="h-4 w-4 text-primary" /> {address}
               </div>
+              {socialLinks && socialLinks.length > 0 && (
+                <div className="flex items-center gap-2 mt-2">
+                  {socialLinks.map((link) => {
+                    const Icon = getIconComponent(link.icon);
+                    return (
+                      <a
+                        key={link._id}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={link.platform}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                      >
+                        <Icon className="h-4 w-4" />
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         </div>
         <div className="border-t border-border mt-6 pt-5 text-center text-sm text-muted-foreground">
-          © 2026 VoltEdge. All rights reserved.
+          {copyrightText}
         </div>
       </div>
     </footer>

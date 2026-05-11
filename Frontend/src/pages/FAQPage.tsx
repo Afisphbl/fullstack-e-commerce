@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { fetchFAQs, FAQ } from "@/lib/api";
+import React, { useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -8,13 +7,39 @@ import {
 } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { useFAQs } from "@/hooks/useFAQs";
+import { ContentSkeleton } from "@/components/shared/ContentSkeleton";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const FAQPage = () => {
-  const [faqs, setFaqs] = useState<FAQ[]>([]);
+  usePageTitle("FAQ");
   const [search, setSearch] = useState("");
-  useEffect(() => {
-    fetchFAQs().then(setFaqs);
-  }, []);
+  
+  // Fetch FAQs from API
+  const { data: faqs, isLoading, error } = useFAQs();
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto max-w-4xl px-4 py-10">
+        <ContentSkeleton lines={8} />
+      </div>
+    );
+  }
+
+  if (error || !faqs) {
+    return (
+      <div className="container mx-auto max-w-4xl px-4 py-10">
+        <div className="text-center">
+          <h1 className="mb-2 text-3xl font-display font-bold text-foreground">
+            Frequently Asked Questions
+          </h1>
+          <p className="text-muted-foreground">
+            Unable to load FAQs. Please try again later.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const filtered = faqs.filter(
     (f) =>
@@ -56,8 +81,8 @@ const FAQPage = () => {
             <Accordion type="single" collapsible>
               {catFaqs.map((faq) => (
                 <AccordionItem
-                  key={faq.id}
-                  value={faq.id}
+                  key={faq._id || faq.id}
+                  value={faq._id || faq.id}
                   className="border-border"
                 >
                   <AccordionTrigger className="text-left font-medium text-foreground hover:text-primary">

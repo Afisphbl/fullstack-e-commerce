@@ -23,6 +23,7 @@ import {
   PanelLeftClose,
   Bell,
   MessageSquare,
+  FileText,
 } from "lucide-react";
 
 const navItems = [
@@ -31,6 +32,7 @@ const navItems = [
   { to: "/admin/orders", icon: ShoppingCart, label: "Orders" },
   { to: "/admin/users", icon: Users, label: "Users" },
   { to: "/admin/categories", icon: Tag, label: "Categories" },
+  { to: "/admin/content", icon: FileText, label: "Content" },
   { to: "/admin/pos", icon: Monitor, label: "POS" },
   { to: "/admin/summary", icon: BarChart3, label: "Summary" },
   { to: "/admin/messages", icon: MessageSquare, label: "Messages" },
@@ -43,6 +45,7 @@ const pageTitles: Record<string, string> = {
   "/admin/orders": "Orders",
   "/admin/users": "Users",
   "/admin/categories": "Categories",
+  "/admin/content": "Content Management",
   "/admin/pos": "POS",
   "/admin/summary": "Summary",
   "/admin/messages": "Messages",

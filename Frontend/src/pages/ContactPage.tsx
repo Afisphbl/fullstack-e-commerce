@@ -20,9 +20,12 @@ import {
   Twitter,
   CheckCircle2,
 } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { submitContactForm, ContactFormPayload } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useSocialLinks } from "@/hooks/useSocialLinks";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -37,6 +40,26 @@ type ContactFormValues = z.infer<typeof contactSchema>;
 const ContactPage = () => {
   usePageTitle("Contact Us");
   const { user } = useAuth();
+  
+  // Fetch site settings for contact info
+  const { data: siteSettings, isLoading: loadingSettings } = useSiteSettings();
+  const { data: socialLinks } = useSocialLinks();
+
+  const contactEmail = siteSettings?.contactEmail || "abuabdurehman0308@gmail.com";
+  const contactPhone = siteSettings?.contactPhone || "+251993877913";
+  const address = siteSettings?.address || "Addis Ababa, Ethiopia";
+  const workingHours = siteSettings?.workingHours || [
+    { day: "Mon - Fri", hours: "9:00 AM - 8:00 PM", isOpen: true },
+    { day: "Saturday", hours: "10:00 AM - 6:00 PM", isOpen: true },
+    { day: "Sunday", hours: "11:00 AM - 4:00 PM", isOpen: true },
+  ];
+  const mapCoordinates = siteSettings?.mapCoordinates || { lat: 9.7719357, lng: 38.7388875 };
+
+  // Get icon component dynamically
+  const getIconComponent = (iconName: string) => {
+    const Icon = (LucideIcons as any)[iconName];
+    return Icon || Mail;
+  };
 
   const {
     register,
@@ -171,57 +194,67 @@ const ContactPage = () => {
 
         <div className="space-y-5">
           {[
-            { icon: Mail, title: "Email", info: "abuabdurehman0308@gmail.com" },
-            { icon: Phone, title: "Phone", info: "+251993877913" },
-            { icon: MapPin, title: "Address", info: "Addis Ababa, Ethiopia" },
-          ].map(({ icon: Icon, title, info }) => (
-            <div
-              key={title}
-              className="flex gap-4 rounded-xl border border-border bg-card p-4"
-            >
-              <div className="rounded-lg bg-primary/10 p-3">
-                <Icon className="h-5 w-5 text-primary" />
+            { icon: "Mail", title: "Email", info: contactEmail },
+            { icon: "Phone", title: "Phone", info: contactPhone },
+            { icon: "MapPin", title: "Address", info: address },
+          ].map(({ icon, title, info }) => {
+            const Icon = getIconComponent(icon);
+            return (
+              <div
+                key={title}
+                className="flex gap-4 rounded-xl border border-border bg-card p-4"
+              >
+                <div className="rounded-lg bg-primary/10 p-3">
+                  <Icon className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">{title}</h3>
+                  <p className="text-sm text-muted-foreground">{info}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-foreground">{title}</h3>
-                <p className="text-sm text-muted-foreground">{info}</p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
 
           <div className="rounded-xl border border-border bg-card p-4">
             <h3 className="mb-3 flex items-center gap-2 font-semibold text-foreground">
               <Clock3 className="h-4 w-4 text-primary" /> Working Hours
             </h3>
             <div className="space-y-1.5 text-sm text-muted-foreground">
-              <p>Mon - Fri: 9:00 AM - 8:00 PM</p>
-              <p>Saturday: 10:00 AM - 6:00 PM</p>
-              <p>Sunday: 11:00 AM - 4:00 PM</p>
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-border bg-card p-4">
-            <h3 className="mb-3 font-semibold text-foreground">Follow Us</h3>
-            <div className="flex items-center gap-2">
-              {[Facebook, Instagram, Linkedin, Twitter].map((Icon, idx) => (
-                <a
-                  key={idx}
-                  href="#"
-                  aria-label="Social link"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
-                >
-                  <Icon className="h-4 w-4" />
-                </a>
+              {workingHours.filter((wh: any) => wh.isOpen).map((wh: any, idx: number) => (
+                <p key={idx}>{wh.day}: {wh.hours}</p>
               ))}
             </div>
           </div>
+
+          {socialLinks && socialLinks.length > 0 && (
+            <div className="rounded-xl border border-border bg-card p-4">
+              <h3 className="mb-3 font-semibold text-foreground">Follow Us</h3>
+              <div className="flex items-center gap-2">
+                {socialLinks.map((link) => {
+                  const Icon = getIconComponent(link.icon);
+                  return (
+                    <a
+                      key={link._id}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={link.platform}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                    >
+                      <Icon className="h-4 w-4" />
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       <div className="mt-8 overflow-hidden rounded-2xl border border-border">
         <iframe
           title="Our location"
-          src="https://www.google.com/maps?q=9.7719357,38.7388875&output=embed"
+          src={`https://www.google.com/maps?q=${mapCoordinates.lat},${mapCoordinates.lng}&output=embed`}
           width="100%"
           height="320"
           loading="lazy"

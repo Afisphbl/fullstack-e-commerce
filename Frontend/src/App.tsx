@@ -38,6 +38,7 @@ import AdminSummaryPage from "./pages/admin/AdminSummaryPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import AdminMessagesPage from "./pages/admin/AdminMessagesPage";
+import AdminContentPage from "./pages/admin/AdminContentPage";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -274,6 +275,7 @@ const App = () => (
                       <Route path="summary" element={<AdminSummaryPage />} />
                       <Route path="settings" element={<AdminSettingsPage />} />
                       <Route path="messages" element={<AdminMessagesPage />} />
+                      <Route path="content" element={<AdminContentPage />} />
                     </Route>
 
                     <Route path="*" element={<NotFound />} />
