@@ -64,20 +64,18 @@ exports.updateSEOSettings = catchAsync(async (req, res, next) => {
   const { page } = req.params;
 
   req.body.updatedBy = req.user._id;
+  req.body.page = page;
 
-  let settings = await SEOSettings.findOne({ page });
-
-  if (!settings) {
-    settings = await SEOSettings.create({
-      page,
-      ...req.body,
-    });
-  } else {
-    settings = await SEOSettings.findOneAndUpdate({ page }, req.body, {
+  const settings = await SEOSettings.findOneAndUpdate(
+    { page },
+    req.body,
+    {
       new: true,
+      upsert: true,
       runValidators: true,
-    });
-  }
+      setDefaultsOnInsert: true,
+    }
+  );
 
   res.status(200).json({
     status: 'success',

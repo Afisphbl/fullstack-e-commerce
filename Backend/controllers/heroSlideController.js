@@ -148,12 +148,24 @@ exports.reorderSlides = catchAsync(async (req, res, next) => {
     return next(new AppError('Please provide an array of slides with order', 400));
   }
 
+  // Validate each slide has required fields
+  for (const slide of slides) {
+    if (!slide.id || typeof slide.order !== 'number') {
+      return next(new AppError('Each slide must have an id and order', 400));
+    }
+  }
+
   // Update order for each slide
   const updatePromises = slides.map((slide) =>
     HeroSlide.findByIdAndUpdate(slide.id, { order: slide.order }, { new: true })
   );
 
-  await Promise.all(updatePromises);
+  const results = await Promise.all(updatePromises);
+  
+  // Check if any updates failed
+  if (results.some(result => result === null)) {
+    return next(new AppError('One or more slide IDs are invalid', 400));
+  }
 
   const updatedSlides = await HeroSlide.find().sort({ order: 1 });
 
