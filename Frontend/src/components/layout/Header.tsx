@@ -16,6 +16,7 @@ import { useFavorites } from "@/contexts/FavoritesContext";
 import { useCompare } from "@/contexts/CompareContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSettings } from "@/contexts/SettingsContext";
 import { Button } from "@/components/ui/button";
 import { isAdminRole } from "@/lib/roles";
 
@@ -34,14 +35,15 @@ export const Header = () => {
   const { compareList } = useCompare();
   const { theme, toggleTheme } = useTheme();
   const { user } = useAuth();
+  const { settings } = useSettings();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 glass border-b border-border/50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="font-display text-xl font-bold text-gradient">
-            VOLTEDGE
+          <Link to="/" className="font-display text-xl font-bold text-gradient uppercase tracking-wider">
+            {settings?.siteName || "VOLTEDGE"}
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">

@@ -21,8 +21,11 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { usePageTitle } from "@/hooks/usePageTitle";
-import { submitContactForm, ContactFormPayload } from "@/lib/api";
+import { submitContactForm, ContactFormPayload, fetchPageBySlug } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSettings } from "@/contexts/SettingsContext";
+import { SEO } from "@/components/shared/SEO";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -37,6 +40,12 @@ type ContactFormValues = z.infer<typeof contactSchema>;
 const ContactPage = () => {
   usePageTitle("Contact Us");
   const { user } = useAuth();
+  const { settings } = useSettings();
+
+  const { data: page, isLoading } = useQuery({
+    queryKey: ["page", "contact"],
+    queryFn: () => fetchPageBySlug("contact"),
+  });
 
   const {
     register,
@@ -81,17 +90,38 @@ const ContactPage = () => {
     mutation.mutate(values);
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-10">
-      <div className="mx-auto mb-10 max-w-2xl text-center">
-        <h1 className="mb-2 text-3xl font-display font-bold text-foreground">
-          Contact Us
-        </h1>
-        <p className="text-muted-foreground">
-          Have a question, order issue, or partnership inquiry? Our team is
-          ready to help.
-        </p>
-      </div>
+      <SEO title={page?.seoTitle || "Contact Us"} description={page?.seoDescription} />
+      
+      {page && (
+        <div className="mx-auto mb-10 max-w-3xl">
+          <div 
+            className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-display prose-a:text-primary text-center"
+            dangerouslySetInnerHTML={{ __html: page.content }} 
+          />
+        </div>
+      )}
+
+      {!page && (
+        <div className="mx-auto mb-10 max-w-2xl text-center">
+          <h1 className="mb-2 text-3xl font-display font-bold text-foreground">
+            Contact Us
+          </h1>
+          <p className="text-muted-foreground">
+            Have a question, order issue, or partnership inquiry? Our team is
+            ready to help.
+          </p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_0.8fr]">
         <form
@@ -171,9 +201,9 @@ const ContactPage = () => {
 
         <div className="space-y-5">
           {[
-            { icon: Mail, title: "Email", info: "abuabdurehman0308@gmail.com" },
-            { icon: Phone, title: "Phone", info: "+251993877913" },
-            { icon: MapPin, title: "Address", info: "Addis Ababa, Ethiopia" },
+            { icon: Mail, title: "Email", info: settings?.contactEmail || "support@voltedge.com" },
+            { icon: Phone, title: "Phone", info: settings?.contactPhone || "+1 (555) 123-4567" },
+            { icon: MapPin, title: "Address", info: settings?.address || "San Francisco, CA" },
           ].map(({ icon: Icon, title, info }) => (
             <div
               key={title}
@@ -203,16 +233,31 @@ const ContactPage = () => {
           <div className="rounded-xl border border-border bg-card p-4">
             <h3 className="mb-3 font-semibold text-foreground">Follow Us</h3>
             <div className="flex items-center gap-2">
-              {[Facebook, Instagram, Linkedin, Twitter].map((Icon, idx) => (
-                <a
-                  key={idx}
-                  href="#"
-                  aria-label="Social link"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
-                >
-                  <Icon className="h-4 w-4" />
-                </a>
-              ))}
+              {settings?.socialLinks && settings.socialLinks.length > 0 ? (
+                settings.socialLinks.map((link, idx) => (
+                  <a
+                    key={idx}
+                    href={link.url}
+                    aria-label={link.platform}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex h-9 px-3 items-center justify-center rounded-full border border-border text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                  >
+                    {link.platform}
+                  </a>
+                ))
+              ) : (
+                [Facebook, Instagram, Linkedin, Twitter].map((Icon, idx) => (
+                  <a
+                    key={idx}
+                    href="#"
+                    aria-label="Social link"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                  >
+                    <Icon className="h-4 w-4" />
+                  </a>
+                ))
+              )}
             </div>
           </div>
         </div>

@@ -9,6 +9,8 @@ import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { CompareProvider } from "@/contexts/CompareContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { SettingsProvider } from "@/contexts/SettingsContext";
+import { HelmetProvider } from "react-helmet-async";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/layout/CartDrawer";
@@ -21,6 +23,7 @@ import BlogDetailPage from "./pages/BlogDetailPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import FAQPage from "./pages/FAQPage";
+import DynamicPage from "./pages/DynamicPage";
 import ComparePage from "./pages/ComparePage";
 import FavoritesPage from "./pages/FavoritesPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -38,6 +41,9 @@ import AdminSummaryPage from "./pages/admin/AdminSummaryPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import AdminMessagesPage from "./pages/admin/AdminMessagesPage";
+import AdminPagesPage from "./pages/admin/AdminPagesPage";
+import AdminSectionsPage from "./pages/admin/AdminSectionsPage";
+import AdminFAQsPage from "./pages/admin/AdminFAQsPage";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -45,8 +51,24 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import { isAdminRole } from "@/lib/roles";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+import { SEO } from "@/components/shared/SEO";
+import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
+import { OfflineIndicator } from "@/components/shared/OfflineIndicator";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+      retry: 2,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: true,
+    },
+    mutations: {
+      retry: 1,
+    },
+  },
+});
 
 
 
@@ -72,6 +94,7 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
 
 const StorefrontLayout = ({ children }: { children: React.ReactNode }) => (
   <div className="flex flex-col min-h-screen">
+    <SEO />
     <Header />
     <main className="flex-1">{children}</main>
     <CartDrawer />
@@ -80,16 +103,20 @@ const StorefrontLayout = ({ children }: { children: React.ReactNode }) => (
 );
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <ThemeProvider>
-        <TooltipProvider>
-          <CartProvider>
-          <FavoritesProvider>
-            <CompareProvider>
-              <Toaster />
-              <SonnerToaster />
-              <BrowserRouter>
+  <HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <ErrorBoundary>
+        <AuthProvider>
+          <SettingsProvider>
+            <ThemeProvider>
+              <TooltipProvider>
+                <CartProvider>
+                  <FavoritesProvider>
+                    <CompareProvider>
+                      <Toaster />
+                      <SonnerToaster />
+                      <OfflineIndicator />
+                      <BrowserRouter>
                   <Routes>
                     {/* Storefront */}
                     <Route
@@ -197,6 +224,14 @@ const App = () => (
                       }
                     />
                     <Route
+                      path="/pages/:slug"
+                      element={
+                        <StorefrontLayout>
+                          <DynamicPage />
+                        </StorefrontLayout>
+                      }
+                    />
+                    <Route
                       path="/compare"
                       element={
                         <StorefrontLayout>
@@ -274,6 +309,9 @@ const App = () => (
                       <Route path="summary" element={<AdminSummaryPage />} />
                       <Route path="settings" element={<AdminSettingsPage />} />
                       <Route path="messages" element={<AdminMessagesPage />} />
+                      <Route path="pages" element={<AdminPagesPage />} />
+                      <Route path="sections" element={<AdminSectionsPage />} />
+                      <Route path="faqs" element={<AdminFAQsPage />} />
                     </Route>
 
                     <Route path="*" element={<NotFound />} />
@@ -284,8 +322,11 @@ const App = () => (
         </CartProvider>
       </TooltipProvider>
     </ThemeProvider>
+        </SettingsProvider>
     </AuthProvider>
+      </ErrorBoundary>
   </QueryClientProvider>
+  </HelmetProvider>
 );
 
 export default App;

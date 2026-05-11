@@ -23,6 +23,9 @@ import {
   PanelLeftClose,
   Bell,
   MessageSquare,
+  FileText,
+  Layout,
+  HelpCircle,
 } from "lucide-react";
 
 const navItems = [
@@ -34,6 +37,9 @@ const navItems = [
   { to: "/admin/pos", icon: Monitor, label: "POS" },
   { to: "/admin/summary", icon: BarChart3, label: "Summary" },
   { to: "/admin/messages", icon: MessageSquare, label: "Messages" },
+  { to: "/admin/pages", icon: FileText, label: "Pages" },
+  { to: "/admin/sections", icon: Layout, label: "Sections" },
+  { to: "/admin/faqs", icon: HelpCircle, label: "FAQs" },
   { to: "/admin/settings", icon: Settings, label: "Settings" },
 ];
 
@@ -46,6 +52,9 @@ const pageTitles: Record<string, string> = {
   "/admin/pos": "POS",
   "/admin/summary": "Summary",
   "/admin/messages": "Messages",
+  "/admin/pages": "Pages",
+  "/admin/sections": "Sections",
+  "/admin/faqs": "FAQs",
   "/admin/settings": "Settings",
 };
 

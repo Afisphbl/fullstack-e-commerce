@@ -1,0 +1,38 @@
+[
+  {
+    "title": "About Us",
+    "slug": "about",
+    "content": "<h1>About VoltEdge</h1><p>We're on a mission to make cutting-edge technology accessible to everyone. Founded in 2020, VoltEdge has grown from a small startup to a global electronics destination trusted by millions.</p>",
+    "seoTitle": "About Us - VoltEdge",
+    "seoDescription": "Learn more about VoltEdge's mission and history.",
+    "isPublished": true,
+    "template": "about"
+  },
+  {
+    "title": "Contact Us",
+    "slug": "contact",
+    "content": "<h1>Contact Us</h1><p>Have questions? We're here to help.</p>",
+    "seoTitle": "Contact Us - VoltEdge",
+    "seoDescription": "Get in touch with the VoltEdge support team.",
+    "isPublished": true,
+    "template": "contact"
+  },
+  {
+    "title": "Privacy Policy",
+    "slug": "privacy-policy",
+    "content": "<h1>Privacy Policy</h1><p>Your privacy is important to us. This policy explains how we collect, use, and protect your personal information.</p>",
+    "seoTitle": "Privacy Policy - VoltEdge",
+    "seoDescription": "Read our privacy policy.",
+    "isPublished": true,
+    "template": "policy"
+  },
+  {
+    "title": "Terms of Service",
+    "slug": "terms",
+    "content": "<h1>Terms of Service</h1><p>By using VoltEdge, you agree to these terms.</p>",
+    "seoTitle": "Terms of Service - VoltEdge",
+    "seoDescription": "Read our terms of service.",
+    "isPublished": true,
+    "template": "policy"
+  }
+]

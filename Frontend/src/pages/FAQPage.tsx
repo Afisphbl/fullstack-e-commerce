@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { fetchFAQs, FAQ } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
+import { fetchFAQs, FAQ, fetchPageBySlug } from "@/lib/api";
+import { SEO } from "@/components/shared/SEO";
 import {
   Accordion,
   AccordionContent,
@@ -8,10 +10,16 @@ import {
 } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 
 const FAQPage = () => {
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [search, setSearch] = useState("");
+
+  const { data: page, isLoading: isPageLoading } = useQuery({
+    queryKey: ["page", "faq"],
+    queryFn: () => fetchPageBySlug("faq"),
+  });
   useEffect(() => {
     fetchFAQs().then(setFaqs);
   }, []);
@@ -23,14 +31,32 @@ const FAQPage = () => {
   );
   const categories = [...new Set(faqs.map((f) => f.category))];
 
+  if (isPageLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto max-w-4xl px-4 py-10">
+      <SEO title={page?.seoTitle || "FAQ"} description={page?.seoDescription} />
+      
       <h1 className="mb-2 text-3xl font-display font-bold text-foreground">
-        Frequently Asked Questions
+        {page?.title || "Frequently Asked Questions"}
       </h1>
-      <p className="mb-8 text-muted-foreground">
-        Find answers to common questions
-      </p>
+      
+      {page?.content ? (
+        <div 
+          className="prose prose-lg dark:prose-invert max-w-none prose-p:text-muted-foreground mb-8"
+          dangerouslySetInnerHTML={{ __html: page.content }}
+        />
+      ) : (
+        <p className="mb-8 text-muted-foreground">
+          Find answers to common questions
+        </p>
+      )}
 
       <div className="relative mb-8">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

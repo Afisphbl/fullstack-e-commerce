@@ -4,6 +4,7 @@ const multer = require('multer');
 const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
 
@@ -196,6 +197,46 @@ const resizeProductImages = catchAsync(async (req, res, next) => {
 });
 
 
+// ── Generic Media image: single image ──────────────────────────────────────────
+const uploadMediaImage = upload.single('file');
+
+const resizeMediaImage = catchAsync(async (req, res, next) => {
+  if (!req.file) return next();
+
+  // 1) Resize and format the image using sharp
+  const buffer = await sharp(req.file.buffer)
+    .resize({ width: 1920, withoutEnlargement: true })
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toBuffer();
+
+  // 2) Upload to Cloudinary using a promise-wrapped stream
+  const uploadToCloudinary = (imageBuffer) => {
+    return new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'e-commerce/media',
+          public_id: `media-${Date.now()}-${crypto.randomUUID()}`,
+          format: 'jpg',
+          resource_type: 'image',
+        },
+        (error, result) => {
+          if (error) return reject(new AppError('Error uploading to Cloudinary', 500));
+          resolve(result);
+        }
+      );
+      stream.end(imageBuffer);
+    });
+  };
+
+  const result = await uploadToCloudinary(buffer);
+
+  // 3) Store the Cloudinary URL in req.body.url for the controller
+  req.body.url = result.secure_url;
+
+  next();
+});
+
 module.exports = {
   uploadProductImages,
   resizeProductImages,
@@ -203,5 +244,7 @@ module.exports = {
   resizeUserPhoto,
   uploadCategoryImage,
   resizeCategoryImage,
+  uploadMediaImage,
+  resizeMediaImage,
 };
 

@@ -31,6 +31,10 @@ const specificationRoutes = require('./routes/specificationRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
+const settingRoutes = require('./routes/settingRoutes');
+const pageRoutes    = require('./routes/pageRoutes');
+const sectionRoutes = require('./routes/sectionRoutes');
+const faqRoutes     = require('./routes/faqRoutes');
 
 // ── Error handling ────────────────────────────────────────────────────────────
 const globalErrorHandler = require('./middleware/errorHandler');
@@ -129,6 +133,10 @@ app.use(`${API_PREFIX}/specifications`, specificationRoutes);
 app.use(`${API_PREFIX}/wishlist`,   wishlistRoutes);
 app.use(`${API_PREFIX}/messages`,   messageRoutes);
 app.use(`${API_PREFIX}/payments`,   paymentRoutes);
+app.use(`${API_PREFIX}/settings`,   settingRoutes);
+app.use(`${API_PREFIX}/pages`,      pageRoutes);
+app.use(`${API_PREFIX}/sections`,   sectionRoutes);
+app.use(`${API_PREFIX}/faqs`,       faqRoutes);
 
 // ── 404 — unmatched routes ────────────────────────────────────────────────────
 app.all('*', (req, res, next) => {

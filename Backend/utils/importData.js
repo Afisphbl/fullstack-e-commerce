@@ -22,6 +22,10 @@ const Review   = require('../models/reviewModel');
 const Order    = require('../models/orderModel');
 const Coupon   = require('../models/couponModel');
 const Specification = require('../models/specificationModel');
+const Setting = require('../models/settingModel');
+const Page = require('../models/pageModel');
+const Section = require('../models/sectionModel');
+const FAQ = require('../models/faqModel');
 
 // ─── Connect ──────────────────────────────────────────────────────────────────
 const connectDB = async () => {
@@ -48,6 +52,10 @@ const importData = async () => {
     const reviews    = loadJSON('reviews.json');
     const coupons    = loadJSON('coupons.json');
     const specifications = loadJSON('specifications.json');
+    const settings   = loadJSON('settings.json');
+    const pages      = loadJSON('pages.json');
+    const sections   = loadJSON('sections.json');
+    const faqs       = loadJSON('faqs.json');
 
     if (categories) await Category.create(categories, { validateBeforeSave: false });
     if (users)      await User.create(users,      { validateBeforeSave: false });
@@ -55,6 +63,15 @@ const importData = async () => {
     if (reviews)    await Review.create(reviews,   { validateBeforeSave: false });
     if (coupons)    await Coupon.create(coupons,   { validateBeforeSave: false });
     if (specifications) await Specification.create(specifications, { validateBeforeSave: false });
+    
+    // Check if setting already exists to respect singleton
+    if (settings) {
+      const count = await Setting.countDocuments();
+      if (count === 0) await Setting.create(settings, { validateBeforeSave: false });
+    }
+    if (pages)      await Page.create(pages, { validateBeforeSave: false });
+    if (sections)   await Section.create(sections, { validateBeforeSave: false });
+    if (faqs)       await FAQ.create(faqs, { validateBeforeSave: false });
 
     logger.info('✅  Data imported successfully.');
   } catch (err) {
@@ -76,6 +93,10 @@ const deleteData = async () => {
       Order.deleteMany(),
       Coupon.deleteMany(),
       Specification.deleteMany(),
+      Setting.deleteMany(),
+      Page.deleteMany(),
+      Section.deleteMany(),
+      FAQ.deleteMany(),
     ]);
     logger.info('🗑️  All data deleted successfully.');
   } catch (err) {

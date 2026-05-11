@@ -502,7 +502,15 @@ export const updateOrder = async (id: string, orderData: any) => {
 
 // FAQ
 export const fetchFAQs = async (): Promise<FAQ[]> => {
-  return faqsData as FAQ[];
+  try {
+    const res = await apiFetch("/api/v1/faqs");
+    return res.data.data.map((faq: any) => ({
+      ...faq,
+      id: faq._id || faq.id
+    }));
+  } catch (error) {
+    return faqsData as FAQ[];
+  }
 };
 
 // Team
@@ -667,3 +675,96 @@ export const getUnreadMessagesCount = async (): Promise<number> => {
   const data = await apiFetch("/api/v1/messages/unread-count");
   return data.data.count;
 };
+
+// ── CMS ──────────────────────────────────────────────────────────────────────
+
+export interface SiteSettings {
+  siteName: string;
+  contactEmail: string;
+  contactPhone: string;
+  address: string;
+  socialLinks: { platform: string; url: string; _id?: string }[];
+  seo: { title: string; description: string; keywords: string };
+  theme: { primaryColor: string; accentColor: string };
+}
+
+export const fetchSettings = async (): Promise<SiteSettings> => {
+  const data = await apiFetch("/api/v1/settings");
+  return data.data.data;
+};
+
+export const updateSettings = async (settingsData: Partial<SiteSettings>) => {
+  const data = await apiFetch("/api/v1/settings", {
+    method: "PATCH",
+    body: JSON.stringify(settingsData),
+  });
+  return data.data.data;
+};
+
+export const fetchPages = async (): Promise<any[]> => {
+  const data = await apiFetch("/api/v1/pages");
+  return data.data.data;
+};
+
+export const fetchPageBySlug = async (slug: string): Promise<any> => {
+  const data = await apiFetch(`/api/v1/pages/${slug}`);
+  return data.data.data;
+};
+
+export const createPage = async (pageData: any) => {
+  const data = await apiFetch("/api/v1/pages", {
+    method: "POST",
+    body: JSON.stringify(pageData),
+  });
+  return data.data.data;
+};
+
+export const updatePage = async (id: string, pageData: any) => {
+  const data = await apiFetch(`/api/v1/pages/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(pageData),
+  });
+  return data.data.data;
+};
+
+export const deletePage = async (id: string) => {
+  await apiFetch(`/api/v1/pages/${id}`, {
+    method: "DELETE",
+  });
+};
+
+export const fetchSections = async (): Promise<any[]> => {
+  const data = await apiFetch("/api/v1/sections?sort=order");
+  return data.data.data;
+};
+
+export const updateSection = async (id: string, sectionData: any) => {
+  const data = await apiFetch(`/api/v1/sections/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(sectionData),
+  });
+  return data.data.data;
+};
+
+export const createFAQ = async (faqData: any) => {
+  const data = await apiFetch("/api/v1/faqs", {
+    method: "POST",
+    body: JSON.stringify(faqData),
+  });
+  return data.data.data;
+};
+
+export const updateFAQ = async (id: string, faqData: any) => {
+  const data = await apiFetch(`/api/v1/faqs/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(faqData),
+  });
+  return data.data.data;
+};
+
+export const deleteFAQ = async (id: string) => {
+  await apiFetch(`/api/v1/faqs/${id}`, {
+    method: "DELETE",
+  });
+};
+

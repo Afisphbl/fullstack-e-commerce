@@ -1,0 +1,83 @@
+[
+  {
+    "name": "Main Hero",
+    "type": "hero",
+    "order": 1,
+    "isActive": true,
+    "data": {
+      "slides": [
+        {
+          "image": "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=1200",
+          "title": "Powerful Laptops",
+          "subtitle": "Built for creators and pros"
+        },
+        {
+          "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1200",
+          "title": "Smart Flagship Phones",
+          "subtitle": "Performance meets elegance"
+        },
+        {
+          "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=1200",
+          "title": "Ultra-Clear Displays",
+          "subtitle": "Visuals that redefine detail"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Features List",
+    "type": "features",
+    "order": 2,
+    "isActive": true,
+    "data": {
+      "features": [
+        { "icon": "Truck", "title": "Free Shipping", "desc": "On orders over $100" },
+        { "icon": "Shield", "title": "2 Year Warranty", "desc": "Extended protection" },
+        { "icon": "Zap", "title": "Fast Support", "desc": "24/7 expert help" }
+      ]
+    }
+  },
+  {
+    "name": "Categories Showcase",
+    "type": "categories",
+    "order": 3,
+    "isActive": true,
+    "data": {
+      "title": "Shop by Category"
+    }
+  },
+  {
+    "name": "Featured Products",
+    "type": "products",
+    "order": 4,
+    "isActive": true,
+    "data": {
+      "title": "Featured Products",
+      "filter": "featured",
+      "limit": 4
+    }
+  },
+  {
+    "name": "New Arrivals",
+    "type": "products",
+    "order": 5,
+    "isActive": true,
+    "data": {
+      "title": "New Arrivals",
+      "filter": "new",
+      "limit": 4
+    }
+  },
+  {
+    "name": "Call to Action",
+    "type": "cta",
+    "order": 6,
+    "isActive": true,
+    "data": {
+      "title": "Ready to Upgrade?",
+      "subtitle": "Join thousands of tech enthusiasts who trust VoltEdge for the latest in consumer electronics.",
+      "buttonText": "Explore Collection",
+      "buttonLink": "/shop"
+    }
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "siteName": "VoltEdge",
+    "contactEmail": "support@voltedge.com",
+    "contactPhone": "+1 (555) 123-4567",
+    "address": "123 Innovation Drive, Tech City, TC 90210",
+    "socialLinks": [
+      { "platform": "Twitter", "url": "https://twitter.com" },
+      { "platform": "Instagram", "url": "https://instagram.com" },
+      { "platform": "Facebook", "url": "https://facebook.com" }
+    ],
+    "seo": {
+      "title": "VoltEdge - Next-Gen Electronics",
+      "description": "Discover cutting-edge electronics with unmatched performance.",
+      "keywords": "electronics, laptops, phones, technology"
+    },
+    "theme": {
+      "primaryColor": "#3b82f6",
+      "accentColor": "#10b981"
+    }
+  }
+]
