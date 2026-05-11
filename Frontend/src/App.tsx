@@ -8,6 +8,7 @@ import { CartProvider } from "@/contexts/CartContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { CompareProvider } from "@/contexts/CompareContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { SiteSettingsProvider } from "@/contexts/SiteSettingsContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -84,6 +85,7 @@ const App = () => (
     <AuthProvider>
       <ThemeProvider>
         <TooltipProvider>
+          <SiteSettingsProvider>
           <CartProvider>
           <FavoritesProvider>
             <CompareProvider>
@@ -282,6 +284,7 @@ const App = () => (
             </CompareProvider>
           </FavoritesProvider>
         </CartProvider>
+        </SiteSettingsProvider>
       </TooltipProvider>
     </ThemeProvider>
     </AuthProvider>
