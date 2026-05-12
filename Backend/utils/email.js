@@ -118,7 +118,7 @@ const sendWelcomeEmail = async ({ email, name }) => {
           </ul>
         </div>
         <div style="text-align:center;margin:32px 0;">
-          <a href="${process.env.CLIENT_URL || "http://localhost:5173"}" style="display:inline-block;padding:14px 32px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px;box-shadow:0 4px 6px rgba(16,185,129,0.3);">
+          <a href="${process.env.PROD_CLIENT_URL || "http://localhost:5173"}" style="display:inline-block;padding:14px 32px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px;box-shadow:0 4px 6px rgba(16,185,129,0.3);">
             Start Shopping
           </a>
         </div>
