@@ -223,9 +223,56 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const { updateSettingsSection, SECTIONS } =
         await import("@/lib/api/settings");
+
+      const payloads: Record<string, any> = {
+        general: {
+          companyName: s.companyName,
+          tagline: s.tagline,
+          logoUrl: s.logoUrl,
+          description: s.description,
+        },
+        hero: {
+          heroEyebrow: s.heroEyebrow,
+          heroTitle: s.heroTitle,
+          heroHighlight: s.heroHighlight,
+          heroSubtitle: s.heroSubtitle,
+          heroCtaText: s.heroCtaText,
+          heroCtaLink: s.heroCtaLink,
+          heroSlides: s.heroSlides,
+        },
+        about: {
+          aboutEyebrow: s.aboutEyebrow,
+          aboutTitle: s.aboutTitle,
+          aboutHighlight: s.aboutHighlight,
+          aboutIntro: s.aboutIntro,
+          aboutImage: s.aboutImage,
+          aboutStats: s.aboutStats,
+          aboutValues: s.aboutValues,
+        },
+        contact: {
+          contactEmail: s.contactEmail,
+          contactPhone: s.contactPhone,
+          contactAddress: s.contactAddress,
+          workingHours: s.workingHours,
+          mapLat: s.mapLat,
+          mapLng: s.mapLng,
+          mapZoom: s.mapZoom,
+        },
+        social: s.social,
+        commerce: {
+          taxRate: s.taxRate,
+          freeShippingMin: s.freeShippingMin,
+          currency: s.currency,
+        },
+        preferences: {
+          maintenanceMode: s.maintenanceMode,
+          emailNotifications: s.emailNotifications,
+        },
+      };
+
       // Fire and forget saves to backend
       const promises = SECTIONS.map((section) =>
-        updateSettingsSection(section, s),
+        updateSettingsSection(section, payloads[section] || s),
       );
       await Promise.allSettled(promises);
     } catch (e) {

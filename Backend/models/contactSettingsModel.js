@@ -1,6 +1,7 @@
 "use strict";
 
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const contactSettingsSchema = new mongoose.Schema(
   {
@@ -8,8 +9,8 @@ const contactSettingsSchema = new mongoose.Schema(
       type: String,
       trim: true,
       lowercase: true,
-      match: [/^\S+@\S+\.\S+$/, "Please provide a valid email address."],
-      default: "support@voltedge.com",
+      validate: [validator.isEmail, "Please provide a valid email."],
+      default: "[EMAIL_ADDRESS]",
     },
     contactPhone: {
       type: String,
@@ -29,19 +30,22 @@ const contactSettingsSchema = new mongoose.Schema(
       default: "",
     },
     mapLat: {
-      type: String,
-      trim: true,
-      default: "37.7749",
+      type: Number,
+      min: -90,
+      max: 90,
+      default: 37.7749,
     },
     mapLng: {
-      type: String,
-      trim: true,
-      default: "-122.4194",
+      type: Number,
+      min: -180,
+      max: 180,
+      default: -122.4194,
     },
     mapZoom: {
-      type: String,
-      trim: true,
-      default: "13",
+      type: Number,
+      min: 0,
+      max: 20,
+      default: 13,
     },
   },
   { timestamps: true },
