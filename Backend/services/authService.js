@@ -71,7 +71,7 @@ const logout = (res) => {
 };
 
 // ─── forgotPassword ───────────────────────────────────────────────────────────
-const forgotPassword = async ({ email }, next) => {
+const forgotPassword = async ({ email }) => {
   const user = await User.findOne({ email });
   if (!user) throw new AppError("No user found with that email address.", 404);
 
@@ -87,7 +87,8 @@ const forgotPassword = async ({ email }, next) => {
       resetURL,
     });
     return { message: MESSAGES.PASSWORD_RESET_EMAIL_SENT };
-  } catch {
+  } catch (err) {
+    logger.error("📧 Password reset email failed:", err);
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save({ validateBeforeSave: false });

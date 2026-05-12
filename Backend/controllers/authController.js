@@ -16,8 +16,7 @@ exports.logout = (req, res) => {
 };
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
-  console.log(req.body);
-  const result = await authService.forgotPassword(req.body, next);
+  const result = await authService.forgotPassword({ email: req.body.email });
   if (result) {
     res.status(200).json({ status: "success", message: result.message });
   }
