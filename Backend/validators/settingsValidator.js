@@ -17,7 +17,7 @@ const generalRules = [
     .isLength({ max: 160 })
     .withMessage("Tagline must be at most 160 characters."),
   body("logoUrl")
-    .optional()
+    .optional({ checkFalsy: true })
     .trim()
     .isURL({ require_tld: false })
     .withMessage("Logo URL must be a valid URL."),
@@ -55,7 +55,7 @@ const heroRules = [
     .isArray()
     .withMessage("heroSlides must be an array."),
   body("heroSlides.*.image")
-    .optional()
+    .optional({ checkFalsy: true })
     .trim()
     .isURL({ require_tld: false })
     .withMessage("Each slide image must be a valid URL."),
@@ -79,7 +79,7 @@ const aboutRules = [
     .isLength({ max: 1000 })
     .withMessage("About intro must be at most 1000 characters."),
   body("aboutImage")
-    .optional()
+    .optional({ checkFalsy: true })
     .trim()
     .isURL({ require_tld: false })
     .withMessage("About image must be a valid URL."),
@@ -129,34 +129,34 @@ const contactRules = [
 // ─── Social ───────────────────────────────────────────────────────────────────
 const socialRules = [
   body("facebook")
-    .optional()
+    .optional({ checkFalsy: true })
     .trim()
     .isURL({ require_tld: false })
     .withMessage("Facebook must be a valid URL."),
   body("instagram")
-    .optional()
+    .optional({ checkFalsy: true })
     .trim()
     .isURL({ require_tld: false })
     .withMessage("Instagram must be a valid URL."),
   body("twitter")
-    .optional()
+    .optional({ checkFalsy: true })
     .trim()
     .isURL({ require_tld: false })
     .withMessage("Twitter must be a valid URL."),
   body("linkedin")
-    .optional()
+    .optional({ checkFalsy: true })
     .trim()
     .isURL({ require_tld: false })
     .withMessage("LinkedIn must be a valid URL."),
   body("youtube")
-    .optional()
+    .optional({ checkFalsy: true })
     .trim()
     .isURL({ require_tld: false })
     .withMessage("YouTube must be a valid URL."),
   body("custom").optional().isArray().withMessage("custom must be an array."),
   body("custom.*.platform").optional().trim(),
   body("custom.*.url")
-    .optional()
+    .optional({ checkFalsy: true })
     .trim()
     .isURL({ require_tld: false })
     .withMessage("Custom URL must be a valid URL."),

@@ -1,4 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import {
+  fetchAllSettings,
+  updateSettingsSection,
+  SECTIONS,
+  SettingsSection,
+} from "@/lib/api/settings";
 
 export interface HeroSlide {
   image: string;
@@ -167,7 +173,7 @@ const STORAGE_KEY = "voltedge_site_settings";
 interface Ctx {
   settings: SiteSettings;
   setSettings: React.Dispatch<React.SetStateAction<SiteSettings>>;
-  save: (s: SiteSettings) => void;
+  save: (s: SiteSettings, targetSection?: SettingsSection) => Promise<void>;
   reset: () => void;
   isLoading: boolean;
 }
@@ -193,7 +199,6 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     let active = true;
     const loadFromApi = async () => {
       try {
-        const { fetchAllSettings } = await import("@/lib/api/settings");
         const apiSettings = await fetchAllSettings();
         if (active && Object.keys(apiSettings).length > 0) {
           setSettings((prev) => {
@@ -214,16 +219,13 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, []);
 
-  const save = async (s: SiteSettings) => {
+  const save = async (s: SiteSettings, targetSection?: SettingsSection) => {
     // Optimistic UI update
     setSettings(s);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
 
     // Async save to API
     try {
-      const { updateSettingsSection, SECTIONS } =
-        await import("@/lib/api/settings");
-
       const payloads: Record<string, any> = {
         general: {
           companyName: s.companyName,
@@ -270,13 +272,23 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
         },
       };
 
-      // Fire and forget saves to backend
-      const promises = SECTIONS.map((section) =>
-        updateSettingsSection(section, payloads[section] || s),
-      );
-      await Promise.allSettled(promises);
+      // Save to backend
+      const promises = targetSection
+        ? [updateSettingsSection(targetSection, payloads[targetSection] || s)]
+        : SECTIONS.map((section) =>
+            updateSettingsSection(section, payloads[section] || s),
+          );
+      const results = await Promise.allSettled(promises);
+      const failures = results.filter((r) => r.status === "rejected");
+      if (failures.length > 0) {
+        console.error("Save failures:", failures);
+        throw new Error(
+          `${failures.length} section(s) failed to save to the database. Checking the backend logs can provide more info.`,
+        );
+      }
     } catch (e) {
       console.error("Failed to save settings to API", e);
+      throw e;
     }
   };
 
