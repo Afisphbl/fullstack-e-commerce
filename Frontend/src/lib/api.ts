@@ -16,6 +16,15 @@ import {
   SpecDetail,
   SpecGroup,
   Specification,
+  Product,
+  Order,
+  Category,
+  ProductStatus,
+  AdminDashboardData,
+  Blog,
+  FAQ,
+  TeamMember,
+  WishlistAnalytics,
 } from "@/types/api";
 
 export type {
@@ -29,6 +38,15 @@ export type {
   SpecDetail,
   SpecGroup,
   Specification,
+  Product,
+  Order,
+  Category,
+  ProductStatus,
+  AdminDashboardData,
+  Blog,
+  FAQ,
+  TeamMember,
+  WishlistAnalytics,
 };
 
 export interface RawProduct {
@@ -110,108 +128,8 @@ export interface RawAdminUser {
   lastLogin: string | null;
 }
 
-export interface Product {
-  id: string;
-  _id?: string;
-  name: string;
-  slug: string;
-  price: number;
-  priceDiscount?: number;
-  discountPercent?: number;
-  originalPrice: number | null;
-  category: Category | string | null;
-  brand: string;
-  image: string;
-  imageCover?: string;
-  images: string[];
-  description: string;
-  shortDescription?: string;
-  specs: Record<string, string>;
-  stock: number;
-  featured: boolean;
-  isFeatured?: boolean;
-  isNew: boolean;
-  createdAt?: string;
-  tags: string[];
-  ratingsAverage: number;
-  ratingsQuantity: number;
-  sold: number;
-  specification?: Specification;
-  status?: ProductStatus;
-}
-
-export interface Category {
-  id: string;
-  _id?: string;
-  name: string;
-  slug: string;
-  icon: string;
-  count: number;
-  image: string;
-}
-
-export interface Blog {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  author: string;
-  date: string;
-  image: string;
-  category: string;
-  readTime: string;
-}
-
-export interface OrderItem {
-  productId: string;
-  name: string;
-  quantity: number;
-  price: number;
-  image: string;
-}
-
-export interface OrderTimeline {
-  status: string;
-  date: string;
-  description: string;
-}
-
-export interface Order {
-  id: string;
-  userId: string;
-  user?: {
-    name: string;
-    email: string;
-  };
-  items: OrderItem[];
-  total: number;
-  status: string;
-  date: string;
-  shippingAddress: string;
-  trackingNumber: string | null;
-  estimatedDelivery: string;
-  timeline: OrderTimeline[];
-}
-
-export interface FAQ {
-  id: string;
-  question: string;
-  answer: string;
-  category: string;
-}
-
-export interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  bio: string;
-  image: string;
-}
-
 export type AdminUserRole = "user" | "admin";
 export type AdminUserStatus = "active" | "suspended" | "pending";
-export type ProductStatus = "active" | "inactive" | "out_of_stock" | "archived";
 
 export interface AdminUser {
   _id: string;
@@ -251,19 +169,12 @@ export interface RawReview {
   createdAt: string;
 }
 
-export interface RawUserAnalytics {
-  total: number;
-  active: number;
-  inactive: number;
-  roles: Record<string, number>;
-}
-
 export interface AdminUsersResponse {
   users: AdminUser[];
   total: number;
   page: number;
   limit: number;
-  analytics: RawUserAnalytics;
+  analytics: AdminUserAnalytics;
   recentEvents: AdminUserEvent[];
 }
 
@@ -724,42 +635,43 @@ export const fetchProductStats = async () => {
   return data.data.data.stats;
 };
 
-export const fetchWishlistAnalytics = async () => {
-  const data = await apiFetch<
-    ApiResponse<{ analytics: Record<string, unknown> }>
-  >("/api/v1/wishlist/analytics");
+export const fetchWishlistAnalytics = async (): Promise<WishlistAnalytics> => {
+  const data = await apiFetch<ApiResponse<{ analytics: WishlistAnalytics }>>(
+    "/api/v1/wishlist/analytics",
+  );
   return data.data.data.analytics;
 };
 
-export const fetchAdminDashboardData = async () => {
-  const [
-    orderStats,
-    productStats,
-    wishlistAnalytics,
-    productsRes,
-    orders,
-    categories,
-  ] = await Promise.all([
-    fetchOrderStats(),
-    fetchProductStats(),
-    fetchWishlistAnalytics(),
-    fetchProducts({ limit: 10, sort: "-sold" }),
-    fetchOrders(),
-    fetchCategories(),
-  ]);
+export const fetchAdminDashboardData =
+  async (): Promise<AdminDashboardData> => {
+    const [
+      orderStats,
+      productStats,
+      wishlistAnalytics,
+      productsRes,
+      orders,
+      categories,
+    ] = await Promise.all([
+      fetchOrderStats(),
+      fetchProductStats(),
+      fetchWishlistAnalytics(),
+      fetchProducts({ limit: 10, sort: "-sold" }),
+      fetchOrders(),
+      fetchCategories(),
+    ]);
 
-  return {
-    orderStats,
-    productStats,
-    wishlistAnalytics,
-    topProducts: productsRes.products,
-    totalOrders: orders.length,
-    totalProducts: productsRes.total,
-    totalCategories: categories.length,
-    recentOrders: orders.slice(0, 5),
-    revenue: orders.reduce((acc, curr) => acc + curr.total, 0),
+    return {
+      orderStats,
+      productStats,
+      wishlistAnalytics,
+      topProducts: productsRes.products,
+      totalOrders: orders.length,
+      totalProducts: productsRes.total,
+      totalCategories: categories.length,
+      recentOrders: orders.slice(0, 5),
+      revenue: orders.reduce((acc, curr) => acc + curr.total, 0),
+    };
   };
-};
 
 export const fetchAdminUsers = async (
   params: Record<string, string | number | boolean> = {},
@@ -774,14 +686,19 @@ export const fetchAdminUsers = async (
   const data = await apiFetch<ApiResponse<RawAdminUser[]>>(
     `/api/v1/users?${query.toString()}`,
   );
+  const responseData = data.data as unknown as {
+    data: RawAdminUser[];
+    analytics: AdminUserAnalytics;
+    meta?: { recentEvents: AdminUserEvent[] };
+  };
+
   return {
-    users: data.data.data.map(mapAdminUser),
+    users: responseData.data.map(mapAdminUser),
     total: data.total || 0,
     page: data.page || 1,
     limit: data.limit || 10,
-    analytics: (data.data as unknown as { analytics: RawUserAnalytics })
-      .analytics,
-    recentEvents: data.meta?.recentEvents || [],
+    analytics: responseData.analytics,
+    recentEvents: responseData.meta?.recentEvents || [],
   };
 };
 

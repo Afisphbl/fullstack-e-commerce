@@ -17,8 +17,6 @@ import { useUserFilters } from "@/components/admin/users/hooks/useUserFilters";
 import { useUserMutations } from "@/components/admin/users/hooks/useUserMutations";
 import { useUserExport } from "@/components/admin/users/hooks/useUserExport";
 
-
-
 const AdminUsersPage = () => {
   const {
     searchInput,
@@ -53,7 +51,8 @@ const AdminUsersPage = () => {
     refetchInterval: 30000,
   });
 
-  const { saveMutation, deleteMutation, toggleStatusMutation } = useUserMutations();
+  const { saveMutation, deleteMutation, toggleStatusMutation } =
+    useUserMutations();
   const { exportCsv, isExporting } = useUserExport();
 
   const users = data?.users || [];
@@ -74,9 +73,9 @@ const AdminUsersPage = () => {
     name: string;
     email: string;
     phone?: string;
-    photo?: any;
+    photo?: string | File;
     role: "user" | "admin";
-    status: "active" | "pending" | "suspended";
+    status: AdminUserStatus;
     permissions?: string;
     password?: string;
     passwordConfirm?: string;
@@ -105,7 +104,7 @@ const AdminUsersPage = () => {
         onSuccess: () => {
           setDialogOpen(false);
         },
-      }
+      },
     );
   };
 
@@ -119,7 +118,8 @@ const AdminUsersPage = () => {
   };
 
   const handleToggleStatus = (user: AdminUser) => {
-    const nextStatus: AdminUserStatus = user.status === "suspended" ? "active" : "suspended";
+    const nextStatus: AdminUserStatus =
+      user.status === "suspended" ? "active" : "suspended";
     toggleStatusMutation.mutate({ user, nextStatus });
   };
 
@@ -133,7 +133,7 @@ const AdminUsersPage = () => {
   };
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className='space-y-6 pb-8'>
       <UserPageHeader
         analytics={{
           totalUsers: data?.analytics.totalUsers || 0,
@@ -144,34 +144,42 @@ const AdminUsersPage = () => {
         isLoading={isLoading}
       />
 
-
-      <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="overflow-hidden rounded-[28px] border border-border/70 bg-card shadow-card">
-          <div className="border-b border-border/70 px-6 py-5">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <section className='grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]'>
+        <div className='overflow-hidden rounded-[28px] border border-border/70 bg-card shadow-card'>
+          <div className='border-b border-border/70 px-6 py-5'>
+            <div className='flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between'>
               <div>
-                <h3 className="text-2xl font-display font-semibold text-foreground">
+                <h3 className='text-2xl font-display font-semibold text-foreground'>
                   User Management
                 </h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Manage roles, permissions, account status, registration details, and staff assignments.
+                <p className='mt-1 text-sm text-muted-foreground'>
+                  Manage roles, permissions, account status, registration
+                  details, and staff assignments.
                 </p>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3">
-                <Button variant="outline" className="rounded-xl" onClick={handleExport} disabled={isExporting}>
-                  <Download className="mr-2 h-4 w-4" />
+              <div className='flex flex-wrap items-center gap-3'>
+                <Button
+                  variant='outline'
+                  className='rounded-xl'
+                  onClick={handleExport}
+                  disabled={isExporting}
+                >
+                  <Download className='mr-2 h-4 w-4' />
                   {isExporting ? "Exporting..." : "Export CSV"}
                 </Button>
-                <Button className="rounded-xl shadow-sm" onClick={openCreateDialog}>
-                  <Plus className="mr-2 h-4 w-4" />
+                <Button
+                  className='rounded-xl shadow-sm'
+                  onClick={openCreateDialog}
+                >
+                  <Plus className='mr-2 h-4 w-4' />
                   {isStaffTab ? "Add Staff" : "Add User"}
                 </Button>
               </div>
             </div>
           </div>
 
-          <div className="space-y-5 p-6">
+          <div className='space-y-5 p-6'>
             <Tabs
               value={tab}
               onValueChange={(value) =>
@@ -181,11 +189,11 @@ const AdminUsersPage = () => {
                 })
               }
             >
-              <TabsList className="grid w-full max-w-[320px] grid-cols-2 rounded-2xl bg-muted/60 p-1">
-                <TabsTrigger value="all" className="rounded-xl">
+              <TabsList className='grid w-full max-w-[320px] grid-cols-2 rounded-2xl bg-muted/60 p-1'>
+                <TabsTrigger value='all' className='rounded-xl'>
                   All Users
                 </TabsTrigger>
-                <TabsTrigger value="staff" className="rounded-xl">
+                <TabsTrigger value='staff' className='rounded-xl'>
                   Staff Members
                 </TabsTrigger>
               </TabsList>
@@ -195,7 +203,9 @@ const AdminUsersPage = () => {
               searchInput={searchInput}
               onSearchChange={setSearchInput}
               status={status}
-              onStatusChange={(value) => updateParams({ status: value, page: "1" })}
+              onStatusChange={(value) =>
+                updateParams({ status: value, page: "1" })
+              }
               role={role}
               onRoleChange={(value) => updateParams({ role: value, page: "1" })}
             />
@@ -211,7 +221,9 @@ const AdminUsersPage = () => {
               }}
               onEdit={openEditDialog}
               onDelete={setDeleteTarget}
-              onStatusChange={(user, status) => toggleStatusMutation.mutate({ user, nextStatus: status })}
+              onStatusChange={(user, status) =>
+                toggleStatusMutation.mutate({ user, nextStatus: status })
+              }
               onRetry={refetch}
             />
 
@@ -222,12 +234,14 @@ const AdminUsersPage = () => {
               currentRecords={users.length}
               isFetching={isFetching}
               isLoading={isLoading}
-              onPageChange={(newPage) => updateParams({ page: String(newPage) })}
+              onPageChange={(newPage) =>
+                updateParams({ page: String(newPage) })
+              }
             />
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className='space-y-6'>
           <UserStatusChart users={users} />
           <UserNotifications events={data?.recentEvents || []} />
         </div>
