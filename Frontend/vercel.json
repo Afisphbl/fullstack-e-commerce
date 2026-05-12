@@ -3,7 +3,7 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "installCommand": "npm ci",
-  
+
   "headers": [
     {
       "source": "/(.*)",
@@ -67,14 +67,14 @@
       ]
     }
   ],
-  
+
   "rewrites": [
     {
-      "source": "/((?!api).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ],
-  
+
   "redirects": [
     {
       "source": "/home",
@@ -82,11 +82,11 @@
       "permanent": true
     }
   ],
-  
+
   "trailingSlash": false,
-  
+
   "cleanUrls": true,
-  
+
   "env": {
     "NODE_ENV": "production"
   }
