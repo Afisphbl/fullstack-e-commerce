@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch, setAuthToken } from "@/lib/api-client";
+import { AuthResponse } from "@/lib/api";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,7 +46,7 @@ export default function Login() {
 
   const mutation = useMutation({
     mutationFn: (values: z.infer<typeof loginSchema>) =>
-      apiFetch("/api/v1/auth/login", {
+      apiFetch<AuthResponse>("/api/v1/auth/login", {
         method: "POST",
         body: JSON.stringify(values),
       }),

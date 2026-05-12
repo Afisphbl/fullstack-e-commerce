@@ -10,27 +10,11 @@ import {
   Product,
   SpecGroup,
 } from "@/lib/api";
-
-interface ProductFormValues {
-  name: string;
-  description: string;
-  shortDescription?: string;
-  price: number;
-  discountPercent: number;
-  stock: number;
-  category: string;
-  brand: string;
-  imageCover: any;
-  images?: any;
-  tags?: string;
-  status: "active" | "inactive" | "out_of_stock" | "archived";
-  isFeatured: boolean;
-  specGroups?: SpecGroup[];
-}
+import { ProductFormValues } from "./useProductForm";
 
 export const useProductMutations = (
   editingProduct: Product | null,
-  onSuccess: () => void
+  onSuccess: () => void,
 ) => {
   const queryClient = useQueryClient();
 
@@ -38,31 +22,36 @@ export const useProductMutations = (
     mutationFn: async (values: ProductFormValues) => {
       // 1. Prepare Product Payload
       const { specGroups, ...productData } = values;
-      
+
       const formData = new FormData();
-      
+
       // Append basic fields
       Object.entries(productData).forEach(([key, value]) => {
-        if (key === 'imageCover') {
+        if (key === "imageCover") {
           if (value instanceof File) {
-            formData.append('imageCover', value);
-          } else if (typeof value === 'string') {
-             // If it's a string (URL), we only send it if it's the existing one
-             // Actually, the backend might expect it in req.body if not a file
-             formData.append('imageCover', value);
+            formData.append("imageCover", value);
+          } else if (typeof value === "string") {
+            // If it's a string (URL), we only send it if it's the existing one
+            // Actually, the backend might expect it in req.body if not a file
+            formData.append("imageCover", value);
           }
-        } else if (key === 'images') {
-           if (value instanceof FileList) {
-             Array.from(value).forEach(file => formData.append('images', file));
-           } else if (typeof value === 'string' && value) {
-             // Split comma separated URLs back into an array for the backend
-             value.split(",").map(s => s.trim()).filter(Boolean).forEach(img => formData.append('images', img));
-           } else if (Array.isArray(value)) {
-              value.forEach(img => formData.append('images', img));
-           }
-
-        } else if (key === 'tags') {
-           formData.append('tags', values.tags || "");
+        } else if (key === "images") {
+          if (value instanceof FileList) {
+            Array.from(value).forEach((file) =>
+              formData.append("images", file),
+            );
+          } else if (typeof value === "string" && value) {
+            // Split comma separated URLs back into an array for the backend
+            value
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean)
+              .forEach((img) => formData.append("images", img));
+          } else if (Array.isArray(value)) {
+            value.forEach((img) => formData.append("images", img));
+          }
+        } else if (key === "tags") {
+          formData.append("tags", values.tags || "");
         } else {
           formData.append(key, String(value));
         }
@@ -80,18 +69,19 @@ export const useProductMutations = (
         if (specGroups && specGroups.length > 0) {
           if (editingProduct?.specification) {
             await updateSpecification(
-              editingProduct.specification._id || editingProduct.specification.id,
-              { details: specGroups }
+              editingProduct.specification._id ||
+                editingProduct.specification.id,
+              { details: specGroups as SpecGroup[] },
             );
           } else {
             await createSpecification({
               product: updatedOrCreated.id,
-              details: specGroups,
+              details: specGroups as SpecGroup[],
             });
           }
         } else if (editingProduct?.specification) {
           await deleteSpecification(
-            editingProduct.specification._id || editingProduct.specification.id
+            editingProduct.specification._id || editingProduct.specification.id,
           );
         }
         return updatedOrCreated;

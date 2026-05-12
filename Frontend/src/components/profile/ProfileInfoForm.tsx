@@ -11,6 +11,7 @@ import * as z from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api-client";
 import { toast } from "sonner";
+import { ProfileResponse } from "@/lib/api";
 import {
   Form,
   FormControl,
@@ -129,7 +130,7 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
         payload.addresses = [];
       }
 
-      return apiFetch("/api/v1/users/updateMe", {
+      return apiFetch<ProfileResponse>("/api/v1/users/updateMe", {
         method: "PATCH",
         body: JSON.stringify(payload),
       });
@@ -147,37 +148,39 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
     <Form {...profileForm}>
       <form
         onSubmit={profileForm.handleSubmit((values) =>
-          updateProfileMutation.mutate(values)
+          updateProfileMutation.mutate(values),
         )}
-        className="space-y-8"
+        className='space-y-8'
       >
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
           {/* Left Column: Personal Information */}
-          <div className="space-y-4">
-            <h2 className="font-display font-semibold text-foreground mb-6 text-xl">
+          <div className='space-y-4'>
+            <h2 className='font-display font-semibold text-foreground mb-6 text-xl'>
               Personal Information
             </h2>
 
-            <div className="mb-8">
+            <div className='mb-8'>
               <ProfilePictureUpload
                 userName={user.name}
                 currentPhoto={
-                  user.photo === 'default.jpg' 
-                    ? undefined 
-                    : user.photo.startsWith('http') 
-                      ? user.photo 
+                  user.photo === "default.jpg"
+                    ? undefined
+                    : user.photo.startsWith("http")
+                      ? user.photo
                       : `/public/img/users/${user.photo}`
                 }
                 onUploadSuccess={(newPhoto) => {
-                  queryClient.setQueryData(["currentUser"], { ...user, photo: newPhoto });
+                  queryClient.setQueryData(["currentUser"], {
+                    ...user,
+                    photo: newPhoto,
+                  });
                 }}
               />
             </div>
 
-
             <FormField
               control={profileForm.control}
-              name="name"
+              name='name'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Full Name</FormLabel>
@@ -190,7 +193,7 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
             />
             <FormField
               control={profileForm.control}
-              name="email"
+              name='email'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
@@ -205,34 +208,34 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
 
           {/* Right Column: Shipping Details (Users Only) */}
           {user.role === "user" && (
-            <div className="space-y-4">
-              <h2 className="font-display font-semibold text-foreground mb-6 text-xl flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-primary" /> Shipping Details
+            <div className='space-y-4'>
+              <h2 className='font-display font-semibold text-foreground mb-6 text-xl flex items-center gap-2'>
+                <MapPin className='h-5 w-5 text-primary' /> Shipping Details
               </h2>
 
               <FormField
                 control={profileForm.control}
-                name="street"
+                name='street'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Street Address</FormLabel>
                     <FormControl>
-                      <Input placeholder="123 Main St" {...field} />
+                      <Input placeholder='123 Main St' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className='grid grid-cols-2 gap-4'>
                 <FormField
                   control={profileForm.control}
-                  name="city"
+                  name='city'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>City</FormLabel>
                       <FormControl>
-                        <Input placeholder="New York" {...field} />
+                        <Input placeholder='New York' {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -240,12 +243,12 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
                 />
                 <FormField
                   control={profileForm.control}
-                  name="state"
+                  name='state'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>State/Province</FormLabel>
                       <FormControl>
-                        <Input placeholder="NY" {...field} />
+                        <Input placeholder='NY' {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -253,15 +256,15 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className='grid grid-cols-2 gap-4'>
                 <FormField
                   control={profileForm.control}
-                  name="zip"
+                  name='zip'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Postal Code</FormLabel>
                       <FormControl>
-                        <Input placeholder="10001" {...field} />
+                        <Input placeholder='10001' {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -269,12 +272,12 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
                 />
                 <FormField
                   control={profileForm.control}
-                  name="country"
+                  name='country'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Country</FormLabel>
                       <FormControl>
-                        <Input placeholder="United States" {...field} />
+                        <Input placeholder='United States' {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -285,8 +288,8 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
           )}
         </div>
 
-        <div className="flex justify-end border-t border-border pt-6">
-          <Button type="submit" disabled={updateProfileMutation.isPending}>
+        <div className='flex justify-end border-t border-border pt-6'>
+          <Button type='submit' disabled={updateProfileMutation.isPending}>
             {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
           </Button>
         </div>

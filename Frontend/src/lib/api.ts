@@ -5,6 +5,7 @@ import ordersData from "@/data/orders.json";
 import faqsData from "@/data/faqs.json";
 import teamData from "@/data/team.json";
 import { apiFetch } from "./api-client";
+import { User } from "@/contexts/AuthContext";
 
 export interface SpecDetail {
   name: string;
@@ -36,6 +37,26 @@ export interface ApiResponse<T> {
   };
 }
 
+export interface AuthResponse {
+  status: string;
+  token?: string;
+  data: {
+    user: User;
+  };
+}
+
+export interface ProfileResponse {
+  status: string;
+  data: {
+    user: User;
+  };
+}
+
+export interface UploadResponse {
+  status: string;
+  url: string;
+}
+
 export interface RawProduct {
   _id: string;
   id?: string;
@@ -62,6 +83,7 @@ export interface RawProduct {
   description?: string;
   stock?: number;
   tags?: string[];
+  status?: ProductStatus;
 }
 
 export interface RawCategory {
@@ -140,7 +162,7 @@ export interface Product {
   ratingsQuantity: number;
   sold: number;
   specification?: Specification;
-  status?: string;
+  status?: ProductStatus;
 }
 
 export interface Category {
@@ -214,6 +236,7 @@ export interface TeamMember {
 
 export type AdminUserRole = "user" | "admin";
 export type AdminUserStatus = "active" | "suspended" | "pending";
+export type ProductStatus = "active" | "inactive" | "out_of_stock" | "archived";
 
 export interface AdminUser {
   _id: string;

@@ -12,7 +12,7 @@ interface UserFormPayload {
   name: string;
   email: string;
   phone?: string;
-  photo?: string;
+  photo?: string | File;
   role: "user" | "admin";
   status: AdminUserStatus;
   permissions: string[];
@@ -29,7 +29,7 @@ export const useUserMutations = () => {
       payload,
     }: {
       editingUser: AdminUser | null;
-      payload: any; // Using any to allow File or string for photo
+      payload: UserFormPayload;
     }) => {
       if (!editingUser && (!payload.password || !payload.passwordConfirm)) {
         throw new Error("Password and confirmation are required for new users");
@@ -59,10 +59,13 @@ export const useUserMutations = () => {
 
       // Fallback to JSON if no file is present
       if (editingUser) {
-        return updateAdminUser(editingUser.id, payload);
+        return updateAdminUser(
+          editingUser.id,
+          payload as unknown as Record<string, unknown>,
+        );
       }
 
-      return createAdminUser(payload);
+      return createAdminUser(payload as unknown as Record<string, unknown>);
     },
     onSuccess: (_, variables) => {
       toast.success(variables.editingUser ? "User updated" : "User created");
@@ -85,8 +88,13 @@ export const useUserMutations = () => {
   });
 
   const toggleStatusMutation = useMutation({
-    mutationFn: ({ user, nextStatus }: { user: AdminUser; nextStatus: AdminUserStatus }) =>
-      updateAdminUser(user.id, { status: nextStatus }),
+    mutationFn: ({
+      user,
+      nextStatus,
+    }: {
+      user: AdminUser;
+      nextStatus: AdminUserStatus;
+    }) => updateAdminUser(user.id, { status: nextStatus }),
     onSuccess: (_, variables) => {
       toast.success(`Status updated to ${variables.nextStatus}`);
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });

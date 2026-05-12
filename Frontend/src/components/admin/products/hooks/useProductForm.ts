@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Product, SpecGroup } from "@/lib/api";
+import { Product, SpecGroup, ProductStatus } from "@/lib/api";
 
 const productSchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -13,14 +13,21 @@ const productSchema = z.object({
   stock: z.coerce.number().min(0),
   category: z.string().min(1, "Category is required"),
   brand: z.string().min(1, "Brand is required"),
-  imageCover: z.any().optional(),
-  images: z.any().optional().refine((val) => {
-    if (val instanceof FileList) return val.length <= 5;
-    if (typeof val === 'string') return val.split(',').filter(Boolean).length <= 5;
-    if (Array.isArray(val)) return val.length <= 5;
-    return true;
-  }, "Maximum 5 gallery images allowed"),
-
+  imageCover: z.union([z.string(), z.instanceof(File)]).optional(),
+  images: z
+    .union([
+      z.string(),
+      z.instanceof(FileList),
+      z.array(z.union([z.string(), z.instanceof(File)])),
+    ])
+    .optional()
+    .refine((val) => {
+      if (val instanceof FileList) return val.length <= 5;
+      if (typeof val === "string")
+        return val.split(",").filter(Boolean).length <= 5;
+      if (Array.isArray(val)) return val.length <= 5;
+      return true;
+    }, "Maximum 5 gallery images allowed"),
 
   tags: z.string().optional(),
   status: z.enum(["active", "inactive", "out_of_stock", "archived"]),
@@ -33,9 +40,9 @@ const productSchema = z.object({
           z.object({
             name: z.string().min(1, "Spec name is required"),
             value: z.string().min(1, "Value is required"),
-          })
+          }),
         ),
-      })
+      }),
     )
     .optional(),
 });
@@ -63,7 +70,11 @@ export const useProductForm = (editingProduct: Product | null) => {
     },
   });
 
-  const { fields: specGroups, append: appendGroup, remove: removeGroup } = useFieldArray({
+  const {
+    fields: specGroups,
+    append: appendGroup,
+    remove: removeGroup,
+  } = useFieldArray({
     control: form.control,
     name: "specGroups",
   });
@@ -88,7 +99,7 @@ export const useProductForm = (editingProduct: Product | null) => {
         imageCover: editingProduct.imageCover || "",
         images: editingProduct.images?.join(", ") || "",
         tags: editingProduct.tags?.join(", ") || "",
-        status: (editingProduct as { status?: string }).status || "active",
+        status: (editingProduct.status as ProductStatus) || "active",
         isFeatured: editingProduct.isFeatured || false,
         specGroups: groups,
       });

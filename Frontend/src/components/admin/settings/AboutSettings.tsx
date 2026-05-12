@@ -12,6 +12,7 @@ import {
 import { Field } from "./Field";
 import { toast } from "sonner";
 import { apiFetch } from "@/lib/api-client";
+import { UploadResponse } from "@/lib/api";
 
 interface AboutSettingsProps {
   draft: SiteSettings;
@@ -37,7 +38,7 @@ export const AboutSettings = ({ draft, update }: AboutSettingsProps) => {
 
       const toastId = toast.loading("Uploading image...");
       try {
-        const response = await apiFetch("/api/v1/upload", {
+        const response = await apiFetch<UploadResponse>("/api/v1/upload", {
           method: "POST",
           body: formData,
         });

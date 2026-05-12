@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api-client";
+import { ProfileResponse } from "@/lib/api";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +16,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const resetPasswordSchema = z
   .object({
@@ -42,7 +49,7 @@ export default function ResetPassword() {
 
   const mutation = useMutation({
     mutationFn: (values: z.infer<typeof resetPasswordSchema>) =>
-      apiFetch(`/api/v1/auth/resetPassword/${token}`, {
+      apiFetch<ProfileResponse>(`/api/v1/auth/resetPassword/${token}`, {
         method: "PATCH",
         body: JSON.stringify(values),
       }),
@@ -61,23 +68,27 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-4 py-12">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-3xl font-bold">Reset Password</CardTitle>
+    <div className='flex items-center justify-center min-h-[calc(100vh-200px)] px-4 py-12'>
+      <Card className='w-full max-w-md'>
+        <CardHeader className='space-y-1 text-center'>
+          <CardTitle className='text-3xl font-bold'>Reset Password</CardTitle>
           <CardDescription>Enter your new password below</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
               <FormField
                 control={form.control}
-                name="password"
+                name='password'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>New Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
+                      <Input
+                        type='password'
+                        placeholder='••••••••'
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -85,18 +96,26 @@ export default function ResetPassword() {
               />
               <FormField
                 control={form.control}
-                name="passwordConfirm"
+                name='passwordConfirm'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Confirm New Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
+                      <Input
+                        type='password'
+                        placeholder='••••••••'
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={mutation.isPending}>
+              <Button
+                type='submit'
+                className='w-full'
+                disabled={mutation.isPending}
+              >
                 {mutation.isPending ? "Resetting..." : "Reset Password"}
               </Button>
             </form>
