@@ -47,31 +47,40 @@ app.set("trust proxy", 1);
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
 const allowedOrigins = process.env.CLIENT_URL
-  ? process.env.CLIENT_URL.split(",").map((url) => url.trim())
-  : ["http://localhost:5173", "http://localhost:3000","https://seid-electronic-store.vercel.app"];
+  ? process.env.CLIENT_URL.split(",").map((url) => url.trim().replace(/\/$/, ""))
+  : [
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "https://seid-electronic-store.vercel.app",
+    ];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, Postman, etc.)
+      // allow Postman / mobile apps
       if (!origin) return callback(null, true);
 
-      if (
-        allowedOrigins.includes(origin) ||
-        process.env.NODE_ENV === "development"
-      ) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
+      const normalizedOrigin = origin.replace(/\/$/, "");
+
+      const isAllowed =
+        allowedOrigins.includes(normalizedOrigin) ||
+        process.env.NODE_ENV?.trim() === "development";
+
+      if (isAllowed) {
+        return callback(null, true);
       }
+
+      console.error("🚫 CORS blocked:", origin);
+      return callback(new Error("Not allowed by CORS"));
     },
+
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    exposedHeaders: ["Set-Cookie"],
-    maxAge: 86400, // 24 hours
-  }),
+  })
 );
+
+// IMPORTANT: don't override CORS here
 app.options("*", cors());
 
 // ── HTTP security headers ─────────────────────────────────────────────────────
