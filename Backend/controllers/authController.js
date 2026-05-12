@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-const catchAsync = require('../utils/catchAsync');
-const authService = require('../services/authService');
+const catchAsync = require("../utils/catchAsync");
+const authService = require("../services/authService");
 
 exports.signup = catchAsync(async (req, res, next) => {
   await authService.signup(req.body, res);
@@ -16,9 +16,9 @@ exports.logout = (req, res) => {
 };
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
-  const result = await authService.forgotPassword(req.body, req, next);
+  const result = await authService.forgotPassword(req.body, next);
   if (result) {
-    res.status(200).json({ status: 'success', message: result.message });
+    res.status(200).json({ status: "success", message: result.message });
   }
 });
 
@@ -30,7 +30,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
       passwordConfirm: req.body.passwordConfirm,
     },
     res,
-    next
+    next,
   );
 });
 
@@ -43,6 +43,6 @@ exports.updateMyPassword = catchAsync(async (req, res, next) => {
       passwordConfirm: req.body.passwordConfirm,
     },
     res,
-    next
+    next,
   );
 });

@@ -118,7 +118,7 @@ const sendWelcomeEmail = async ({ email, name }) => {
           </ul>
         </div>
         <div style="text-align:center;margin:32px 0;">
-          <a href="${process.env.PROD_CLIENT_URL || "http://localhost:5173"}" style="display:inline-block;padding:14px 32px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px;box-shadow:0 4px 6px rgba(16,185,129,0.3);">
+          <a href="${config.email.clientUrl}" style="display:inline-block;padding:14px 32px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px;box-shadow:0 4px 6px rgba(16,185,129,0.3);">
             Start Shopping
           </a>
         </div>
@@ -136,7 +136,7 @@ const sendWelcomeEmail = async ({ email, name }) => {
           E-Commerce Store · Happy Shopping!
         </p>
         <p style="margin:0;font-size:11px;color:#9ca3af;">
-          Need help? Contact us at <a href="mailto:${process.env.OWNER_EMAIL}" style="color:#3b82f6;text-decoration:none;">${process.env.OWNER_EMAIL}</a>
+          Need help? Contact us at <a href="mailto:${config.email.ownerEmail}" style="color:#3b82f6;text-decoration:none;">${config.email.ownerEmail}</a>
         </p>
       </div>
     </div>
@@ -156,7 +156,7 @@ const sendContactNotificationEmail = async ({
   message,
   to,
 }) => {
-  const ownerEmail = to || process.env.OWNER_EMAIL;
+  const ownerEmail = to || config.email.ownerEmail;
   if (!ownerEmail) {
     logger.warn("Recipient email not set for contact notification — skipping.");
     return;

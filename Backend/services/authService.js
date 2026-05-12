@@ -2,6 +2,7 @@
 
 const crypto = require("crypto");
 const User = require("../models/userModel");
+const config = require("../config/env");
 const AppError = require("../utils/AppError");
 const { sendTokenResponse } = require("../middleware/auth");
 const { sendPasswordResetEmail, sendWelcomeEmail } = require("../utils/email");
@@ -70,14 +71,14 @@ const logout = (res) => {
 };
 
 // ─── forgotPassword ───────────────────────────────────────────────────────────
-const forgotPassword = async ({ email }, req, next) => {
+const forgotPassword = async ({ email }, next) => {
   const user = await User.findOne({ email });
   if (!user) throw new AppError("No user found with that email address.", 404);
 
   const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
 
-  const resetURL = `${req.protocol}://${req.get("host")}/api/v1/auth/resetPassword/${resetToken}`;
+  const resetURL = `${config.email.clientUrl}/reset-password/${resetToken}`;
 
   try {
     await sendPasswordResetEmail({

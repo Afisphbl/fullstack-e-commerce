@@ -35,6 +35,8 @@ module.exports = {
     username: process.env.GMAIL_USER,
     password: process.env.GMAIL_APP_PASSWORD,
     from: process.env.EMAIL_FROM,
+    clientUrl: process.env.PROD_CLIENT_URL || "http://localhost:5173",
+    ownerEmail: process.env.OWNER_EMAIL,
   },
   cloudinary: {
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
