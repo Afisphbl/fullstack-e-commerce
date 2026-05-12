@@ -10,7 +10,7 @@ const contactSettingsSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
       validate: [validator.isEmail, "Please provide a valid email."],
-      default: "[EMAIL_ADDRESS]",
+      default: "contact@example.com",
     },
     contactPhone: {
       type: String,

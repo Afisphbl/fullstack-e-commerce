@@ -11,7 +11,8 @@
     "test:chapa": "node utils/testChapa.js",
     "import-data": "node utils/importData.js --import",
     "delete-data": "node utils/importData.js --delete",
-    "migrate-messages": "node utils/migrateMessages.js"
+    "migrate-messages": "node utils/migrateMessages.js",
+    "fix-contact-settings": "node utils/fixContactSettings.js"
   },
   "engines": {
     "node": ">=18.0.0"

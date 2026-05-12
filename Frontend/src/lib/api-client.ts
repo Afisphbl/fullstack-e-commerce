@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://api-wef5.onrender.com";
+const API_BASE_URL = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || "https://api-wef5.onrender.com";
 
 // Token management
 const TOKEN_KEY = 'auth_token';

@@ -1,7 +1,23 @@
 import axios from "axios";
 import { SiteSettings } from "@/contexts/SiteSettingsContext";
+import { getAuthToken } from "@/lib/api-client";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
+
+// Create axios instance with default config
+const axiosInstance = axios.create({
+  baseURL: API_URL,
+  withCredentials: true, // Send cookies with requests
+});
+
+// Add auth token to requests if available
+axiosInstance.interceptors.request.use((config) => {
+  const token = getAuthToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 // Sections map strictly to the SiteSettings interface and backend routes
 export type SettingsSection =
@@ -29,9 +45,7 @@ export const SECTIONS: SettingsSection[] = [
 export const fetchAllSettings = async (): Promise<Partial<SiteSettings>> => {
   try {
     const promises = SECTIONS.map((section) =>
-      // Add withCredentials: true so that the access token (cookie) is sent
-      // This is required to access the admin-only GET endpoints (commerce, preferences)
-      axios.get(`${API_URL}/settings/${section}`, { withCredentials: true }),
+      axiosInstance.get(`/settings/${section}`)
     );
 
     // Use Promise.allSettled so if one fails (e.g. auth required and user not logged in),
@@ -68,8 +82,6 @@ export const updateSettingsSection = async (
   section: SettingsSection,
   data: Partial<SiteSettings>,
 ) => {
-  const response = await axios.patch(`${API_URL}/settings/${section}`, data, {
-    withCredentials: true,
-  });
+  const response = await axiosInstance.patch(`/settings/${section}`, data);
   return response.data;
 };
