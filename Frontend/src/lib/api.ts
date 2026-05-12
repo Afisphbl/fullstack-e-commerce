@@ -5,57 +5,31 @@ import ordersData from "@/data/orders.json";
 import faqsData from "@/data/faqs.json";
 import teamData from "@/data/team.json";
 import { apiFetch } from "./api-client";
-import { User } from "@/contexts/AuthContext";
+import {
+  User,
+  ApiResponse,
+  AuthResponse,
+  ProfileResponse,
+  UploadResponse,
+  AdminUserEvent,
+  Address,
+  SpecDetail,
+  SpecGroup,
+  Specification,
+} from "@/types/api";
 
-export interface SpecDetail {
-  name: string;
-  value: string;
-}
-
-export interface SpecGroup {
-  group: string;
-  specs: SpecDetail[];
-}
-
-export interface Specification {
-  id: string;
-  _id?: string;
-  details: SpecGroup[];
-}
-
-export interface ApiResponse<T> {
-  status: string;
-  data: {
-    data: T;
-  };
-  total?: number;
-  page?: number;
-  limit?: number;
-  countsByStatus?: { unread: number; read: number; archived: number };
-  meta?: {
-    recentEvents: AdminUserEvent[];
-  };
-}
-
-export interface AuthResponse {
-  status: string;
-  token?: string;
-  data: {
-    user: User;
-  };
-}
-
-export interface ProfileResponse {
-  status: string;
-  data: {
-    user: User;
-  };
-}
-
-export interface UploadResponse {
-  status: string;
-  url: string;
-}
+export type {
+  User,
+  ApiResponse,
+  AuthResponse,
+  ProfileResponse,
+  UploadResponse,
+  AdminUserEvent,
+  Address,
+  SpecDetail,
+  SpecGroup,
+  Specification,
+};
 
 export interface RawProduct {
   _id: string;
@@ -84,6 +58,7 @@ export interface RawProduct {
   stock?: number;
   tags?: string[];
   status?: ProductStatus;
+  originalPrice?: number | null;
 }
 
 export interface RawCategory {
@@ -261,13 +236,6 @@ export interface AdminUserAnalytics {
   newUsersThisMonth: number;
 }
 
-export interface AdminUserEvent {
-  id: string;
-  type: string;
-  title: string;
-  time: string;
-}
-
 export interface RawReview {
   _id: string;
   user:
@@ -299,7 +267,7 @@ export interface AdminUsersResponse {
   recentEvents: AdminUserEvent[];
 }
 
-const mapProduct = (p: RawProduct): Product => {
+export const mapProduct = (p: RawProduct): Product => {
   const mapImage = (img: string | undefined): string => {
     if (!img)
       return "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600";
@@ -316,7 +284,7 @@ const mapProduct = (p: RawProduct): Product => {
     images: Array.isArray(p.images) ? p.images.map(mapImage) : [],
     featured: p.isFeatured !== undefined ? p.isFeatured : p.featured || false,
     category: p.category,
-    originalPrice: p.priceDiscount ? p.price : null,
+    originalPrice: p.originalPrice ?? (p.priceDiscount ? p.price : null),
     price: p.finalPrice ?? p.price,
     specs: (() => {
       const flatSpecs: Record<string, string> = p.attributes

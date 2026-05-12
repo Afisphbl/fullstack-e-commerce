@@ -11,6 +11,8 @@ export interface BackendCartItem {
     _id: string;
     name: string;
     price: number;
+    slug: string;
+    brand?: string;
     finalPrice: number;
     imageCover: string;
     stock: number;
@@ -72,7 +74,7 @@ export const getCart = async (): Promise<BackendCart> => {
  */
 export const addItem = async (
   productId: string,
-  quantity: number = 1
+  quantity: number = 1,
 ): Promise<BackendCart> => {
   const response: CartApiResponse = await apiFetch("/api/v1/cart", {
     method: "POST",
@@ -90,14 +92,14 @@ export const addItem = async (
  */
 export const updateItem = async (
   productId: string,
-  quantity: number
+  quantity: number,
 ): Promise<BackendCart> => {
   const response: CartApiResponse = await apiFetch(
     `/api/v1/cart/${productId}`,
     {
       method: "PATCH",
       body: JSON.stringify({ quantity }),
-    }
+    },
   );
   return response.data.cart;
 };
@@ -113,7 +115,7 @@ export const removeItem = async (productId: string): Promise<BackendCart> => {
     `/api/v1/cart/${productId}`,
     {
       method: "DELETE",
-    }
+    },
   );
   return response.data.cart;
 };

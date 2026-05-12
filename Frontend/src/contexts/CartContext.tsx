@@ -160,13 +160,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           product: {
             id: item.product._id,
             name: item.product.name,
+            slug: item.product.slug,
+            brand: item.product.brand || "",
             price: item.product.finalPrice || item.product.price,
             finalPrice: item.product.finalPrice,
             image: item.product.imageCover,
             imageCover: item.product.imageCover,
             stock: item.product.stock,
             status: item.product.status,
-          } as Product,
+          } as unknown as Product,
           quantity: item.quantity,
         }),
       );
@@ -507,7 +509,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     try {
       await removeCouponMutation.mutateAsync();
       toast.success("Coupon removed");
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Log error for debugging
       console.error("Failed to remove coupon:", error);
 

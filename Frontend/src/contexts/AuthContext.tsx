@@ -1,26 +1,9 @@
 import React, { createContext, useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api-client";
+import { User, ApiResponse, Address } from "@/types/api";
 
-export interface Address {
-  label?: string;
-  street?: string;
-  city?: string;
-  state?: string;
-  zip?: string;
-  country?: string;
-  isDefault?: boolean;
-}
-
-export interface User {
-  _id: string;
-  name: string;
-  email: string;
-  role: string;
-  photo: string;
-  status?: string;
-  addresses?: Address[];
-}
+export type { User, Address };
 
 interface AuthContextType {
   user: User | null;

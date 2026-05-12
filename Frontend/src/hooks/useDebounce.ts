@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from "react";
 
 /**
  * Custom hook for debouncing function calls
@@ -6,11 +6,11 @@ import { useEffect, useRef, useCallback } from 'react';
  * @param delay - The delay in milliseconds
  * @returns A debounced version of the callback
  */
-export function useDebounce<T extends (...args: any[]) => any>(
+export function useDebounce<T extends (...args: unknown[]) => unknown>(
   callback: T,
-  delay: number
+  delay: number,
 ): (...args: Parameters<T>) => void {
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const callbackRef = useRef(callback);
 
   // Update callback ref when callback changes
@@ -37,7 +37,7 @@ export function useDebounce<T extends (...args: any[]) => any>(
         callbackRef.current(...args);
       }, delay);
     },
-    [delay]
+    [delay],
   );
 
   return debouncedCallback;
@@ -50,11 +50,16 @@ export function useDebounce<T extends (...args: any[]) => any>(
  * @param delay - The delay in milliseconds
  * @returns A debounced version of the callback that accepts a key as first parameter
  */
-export function useKeyedDebounce<T extends (key: string, ...args: any[]) => any>(
+export function useKeyedDebounce<
+  T extends (key: string, ...args: unknown[]) => unknown,
+>(
   callback: T,
-  delay: number
-): (key: string, ...args: Parameters<T> extends [string, ...infer Rest] ? Rest : never) => void {
-  const timeoutsRef = useRef<Record<string, NodeJS.Timeout>>({});
+  delay: number,
+): (
+  key: string,
+  ...args: Parameters<T> extends [string, ...infer Rest] ? Rest : never
+) => void {
+  const timeoutsRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
   const callbackRef = useRef(callback);
 
   // Update callback ref when callback changes
@@ -73,7 +78,10 @@ export function useKeyedDebounce<T extends (key: string, ...args: any[]) => any>
   }, []);
 
   const debouncedCallback = useCallback(
-    (key: string, ...args: any[]) => {
+    (
+      key: string,
+      ...args: Parameters<T> extends [string, ...infer Rest] ? Rest : unknown[]
+    ) => {
       // Clear existing timer for this key
       if (timeoutsRef.current[key]) {
         clearTimeout(timeoutsRef.current[key]);
@@ -85,7 +93,7 @@ export function useKeyedDebounce<T extends (key: string, ...args: any[]) => any>
         delete timeoutsRef.current[key];
       }, delay);
     },
-    [delay]
+    [delay],
   );
 
   return debouncedCallback;
