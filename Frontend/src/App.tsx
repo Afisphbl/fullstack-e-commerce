@@ -16,9 +16,9 @@ import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/layout/CartDrawer";
 import { isAdminRole } from "@/lib/roles";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+import Index from "./pages/Index";
 
 // ── Storefront pages (lazy-loaded for code splitting) ─────────────────────────
-const Index = lazy(() => import("./pages/Index"));
 const ShopPage = lazy(() => import("./pages/ShopPage"));
 const ProductDetailPage = lazy(() => import("./pages/ProductDetailPage"));
 const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));

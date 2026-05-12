@@ -26,6 +26,15 @@ export default defineConfig({
     ],
   },
   build: {
+    modulePreload: {
+      resolveDependencies: (_filename, deps) =>
+        deps.filter(
+          (dep) =>
+            !/assets\/js\/(?:admin|AboutPage|Blog|CheckoutPage|ComparePage|ContactPage|FAQPage|FavoritesPage|ForgotPassword|Login|NotFound|Order|PaymentSuccessPage|ProductDetailPage|ProfilePage|ResetPassword|ShopPage|Signup|TrackOrderPage)/.test(
+              dep,
+            ),
+        ),
+    },
     // Generate sourcemaps for production debugging (can be disabled for smaller builds)
     sourcemap: false,
     
@@ -53,23 +62,6 @@ export default defineConfig({
       output: {
         // Manual chunk splitting for optimal caching
         manualChunks(id) {
-          // Vendor chunks for better caching
-          if (
-            id.includes("node_modules/recharts") ||
-            id.includes("node_modules/d3")
-          ) {
-            return "vendor-charts";
-          }
-          if (
-            id.includes("node_modules/react-hook-form") ||
-            id.includes("node_modules/@hookform") ||
-            id.includes("node_modules/zod")
-          ) {
-            return "vendor-forms";
-          }
-          if (id.includes("node_modules/@radix-ui")) {
-            return "vendor-radix";
-          }
           if (id.includes("node_modules/@tanstack")) {
             return "vendor-query";
           }
@@ -83,10 +75,6 @@ export default defineConfig({
           }
           if (id.includes("node_modules/lucide-react")) {
             return "vendor-icons";
-          }
-          // Separate admin pages into their own chunk
-          if (id.includes("/src/pages/admin/")) {
-            return "admin";
           }
         },
         

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { OptimizedImage } from "@/components/shared/OptimizedImage";
 
 interface ProductImageGalleryProps {
   images: string[];
@@ -28,9 +29,16 @@ export const ProductImageGallery = ({ images, productName }: ProductImageGallery
   return (
     <div>
       <div className="rounded-lg overflow-hidden bg-card border border-border mb-4 aspect-square">
-        <img
+        <OptimizedImage
           src={currentImageSrc}
           alt={productName}
+          widths={[480, 720, 960, 1280]}
+          sizes="(min-width: 1024px) 40vw, 100vw"
+          optimizeWidth={960}
+          optimizeHeight={960}
+          crop="fill"
+          loading="eager"
+          fetchPriority="high"
           className="w-full h-full object-cover"
         />
       </div>
@@ -46,9 +54,14 @@ export const ProductImageGallery = ({ images, productName }: ProductImageGallery
                 i === selectedImage ? "border-primary" : "border-border"
               }`}
             >
-              <img
+              <OptimizedImage
                 src={img}
                 alt=""
+                widths={[96, 160]}
+                sizes="80px"
+                optimizeWidth={160}
+                optimizeHeight={160}
+                crop="fill"
                 className="w-full h-full object-cover"
               />
             </button>

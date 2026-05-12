@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { isAdminRole } from "@/lib/roles";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { OptimizedImage } from "@/components/shared/OptimizedImage";
 
 interface ProductCardProps {
   product: Product;
@@ -39,9 +40,14 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card/90 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-elevated animate-fade-in">
       <div className="relative overflow-hidden aspect-[4/3]">
         <Link to={`/product/${product.slug}`}>
-          <img
+          <OptimizedImage
             src={product.image}
             alt={product.name}
+            widths={[240, 360, 480, 640]}
+            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+            optimizeWidth={480}
+            optimizeHeight={360}
+            crop="fill"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         </Link>

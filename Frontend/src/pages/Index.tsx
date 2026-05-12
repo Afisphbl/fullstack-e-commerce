@@ -14,6 +14,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 import { isAdminRole } from "@/lib/roles";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { OptimizedImage } from "@/components/shared/OptimizedImage";
+import { buildSrcSet, optimizeImageUrl, preloadImage } from "@/lib/images";
 
 const Index = () => {
   usePageTitle("Home");
@@ -27,6 +29,14 @@ const Index = () => {
   const [loadingFeatured, setLoadingFeatured] = useState(true);
   const [loadingNewArrivals, setLoadingNewArrivals] = useState(true);
   const [loadingCategories, setLoadingCategories] = useState(true);
+  const activeHeroSlide = heroSlides[slideIndex];
+  const heroSizes = "(min-width: 1024px) 50vw, 100vw";
+  const heroSrcSet = activeHeroSlide?.image
+    ? buildSrcSet(activeHeroSlide.image, [640, 960, 1280, 1600], {
+        height: 880,
+        crop: "fill",
+      })
+    : undefined;
 
   useEffect(() => {
     setLoadingFeatured(true);
@@ -73,6 +83,23 @@ const Index = () => {
     return () => clearInterval(timer);
   }, [heroSlides.length]);
 
+  useEffect(() => {
+    if (!activeHeroSlide?.image) return;
+
+    return preloadImage(
+      optimizeImageUrl(activeHeroSlide.image, {
+        width: 1280,
+        height: 880,
+        crop: "fill",
+      }),
+      {
+        srcSet: heroSrcSet,
+        sizes: heroSizes,
+        fetchPriority: "high",
+      },
+    );
+  }, [activeHeroSlide?.image, heroSizes, heroSrcSet]);
+
   return (
     <div className='min-h-screen'>
       {/* Hero */}
@@ -118,14 +145,21 @@ const Index = () => {
 
             <div className='relative overflow-hidden rounded-2xl border border-white/20 bg-black/20 p-2 shadow-2xl'>
               <div className='relative aspect-[16/11] overflow-hidden rounded-xl'>
-                {heroSlides.map((slide, idx) => (
-                  <img
-                    key={idx}
-                    src={slide.image}
-                    alt={slide.title}
-                    className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${idx === slideIndex ? "opacity-100" : "opacity-0"}`}
+                {activeHeroSlide && (
+                  <OptimizedImage
+                    key={activeHeroSlide.image}
+                    src={activeHeroSlide.image}
+                    alt={activeHeroSlide.title}
+                    widths={[640, 960, 1280, 1600]}
+                    sizes={heroSizes}
+                    optimizeWidth={1280}
+                    optimizeHeight={880}
+                    crop='fill'
+                    fetchPriority='high'
+                    loading='eager'
+                    className='absolute inset-0 h-full w-full object-cover animate-fade-in'
                   />
-                ))}
+                )}
                 <div className='absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent' />
                 <div className='absolute bottom-4 left-4 right-4'>
                   <p className='text-xs uppercase tracking-[0.15em] text-accent'>
@@ -219,9 +253,14 @@ const Index = () => {
                     to={`/shop?category=${cat.id}`}
                     className='group relative rounded-lg overflow-hidden aspect-square'
                   >
-                    <img
+                    <OptimizedImage
                       src={cat.image}
                       alt={cat.name}
+                      widths={[240, 360, 480, 640]}
+                      sizes='(min-width: 1024px) 20vw, (min-width: 768px) 33vw, 50vw'
+                      optimizeWidth={480}
+                      optimizeHeight={480}
+                      crop='fill'
                       className='w-full h-full object-cover group-hover:scale-110 transition-transform duration-500'
                     />
                     <div className='absolute inset-0 bg-gradient-to-t from-black/65 to-transparent dark:from-white/80 dark:to-white/15' />
