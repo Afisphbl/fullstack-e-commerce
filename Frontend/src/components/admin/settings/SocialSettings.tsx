@@ -1,0 +1,106 @@
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Plus, Trash2 } from "lucide-react";
+import { SiteSettings } from "@/contexts/SiteSettingsContext";
+import { Field } from "./Field";
+
+interface SocialSettingsProps {
+  draft: SiteSettings;
+  update: <K extends keyof SiteSettings>(key: K, value: SiteSettings[K]) => void;
+}
+
+export const SocialSettings = ({ draft, update }: SocialSettingsProps) => {
+  const [customSocialLinks, setCustomSocialLinks] = useState<
+    Array<{ platform: string; url: string }>
+  >([]);
+
+  const addCustomSocialLink = () => {
+    setCustomSocialLinks([...customSocialLinks, { platform: "", url: "" }]);
+  };
+
+  const updateCustomSocialLink = (
+    idx: number,
+    field: "platform" | "url",
+    value: string
+  ) => {
+    const updated = [...customSocialLinks];
+    updated[idx][field] = value;
+    setCustomSocialLinks(updated);
+  };
+
+  const removeCustomSocialLink = (idx: number) => {
+    setCustomSocialLinks(customSocialLinks.filter((_, i) => i !== idx));
+  };
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-lg font-semibold">Social Media Links</h3>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {(["facebook", "instagram", "twitter", "linkedin", "youtube"] as const).map(
+          (k) => (
+            <Field key={k} label={k.charAt(0).toUpperCase() + k.slice(1)}>
+              <Input
+                value={draft.social[k]}
+                onChange={(e) =>
+                  update("social", { ...draft.social, [k]: e.target.value })
+                }
+                placeholder={`https://${k}.com/yourbrand`}
+                className="bg-background"
+              />
+            </Field>
+          )
+        )}
+      </div>
+
+      {customSocialLinks.length > 0 && (
+        <div className="mt-4 space-y-3">
+          <Label className="text-sm font-semibold">Custom Social Links</Label>
+          {customSocialLinks.map((link, idx) => (
+            <div key={idx} className="flex gap-2 items-end">
+              <div className="flex-1">
+                <Input
+                  placeholder="Platform name (e.g., TikTok)"
+                  value={link.platform}
+                  onChange={(e) =>
+                    updateCustomSocialLink(idx, "platform", e.target.value)
+                  }
+                  className="bg-background"
+                />
+              </div>
+              <div className="flex-[2]">
+                <Input
+                  placeholder="https://..."
+                  value={link.url}
+                  onChange={(e) =>
+                    updateCustomSocialLink(idx, "url", e.target.value)
+                  }
+                  className="bg-background"
+                />
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => removeCustomSocialLink(idx)}
+                className="text-destructive"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <Button
+        type="button"
+        variant="outline"
+        onClick={addCustomSocialLink}
+        className="mt-2"
+      >
+        <Plus className="h-4 w-4 mr-2" /> Add Another Social Link
+      </Button>
+    </div>
+  );
+};
