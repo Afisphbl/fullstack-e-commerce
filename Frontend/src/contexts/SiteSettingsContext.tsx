@@ -169,6 +169,7 @@ interface Ctx {
   setSettings: React.Dispatch<React.SetStateAction<SiteSettings>>;
   save: (s: SiteSettings) => void;
   reset: () => void;
+  isLoading: boolean;
 }
 
 const SiteSettingsContext = createContext<Ctx | null>(null);
@@ -176,19 +177,60 @@ const SiteSettingsContext = createContext<Ctx | null>(null);
 export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const [isLoading, setIsLoading] = useState(true);
   const [settings, setSettings] = useState<SiteSettings>(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) return { ...DEFAULTS, ...JSON.parse(raw) };
     } catch {
-        
+      // use defaults
     }
     return DEFAULTS;
   });
 
-  const save = (s: SiteSettings) => {
+  // Load from API on mount
+  useEffect(() => {
+    let active = true;
+    const loadFromApi = async () => {
+      try {
+        const { fetchAllSettings } = await import("@/lib/api/settings");
+        const apiSettings = await fetchAllSettings();
+        if (active && Object.keys(apiSettings).length > 0) {
+          setSettings((prev) => {
+            const next = { ...prev, ...apiSettings };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+            return next;
+          });
+        }
+      } catch (error) {
+        console.error("Failed to load settings from API", error);
+      } finally {
+        if (active) setIsLoading(false);
+      }
+    };
+    loadFromApi();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const save = async (s: SiteSettings) => {
+    // Optimistic UI update
     setSettings(s);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+
+    // Async save to API
+    try {
+      const { updateSettingsSection, SECTIONS } =
+        await import("@/lib/api/settings");
+      // Fire and forget saves to backend
+      const promises = SECTIONS.map((section) =>
+        updateSettingsSection(section, s),
+      );
+      await Promise.allSettled(promises);
+    } catch (e) {
+      console.error("Failed to save settings to API", e);
+    }
   };
 
   const reset = () => {
@@ -196,12 +238,17 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     setSettings(DEFAULTS);
   };
 
+  // Keep localStorage perfectly synced on any change
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-  }, [settings]);
+    if (!isLoading) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    }
+  }, [settings, isLoading]);
 
   return (
-    <SiteSettingsContext.Provider value={{ settings, setSettings, save, reset }}>
+    <SiteSettingsContext.Provider
+      value={{ settings, setSettings, save, reset, isLoading }}
+    >
       {children}
     </SiteSettingsContext.Provider>
   );
