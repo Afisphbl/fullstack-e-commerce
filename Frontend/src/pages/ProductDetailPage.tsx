@@ -1,6 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
-import { fetchProductBySlug, fetchProducts, Product, fetchReviewsByProduct } from "@/lib/api";
+import {
+  fetchProductBySlug,
+  fetchProducts,
+  Product,
+  Category,
+  fetchReviewsByProduct,
+  Review,
+} from "@/lib/api";
 import { ChevronLeft } from "lucide-react";
 import {
   ProductImageGallery,
@@ -15,17 +22,6 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { isAdminRole } from "@/lib/roles";
 import { usePageTitle } from "@/hooks/usePageTitle";
-
-interface Review {
-  _id: string;
-  rating: number;
-  review: string;
-  createdAt: string;
-  user?: {
-    _id: string;
-    name: string;
-  };
-}
 
 const ProductDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -48,7 +44,7 @@ const ProductDetailPage = () => {
       setIsLoading(false);
       return;
     }
-    
+
     setIsLoading(true);
     try {
       const p = await fetchProductBySlug(slug);
@@ -62,7 +58,11 @@ const ProductDetailPage = () => {
       setProduct(p);
 
       // Fetch related products from the same category
-      const getCategoryId = (cat: any) => typeof cat === 'object' ? cat?._id || cat?.id : cat;
+      const getCategoryId = (cat: Category | string | null): string => {
+        if (!cat) return "";
+        if (typeof cat === "string") return cat;
+        return cat._id || cat.id;
+      };
       const currentCatId = getCategoryId(p.category);
 
       const allProductsRes = await fetchProducts({ category: currentCatId });
@@ -73,26 +73,26 @@ const ProductDetailPage = () => {
         .map((item) => {
           let score = 0;
           const itemCatId = getCategoryId(item.category);
-          
+
           if (itemCatId === currentCatId) score += 10;
           if (item.brand === p.brand) score += 5;
-          
+
           const sharedTags =
             item.tags?.filter((tag) => p.tags?.includes(tag)).length || 0;
           score += sharedTags;
-          
+
           return { item, score };
         })
-        .filter(entry => entry.score > 0) // Only show items with some similarity
+        .filter((entry) => entry.score > 0) // Only show items with some similarity
         .sort(
           (a, b) =>
             b.score - a.score ||
-            new Date(b.item.createdAt || 0).getTime() - new Date(a.item.createdAt || 0).getTime()
+            new Date(b.item.createdAt || 0).getTime() -
+              new Date(a.item.createdAt || 0).getTime(),
         )
         .slice(0, 4)
         .map((entry) => entry.item);
       setRelated(scored);
-
     } finally {
       setIsLoading(false);
     }
@@ -146,7 +146,7 @@ const ProductDetailPage = () => {
 
   if (!product) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">
+      <div className='container mx-auto px-4 py-16 text-center text-muted-foreground'>
         Product not found.
       </div>
     );
@@ -155,23 +155,26 @@ const ProductDetailPage = () => {
   // Hide zero-stock products from non-admin users
   if (product.stock === 0 && !isAdminRole(user?.role)) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">
+      <div className='container mx-auto px-4 py-16 text-center text-muted-foreground'>
         Product not found.
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className='container mx-auto px-4 py-8'>
       <Link
-        to="/shop"
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-6"
+        to='/shop'
+        className='inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-6'
       >
-        <ChevronLeft className="h-4 w-4" /> Back to Shop
+        <ChevronLeft className='h-4 w-4' /> Back to Shop
       </Link>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-        <ProductImageGallery images={product.images} productName={product.name} />
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16'>
+        <ProductImageGallery
+          images={product.images}
+          productName={product.name}
+        />
 
         <div>
           <ProductInfo product={product} />
@@ -181,8 +184,8 @@ const ProductDetailPage = () => {
       </div>
 
       {/* Reviews Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16">
-        <div className="lg:col-span-2 space-y-8">
+      <div className='grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16'>
+        <div className='lg:col-span-2 space-y-8'>
           <ReviewsList
             reviews={reviews}
             totalReviews={totalReviews}
@@ -192,7 +195,7 @@ const ProductDetailPage = () => {
           />
         </div>
 
-        <div className="space-y-6">
+        <div className='space-y-6'>
           <ReviewForm
             productId={product.id}
             existingReview={existingReview}

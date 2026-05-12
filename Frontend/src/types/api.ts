@@ -30,6 +30,7 @@ export interface User {
   email: string;
   role: string;
   photo: string;
+  phone?: string;
   status?: string;
   addresses?: Address[];
 }
@@ -53,6 +54,11 @@ export interface ApiResponse<T> {
   meta?: {
     recentEvents: AdminUserEvent[];
   };
+}
+
+export interface MessageResponse {
+  status: string;
+  message: string;
 }
 
 export type ProductStatus = "active" | "inactive" | "out_of_stock" | "archived";
@@ -202,4 +208,16 @@ export interface AdminDashboardData {
   totalCategories: number;
   recentOrders: Order[];
   revenue: number;
+}
+export interface Review {
+  id: string;
+  _id: string;
+  rating: number;
+  review: string;
+  createdAt: string;
+  user?: {
+    _id: string;
+    name: string;
+    photo?: string;
+  };
 }

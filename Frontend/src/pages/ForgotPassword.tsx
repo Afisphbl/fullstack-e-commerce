@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api-client";
+import { MessageResponse } from "@/lib/api";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +16,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -31,7 +38,7 @@ export default function ForgotPassword() {
 
   const mutation = useMutation({
     mutationFn: (values: z.infer<typeof forgotPasswordSchema>) =>
-      apiFetch("/api/v1/auth/forgotPassword", {
+      apiFetch<MessageResponse>("/api/v1/auth/forgotPassword", {
         method: "POST",
         body: JSON.stringify(values),
       }),
@@ -49,38 +56,46 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-4 py-12">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-3xl font-bold">Forgot Password</CardTitle>
+    <div className='flex items-center justify-center min-h-[calc(100vh-200px)] px-4 py-12'>
+      <Card className='w-full max-w-md'>
+        <CardHeader className='space-y-1 text-center'>
+          <CardTitle className='text-3xl font-bold'>Forgot Password</CardTitle>
           <CardDescription>
-            Enter your email address and we'll send you a link to reset your password.
+            Enter your email address and we'll send you a link to reset your
+            password.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
               <FormField
                 control={form.control}
-                name="email"
+                name='email'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="m@example.com" {...field} />
+                      <Input placeholder='m@example.com' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={mutation.isPending}>
+              <Button
+                type='submit'
+                className='w-full'
+                disabled={mutation.isPending}
+              >
                 {mutation.isPending ? "Sending..." : "Send Reset Link"}
               </Button>
             </form>
           </Form>
-          <div className="mt-4 text-center text-sm">
+          <div className='mt-4 text-center text-sm'>
             Remember your password?{" "}
-            <Link to="/login" className="text-primary hover:underline font-medium">
+            <Link
+              to='/login'
+              className='text-primary hover:underline font-medium'
+            >
               Back to login
             </Link>
           </div>

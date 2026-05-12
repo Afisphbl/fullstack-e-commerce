@@ -25,6 +25,8 @@ import {
   FAQ,
   TeamMember,
   WishlistAnalytics,
+  MessageResponse,
+  Review,
 } from "@/types/api";
 
 export type {
@@ -47,6 +49,8 @@ export type {
   FAQ,
   TeamMember,
   WishlistAnalytics,
+  MessageResponse,
+  Review,
 };
 
 export interface RawProduct {
@@ -305,6 +309,22 @@ const mapAdminUser = (user: RawAdminUser): AdminUser => ({
   lastLogin: user.lastLogin || null,
 });
 
+const mapReview = (r: RawReview): Review => ({
+  id: r._id,
+  _id: r._id,
+  rating: r.rating,
+  review: r.review,
+  createdAt: r.createdAt,
+  user:
+    typeof r.user === "object"
+      ? {
+          _id: r.user._id,
+          name: r.user.name,
+          photo: r.user.photo,
+        }
+      : undefined,
+});
+
 // Products
 export const fetchProducts = async (
   params: Record<string, string | number | boolean> = {},
@@ -514,13 +534,18 @@ export const fetchReviewsByProduct = async (
   productId: string,
   page = 1,
   limit = 10,
-) => {
+): Promise<{
+  reviews: Review[];
+  total: number;
+  page: number;
+  limit: number;
+}> => {
   try {
     const data = await apiFetch<ApiResponse<RawReview[]>>(
       `/api/v1/products/${productId}/reviews?page=${page}&limit=${limit}&sort=-createdAt`,
     );
     return {
-      reviews: data.data.data,
+      reviews: data.data.data.map(mapReview),
       total: data.total || 0,
       page: data.page || 1,
       limit: data.limit || 10,
