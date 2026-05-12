@@ -114,19 +114,16 @@ const contactRules = [
     .withMessage("Working hours must be at most 500 characters."),
   body("mapLat")
     .optional()
-    .trim()
-    .matches(/^-?\d+(\.\d+)?$/)
-    .withMessage("Map latitude must be a valid decimal number."),
+    .isFloat({ min: -90, max: 90 })
+    .withMessage("Map latitude must be between -90 and 90."),
   body("mapLng")
     .optional()
-    .trim()
-    .matches(/^-?\d+(\.\d+)?$/)
-    .withMessage("Map longitude must be a valid decimal number."),
+    .isFloat({ min: -180, max: 180 })
+    .withMessage("Map longitude must be between -180 and 180."),
   body("mapZoom")
     .optional()
-    .trim()
-    .matches(/^\d+$/)
-    .withMessage("Map zoom must be a positive integer."),
+    .isInt({ min: 0, max: 20 })
+    .withMessage("Map zoom must be an integer between 0 and 20."),
 ];
 
 // ─── Social ───────────────────────────────────────────────────────────────────
