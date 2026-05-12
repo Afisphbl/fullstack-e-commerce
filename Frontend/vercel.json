@@ -4,9 +4,23 @@
   "framework": "vite",
   "installCommand": "npm ci",
 
-  "headers": [
+  "routes": [
     {
-      "source": "/(.*)",
+      "src": "/assets/(.*)",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      },
+      "continue": true
+    },
+    {
+      "src": "/(.*?)\\.(jpg|jpeg|png|gif|webp|avif|svg|ico|js|css|woff|woff2|ttf|eot)",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      },
+      "continue": true
+    },
+    {
+      "src": "/(.*)",
       "headers": [
         {
           "key": "X-Content-Type-Options",
@@ -28,64 +42,25 @@
           "key": "Permissions-Policy",
           "value": "camera=(), microphone=(), geolocation=()"
         }
-      ]
+      ],
+      "continue": true
     },
     {
-      "source": "/assets/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
+      "src": "/home",
+      "dest": "/",
+      "status": 301
     },
     {
-      "source": "/(.*?)\\.(jpg|jpeg|png|gif|webp|avif|svg|ico)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
+      "handle": "filesystem"
     },
     {
-      "source": "/(.*?)\\.(js|css|woff|woff2|ttf|eot)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/index.html",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    }
-  ],
-
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ],
-
-  "redirects": [
-    {
-      "source": "/home",
-      "destination": "/",
-      "permanent": true
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ],
 
   "trailingSlash": false,
-
-  "cleanUrls": true,
+  "cleanUrls": false,
 
   "env": {
     "NODE_ENV": "production"
