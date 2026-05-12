@@ -46,6 +46,7 @@ const AdminSettingsPage = () => {
   const { settings, save, reset } = useSiteSettings();
   const [draft, setDraft] = useState<SiteSettings>(settings);
   const [activeTab, setActiveTab] = useState("general");
+  const [isSaving, setIsSaving] = useState(false);
 
   const update = <K extends keyof SiteSettings>(
     key: K,
@@ -54,6 +55,7 @@ const AdminSettingsPage = () => {
 
   const handleSaveAll = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSaving(true);
     try {
       await save(draft);
       toast({
@@ -67,10 +69,13 @@ const AdminSettingsPage = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setIsSaving(false);
     }
   };
 
   const handleSaveSection = async () => {
+    setIsSaving(true);
     try {
       await save(draft, activeTab as SettingsSection);
       toast({
@@ -84,10 +89,13 @@ const AdminSettingsPage = () => {
         description: err.message || "Something went wrong.",
         variant: "destructive",
       });
+    } finally {
+      setIsSaving(false);
     }
   };
 
   const handleReset = () => {
+    setIsSaving(true);
     reset();
     toast({ title: "Reset to defaults" });
     setTimeout(() => window.location.reload(), 300);
@@ -106,15 +114,22 @@ const AdminSettingsPage = () => {
           </p>
         </div>
         <div className='flex gap-2'>
-          <Button type='button' variant='outline' onClick={handleReset}>
+          <Button
+            type='button'
+            variant='outline'
+            onClick={handleReset}
+            disabled={isSaving}
+          >
             <RotateCcw className='h-4 w-4 mr-2' /> Reset
           </Button>
           <Button
             type='button'
             onClick={handleSaveSection}
+            disabled={isSaving}
             className='bg-primary text-primary-foreground hover:bg-primary/90 shadow-neon'
           >
-            <Save className='h-4 w-4 mr-2' /> Save Section
+            <Save className='h-4 w-4 mr-2' />{" "}
+            {isSaving ? "Saving..." : "Save Section"}
           </Button>
         </div>
       </div>
@@ -212,9 +227,11 @@ const AdminSettingsPage = () => {
       <div className='sticky bottom-4 mt-8 flex justify-end'>
         <Button
           type='submit'
+          disabled={isSaving}
           className='bg-primary text-primary-foreground hover:bg-primary/90 shadow-neon'
         >
-          <Save className='h-4 w-4 mr-2' /> Save All Changes
+          <Save className='h-4 w-4 mr-2' />{" "}
+          {isSaving ? "Saving..." : "Save All Changes"}
         </Button>
       </div>
     </form>
