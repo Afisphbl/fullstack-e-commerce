@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -12,12 +12,19 @@ interface SocialSettingsProps {
 }
 
 export const SocialSettings = ({ draft, update }: SocialSettingsProps) => {
-  const [customSocialLinks, setCustomSocialLinks] = useState<
-    Array<{ platform: string; url: string }>
-  >([]);
+  const [customSocialLinks, setCustomSocialLinks] = useState(
+    draft.social.custom || []
+  );
+
+  // Keep local state in sync when draft updates (e.g. on reset)
+  useEffect(() => {
+    setCustomSocialLinks(draft.social.custom || []);
+  }, [draft.social.custom]);
 
   const addCustomSocialLink = () => {
-    setCustomSocialLinks([...customSocialLinks, { platform: "", url: "" }]);
+    const updated = [...customSocialLinks, { platform: "", url: "" }];
+    setCustomSocialLinks(updated);
+    update("social", { ...draft.social, custom: updated });
   };
 
   const updateCustomSocialLink = (
@@ -26,12 +33,15 @@ export const SocialSettings = ({ draft, update }: SocialSettingsProps) => {
     value: string
   ) => {
     const updated = [...customSocialLinks];
-    updated[idx][field] = value;
+    updated[idx] = { ...updated[idx], [field]: value };
     setCustomSocialLinks(updated);
+    update("social", { ...draft.social, custom: updated });
   };
 
   const removeCustomSocialLink = (idx: number) => {
-    setCustomSocialLinks(customSocialLinks.filter((_, i) => i !== idx));
+    const updated = customSocialLinks.filter((_, i) => i !== idx);
+    setCustomSocialLinks(updated);
+    update("social", { ...draft.social, custom: updated });
   };
 
   return (

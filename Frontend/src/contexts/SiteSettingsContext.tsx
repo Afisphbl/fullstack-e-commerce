@@ -57,6 +57,7 @@ export interface SiteSettings {
     twitter: string;
     linkedin: string;
     youtube: string;
+    custom: Array<{ platform: string; url: string }>;
   };
 
   // Commerce
@@ -150,6 +151,7 @@ const DEFAULTS: SiteSettings = {
     twitter: "https://twitter.com",
     linkedin: "https://linkedin.com",
     youtube: "",
+    custom: [],
   },
 
   taxRate: "8",
