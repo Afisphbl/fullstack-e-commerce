@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import {
   Save,
@@ -24,9 +31,20 @@ import { SocialSettings } from "@/components/admin/settings/SocialSettings";
 import { CommerceSettings } from "@/components/admin/settings/CommerceSettings";
 import { PreferencesSettings } from "@/components/admin/settings/PreferencesSettings";
 
+const tabs = [
+  { value: "general", label: "General", icon: Building2 },
+  { value: "hero", label: "Hero", icon: ImageIcon },
+  { value: "about", label: "About", icon: Info },
+  { value: "contact", label: "Contact & Map", icon: Phone },
+  { value: "social", label: "Social", icon: Share2 },
+  { value: "commerce", label: "Commerce", icon: ShoppingBag },
+  { value: "prefs", label: "Preferences", icon: SettingsIcon },
+];
+
 const AdminSettingsPage = () => {
   const { settings, save, reset } = useSiteSettings();
   const [draft, setDraft] = useState<SiteSettings>(settings);
+  const [activeTab, setActiveTab] = useState("general");
 
   const update = <K extends keyof SiteSettings>(
     key: K,
@@ -73,37 +91,52 @@ const AdminSettingsPage = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="general" className="w-full">
-        <TabsList className="mb-6 flex flex-wrap h-auto bg-card border border-border p-1">
-          <TabsTrigger value="general">
-            <Building2 className="h-3.5 w-3.5 mr-1.5" />
-            General
-          </TabsTrigger>
-          <TabsTrigger value="hero">
-            <ImageIcon className="h-3.5 w-3.5 mr-1.5" />
-            Hero
-          </TabsTrigger>
-          <TabsTrigger value="about">
-            <Info className="h-3.5 w-3.5 mr-1.5" />
-            About
-          </TabsTrigger>
-          <TabsTrigger value="contact">
-            <Phone className="h-3.5 w-3.5 mr-1.5" />
-            Contact & Map
-          </TabsTrigger>
-          <TabsTrigger value="social">
-            <Share2 className="h-3.5 w-3.5 mr-1.5" />
-            Social
-          </TabsTrigger>
-          <TabsTrigger value="commerce">
-            <ShoppingBag className="h-3.5 w-3.5 mr-1.5" />
-            Commerce
-          </TabsTrigger>
-          <TabsTrigger value="prefs">
-            <SettingsIcon className="h-3.5 w-3.5 mr-1.5" />
-            Preferences
-          </TabsTrigger>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        {/* Desktop Tabs */}
+        <TabsList className="mb-6 hidden md:flex flex-wrap h-auto bg-card border border-border p-1">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <TabsTrigger key={tab.value} value={tab.value}>
+                <Icon className="h-3.5 w-3.5 mr-1.5" />
+                {tab.label}
+              </TabsTrigger>
+            );
+          })}
         </TabsList>
+
+        {/* Mobile Dropdown */}
+        <div className="mb-6 md:hidden">
+          <Select value={activeTab} onValueChange={setActiveTab}>
+            <SelectTrigger className="w-full bg-card border-border">
+              <SelectValue>
+                {(() => {
+                  const currentTab = tabs.find((t) => t.value === activeTab);
+                  const Icon = currentTab?.icon || Building2;
+                  return (
+                    <div className="flex items-center gap-2">
+                      <Icon className="h-4 w-4" />
+                      <span>{currentTab?.label || "General"}</span>
+                    </div>
+                  );
+                })()}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <SelectItem key={tab.value} value={tab.value}>
+                    <div className="flex items-center gap-2">
+                      <Icon className="h-4 w-4" />
+                      <span>{tab.label}</span>
+                    </div>
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </div>
 
         <TabsContent value="general" className="space-y-6">
           <SectionCard title="Brand Identity" icon={Building2}>
