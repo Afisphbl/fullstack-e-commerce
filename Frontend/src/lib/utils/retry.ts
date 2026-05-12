@@ -119,7 +119,7 @@ export async function retry<T>(
  * const fetchDataWithRetry = retryable(fetchData, { maxAttempts: 3 });
  * const data = await fetchDataWithRetry();
  */
-export function retryable<T extends (...args: any[]) => Promise<any>>(
+export function retryable<T extends (...args: unknown[]) => Promise<unknown>>(
   fn: T,
   options: RetryOptions = {}
 ): T {
