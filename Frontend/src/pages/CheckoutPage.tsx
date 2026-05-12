@@ -7,7 +7,6 @@ import { initializeChapaPayment } from "@/lib/payment-api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import {
   CreditCard,
@@ -25,7 +24,7 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<string>("card");
+  const [paymentMethod] = useState<string>("chapa");
   const [shippingInfo, setShippingInfo] = useState({
     firstName: "",
     lastName: "",
@@ -85,14 +84,6 @@ const CheckoutPage = () => {
 
     setLoading(true);
     try {
-      // Determine payment method based on selection
-      let orderPaymentMethod = paymentMethod;
-      if (paymentMethod === "chapa_cbe") {
-        orderPaymentMethod = "chapa_cbe";
-      } else if (paymentMethod === "chapa_telebirr") {
-        orderPaymentMethod = "chapa_telebirr";
-      }
-
       const orderData = {
         orderItems: items.map((i) => ({
           product: i.product.id,
@@ -105,43 +96,31 @@ const CheckoutPage = () => {
           zip: shippingInfo.zip,
           country: shippingInfo.country,
         },
-        paymentMethod: orderPaymentMethod,
+        paymentMethod: paymentMethod,
         itemsPrice: subtotal || total,
       };
 
       const orderResponse = await createOrder(orderData);
       const orderId = orderResponse.data.data._id;
 
-      // If Chapa payment method, initialize payment
-      if (paymentMethod === "chapa_cbe" || paymentMethod === "chapa_telebirr") {
-        toast.success("Order created! Redirecting to payment...");
+      // Initialize Chapa payment
+      toast.success("Order created! Redirecting to payment...");
 
-        try {
-          const paymentResponse = await initializeChapaPayment(orderId);
+      try {
+        const paymentResponse = await initializeChapaPayment(orderId);
 
-          // Redirect to Chapa checkout - cart will be cleared after successful payment
-          window.location.href = paymentResponse.checkoutUrl;
-        } catch (error) {
-          console.error("Payment initialization error:", error);
-          const errorMessage =
-            (error as Error).message || "Failed to initialize payment";
-          toast.error(errorMessage);
-          // Don't navigate away - let user try again or fix the issue
-          setLoading(false);
-          return;
-        }
-      } else {
-        // For other payment methods (cash on delivery, etc.), just show success
-        toast.success(
-          "Order placed successfully! Check your email for confirmation.",
-        );
-        clearCart();
-        navigate("/orders");
+        // Redirect to Chapa checkout - clear cart will happen after successful redirection/return
+        window.location.href = paymentResponse.checkoutUrl;
+      } catch (error) {
+        console.error("Payment initialization error:", error);
+        const errorMessage =
+          (error as Error).message || "Failed to initialize payment";
+        toast.error(errorMessage);
+        setLoading(false);
       }
     } catch (error) {
       const err = error as Error;
       toast.error(err.message || "Failed to place order. Please try again.");
-    } finally {
       setLoading(false);
     }
   };
@@ -156,19 +135,19 @@ const CheckoutPage = () => {
   const grandTotal = total + shipping + tax;
 
   return (
-    <div className='container mx-auto px-4 py-8 max-w-4xl'>
-      <h1 className='text-3xl font-display font-bold text-foreground mb-8'>
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <h1 className="text-3xl font-display font-bold text-foreground mb-8">
         Checkout
       </h1>
 
-      {/* Steps */}
-      <div className='flex items-center justify-center gap-4 mb-8'>
+      {/* Steps Visualization */}
+      <div className="flex items-center justify-center gap-4 mb-8">
         {["Shipping", "Payment", "Review"].map((label, i) => (
-          <div key={label} className='flex items-center gap-2'>
+          <div key={label} className="flex items-center gap-2">
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${i + 1 <= step ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
             >
-              {i + 1 < step ? <Check className='h-4 w-4' /> : i + 1}
+              {i + 1 < step ? <Check className="h-4 w-4" /> : i + 1}
             </div>
             <span
               className={`text-sm hidden sm:inline ${i + 1 <= step ? "text-foreground" : "text-muted-foreground"}`}
@@ -186,307 +165,254 @@ const CheckoutPage = () => {
 
       <form
         onSubmit={handleSubmit}
-        className='grid grid-cols-1 lg:grid-cols-3 gap-8'
+        className="grid grid-cols-1 lg:grid-cols-3 gap-8"
       >
-        <div className='lg:col-span-2 bg-card rounded-lg border border-border p-6'>
+        <div className="lg:col-span-2 bg-card rounded-lg border border-border p-6">
           {step === 1 && (
-            <div className='space-y-4'>
-              <h2 className='font-display font-semibold text-foreground mb-4'>
+            <div className="space-y-4">
+              <h2 className="font-display font-semibold text-foreground mb-4">
                 Shipping Information
               </h2>
-              <div className='grid grid-cols-2 gap-4'>
-                <div>
-                  <Label className='text-foreground'>First Name</Label>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-foreground">First Name</Label>
                   <Input
-                    name='firstName'
+                    name="firstName"
                     value={shippingInfo.firstName}
                     onChange={handleInputChange}
                     required
-                    className='bg-background'
                   />
                 </div>
-                <div>
-                  <Label className='text-foreground'>Last Name</Label>
+                <div className="space-y-2">
+                  <Label className="text-foreground">Last Name</Label>
                   <Input
-                    name='lastName'
+                    name="lastName"
                     value={shippingInfo.lastName}
                     onChange={handleInputChange}
                     required
-                    className='bg-background'
                   />
                 </div>
               </div>
-              <div>
-                <Label className='text-foreground'>Email</Label>
+              <div className="space-y-2">
+                <Label className="text-foreground">Email Address</Label>
                 <Input
-                  name='email'
-                  type='email'
+                  name="email"
+                  type="email"
                   value={shippingInfo.email}
                   onChange={handleInputChange}
                   required
-                  className='bg-background'
                 />
               </div>
-              <div>
-                <Label className='text-foreground'>Phone Number</Label>
+              <div className="space-y-2">
+                <Label className="text-foreground">Phone Number</Label>
                 <Input
-                  name='phone'
-                  type='tel'
-                  placeholder='09xxxxxxxx'
+                  name="phone"
+                  type="tel"
+                  placeholder="09xxxxxxxx"
                   value={shippingInfo.phone}
                   onChange={handleInputChange}
-                  className='bg-background'
                 />
-                <p className='text-xs text-muted-foreground mt-1'>
-                  Required for Telebirr payments (format: 09xxxxxxxx)
+                <p className="text-[11px] text-muted-foreground">
+                  Required for Telebirr payments
                 </p>
               </div>
-              <div>
-                <Label className='text-foreground'>Address</Label>
+              <div className="space-y-2">
+                <Label className="text-foreground">Street Address</Label>
                 <Input
-                  name='address'
+                  name="address"
                   value={shippingInfo.address}
                   onChange={handleInputChange}
                   required
-                  className='bg-background'
                 />
               </div>
-              <div className='grid grid-cols-3 gap-4'>
-                <div>
-                  <Label className='text-foreground'>City</Label>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-foreground">City</Label>
                   <Input
-                    name='city'
+                    name="city"
                     value={shippingInfo.city}
                     onChange={handleInputChange}
                     required
-                    className='bg-background'
                   />
                 </div>
-                <div>
-                  <Label className='text-foreground'>State</Label>
+                <div className="space-y-2">
+                  <Label className="text-foreground">State</Label>
                   <Input
-                    name='state'
+                    name="state"
                     value={shippingInfo.state}
                     onChange={handleInputChange}
                     required
-                    className='bg-background'
                   />
                 </div>
-                <div>
-                  <Label className='text-foreground'>ZIP</Label>
+                <div className="space-y-2">
+                  <Label className="text-foreground">ZIP</Label>
                   <Input
-                    name='zip'
+                    name="zip"
                     value={shippingInfo.zip}
                     onChange={handleInputChange}
                     required
-                    className='bg-background'
                   />
                 </div>
               </div>
             </div>
           )}
+
           {step === 2 && (
-            <div className='space-y-6'>
-              <h2 className='font-display font-semibold text-foreground mb-4'>
-                Payment Method
-              </h2>
+            <div className="space-y-6 text-center">
+              <div className="mb-4">
+                <h2 className="font-display font-semibold text-2xl text-foreground mb-2">
+                  Secure Payment with Chapa
+                </h2>
+                <p className="text-muted-foreground text-sm max-w-sm mx-auto">
+                  Safe, secure transactions supporting all major Ethiopian and
+                  international payment methods.
+                </p>
+              </div>
 
-              <RadioGroup
-                value={paymentMethod}
-                onValueChange={setPaymentMethod}
-              >
-                {/* Chapa Telebirr */}
-                <div className='flex items-center space-x-3 border border-border rounded-lg p-4 hover:bg-accent/50 transition-colors cursor-pointer'>
-                  <RadioGroupItem value='chapa_telebirr' id='chapa_telebirr' />
-                  <Label
-                    htmlFor='chapa_telebirr'
-                    className='flex items-center gap-3 cursor-pointer flex-1'
-                  >
-                    <div className='flex items-center justify-center w-10 h-10 rounded-full bg-primary/10'>
-                      <Smartphone className='h-5 w-5 text-primary' />
-                    </div>
-                    <div className='flex-1'>
-                      <p className='font-medium text-foreground'>Telebirr</p>
-                      <p className='text-sm text-muted-foreground'>
-                        Pay with Telebirr mobile money
-                      </p>
-                    </div>
-                  </Label>
-                </div>
-
-                {/* Chapa CBE */}
-                <div className='flex items-center space-x-3 border border-border rounded-lg p-4 hover:bg-accent/50 transition-colors cursor-pointer'>
-                  <RadioGroupItem value='chapa_cbe' id='chapa_cbe' />
-                  <Label
-                    htmlFor='chapa_cbe'
-                    className='flex items-center gap-3 cursor-pointer flex-1'
-                  >
-                    <div className='flex items-center justify-center w-10 h-10 rounded-full bg-primary/10'>
-                      <Building2 className='h-5 w-5 text-primary' />
-                    </div>
-                    <div className='flex-1'>
-                      <p className='font-medium text-foreground'>CBE Birr</p>
-                      <p className='text-sm text-muted-foreground'>
-                        Pay with Commercial Bank of Ethiopia
-                      </p>
-                    </div>
-                  </Label>
-                </div>
-
-                {/* Credit/Debit Card */}
-                <div className='flex items-center space-x-3 border border-border rounded-lg p-4 hover:bg-accent/50 transition-colors cursor-pointer'>
-                  <RadioGroupItem value='card' id='card' />
-                  <Label
-                    htmlFor='card'
-                    className='flex items-center gap-3 cursor-pointer flex-1'
-                  >
-                    <div className='flex items-center justify-center w-10 h-10 rounded-full bg-primary/10'>
-                      <CreditCard className='h-5 w-5 text-primary' />
-                    </div>
-                    <div className='flex-1'>
-                      <p className='font-medium text-foreground'>
-                        Credit/Debit Card
-                      </p>
-                      <p className='text-sm text-muted-foreground'>
-                        Pay with Visa, Mastercard, or other cards
-                      </p>
-                    </div>
-                  </Label>
-                </div>
-              </RadioGroup>
-
-              {/* Show card details only if card is selected */}
-              {paymentMethod === "card" && (
-                <div className='space-y-4 mt-6 pt-6 border-t border-border'>
-                  <h3 className='font-medium text-foreground'>Card Details</h3>
-                  <div>
-                    <Label className='text-foreground'>Card Number</Label>
-                    <Input
-                      placeholder='1234 5678 9012 3456'
-                      required
-                      className='bg-background'
-                    />
-                  </div>
-                  <div className='grid grid-cols-2 gap-4'>
-                    <div>
-                      <Label className='text-foreground'>Expiry</Label>
-                      <Input
-                        placeholder='MM/YY'
-                        required
-                        className='bg-background'
-                      />
+              <div className="bg-card border-2 border-primary rounded-2xl p-8 transition-all hover:shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-4 text-left">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <CreditCard className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                      <Label className='text-foreground'>CVC</Label>
-                      <Input
-                        placeholder='123'
-                        required
-                        className='bg-background'
-                      />
+                      <h3 className="font-bold text-lg text-foreground">
+                        Chapa Gateway
+                      </h3>
+                      <p className="text-xs text-muted-foreground italic">
+                        Official Payment Partner
+                      </p>
                     </div>
                   </div>
-                  <div>
-                    <Label className='text-foreground'>Name on Card</Label>
-                    <Input required className='bg-background' />
+                  <div className="bg-primary/10 text-primary text-[10px] uppercase font-black px-2 py-1 rounded">
+                    Recommended
                   </div>
                 </div>
-              )}
 
-              {/* Info for Chapa payments */}
-              {(paymentMethod === "chapa_cbe" ||
-                paymentMethod === "chapa_telebirr") && (
-                <div className='bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mt-6'>
-                  <p className='text-sm text-blue-900 dark:text-blue-100'>
-                    <strong>Note:</strong> You will be redirected to Chapa's
-                    secure payment page to complete your{" "}
-                    {paymentMethod === "chapa_telebirr"
-                      ? "Telebirr"
-                      : "CBE Birr"}{" "}
-                    payment.
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="p-3 bg-muted/50 rounded-xl w-full flex justify-center">
+                      <Smartphone className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase opacity-60">
+                      Telebirr
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="p-3 bg-muted/50 rounded-xl w-full flex justify-center">
+                      <Building2 className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase opacity-60">
+                      CBE Birr
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="p-3 bg-muted/50 rounded-xl w-full flex justify-center">
+                      <CreditCard className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase opacity-60">
+                      Visa/Master
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="p-3 bg-muted/50 rounded-xl w-full flex justify-center">
+                      <Check className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase opacity-60">
+                      & More
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-primary/5 border border-primary/10 rounded-xl p-4 text-left">
+                  <p className="text-xs text-foreground/80 leading-relaxed font-medium">
+                    You'll be redirected to Chapa's official gateway. Choose
+                    your flavor: <strong>Telebirr, CBE Birr, Amole,</strong> or
+                    any <strong>Credit/Debit card</strong>.
                   </p>
                 </div>
-              )}
+              </div>
             </div>
           )}
+
           {step === 3 && (
-            <div>
-              <h2 className='font-display font-semibold text-foreground mb-4'>
+            <div className="space-y-6">
+              <h2 className="font-display font-semibold text-foreground mb-4 text-xl">
                 Order Review
               </h2>
-              <div className='space-y-3 mb-6'>
+              <div className="space-y-3 mb-6">
                 {items.map(({ product, quantity }) => (
                   <div
                     key={product.id}
-                    className='flex items-center gap-3 py-2 border-b border-border last:border-0'
+                    className="flex gap-4 py-3 border-b border-border last:border-0"
                   >
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className='w-16 h-16 rounded object-cover'
-                    />
-                    <div className='flex-1'>
-                      <p className='text-sm font-medium text-foreground'>
+                    <div className="w-16 h-16 rounded overflow-hidden bg-muted">
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-foreground">
                         {product.name}
                       </p>
-                      <p className='text-xs text-muted-foreground'>
-                        Qty: {quantity}
+                      <p className="text-xs text-muted-foreground">
+                        Quantity: {quantity}
                       </p>
                     </div>
-                    <span className='text-sm font-medium text-foreground'>
-                      ${(product.price * quantity).toFixed(2)}
-                    </span>
+                    <div className="text-right">
+                      <p className="text-sm font-bold text-foreground">
+                        ${(product.price * quantity).toFixed(2)}
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
 
-              {/* Shipping Info Summary */}
-              <div className='bg-muted/50 rounded-lg p-4 mb-4'>
-                <h3 className='text-sm font-semibold text-foreground mb-2'>
-                  Shipping To:
+              <div className="bg-muted/30 rounded-xl p-5 border border-border/50">
+                <h3 className="text-xs font-black uppercase text-foreground mb-3 tracking-widest">
+                  Shipping Destination
                 </h3>
-                <p className='text-sm text-muted-foreground'>
-                  {shippingInfo.firstName} {shippingInfo.lastName}
-                </p>
-                <p className='text-sm text-muted-foreground'>
-                  {shippingInfo.email}
-                </p>
-                <p className='text-sm text-muted-foreground'>
-                  {shippingInfo.address}
-                </p>
-                <p className='text-sm text-muted-foreground'>
-                  {shippingInfo.city}, {shippingInfo.state} {shippingInfo.zip}
-                </p>
-                <p className='text-sm text-muted-foreground'>
-                  {shippingInfo.country}
-                </p>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  <p className="font-semibold text-foreground">
+                    {shippingInfo.firstName} {shippingInfo.lastName}
+                  </p>
+                  <p>{shippingInfo.address}</p>
+                  <p>
+                    {shippingInfo.city}, {shippingInfo.state} {shippingInfo.zip}
+                  </p>
+                  <p className="pt-2">{shippingInfo.phone}</p>
+                </div>
               </div>
             </div>
           )}
-          <div className='flex gap-3 mt-6'>
+
+          <div className="flex gap-3 mt-8">
             {step > 1 && (
               <Button
-                type='button'
-                variant='outline'
+                type="button"
+                variant="outline"
+                className="px-8"
                 onClick={() => setStep(step - 1)}
               >
                 Back
               </Button>
             )}
             <Button
-              type='submit'
+              type="submit"
               disabled={loading}
-              className='flex-1 bg-primary text-primary-foreground hover:bg-primary/90 shadow-neon'
+              className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 font-bold uppercase tracking-tight shadow-neon"
             >
               {loading ? (
                 <>
-                  <Loader2 className='h-4 w-4 mr-2 animate-spin' /> Placing
-                  Order...
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Working...
                 </>
               ) : step < 3 ? (
-                "Continue"
+                "Continue to Payment"
               ) : (
                 <>
-                  <CreditCard className='h-4 w-4 mr-2' /> Place Order — $
+                  <Check className="h-4 w-4 mr-2" /> Place Order — $
                   {grandTotal.toFixed(2)}
                 </>
               )}
@@ -494,73 +420,69 @@ const CheckoutPage = () => {
           </div>
         </div>
 
-        <div className='bg-card rounded-lg border border-border p-6 h-fit'>
-          <h3 className='font-display font-semibold text-foreground mb-4'>
-            Order Summary
+        <div className="bg-card rounded-lg border border-border p-6 h-fit sticky top-24">
+          <h3 className="font-display font-semibold text-foreground mb-6 text-lg border-b border-border pb-2">
+            Summary
           </h3>
-          <div className='space-y-2 text-sm mb-4'>
-            <div className='flex justify-between'>
-              <span className='text-muted-foreground'>
-                Items ({items.reduce((sum, item) => sum + item.quantity, 0)})
-              </span>
-              <span className='text-foreground'>
+          <div className="space-y-3 text-sm mb-6">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Items Price</span>
+              <span className="text-foreground font-medium">
                 ${(subtotal || total).toFixed(2)}
               </span>
             </div>
             {discount > 0 && (
-              <>
-                <div className='flex justify-between text-green-600 dark:text-green-400'>
-                  <span>Discount {couponCode && `(${couponCode})`}</span>
-                  <span>-${discount.toFixed(2)}</span>
-                </div>
-                <div className='flex justify-between'>
-                  <span className='text-muted-foreground'>
-                    Subtotal after discount
-                  </span>
-                  <span className='text-foreground'>${total.toFixed(2)}</span>
-                </div>
-              </>
+              <div className="flex justify-between text-green-600 dark:text-green-400">
+                <span>Discount</span>
+                <span>-${discount.toFixed(2)}</span>
+              </div>
             )}
-            <div className='flex justify-between'>
-              <span className='text-muted-foreground'>Shipping</span>
-              <span className='text-foreground'>
-                {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Shipping</span>
+              <span className="text-foreground font-medium">
+                {shipping === 0 ? "FREE" : `$${shipping.toFixed(2)}`}
               </span>
             </div>
-            <div className='flex justify-between'>
-              <span className='text-muted-foreground'>Tax (8%)</span>
-              <span className='text-foreground'>${tax.toFixed(2)}</span>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Estimated Tax</span>
+              <span className="text-foreground font-medium">
+                ${tax.toFixed(2)}
+              </span>
             </div>
-            <div className='border-t border-border pt-2 flex justify-between font-display font-bold text-lg'>
-              <span className='text-foreground'>Total</span>
-              <span className='text-foreground'>${grandTotal.toFixed(2)}</span>
+            <div className="border-t border-border pt-4 flex justify-between font-display font-bold text-xl">
+              <span className="text-foreground">Total</span>
+              <span className="text-primary">${grandTotal.toFixed(2)}</span>
             </div>
           </div>
 
-          {/* Cart Items Preview */}
-          <div className='border-t border-border pt-4'>
-            <h4 className='text-xs font-semibold text-muted-foreground mb-3 uppercase'>
-              Items in Cart
-            </h4>
-            <div className='space-y-2'>
-              {items.map(({ product, quantity }) => (
-                <div key={product.id} className='flex items-center gap-2'>
+          <div className="space-y-4">
+            <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest mb-2">
+              Cart Preview
+            </div>
+            {items.slice(0, 3).map(({ product, quantity }) => (
+              <div key={product.id} className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded bg-muted overflow-hidden">
                   <img
                     src={product.image}
-                    alt={product.name}
-                    className='w-10 h-10 rounded object-cover'
+                    alt=""
+                    className="w-full h-full object-cover"
                   />
-                  <div className='flex-1 min-w-0'>
-                    <p className='text-xs font-medium text-foreground truncate'>
-                      {product.name}
-                    </p>
-                    <p className='text-xs text-muted-foreground'>
-                      {quantity} × ${product.price.toFixed(2)}
-                    </p>
-                  </div>
                 </div>
-              ))}
-            </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold truncate">
+                    {product.name}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {quantity} unit(s)
+                  </p>
+                </div>
+              </div>
+            ))}
+            {items.length > 3 && (
+              <p className="text-[10px] text-center text-muted-foreground">
+                +{items.length - 3} more items
+              </p>
+            )}
           </div>
         </div>
       </form>

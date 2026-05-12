@@ -1,18 +1,25 @@
-'use strict';
+"use strict";
 
-const Order = require('../models/orderModel');
-const chapaService = require('../utils/chapaService');
-const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/AppError');
-const { PAYMENT_STATUS, ORDER_STATUS, PAYMENT_METHOD } = require('../constants/enums');
+const Order = require("../models/orderModel");
+const chapaService = require("../utils/chapaService");
+const catchAsync = require("../utils/catchAsync");
+const AppError = require("../utils/AppError");
+const {
+  PAYMENT_STATUS,
+  ORDER_STATUS,
+  PAYMENT_METHOD,
+} = require("../constants/enums");
 
 // ── Helper: Validate Payment Verification ─────────────────────────────────────
 const validatePaymentVerification = (verification, order) => {
   const errors = [];
 
   // 1) Check if verification was successful
-  if (!verification.success || verification.status !== 'success') {
-    return { valid: false, errors: ['Payment verification failed or status not successful'] };
+  if (!verification.success || verification.status !== "success") {
+    return {
+      valid: false,
+      errors: ["Payment verification failed or status not successful"],
+    };
   }
 
   // 2) Validate amount (convert to numbers and compare with tolerance for floating point)
@@ -23,17 +30,17 @@ const validatePaymentVerification = (verification, order) => {
 
   if (amountDifference > tolerance) {
     errors.push(
-      `Amount mismatch: verified=${verifiedAmount} ETB, expected=${orderAmount} ETB`
+      `Amount mismatch: verified=${verifiedAmount} ETB, expected=${orderAmount} ETB`,
     );
   }
 
   // 3) Validate currency
-  const verifiedCurrency = verification.currency?.toUpperCase() || 'ETB';
-  const expectedCurrency = 'ETB'; // Currently only ETB is supported
+  const verifiedCurrency = verification.currency?.toUpperCase() || "ETB";
+  const expectedCurrency = "ETB"; // Currently only ETB is supported
 
   if (verifiedCurrency !== expectedCurrency) {
     errors.push(
-      `Currency mismatch: verified=${verifiedCurrency}, expected=${expectedCurrency}`
+      `Currency mismatch: verified=${verifiedCurrency}, expected=${expectedCurrency}`,
     );
   }
 
@@ -43,14 +50,14 @@ const validatePaymentVerification = (verification, order) => {
 
   if (verifiedTxRef !== orderTxRef) {
     errors.push(
-      `Transaction reference mismatch: verified=${verifiedTxRef}, expected=${orderTxRef}`
+      `Transaction reference mismatch: verified=${verifiedTxRef}, expected=${orderTxRef}`,
     );
   }
 
   // 5) Return validation result
   if (errors.length > 0) {
     // Log security issue
-    console.error('⚠️  PAYMENT VERIFICATION FAILED:', {
+    console.error("⚠️  PAYMENT VERIFICATION FAILED:", {
       orderId: order._id,
       orderAmount: orderAmount,
       verifiedAmount: verifiedAmount,
@@ -70,45 +77,64 @@ const validatePaymentVerification = (verification, order) => {
 exports.initializeChapaPayment = catchAsync(async (req, res, next) => {
   const { orderId } = req.body;
 
-  console.log('💳 Payment initialization request:', { orderId, userId: req.user._id });
+  console.log("💳 Payment initialization request:", {
+    orderId,
+    userId: req.user._id,
+  });
 
   // 1) Find the order
   const order = await Order.findById(orderId);
   if (!order) {
-    console.error('❌ Order not found:', orderId);
-    return next(new AppError('Order not found', 404));
+    console.error("❌ Order not found:", orderId);
+    return next(new AppError("Order not found", 404));
   }
 
-  console.log('✅ Order found:', { 
-    orderId: order._id, 
+  console.log("✅ Order found:", {
+    orderId: order._id,
     paymentMethod: order.paymentMethod,
     totalPrice: order.totalPrice,
-    userId: order.user._id 
+    userId: order.user._id,
   });
 
   // 2) Check if order belongs to user (unless admin)
-  if (order.user._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
-    console.error('❌ Permission denied:', { orderUser: order.user._id, requestUser: req.user._id });
-    return next(new AppError('You do not have permission to pay for this order', 403));
+  if (
+    order.user._id.toString() !== req.user._id.toString() &&
+    req.user.role !== "admin"
+  ) {
+    console.error("❌ Permission denied:", {
+      orderUser: order.user._id,
+      requestUser: req.user._id,
+    });
+    return next(
+      new AppError("You do not have permission to pay for this order", 403),
+    );
   }
 
   // 3) Check if order is already paid
   if (order.paymentStatus === PAYMENT_STATUS.PAID) {
-    return next(new AppError('This order has already been paid', 400));
+    return next(new AppError("This order has already been paid", 400));
   }
 
   // 4) Validate payment method
-  if (![PAYMENT_METHOD.CHAPA_CBE, PAYMENT_METHOD.CHAPA_TELEBIRR].includes(order.paymentMethod)) {
-    return next(new AppError('Invalid payment method for Chapa', 400));
+  if (
+    ![
+      PAYMENT_METHOD.CHAPA,
+      PAYMENT_METHOD.CHAPA_CBE,
+      PAYMENT_METHOD.CHAPA_TELEBIRR,
+    ].includes(order.paymentMethod)
+  ) {
+    return next(new AppError("Invalid payment method for Chapa", 400));
   }
 
   // 5) Check for existing pending payment session
-  if (order.paymentResult?.id && order.paymentResult?.status === 'pending') {
+  if (order.paymentResult?.id && order.paymentResult?.status === "pending") {
     // Reuse existing payment session - don't create a new one
-    return next(new AppError(
-      'A payment session is already in progress for this order. Please complete or cancel the existing payment before creating a new one.',
-      400
-    ));
+    return next(
+      new AppError(
+        "A payment session is already in progress for this order. Please complete or cancel the existing payment before creating a new one.",
+        400,
+      ),
+    );
   }
 
   // 6) Generate unique transaction reference (only for new payments)
@@ -117,17 +143,17 @@ exports.initializeChapaPayment = catchAsync(async (req, res, next) => {
   // 7) Prepare payment data
   const paymentData = {
     amount: order.totalPrice,
-    currency: 'ETB',
+    currency: "ETB",
     email: req.user.email,
-    firstName: req.user.name.split(' ')[0] || 'Customer',
-    lastName: req.user.name.split(' ').slice(1).join(' ') || 'User',
-    phone: req.user.phone || '0911111111', // Use default if not provided
+    firstName: req.user.name.split(" ")[0] || "Customer",
+    lastName: req.user.name.split(" ").slice(1).join(" ") || "User",
+    phone: req.user.phone || "0911111111", // Use default if not provided
     txRef,
     callbackUrl: `${process.env.CHAPA_CALLBACK_URL}`,
     returnUrl: `${process.env.CHAPA_RETURN_URL}/${order._id}`,
     customization: {
-      title: 'E-Commerce Store',
-      description: 'Order Payment', // Simplified description
+      title: "E-Commerce Store",
+      description: "Order Payment", // Simplified description
     },
   };
 
@@ -137,7 +163,7 @@ exports.initializeChapaPayment = catchAsync(async (req, res, next) => {
   // 9) Store transaction reference in order (only after successful initialization)
   order.paymentResult = {
     id: txRef,
-    status: 'pending',
+    status: "pending",
     updateTime: new Date().toISOString(),
     emailAddress: req.user.email,
   };
@@ -145,7 +171,7 @@ exports.initializeChapaPayment = catchAsync(async (req, res, next) => {
 
   // 10) Return checkout URL
   res.status(200).json({
-    status: 'success',
+    status: "success",
     data: {
       checkoutUrl: chapaResponse.checkoutUrl,
       txRef: chapaResponse.txRef,
@@ -162,21 +188,21 @@ exports.chapaCallback = catchAsync(async (req, res, next) => {
   const txRef = tx_ref || trx_ref;
 
   if (!txRef) {
-    return next(new AppError('Transaction reference is missing', 400));
+    return next(new AppError("Transaction reference is missing", 400));
   }
 
   // Verify the payment with Chapa
   const verification = await chapaService.verifyPayment(txRef);
 
   // Find the order by transaction reference
-  const order = await Order.findOne({ 'paymentResult.id': txRef });
-  
+  const order = await Order.findOne({ "paymentResult.id": txRef });
+
   if (!order) {
-    return next(new AppError('Order not found for this transaction', 404));
+    return next(new AppError("Order not found for this transaction", 404));
   }
 
   // Update order based on verification result
-  if (verification.success && verification.status === 'success') {
+  if (verification.success && verification.status === "success") {
     // Validate payment details before marking as paid
     const validation = validatePaymentVerification(verification, order);
 
@@ -187,7 +213,7 @@ exports.chapaCallback = catchAsync(async (req, res, next) => {
       order.orderStatus = ORDER_STATUS.PROCESSING;
       order.paymentResult = {
         id: verification.txRef,
-        status: 'success',
+        status: "success",
         updateTime: new Date().toISOString(),
         emailAddress: verification.email,
         method: verification.method,
@@ -195,19 +221,19 @@ exports.chapaCallback = catchAsync(async (req, res, next) => {
       };
     } else {
       // Payment validation failed - mark as failed
-      console.error('⚠️  Payment validation failed in callback:', {
+      console.error("⚠️  Payment validation failed in callback:", {
         orderId: order._id,
         txRef: txRef,
         errors: validation.errors,
       });
 
       order.paymentStatus = PAYMENT_STATUS.FAILED;
-      order.paymentResult.status = 'failed';
+      order.paymentResult.status = "failed";
       order.paymentResult.updateTime = new Date().toISOString();
     }
   } else {
     order.paymentStatus = PAYMENT_STATUS.FAILED;
-    order.paymentResult.status = 'failed';
+    order.paymentResult.status = "failed";
     order.paymentResult.updateTime = new Date().toISOString();
   }
 
@@ -221,27 +247,27 @@ exports.chapaCallback = catchAsync(async (req, res, next) => {
 // ── Chapa Webhook Handler ─────────────────────────────────────────────────────
 exports.chapaWebhook = catchAsync(async (req, res, next) => {
   // 1) Verify webhook signature
-  const signature = req.headers['chapa-signature'];
-  
+  const signature = req.headers["chapa-signature"];
+
   if (!chapaService.verifyWebhookSignature(signature, req.body)) {
-    return next(new AppError('Invalid webhook signature', 401));
+    return next(new AppError("Invalid webhook signature", 401));
   }
 
   // 2) Extract webhook data
   const { event, data } = req.body;
 
   // 3) Handle different event types
-  if (event === 'charge.success' || data.status === 'success') {
+  if (event === "charge.success" || data.status === "success") {
     const txRef = data.tx_ref || data.trx_ref;
-    
+
     // Find order by transaction reference
-    const order = await Order.findOne({ 'paymentResult.id': txRef });
-    
+    const order = await Order.findOne({ "paymentResult.id": txRef });
+
     if (order && order.paymentStatus !== PAYMENT_STATUS.PAID) {
       // Verify payment before updating
       const verification = await chapaService.verifyPayment(txRef);
-      
-      if (verification.success && verification.status === 'success') {
+
+      if (verification.success && verification.status === "success") {
         // Validate payment details before marking as paid
         const validation = validatePaymentVerification(verification, order);
 
@@ -252,25 +278,25 @@ exports.chapaWebhook = catchAsync(async (req, res, next) => {
           order.orderStatus = ORDER_STATUS.PROCESSING;
           order.paymentResult = {
             id: verification.txRef,
-            status: 'success',
+            status: "success",
             updateTime: new Date().toISOString(),
             emailAddress: verification.email,
             method: verification.method,
             reference: verification.reference,
           };
           await order.save();
-          
+
           console.log(`✅ Order ${order._id} marked as paid via webhook`);
         } else {
           // Payment validation failed
-          console.error('⚠️  Payment validation failed in webhook:', {
+          console.error("⚠️  Payment validation failed in webhook:", {
             orderId: order._id,
             txRef: txRef,
             errors: validation.errors,
           });
 
           order.paymentStatus = PAYMENT_STATUS.FAILED;
-          order.paymentResult.status = 'failed';
+          order.paymentResult.status = "failed";
           order.paymentResult.updateTime = new Date().toISOString();
           await order.save();
         }
@@ -279,7 +305,7 @@ exports.chapaWebhook = catchAsync(async (req, res, next) => {
   }
 
   // 4) Acknowledge webhook
-  res.status(200).json({ status: 'success', message: 'Webhook received' });
+  res.status(200).json({ status: "success", message: "Webhook received" });
 });
 
 // ── Verify Payment Status ─────────────────────────────────────────────────────
@@ -289,18 +315,23 @@ exports.verifyPaymentStatus = catchAsync(async (req, res, next) => {
   // 1) Find the order
   const order = await Order.findById(orderId);
   if (!order) {
-    return next(new AppError('Order not found', 404));
+    return next(new AppError("Order not found", 404));
   }
 
   // 2) Check if order belongs to user (unless admin)
-  if (order.user._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
-    return next(new AppError('You do not have permission to view this order', 403));
+  if (
+    order.user._id.toString() !== req.user._id.toString() &&
+    req.user.role !== "admin"
+  ) {
+    return next(
+      new AppError("You do not have permission to view this order", 403),
+    );
   }
 
   // 3) If already paid, return current status
   if (order.paymentStatus === PAYMENT_STATUS.PAID) {
     return res.status(200).json({
-      status: 'success',
+      status: "success",
       data: {
         paymentStatus: order.paymentStatus,
         orderStatus: order.orderStatus,
@@ -311,9 +342,11 @@ exports.verifyPaymentStatus = catchAsync(async (req, res, next) => {
 
   // 4) Verify with Chapa if transaction reference exists
   if (order.paymentResult?.id) {
-    const verification = await chapaService.verifyPayment(order.paymentResult.id);
-    
-    if (verification.success && verification.status === 'success') {
+    const verification = await chapaService.verifyPayment(
+      order.paymentResult.id,
+    );
+
+    if (verification.success && verification.status === "success") {
       // Validate payment details before marking as paid
       const validation = validatePaymentVerification(verification, order);
 
@@ -322,19 +355,19 @@ exports.verifyPaymentStatus = catchAsync(async (req, res, next) => {
         order.paymentStatus = PAYMENT_STATUS.PAID;
         order.paidAt = Date.now();
         order.orderStatus = ORDER_STATUS.PROCESSING;
-        order.paymentResult.status = 'success';
+        order.paymentResult.status = "success";
         order.paymentResult.updateTime = new Date().toISOString();
         await order.save();
       } else {
         // Payment validation failed
-        console.error('⚠️  Payment validation failed in verifyPaymentStatus:', {
+        console.error("⚠️  Payment validation failed in verifyPaymentStatus:", {
           orderId: order._id,
           txRef: order.paymentResult.id,
           errors: validation.errors,
         });
 
         order.paymentStatus = PAYMENT_STATUS.FAILED;
-        order.paymentResult.status = 'failed';
+        order.paymentResult.status = "failed";
         order.paymentResult.updateTime = new Date().toISOString();
         await order.save();
       }
@@ -342,7 +375,7 @@ exports.verifyPaymentStatus = catchAsync(async (req, res, next) => {
   }
 
   res.status(200).json({
-    status: 'success',
+    status: "success",
     data: {
       paymentStatus: order.paymentStatus,
       orderStatus: order.orderStatus,
@@ -355,9 +388,9 @@ exports.verifyPaymentStatus = catchAsync(async (req, res, next) => {
 // ── Get Supported Currencies ──────────────────────────────────────────────────
 exports.getSupportedCurrencies = catchAsync(async (req, res, next) => {
   const result = await chapaService.getSupportedCurrencies();
-  
+
   res.status(200).json({
-    status: 'success',
+    status: "success",
     data: result,
   });
 });
@@ -365,9 +398,9 @@ exports.getSupportedCurrencies = catchAsync(async (req, res, next) => {
 // ── Get Banks List ────────────────────────────────────────────────────────────
 exports.getBanks = catchAsync(async (req, res, next) => {
   const result = await chapaService.getBanks();
-  
+
   res.status(200).json({
-    status: 'success',
+    status: "success",
     data: result,
   });
 });
@@ -376,14 +409,14 @@ exports.getBanks = catchAsync(async (req, res, next) => {
 exports.checkChapaConfig = catchAsync(async (req, res, next) => {
   const config = {
     secretKeySet: !!process.env.CHAPA_SECRET_KEY,
-    baseUrl: process.env.CHAPA_BASE_URL || 'https://api.chapa.co/v1',
-    callbackUrl: process.env.CHAPA_CALLBACK_URL || 'NOT SET',
-    returnUrl: process.env.CHAPA_RETURN_URL || 'NOT SET',
+    baseUrl: process.env.CHAPA_BASE_URL || "https://api.chapa.co/v1",
+    callbackUrl: process.env.CHAPA_CALLBACK_URL || "NOT SET",
+    returnUrl: process.env.CHAPA_RETURN_URL || "NOT SET",
     webhookSecretSet: !!process.env.CHAPA_WEBHOOK_SECRET,
   };
 
   res.status(200).json({
-    status: 'success',
+    status: "success",
     data: config,
   });
 });
