@@ -4,27 +4,35 @@ const nodemailer = require("nodemailer");
 const config = require("../config/env");
 const logger = require("../logs/logger");
 
-// ─── Gmail SMTP transporter for all emails ───────────────────────────────────
-const createTransporter = () => {
+// ─── Singleton Transporter for connection reuse ──────────────────────────────
+let transporter;
+
+const getTransporter = () => {
+  if (transporter) return transporter;
+
   if (!config.email.username || !config.email.password) {
     throw new Error(
       "Gmail credentials not configured. Please set GMAIL_USER and GMAIL_APP_PASSWORD in config.env",
     );
   }
 
-  return nodemailer.createTransport({
+  transporter = nodemailer.createTransport({
     service: "gmail",
+    pool: true, // Use connection pooling
+    maxConnections: 5,
+    maxMessages: 100,
     auth: {
       user: config.email.username,
       pass: config.email.password,
     },
   });
+
+  return transporter;
 };
 
 // ─── Base send function (Gmail) ───────────────────────────────────────────────
 const sendEmail = async ({ to, subject, text, html }) => {
-  const transporter = createTransporter();
-  const info = await transporter.sendMail({
+  const info = await getTransporter().sendMail({
     from: config.email.from,
     to,
     subject,
@@ -158,7 +166,7 @@ const sendContactNotificationEmail = async ({
   const staffEmails = process.env.STAFF_EMAILS || "";
   const recipients = staffEmails ? `${ownerEmail},${staffEmails}` : ownerEmail;
 
-  const transporter = createTransporter();
+  const transporter = getTransporter();
   const emailSubject = `📬 New Contact Message: ${subject}`;
 
   const text =

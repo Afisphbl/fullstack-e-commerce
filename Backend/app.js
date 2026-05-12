@@ -46,15 +46,20 @@ const app = express();
 app.set("trust proxy", 1);
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
-const allowedOrigins = process.env.CLIENT_URL
-  ? process.env.CLIENT_URL.split(",").map((url) =>
-      url.trim().replace(/\/$/, ""),
-    )
-  : [
-      "http://localhost:5173",
-      "http://localhost:3000",
-      "https://seid-electronic-store.vercel.app",
-    ];
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://seid-electronic-store.vercel.app",
+];
+
+if (process.env.CLIENT_URL) {
+  process.env.CLIENT_URL.split(",").forEach((url) => {
+    const cleanUrl = url.trim().replace(/\/$/, "");
+    if (!allowedOrigins.includes(cleanUrl)) {
+      allowedOrigins.push(cleanUrl);
+    }
+  });
+}
 
 app.use(
   cors({
