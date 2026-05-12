@@ -15,8 +15,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { isAdminRole } from "@/lib/roles";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -24,6 +31,7 @@ const loginSchema = z.object({
 });
 
 export default function Login() {
+  usePageTitle("Login");
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -64,25 +72,33 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-4 py-12">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-3xl font-bold">Sign in</CardTitle>
+    <div className='flex items-center justify-center min-h-[calc(100vh-200px)] px-4 py-12'>
+      <Card className='w-full max-w-md'>
+        <CardHeader className='space-y-1 text-center'>
+          <CardTitle className='text-3xl font-bold'>Sign in</CardTitle>
           <CardDescription>
             Enter your email and password to access your account
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" autoComplete="off">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className='space-y-4'
+              autoComplete='off'
+            >
               <FormField
                 control={form.control}
-                name="email"
+                name='email'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="m@example.com" autoComplete="new-password" {...field} />
+                      <Input
+                        placeholder='m@example.com'
+                        autoComplete='new-password'
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -90,18 +106,23 @@ export default function Login() {
               />
               <FormField
                 control={form.control}
-                name="password"
+                name='password'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" autoComplete="new-password" {...field} />
+                      <Input
+                        type='password'
+                        placeholder='••••••••'
+                        autoComplete='new-password'
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
-                    <div className="flex justify-end">
+                    <div className='flex justify-end'>
                       <Link
-                        to="/forgot-password"
-                        className="text-sm text-primary hover:underline mt-1"
+                        to='/forgot-password'
+                        className='text-sm text-primary hover:underline mt-1'
                       >
                         Forgot password?
                       </Link>
@@ -109,14 +130,21 @@ export default function Login() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={mutation.isPending}>
+              <Button
+                type='submit'
+                className='w-full'
+                disabled={mutation.isPending}
+              >
                 {mutation.isPending ? "Signing in..." : "Sign in"}
               </Button>
             </form>
           </Form>
-          <div className="mt-4 text-center text-sm">
+          <div className='mt-4 text-center text-sm'>
             Don&apos;t have an account?{" "}
-            <Link to="/signup" className="text-primary hover:underline font-medium">
+            <Link
+              to='/signup'
+              className='text-primary hover:underline font-medium'
+            >
               Sign up
             </Link>
           </div>

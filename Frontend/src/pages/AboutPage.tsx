@@ -9,9 +9,11 @@ import {
   Rocket,
   Handshake,
 } from "lucide-react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 
 const AboutPage = () => {
+  usePageTitle("About Us");
   const { settings } = useSiteSettings();
 
   return (

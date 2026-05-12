@@ -33,7 +33,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["currentUser"],
-    queryFn: () => apiFetch("/api/v1/users/me").then((res) => res.data.data),
+    queryFn: () =>
+      apiFetch<ApiResponse<User>>("/api/v1/users/me").then(
+        (res) => res.data.data,
+      ),
     retry: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnMount: true,

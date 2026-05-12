@@ -1,7 +1,9 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || "https://api-wef5.onrender.com";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL?.replace("/api/v1", "") ||
+  "https://api-wef5.onrender.com";
 
 // Token management
-const TOKEN_KEY = 'auth_token';
+const TOKEN_KEY = "auth_token";
 
 export const setAuthToken = (token: string) => {
   localStorage.setItem(TOKEN_KEY, token);
@@ -15,7 +17,10 @@ export const removeAuthToken = () => {
   localStorage.removeItem(TOKEN_KEY);
 };
 
-export const apiFetch = async (url: string, options: RequestInit = {}) => {
+export const apiFetch = async <T = unknown>(
+  url: string,
+  options: RequestInit = {},
+): Promise<T> => {
   const isFormData = options.body instanceof FormData;
 
   const headers: HeadersInit = {
@@ -33,7 +38,7 @@ export const apiFetch = async (url: string, options: RequestInit = {}) => {
   }
 
   // Prepend the base URL if the url doesn't already start with http
-  const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+  const fullUrl = url.startsWith("http") ? url : `${API_BASE_URL}${url}`;
 
   const response = await fetch(fullUrl, {
     ...options,
@@ -49,5 +54,5 @@ export const apiFetch = async (url: string, options: RequestInit = {}) => {
     throw new Error(data?.message || "An error occurred");
   }
 
-  return data;
+  return data as T;
 };

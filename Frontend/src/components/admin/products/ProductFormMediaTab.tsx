@@ -40,13 +40,16 @@ export const ProductFormMediaTab = ({ control }: ProductFormMediaTabProps) => {
   useEffect(() => {
     if (images && galleryItems.length === 0) {
       if (typeof images === "string") {
-        const urls = images.split(",").map(s => s.trim()).filter(Boolean);
+        const urls = images
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
         setGalleryItems(urls);
       } else if (Array.isArray(images)) {
         setGalleryItems(images);
       }
     }
-  }, [images]);
+  }, [images, galleryItems.length]);
 
   // Generate Gallery Previews
   useEffect(() => {
@@ -61,7 +64,7 @@ export const ProductFormMediaTab = ({ control }: ProductFormMediaTabProps) => {
             });
           }
           return item;
-        })
+        }),
       );
       setPreviews(newPreviews);
     };
@@ -69,52 +72,64 @@ export const ProductFormMediaTab = ({ control }: ProductFormMediaTabProps) => {
   }, [galleryItems]);
 
   return (
-    <div className="space-y-8">
+    <div className='space-y-8'>
       <FormField
         control={control}
-        name="imageCover"
+        name='imageCover'
         render={({ field: { onChange, value, ...field } }) => (
           <FormItem>
             <FormLabel>Cover Image</FormLabel>
             <FormControl>
-              <div className="space-y-4">
-                <div 
-                  className="relative group aspect-video rounded-xl border-2 border-dashed border-border/50 bg-muted/30 flex flex-col items-center justify-center overflow-hidden hover:border-primary/50 transition-colors cursor-pointer"
-                  onClick={() => document.getElementById('cover-upload')?.click()}
+              <div className='space-y-4'>
+                <div
+                  className='relative group aspect-video rounded-xl border-2 border-dashed border-border/50 bg-muted/30 flex flex-col items-center justify-center overflow-hidden hover:border-primary/50 transition-colors cursor-pointer'
+                  onClick={() =>
+                    document.getElementById("cover-upload")?.click()
+                  }
                 >
                   {coverPreview ? (
                     <>
-                      <img src={coverPreview} alt="Cover preview" className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <p className="text-white text-sm font-medium">Change Cover</p>
+                      <img
+                        src={coverPreview}
+                        alt='Cover preview'
+                        className='w-full h-full object-cover'
+                      />
+                      <div className='absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center'>
+                        <p className='text-white text-sm font-medium'>
+                          Change Cover
+                        </p>
                       </div>
                       <button
-                        type="button"
+                        type='button'
                         onClick={(e) => {
                           e.stopPropagation();
                           onChange(undefined);
                           setCoverPreview(null);
                         }}
-                        className="absolute top-2 right-2 p-1.5 bg-background/80 backdrop-blur rounded-full text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                        className='absolute top-2 right-2 p-1.5 bg-background/80 backdrop-blur rounded-full text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors'
                       >
-                        <X className="h-4 w-4" />
+                        <X className='h-4 w-4' />
                       </button>
                     </>
                   ) : (
                     <>
-                      <div className="p-3 rounded-full bg-background shadow-sm border border-border mb-3">
-                        <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                      <div className='p-3 rounded-full bg-background shadow-sm border border-border mb-3'>
+                        <ImageIcon className='h-6 w-6 text-muted-foreground' />
                       </div>
-                      <p className="text-sm font-medium text-foreground">Click to upload cover image</p>
-                      <p className="text-xs text-muted-foreground mt-1">JPG, PNG or WebP (max 5MB)</p>
+                      <p className='text-sm font-medium text-foreground'>
+                        Click to upload cover image
+                      </p>
+                      <p className='text-xs text-muted-foreground mt-1'>
+                        JPG, PNG or WebP (max 5MB)
+                      </p>
                     </>
                   )}
                 </div>
                 <Input
-                  id="cover-upload"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
+                  id='cover-upload'
+                  type='file'
+                  accept='image/*'
+                  className='hidden'
                   onChange={(e) => onChange(e.target.files?.[0])}
                   {...field}
                 />
@@ -127,78 +142,97 @@ export const ProductFormMediaTab = ({ control }: ProductFormMediaTabProps) => {
 
       <FormField
         control={control}
-        name="images"
+        name='images'
         render={({ field: { onChange, value } }) => (
           <FormItem>
             <FormLabel>Gallery Images ({galleryItems.length}/5)</FormLabel>
             <FormControl>
-              <div className="space-y-4">
-                <div 
-                  className="relative group min-h-[120px] rounded-xl border-2 border-dashed border-border/50 bg-muted/30 p-4 hover:border-primary/50 transition-colors cursor-pointer"
+              <div className='space-y-4'>
+                <div
+                  className='relative group min-h-[120px] rounded-xl border-2 border-dashed border-border/50 bg-muted/30 p-4 hover:border-primary/50 transition-colors cursor-pointer'
                   onClick={() => {
                     if (galleryItems.length < 5) {
-                      document.getElementById('gallery-upload')?.click();
+                      document.getElementById("gallery-upload")?.click();
                     }
                   }}
                 >
                   {galleryItems.length > 0 ? (
-                    <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+                    <div className='grid grid-cols-3 sm:grid-cols-5 gap-3'>
                       {previews.map((preview, i) => (
-                        <div key={i} className="relative aspect-square rounded-lg overflow-hidden border border-border shadow-sm group/item">
-                          <img src={preview} alt={`Gallery preview ${i}`} className="w-full h-full object-cover" />
+                        <div
+                          key={i}
+                          className='relative aspect-square rounded-lg overflow-hidden border border-border shadow-sm group/item'
+                        >
+                          <img
+                            src={preview}
+                            alt={`Gallery preview ${i}`}
+                            className='w-full h-full object-cover'
+                          />
                           <button
-                            type="button"
+                            type='button'
                             onClick={(e) => {
                               e.stopPropagation();
-                              const newItems = galleryItems.filter((_, index) => index !== i);
+                              const newItems = galleryItems.filter(
+                                (_, index) => index !== i,
+                              );
                               setGalleryItems(newItems);
                               onChange(newItems);
                             }}
-                            className="absolute top-1 right-1 p-1 bg-background/80 backdrop-blur rounded-full text-destructive opacity-0 group-hover/item:opacity-100 transition-opacity hover:bg-destructive hover:text-destructive-foreground"
+                            className='absolute top-1 right-1 p-1 bg-background/80 backdrop-blur rounded-full text-destructive opacity-0 group-hover/item:opacity-100 transition-opacity hover:bg-destructive hover:text-destructive-foreground'
                           >
-                            <X className="h-3 w-3" />
+                            <X className='h-3 w-3' />
                           </button>
                         </div>
                       ))}
                       {galleryItems.length < 5 && (
-                        <div className="aspect-square rounded-lg border border-dashed border-border flex items-center justify-center text-muted-foreground hover:bg-background/50 transition-colors">
-                          <Plus className="h-5 w-5" />
+                        <div className='aspect-square rounded-lg border border-dashed border-border flex items-center justify-center text-muted-foreground hover:bg-background/50 transition-colors'>
+                          <Plus className='h-5 w-5' />
                         </div>
                       )}
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-4">
-                      <div className="p-2 rounded-full bg-background shadow-sm border border-border mb-2">
-                        <Plus className="h-5 w-5 text-muted-foreground" />
+                    <div className='flex flex-col items-center justify-center py-4'>
+                      <div className='p-2 rounded-full bg-background shadow-sm border border-border mb-2'>
+                        <Plus className='h-5 w-5 text-muted-foreground' />
                       </div>
-                      <p className="text-sm font-medium text-foreground">Click to upload gallery images</p>
-                      <p className="text-xs text-muted-foreground mt-1">Up to 5 images allowed</p>
+                      <p className='text-sm font-medium text-foreground'>
+                        Click to upload gallery images
+                      </p>
+                      <p className='text-xs text-muted-foreground mt-1'>
+                        Up to 5 images allowed
+                      </p>
                     </div>
                   )}
                 </div>
                 <Input
-                  id="gallery-upload"
-                  type="file"
+                  id='gallery-upload'
+                  type='file'
                   multiple
-                  accept="image/*"
-                  className="hidden"
+                  accept='image/*'
+                  className='hidden'
                   onChange={(e) => {
                     if (e.target.files) {
                       const newFiles = Array.from(e.target.files);
-                      
-                      setGalleryItems(prev => {
+
+                      setGalleryItems((prev) => {
                         // Avoid duplicates if same file is selected again
-                        const uniqueNew = newFiles.filter(nf => 
-                          !prev.some(p => p instanceof File && p.name === nf.name && p.size === nf.size)
+                        const uniqueNew = newFiles.filter(
+                          (nf) =>
+                            !prev.some(
+                              (p) =>
+                                p instanceof File &&
+                                p.name === nf.name &&
+                                p.size === nf.size,
+                            ),
                         );
                         const combined = [...prev, ...uniqueNew].slice(0, 5);
                         // Update form value
                         onChange(combined);
                         return combined;
                       });
-                      
+
                       // Reset input value to allow selecting same file again if deleted
-                      e.target.value = '';
+                      e.target.value = "";
                     }
                   }}
                 />
@@ -211,5 +245,3 @@ export const ProductFormMediaTab = ({ control }: ProductFormMediaTabProps) => {
     </div>
   );
 };
-
-

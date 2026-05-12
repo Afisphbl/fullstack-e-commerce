@@ -92,7 +92,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       updateCartMutation.mutate(
         { productId, quantity },
         {
-          onError: (error: any) => {
+          onError: (error: Error) => {
             // Log error for debugging
             console.error("Failed to update cart quantity:", error);
 
@@ -103,7 +103,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             const availableStock = extractAvailableStock(error);
 
             // Map error to user-friendly message
-            const errorMessage = error?.message || error?.toString() || "Unknown error";
+            const errorMessage =
+              error?.message || error?.toString() || "Unknown error";
             const userMessage = mapCartErrorMessage(errorMessage, {
               availableStock,
             });
@@ -122,10 +123,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
               toast.error(userMessage);
             }
           },
-        }
+        },
       );
     },
-    500
+    500,
   );
 
   // No longer loading guest cart from localStorage on mount
@@ -142,7 +143,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     if (prevAuthState && !currentAuthState) {
       // Clear cart state in CartContext
       setItems([]);
-      
+
       // Invalidate React Query cache for cart data
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     }
@@ -167,15 +168,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             status: item.product.status,
           } as Product,
           quantity: item.quantity,
-        })
+        }),
       );
       setItems(transformedItems);
-      
+
       // Update coupon and totals from backend
       setCouponCode(backendCart.coupon);
       setDiscount(backendCart.discount || 0);
       setSubtotal(backendCart.subtotal || 0);
-      
+
       setIsLoading(false);
     } else if (isAuthenticated && cartQueryError) {
       // Handle error: retry once after 1 second
@@ -192,7 +193,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       setSubtotal(0);
       setIsLoading(false);
     }
-  }, [isAuthenticated, backendCart, cartQueryError, isCartQueryLoading, refetchCart]);
+  }, [
+    isAuthenticated,
+    backendCart,
+    cartQueryError,
+    isCartQueryLoading,
+    refetchCart,
+  ]);
 
   // Update loading state based on query loading
   useEffect(() => {
@@ -214,7 +221,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             return prev.map((i) =>
               i.product.id === product.id
                 ? { ...i, quantity: i.quantity + quantity }
-                : i
+                : i,
             );
           }
           return [...prev, { product, quantity }];
@@ -225,7 +232,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         addToCartMutation.mutate(
           { productId: product.id, quantity },
           {
-            onError: (error: any) => {
+            onError: (error: Error) => {
               // Log error for debugging
               console.error("Failed to add item to cart:", error);
 
@@ -236,7 +243,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
               const availableStock = extractAvailableStock(error);
 
               // Map error to user-friendly message
-              const errorMessage = error?.message || error?.toString() || "Unknown error";
+              const errorMessage =
+                error?.message || error?.toString() || "Unknown error";
               const userMessage = mapCartErrorMessage(errorMessage, {
                 availableStock,
                 productName: product.name,
@@ -248,7 +256,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
                   action: {
                     label: "Retry",
                     onClick: () => {
-                      addToCartMutation.mutate({ productId: product.id, quantity });
+                      addToCartMutation.mutate({
+                        productId: product.id,
+                        quantity,
+                      });
                     },
                   },
                 });
@@ -256,7 +267,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
                 toast.error(userMessage);
               }
             },
-          }
+          },
         );
       } else {
         // Guest mode: use local state only (no localStorage)
@@ -266,7 +277,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             return prev.map((i) =>
               i.product.id === product.id
                 ? { ...i, quantity: i.quantity + quantity }
-                : i
+                : i,
             );
           }
           return [...prev, { product, quantity }];
@@ -274,7 +285,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         setIsCartOpen(true);
       }
     },
-    [isAuthenticated, items, addToCartMutation]
+    [isAuthenticated, items, addToCartMutation],
   );
 
   const removeFromCart = useCallback(
@@ -288,7 +299,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
         // Call backend API
         removeFromCartMutation.mutate(productId, {
-          onError: (error: any) => {
+          onError: (error: Error) => {
             // Log error for debugging
             console.error("Failed to remove item from cart:", error);
 
@@ -296,7 +307,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             setItems(previousItems);
 
             // Map error to user-friendly message
-            const errorMessage = error?.message || error?.toString() || "Unknown error";
+            const errorMessage =
+              error?.message || error?.toString() || "Unknown error";
             const userMessage = mapCartErrorMessage(errorMessage);
 
             // Display error with retry option for network errors
@@ -319,7 +331,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         setItems((prev) => prev.filter((i) => i.product.id !== productId));
       }
     },
-    [isAuthenticated, items, removeFromCartMutation]
+    [isAuthenticated, items, removeFromCartMutation],
   );
 
   const updateQuantity = useCallback(
@@ -331,14 +343,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           setItems((prev) => prev.filter((i) => i.product.id !== productId));
 
           removeFromCartMutation.mutate(productId, {
-            onError: (error: any) => {
+            onError: (error: Error) => {
               // Log error for debugging
               console.error("Failed to remove item from cart:", error);
 
               setItems(previousItems);
 
               // Map error to user-friendly message
-              const errorMessage = error?.message || error?.toString() || "Unknown error";
+              const errorMessage =
+                error?.message || error?.toString() || "Unknown error";
               const userMessage = mapCartErrorMessage(errorMessage);
 
               // Display error with retry option for network errors
@@ -369,8 +382,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         // Optimistic update: immediately update quantity in UI
         setItems((prev) =>
           prev.map((i) =>
-            i.product.id === productId ? { ...i, quantity } : i
-          )
+            i.product.id === productId ? { ...i, quantity } : i,
+          ),
         );
 
         // Debounce backend call (500ms) - pending calls are automatically cancelled on unmount
@@ -379,12 +392,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         // Guest mode: use local state only (no localStorage)
         setItems((prev) =>
           prev.map((i) =>
-            i.product.id === productId ? { ...i, quantity } : i
-          )
+            i.product.id === productId ? { ...i, quantity } : i,
+          ),
         );
       }
     },
-    [isAuthenticated, items, removeFromCartMutation, debouncedBackendUpdate]
+    [isAuthenticated, items, removeFromCartMutation, debouncedBackendUpdate],
   );
 
   const clearCart = useCallback(() => {
@@ -397,7 +410,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
       // Call backend API
       clearCartMutation.mutate(undefined, {
-        onError: (error: any) => {
+        onError: (error: Error) => {
           // Log error for debugging
           console.error("Failed to clear cart:", error);
 
@@ -405,7 +418,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           setItems(previousItems);
 
           // Map error to user-friendly message
-          const errorMessage = error?.message || error?.toString() || "Unknown error";
+          const errorMessage =
+            error?.message || error?.toString() || "Unknown error";
           const userMessage = mapCartErrorMessage(errorMessage);
 
           // Display error with retry option for network errors
@@ -444,7 +458,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       try {
         await applyCouponMutation.mutateAsync(code);
         toast.success("Coupon applied successfully");
-      } catch (error: any) {
+      } catch (error: unknown) {
         // Log error for debugging
         console.error("Failed to apply coupon:", error);
 
@@ -453,7 +467,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         setDiscount(previousDiscount);
 
         // Map error to user-friendly message
-        const errorMessage = error?.message || error?.toString() || "Unknown error";
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : String(error) || "Unknown error";
         const userMessage = mapCartErrorMessage(errorMessage, {
           couponCode: code,
         });
@@ -473,7 +490,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         }
       }
     },
-    [isAuthenticated, couponCode, discount, applyCouponMutation]
+    [isAuthenticated, couponCode, discount, applyCouponMutation],
   );
 
   const removeCoupon = useCallback(async () => {
@@ -499,7 +516,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       setDiscount(previousDiscount);
 
       // Map error to user-friendly message
-      const errorMessage = error?.message || error?.toString() || "Unknown error";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : String(error) || "Unknown error";
       const userMessage = mapCartErrorMessage(errorMessage);
 
       // Display error with retry option for network errors
@@ -524,10 +544,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   // Calculate totals
   // For authenticated users with backend cart, use backend totals
   // For guest users, calculate from items
-  const calculatedSubtotal = items.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
-  const total = isAuthenticated && backendCart ? backendCart.total : calculatedSubtotal;
-  const finalSubtotal = isAuthenticated && backendCart ? backendCart.subtotal : calculatedSubtotal;
-  const finalDiscount = isAuthenticated && backendCart ? backendCart.discount : 0;
+  const calculatedSubtotal = items.reduce(
+    (sum, i) => sum + i.product.price * i.quantity,
+    0,
+  );
+  const total =
+    isAuthenticated && backendCart ? backendCart.total : calculatedSubtotal;
+  const finalSubtotal =
+    isAuthenticated && backendCart ? backendCart.subtotal : calculatedSubtotal;
+  const finalDiscount =
+    isAuthenticated && backendCart ? backendCart.discount : 0;
   const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
 
   return (

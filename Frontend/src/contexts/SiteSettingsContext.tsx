@@ -226,7 +226,7 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
 
     // Async save to API
     try {
-      const payloads: Record<string, any> = {
+      const payloads: Record<string, unknown> = {
         general: {
           companyName: s.companyName,
           tagline: s.tagline,
