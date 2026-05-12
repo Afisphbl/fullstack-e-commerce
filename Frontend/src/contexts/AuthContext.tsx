@@ -18,12 +18,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     queryKey: ["currentUser"],
     queryFn: () =>
       apiFetch<ApiResponse<User>>("/api/v1/users/me").then(
-        (res) => res.data.data,
+        (res) => res.data.data
       ),
     retry: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnMount: true,
     refetchOnWindowFocus: false,
+    enabled: !!localStorage.getItem("auth_token"), // Only run if token exists
   });
 
   const user = !isError && data ? data : null;

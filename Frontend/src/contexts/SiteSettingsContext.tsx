@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import {
-  fetchAllSettings,
+  fetchPublicSettings,
+  fetchAdminSettings,
   updateSettingsSection,
   SECTIONS,
   SettingsSection,
@@ -194,12 +195,12 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     return DEFAULTS;
   });
 
-  // Load from API on mount
+  // Load public settings on mount
   useEffect(() => {
     let active = true;
-    const loadFromApi = async () => {
+    const loadPublic = async () => {
       try {
-        const apiSettings = await fetchAllSettings();
+        const apiSettings = await fetchPublicSettings();
         if (active && Object.keys(apiSettings).length > 0) {
           setSettings((prev) => {
             const next = { ...prev, ...apiSettings };
@@ -208,12 +209,39 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
           });
         }
       } catch (error) {
-        console.error("Failed to load settings from API", error);
+        console.error("Failed to load public settings", error);
       } finally {
         if (active) setIsLoading(false);
       }
     };
-    loadFromApi();
+    loadPublic();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // Use a second effect to fetch admin-only sections if token exists (or user is admin)
+  useEffect(() => {
+    const token = localStorage.getItem("auth_token");
+    if (!token) return;
+
+    let active = true;
+    const loadAdmin = async () => {
+      try {
+        const adminSettings = await fetchAdminSettings();
+        if (active && Object.keys(adminSettings).length > 0) {
+          setSettings((prev) => {
+            const next = { ...prev, ...adminSettings };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+            return next;
+          });
+        }
+      } catch (error) {
+        // Silently fail for guests; admins will likely see errors in logs
+        // This stops the 401 spam for non-admin users who happen to have a valid store token
+      }
+    };
+    loadAdmin();
     return () => {
       active = false;
     };
@@ -276,14 +304,14 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
       const promises = targetSection
         ? [updateSettingsSection(targetSection, payloads[targetSection] || s)]
         : SECTIONS.map((section) =>
-            updateSettingsSection(section, payloads[section] || s),
+            updateSettingsSection(section, payloads[section] || s)
           );
       const results = await Promise.allSettled(promises);
       const failures = results.filter((r) => r.status === "rejected");
       if (failures.length > 0) {
         console.error("Save failures:", failures);
         throw new Error(
-          `${failures.length} section(s) failed to save to the database. Checking the backend logs can provide more info.`,
+          `${failures.length} section(s) failed to save to the database. Checking the backend logs can provide more info.`
         );
       }
     } catch (e) {
