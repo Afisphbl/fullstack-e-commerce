@@ -647,24 +647,42 @@ export const fetchTeam = async (): Promise<TeamMember[]> => {
 
 // Admin Stats
 export const fetchOrderStats = async () => {
-  const data = await apiFetch<ApiResponse<{ stats: Record<string, unknown> }>>(
-    "/api/v1/orders/stats/overview",
-  );
-  return data.data.data.stats;
+  const data = await apiFetch<{
+    data: {
+      data?: { stats: Record<string, unknown> };
+      stats?: Record<string, unknown>;
+    };
+  }>("/api/v1/orders/stats/overview");
+  // Handle inconsistent nesting: data.data.stats or data.data.data.stats
+  return data.data?.data?.stats || data.data?.stats || {};
 };
 
 export const fetchProductStats = async () => {
-  const data = await apiFetch<ApiResponse<{ stats: Record<string, unknown> }>>(
-    "/api/v1/products/stats",
-  );
-  return data.data.data.stats;
+  const data = await apiFetch<{
+    data: {
+      data?: { stats: Record<string, unknown> };
+      stats?: Record<string, unknown>;
+    };
+  }>("/api/v1/products/stats");
+  // Handle inconsistent nesting
+  return data.data?.data?.stats || data.data?.stats || {};
 };
 
 export const fetchWishlistAnalytics = async (): Promise<WishlistAnalytics> => {
-  const data = await apiFetch<ApiResponse<{ analytics: WishlistAnalytics }>>(
-    "/api/v1/wishlist/analytics",
+  const data = await apiFetch<{
+    data: {
+      data?: { analytics: WishlistAnalytics };
+      analytics?: WishlistAnalytics;
+    };
+  }>("/api/v1/wishlist/analytics");
+  // Handle inconsistent nesting
+  return (
+    data.data?.data?.analytics ||
+    data.data?.analytics || {
+      topWishlistedProducts: [],
+      stats: { totalWishlistItems: 0, avgWishlistSize: 0 },
+    }
   );
-  return data.data.data.analytics;
 };
 
 export const fetchAdminDashboardData =
