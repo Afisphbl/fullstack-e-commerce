@@ -1,17 +1,19 @@
-'use strict';
+"use strict";
 
-const nodemailer = require('nodemailer');
-const config = require('../config/env');
-const logger = require('../logs/logger');
+const nodemailer = require("nodemailer");
+const config = require("../config/env");
+const logger = require("../logs/logger");
 
 // ─── Gmail SMTP transporter for all emails ───────────────────────────────────
 const createTransporter = () => {
   if (!config.email.username || !config.email.password) {
-    throw new Error('Gmail credentials not configured. Please set GMAIL_USER and GMAIL_APP_PASSWORD in config.env');
+    throw new Error(
+      "Gmail credentials not configured. Please set GMAIL_USER and GMAIL_APP_PASSWORD in config.env",
+    );
   }
 
   return nodemailer.createTransport({
-    service: 'gmail',
+    service: "gmail",
     auth: {
       user: config.email.username,
       pass: config.email.password,
@@ -35,7 +37,7 @@ const sendEmail = async ({ to, subject, text, html }) => {
 
 // ─── Template helpers ─────────────────────────────────────────────────────────
 const sendPasswordResetEmail = async ({ email, name, resetURL }) => {
-  const subject = '🔐 Password Reset Request - E-Commerce Store';
+  const subject = "🔐 Password Reset Request - E-Commerce Store";
   const text = `Hi ${name},\n\nYou requested a password reset.\n\nReset link:\n${resetURL}\n\nThis link expires in 10 minutes.\n\nIf you did not request this, please ignore this email and your password will remain unchanged.\n\nThe E-Commerce Team`;
   const html = `
     <div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
@@ -83,7 +85,7 @@ const sendPasswordResetEmail = async ({ email, name, resetURL }) => {
 };
 
 const sendWelcomeEmail = async ({ email, name }) => {
-  const subject = '🎉 Welcome to E-Commerce Store!';
+  const subject = "🎉 Welcome to E-Commerce Store!";
   const text = `Hi ${name},\n\nWelcome to E-Commerce Store! 🎉\n\nYour account has been created successfully. We're excited to have you on board!\n\nStart exploring our amazing products and enjoy a seamless shopping experience.\n\nHappy shopping!\nThe E-Commerce Team`;
   const html = `
     <div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
@@ -108,7 +110,7 @@ const sendWelcomeEmail = async ({ email, name }) => {
           </ul>
         </div>
         <div style="text-align:center;margin:32px 0;">
-          <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}" style="display:inline-block;padding:14px 32px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px;box-shadow:0 4px 6px rgba(16,185,129,0.3);">
+          <a href="${process.env.CLIENT_URL || "http://localhost:5173"}" style="display:inline-block;padding:14px 32px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px;box-shadow:0 4px 6px rgba(16,185,129,0.3);">
             Start Shopping
           </a>
         </div>
@@ -138,18 +140,23 @@ const sendWelcomeEmail = async ({ email, name }) => {
  * Send contact-form notification to the owner and staff via Gmail.
  * Reply-To is set to the customer's email for one-click replies.
  */
-const sendContactNotificationEmail = async ({ name, email, phone, subject, message }) => {
-  const ownerEmail = process.env.OWNER_EMAIL;
+const sendContactNotificationEmail = async ({
+  name,
+  email,
+  phone,
+  subject,
+  message,
+  to,
+}) => {
+  const ownerEmail = to || process.env.OWNER_EMAIL;
   if (!ownerEmail) {
-    logger.warn('OWNER_EMAIL not set — skipping contact notification email.');
+    logger.warn("Recipient email not set for contact notification — skipping.");
     return;
   }
 
   // Optional: Add additional staff emails (comma-separated)
-  const staffEmails = process.env.STAFF_EMAILS || '';
-  const recipients = staffEmails 
-    ? `${ownerEmail},${staffEmails}` 
-    : ownerEmail;
+  const staffEmails = process.env.STAFF_EMAILS || "";
+  const recipients = staffEmails ? `${ownerEmail},${staffEmails}` : ownerEmail;
 
   const transporter = createTransporter();
   const emailSubject = `📬 New Contact Message: ${subject}`;
@@ -157,7 +164,7 @@ const sendContactNotificationEmail = async ({ name, email, phone, subject, messa
   const text =
     `New contact form submission\n\n` +
     `From:    ${name} <${email}>\n` +
-    `Phone:   ${phone || 'N/A'}\n` +
+    `Phone:   ${phone || "N/A"}\n` +
     `Subject: ${subject}\n\n` +
     `Message:\n${message}\n\n` +
     `---\nHit Reply to respond directly to the sender.`;
@@ -175,7 +182,7 @@ const sendContactNotificationEmail = async ({ name, email, phone, subject, messa
           </tr>
           <tr style="border-top:1px solid #f3f4f6;">
             <td style="padding:10px 0;color:#6b7280;vertical-align:top;font-weight:600;">Phone</td>
-            <td style="padding:10px 0;color:#111827;">${phone || 'N/A'}</td>
+            <td style="padding:10px 0;color:#111827;">${phone || "N/A"}</td>
           </tr>
           <tr style="border-top:1px solid #f3f4f6;">
             <td style="padding:10px 0;color:#6b7280;vertical-align:top;font-weight:600;">Subject</td>
@@ -207,8 +214,15 @@ const sendContactNotificationEmail = async ({ name, email, phone, subject, messa
     html,
   });
 
-  logger.info(`Contact notification sent via Gmail: ${info.messageId} → ${recipients}`);
+  logger.info(
+    `Contact notification sent via Gmail: ${info.messageId} → ${recipients}`,
+  );
   return info;
 };
 
-module.exports = { sendEmail, sendPasswordResetEmail, sendWelcomeEmail, sendContactNotificationEmail };
+module.exports = {
+  sendEmail,
+  sendPasswordResetEmail,
+  sendWelcomeEmail,
+  sendContactNotificationEmail,
+};

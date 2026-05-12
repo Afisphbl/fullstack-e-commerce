@@ -1,6 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Minus, Plus, ShoppingBag, Trash2, X, Loader2, Tag } from "lucide-react";
+import {
+  Minus,
+  Plus,
+  ShoppingBag,
+  Trash2,
+  X,
+  Loader2,
+  Tag,
+} from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,7 +62,7 @@ export const CartDrawer = () => {
 
   const handleApplyCoupon = async () => {
     if (!couponInput.trim()) return;
-    
+
     setIsApplyingCoupon(true);
     try {
       await applyCoupon(couponInput.trim());
@@ -91,7 +99,12 @@ export const CartDrawer = () => {
         </SheetHeader>
 
         {isLoading ? (
-          <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4" role="status" aria-live="polite" aria-label="Loading cart items">
+          <div
+            className="flex-1 space-y-3 overflow-y-auto px-4 py-4"
+            role="status"
+            aria-live="polite"
+            aria-label="Loading cart items"
+          >
             <CartItemSkeleton key="skeleton-1" />
             <CartItemSkeleton key="skeleton-2" />
             <CartItemSkeleton key="skeleton-3" />
@@ -162,7 +175,7 @@ export const CartDrawer = () => {
                           >
                             <Minus className="h-3.5 w-3.5" />
                           </button>
-                          <span 
+                          <span
                             className="px-2 text-sm font-medium text-foreground transition-all duration-300"
                             aria-live="polite"
                             aria-label={`Quantity: ${quantity}`}
@@ -180,7 +193,7 @@ export const CartDrawer = () => {
                             <Plus className="h-3.5 w-3.5" />
                           </button>
                         </div>
-                        <span 
+                        <span
                           className="text-sm font-bold text-foreground transition-all duration-300"
                           aria-live="polite"
                           aria-label={`Item total: $${(product.price * quantity).toFixed(2)}`}
@@ -252,7 +265,9 @@ export const CartDrawer = () => {
               <div className="mb-3 space-y-1.5 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span className="text-foreground">${(subtotal || total).toFixed(2)}</span>
+                  <span className="text-foreground">
+                    ${(subtotal || total).toFixed(2)}
+                  </span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-green-600 dark:text-green-400">

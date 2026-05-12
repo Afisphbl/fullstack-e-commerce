@@ -1,11 +1,12 @@
-'use strict';
+"use strict";
 
-const Message = require('../models/messageModel');
-const factory = require('./handleFactory');
-const catchAsync = require('../utils/catchAsync');
-const { sendContactNotificationEmail } = require('../utils/email');
-const { hashIpAddress, extractIpAddress } = require('../utils/hashIp');
-const logger = require('../logs/logger');
+const Message = require("../models/messageModel");
+const ContactSettings = require("../models/contactSettingsModel");
+const factory = require("./handleFactory");
+const catchAsync = require("../utils/catchAsync");
+const { sendContactNotificationEmail } = require("../utils/email");
+const { hashIpAddress, extractIpAddress } = require("../utils/hashIp");
+const logger = require("../logs/logger");
 
 // ── Submit contact form (public) ──────────────────────────────────────────────
 exports.submitContactForm = catchAsync(async (req, res) => {
@@ -18,20 +19,30 @@ exports.submitContactForm = catchAsync(async (req, res) => {
   const doc = await Message.create({
     name,
     email,
-    phone: phone || '',
+    phone: phone || "",
     subject,
     message,
     hashedIp,
   });
 
-  // Send email notification to owner — non-blocking
-  sendContactNotificationEmail({ name, email, phone, subject, message }).catch(
-    (err) => logger.warn(`Contact notification email failed: ${err.message}`)
+  // Send email notification to the site's contact email — non-blocking
+  const settings = await ContactSettings.findOne().lean();
+  const to = settings?.contactEmail;
+
+  sendContactNotificationEmail({
+    name,
+    email,
+    phone,
+    subject,
+    message,
+    to,
+  }).catch((err) =>
+    logger.warn(`Contact notification email failed: ${err.message}`),
   );
 
   res.status(201).json({
-    status: 'success',
-    message: 'Your message has been received. We will get back to you soon!',
+    status: "success",
+    message: "Your message has been received. We will get back to you soon!",
     data: { id: doc._id },
   });
 });
@@ -40,36 +51,36 @@ exports.submitContactForm = catchAsync(async (req, res) => {
 exports.markAsRead = catchAsync(async (req, res, next) => {
   const doc = await Message.findByIdAndUpdate(
     req.params.id,
-    { status: 'read' },
-    { new: true, runValidators: true }
+    { status: "read" },
+    { new: true, runValidators: true },
   );
   if (!doc) {
-    const AppError = require('../utils/AppError');
-    return next(new AppError('Message not found.', 404));
+    const AppError = require("../utils/AppError");
+    return next(new AppError("Message not found.", 404));
   }
-  res.status(200).json({ status: 'success', data: { data: doc } });
+  res.status(200).json({ status: "success", data: { data: doc } });
 });
 
 // ── Archive a message ─────────────────────────────────────────────────────────
 exports.archiveMessage = catchAsync(async (req, res, next) => {
   const doc = await Message.findByIdAndUpdate(
     req.params.id,
-    { status: 'archived' },
-    { new: true, runValidators: true }
+    { status: "archived" },
+    { new: true, runValidators: true },
   );
   if (!doc) {
-    const AppError = require('../utils/AppError');
-    return next(new AppError('Message not found.', 404));
+    const AppError = require("../utils/AppError");
+    return next(new AppError("Message not found.", 404));
   }
-  res.status(200).json({ status: 'success', data: { data: doc } });
+  res.status(200).json({ status: "success", data: { data: doc } });
 });
 
 // ── Admin CRUD ────────────────────────────────────────────────────────────────
 // Custom getAll for messages with status counts
 exports.getAllMessages = catchAsync(async (req, res) => {
-  const Message = require('../models/messageModel');
-  const APIFeatures = require('../utils/APIFeatures');
-  const MESSAGES = require('../constants/messages');
+  const Message = require("../models/messageModel");
+  const APIFeatures = require("../utils/APIFeatures");
+  const MESSAGES = require("../constants/messages");
 
   const filter = req.filterObj || {};
 
@@ -81,7 +92,7 @@ exports.getAllMessages = catchAsync(async (req, res) => {
 
   // Get paginated messages
   const docs = await features.query.lean({ virtuals: false });
-  
+
   // Get total count (respects filters)
   const total = await Message.countDocuments({
     ...filter,
@@ -92,12 +103,12 @@ exports.getAllMessages = catchAsync(async (req, res) => {
   // Only apply search filter if present, not status filter
   const aggregateFilter = { ...filter };
   const searchFilter = {};
-  
+
   // Extract search filter from features._filter (if exists)
   if (features._filter) {
-    Object.keys(features._filter).forEach(key => {
+    Object.keys(features._filter).forEach((key) => {
       // Include all filters EXCEPT status
-      if (key !== 'status') {
+      if (key !== "status") {
         searchFilter[key] = features._filter[key];
       }
     });
@@ -105,7 +116,7 @@ exports.getAllMessages = catchAsync(async (req, res) => {
 
   const statusCounts = await Message.aggregate([
     { $match: { ...aggregateFilter, ...searchFilter } },
-    { $group: { _id: '$status', count: { $sum: 1 } } },
+    { $group: { _id: "$status", count: { $sum: 1 } } },
   ]);
 
   // Convert to object format
@@ -114,7 +125,7 @@ exports.getAllMessages = catchAsync(async (req, res) => {
     read: 0,
     archived: 0,
   };
-  
+
   statusCounts.forEach(({ _id, count }) => {
     if (_id && countsByStatus.hasOwnProperty(_id)) {
       countsByStatus[_id] = count;
@@ -122,7 +133,7 @@ exports.getAllMessages = catchAsync(async (req, res) => {
   });
 
   res.status(200).json({
-    status: 'success',
+    status: "success",
     message: MESSAGES.FETCHED,
     results: docs.length,
     total,
@@ -138,7 +149,6 @@ exports.deleteMessage = factory.deleteOne(Message);
 
 // ── Unread count (for sidebar badge) ─────────────────────────────────────────
 exports.getUnreadCount = catchAsync(async (req, res) => {
-  const count = await Message.countDocuments({ status: 'unread' });
-  res.status(200).json({ status: 'success', data: { count } });
+  const count = await Message.countDocuments({ status: "unread" });
+  res.status(200).json({ status: "success", data: { count } });
 });
-
