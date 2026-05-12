@@ -1,6 +1,12 @@
 import React, { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -40,13 +46,13 @@ const Signup = lazy(() => import("./pages/Signup"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 
-// ── Admin pages (lazy-loaded — only downloaded when an admin visits /admin) ───
-const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
+// ── Admin pages ──────────────────────────────────────────────────────────────
+import AdminLayout from "./pages/admin/AdminLayout";
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const AdminProductsPage = lazy(() => import("./pages/admin/AdminProductsPage"));
 const AdminOrdersPage = lazy(() => import("./pages/admin/AdminOrdersPage"));
 const AdminCategoriesPage = lazy(
-  () => import("./pages/admin/AdminCategoriesPage"),
+  () => import("./pages/admin/AdminCategoriesPage")
 );
 const AdminPOSPage = lazy(() => import("./pages/admin/AdminPOSPage"));
 const AdminSummaryPage = lazy(() => import("./pages/admin/AdminSummaryPage"));
@@ -67,30 +73,38 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isAuthenticated, isLoading } = useAuth();
   if (isLoading) {
     return (
-      <div className='flex min-h-screen items-center justify-center bg-background'>
+      <div className="flex min-h-screen items-center justify-center bg-background">
         <LoadingSpinner
-          size='lg'
-          label='Authenticating and loading your admin dashboard...'
+          size="lg"
+          label="Authenticating and loading your admin dashboard..."
         />
       </div>
     );
   }
 
   if (!isAuthenticated || !user || !isAdminRole(user.role)) {
-    return <Navigate to='/login' replace />;
+    return <Navigate to="/login" replace />;
   }
   // Prevent suspended admins from accessing admin pages
   if (user.status === "suspended") {
-    return <Navigate to='/login' replace />;
+    return <Navigate to="/login" replace />;
   }
   return <>{children}</>;
 };
 
-const StorefrontLayout = ({ children }: { children: React.ReactNode }) => (
-  <div className='flex flex-col min-h-screen'>
+const StorefrontLayout = () => (
+  <div className="flex flex-col min-h-screen">
     <Header />
-    <main className='flex-1' aria-label='Main content'>
-      {children}
+    <main className="flex-1" aria-label="Main content">
+      <Suspense
+        fallback={
+          <div className="flex h-[60vh] items-center justify-center bg-background">
+            <LoadingSpinner size="lg" label="Loading page content..." />
+          </div>
+        }
+      >
+        <Outlet />
+      </Suspense>
     </main>
     <CartDrawer />
     <Footer />
@@ -109,214 +123,109 @@ const App = () => (
                   <Toaster />
                   <SonnerToaster />
                   <BrowserRouter>
-                    <Suspense
-                      fallback={
-                        <div className='flex min-h-screen items-center justify-center bg-background'>
-                          <LoadingSpinner size='lg' label='Loading page...' />
-                        </div>
-                      }
-                    >
-                      <Routes>
-                        {/* Storefront */}
-                        <Route
-                          path='/login'
-                          element={
-                            <StorefrontLayout>
-                              <Login />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/signup'
-                          element={
-                            <StorefrontLayout>
-                              <Signup />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/forgot-password'
-                          element={
-                            <StorefrontLayout>
-                              <ForgotPassword />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/reset-password/:token'
-                          element={
-                            <StorefrontLayout>
-                              <ResetPassword />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/'
-                          element={
-                            <StorefrontLayout>
-                              <Index />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/shop'
-                          element={
-                            <StorefrontLayout>
-                              <ShopPage />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/product/:slug'
-                          element={
-                            <StorefrontLayout>
-                              <ProductDetailPage />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/checkout'
-                          element={
-                            <StorefrontLayout>
-                              <CheckoutPage />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/blog'
-                          element={
-                            <StorefrontLayout>
-                              <BlogPage />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/blog/:slug'
-                          element={
-                            <StorefrontLayout>
-                              <BlogDetailPage />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/about'
-                          element={
-                            <StorefrontLayout>
-                              <AboutPage />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/contact'
-                          element={
-                            <StorefrontLayout>
-                              <ContactPage />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/faq'
-                          element={
-                            <StorefrontLayout>
-                              <FAQPage />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/compare'
-                          element={
-                            <StorefrontLayout>
-                              <ComparePage />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/favorites'
-                          element={
-                            <StorefrontLayout>
-                              <FavoritesPage />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/profile'
-                          element={
-                            <StorefrontLayout>
-                              <ProfilePage />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/orders'
-                          element={
-                            <StorefrontLayout>
-                              <OrdersPage />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/orders/:id'
-                          element={
-                            <StorefrontLayout>
-                              <OrderDetailPage />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/payment/success/:orderId'
-                          element={
-                            <StorefrontLayout>
-                              <PaymentSuccessPage />
-                            </StorefrontLayout>
-                          }
-                        />
-                        <Route
-                          path='/track/:id'
-                          element={
-                            <StorefrontLayout>
-                              <TrackOrderPage />
-                            </StorefrontLayout>
-                          }
-                        />
+                    <Routes>
+                      {/* Auth Pages (No Header/Footer) */}
+                      <Route
+                        path="/login"
+                        element={
+                          <Suspense fallback={<LoadingSpinner />}>
+                            <Login />
+                          </Suspense>
+                        }
+                      />
+                      <Route
+                        path="/signup"
+                        element={
+                          <Suspense fallback={<LoadingSpinner />}>
+                            <Signup />
+                          </Suspense>
+                        }
+                      />
+                      <Route
+                        path="/forgot-password"
+                        element={
+                          <Suspense fallback={<LoadingSpinner />}>
+                            <ForgotPassword />
+                          </Suspense>
+                        }
+                      />
+                      <Route
+                        path="/reset-password/:token"
+                        element={
+                          <Suspense fallback={<LoadingSpinner />}>
+                            <ResetPassword />
+                          </Suspense>
+                        }
+                      />
 
-                        {/* Admin */}
+                      {/* Storefront Pages (Persistent Layout) */}
+                      <Route element={<StorefrontLayout />}>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/shop" element={<ShopPage />} />
                         <Route
-                          path='/admin'
-                          element={
-                            <AdminRoute>
-                              <AdminLayout />
-                            </AdminRoute>
-                          }
-                        >
-                          <Route index element={<AdminDashboard />} />
-                          <Route
-                            path='products'
-                            element={<AdminProductsPage />}
-                          />
-                          <Route path='orders' element={<AdminOrdersPage />} />
-                          <Route path='users' element={<AdminUsersPage />} />
-                          <Route
-                            path='categories'
-                            element={<AdminCategoriesPage />}
-                          />
-                          <Route path='pos' element={<AdminPOSPage />} />
-                          <Route
-                            path='summary'
-                            element={<AdminSummaryPage />}
-                          />
-                          <Route
-                            path='settings'
-                            element={<AdminSettingsPage />}
-                          />
-                          <Route
-                            path='messages'
-                            element={<AdminMessagesPage />}
-                          />
-                        </Route>
+                          path="/product/:slug"
+                          element={<ProductDetailPage />}
+                        />
+                        <Route path="/checkout" element={<CheckoutPage />} />
+                        <Route path="/blog" element={<BlogPage />} />
+                        <Route
+                          path="/blog/:slug"
+                          element={<BlogDetailPage />}
+                        />
+                        <Route path="/about" element={<AboutPage />} />
+                        <Route path="/contact" element={<ContactPage />} />
+                        <Route path="/faq" element={<FAQPage />} />
+                        <Route path="/compare" element={<ComparePage />} />
+                        <Route path="/favorites" element={<FavoritesPage />} />
+                        <Route path="/profile" element={<ProfilePage />} />
+                        <Route path="/orders" element={<OrdersPage />} />
+                        <Route
+                          path="/orders/:id"
+                          element={<OrderDetailPage />}
+                        />
+                        <Route
+                          path="/payment/success/:orderId"
+                          element={<PaymentSuccessPage />}
+                        />
+                        <Route path="/track/:id" element={<TrackOrderPage />} />
+                      </Route>
 
-                        <Route path='*' element={<NotFound />} />
-                      </Routes>
-                    </Suspense>
+                      {/* Admin Pages (Persistent Sidebar) */}
+                      <Route
+                        path="/admin"
+                        element={
+                          <AdminRoute>
+                            <AdminLayout />
+                          </AdminRoute>
+                        }
+                      >
+                        <Route index element={<AdminDashboard />} />
+                        <Route
+                          path="products"
+                          element={<AdminProductsPage />}
+                        />
+                        <Route path="orders" element={<AdminOrdersPage />} />
+                        <Route path="users" element={<AdminUsersPage />} />
+                        <Route
+                          path="categories"
+                          element={<AdminCategoriesPage />}
+                        />
+                        <Route path="pos" element={<AdminPOSPage />} />
+                        <Route path="summary" element={<AdminSummaryPage />} />
+                        <Route
+                          path="settings"
+                          element={<AdminSettingsPage />}
+                        />
+                        <Route
+                          path="messages"
+                          element={<AdminMessagesPage />}
+                        />
+                      </Route>
+
+                      <Route element={<StorefrontLayout />}>
+                        <Route path="*" element={<NotFound />} />
+                      </Route>
+                    </Routes>
                   </BrowserRouter>
                 </CompareProvider>
               </FavoritesProvider>
