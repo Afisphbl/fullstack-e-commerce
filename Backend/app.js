@@ -47,7 +47,9 @@ app.set("trust proxy", 1);
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
 const allowedOrigins = process.env.CLIENT_URL
-  ? process.env.CLIENT_URL.split(",").map((url) => url.trim().replace(/\/$/, ""))
+  ? process.env.CLIENT_URL.split(",").map((url) =>
+      url.trim().replace(/\/$/, ""),
+    )
   : [
       "http://localhost:5173",
       "http://localhost:3000",
@@ -61,6 +63,7 @@ app.use(
       if (!origin) return callback(null, true);
 
       const normalizedOrigin = origin.replace(/\/$/, "");
+      console.log("normalizedOrigin", normalizedOrigin);
 
       const isAllowed =
         allowedOrigins.includes(normalizedOrigin) ||
@@ -77,7 +80,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 
 // IMPORTANT: don't override CORS here
