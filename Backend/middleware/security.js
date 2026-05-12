@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
-const hpp = require('hpp');
-const compression = require('compression');
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const hpp = require("hpp");
+const compression = require("compression");
 
 // ─── Helmet — HTTP security headers ──────────────────────────────────────────
 const helmetMiddleware = helmet({
@@ -13,7 +13,7 @@ const helmetMiddleware = helmet({
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", 'data:', 'https:'],
+      imgSrc: ["'self'", "data:", "https:"],
     },
   },
 });
@@ -21,12 +21,12 @@ const helmetMiddleware = helmet({
 // ─── Rate limiting ────────────────────────────────────────────────────────────
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 300,
+  max: process.env.NODE_ENV?.trim() === "development" ? 5000 : 300,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
-    status: 'fail',
-    message: 'Too many requests from this IP. Please try again in 15 minutes.',
+    status: "fail",
+    message: "Too many requests from this IP. Please try again in 15 minutes.",
   },
 });
 
@@ -36,14 +36,14 @@ const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: {
-    status: 'fail',
-    message: 'Too many login attempts. Please try again in 1 hour.',
+    status: "fail",
+    message: "Too many login attempts. Please try again in 1 hour.",
   },
 });
 
 // ─── HPP — HTTP parameter pollution prevention ────────────────────────────────
 const hppMiddleware = hpp({
-  whitelist: ['price', 'ratingsAverage', 'ratingsQuantity', 'sort', 'fields'],
+  whitelist: ["price", "ratingsAverage", "ratingsQuantity", "sort", "fields"],
 });
 
 // ─── Compression ──────────────────────────────────────────────────────────────

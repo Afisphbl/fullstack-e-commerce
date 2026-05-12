@@ -1,4 +1,4 @@
-import React, {
+import {
   createContext,
   useContext,
   useState,
@@ -26,7 +26,6 @@ import {
   mapCartErrorMessage,
   extractAvailableStock,
   isNetworkError,
-  shouldRetryError,
 } from "@/lib/cart-error-messages";
 
 export interface CartItem {
@@ -63,7 +62,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [couponCode, setCouponCode] = useState<string | undefined>(undefined);
   const [discount, setDiscount] = useState<number>(0);
-  const [subtotal, setSubtotal] = useState<number>(0);
   const queryClient = useQueryClient();
 
   // Track previous authentication state for detecting login/logout
@@ -85,31 +83,30 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const applyCouponMutation = useApplyCouponMutation();
   const removeCouponMutation = useRemoveCouponMutation();
 
+  // Use a ref to access current items in callbacks without triggering dependency loops
+  const itemsRef = useRef(items);
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
+
   // Debounced backend update for quantity changes (500ms delay)
-  // This batches rapid quantity updates to reduce backend requests
   const debouncedBackendUpdate = useKeyedDebounce(
-    (productId: string, quantity: number, previousItems: CartItem[]) => {
+    (productId: string, ...args: unknown[]) => {
+      const [quantity, previousItems] = args as [number, CartItem[]];
       updateCartMutation.mutate(
         { productId, quantity },
         {
           onError: (error: Error) => {
-            // Log error for debugging
             console.error("Failed to update cart quantity:", error);
-
-            // Rollback optimistic update
             setItems(previousItems);
 
-            // Extract available stock from error
             const availableStock = extractAvailableStock(error);
-
-            // Map error to user-friendly message
             const errorMessage =
               error?.message || error?.toString() || "Unknown error";
             const userMessage = mapCartErrorMessage(errorMessage, {
               availableStock,
             });
 
-            // Display error with retry option for network errors
             if (isNetworkError(error)) {
               toast.error(userMessage, {
                 action: {
@@ -123,32 +120,22 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
               toast.error(userMessage);
             }
           },
-        },
+        }
       );
     },
-    500,
+    500
   );
-
-  // No longer loading guest cart from localStorage on mount
 
   // Handle authentication state changes (login/logout)
   useEffect(() => {
     const prevAuthState = prevAuthStateRef.current;
     const currentAuthState = isAuthenticated;
 
-    // Detect login: authentication changed from false to true
-    // No longer merging guest cart since we don't use localStorage
-
-    // Detect logout: authentication changed from true to false
     if (prevAuthState && !currentAuthState) {
-      // Clear cart state in CartContext
       setItems([]);
-
-      // Invalidate React Query cache for cart data
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     }
 
-    // Update previous auth state
     prevAuthStateRef.current = currentAuthState;
   }, [isAuthenticated, queryClient]);
 
@@ -170,29 +157,22 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             status: item.product.status,
           } as unknown as Product,
           quantity: item.quantity,
-        }),
+        })
       );
       setItems(transformedItems);
-
-      // Update coupon and totals from backend
       setCouponCode(backendCart.coupon);
       setDiscount(backendCart.discount || 0);
-      setSubtotal(backendCart.subtotal || 0);
-
       setIsLoading(false);
     } else if (isAuthenticated && cartQueryError) {
-      // Handle error: retry once after 1 second
       console.error("Failed to fetch cart:", cartQueryError);
       setTimeout(() => {
         refetchCart();
       }, 1000);
       setIsLoading(false);
     } else if (isAuthenticated && !backendCart && !isCartQueryLoading) {
-      // Empty cart state
       setItems([]);
       setCouponCode(undefined);
       setDiscount(0);
-      setSubtotal(0);
       setIsLoading(false);
     }
   }, [
@@ -203,7 +183,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     refetchCart,
   ]);
 
-  // Update loading state based on query loading
   useEffect(() => {
     if (isAuthenticated) {
       setIsLoading(isCartQueryLoading);
@@ -213,38 +192,27 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const addToCart = useCallback(
     (product: Product, quantity = 1) => {
       if (isAuthenticated) {
-        // Backend mode: use mutation with optimistic update
-        const previousItems = [...items];
-
-        // Optimistic update: immediately add to UI
+        const previousItems = [...itemsRef.current];
         setItems((prev) => {
           const existing = prev.find((i) => i.product.id === product.id);
           if (existing) {
             return prev.map((i) =>
               i.product.id === product.id
                 ? { ...i, quantity: i.quantity + quantity }
-                : i,
+                : i
             );
           }
           return [...prev, { product, quantity }];
         });
         setIsCartOpen(true);
 
-        // Call backend API
         addToCartMutation.mutate(
           { productId: product.id, quantity },
           {
             onError: (error: Error) => {
-              // Log error for debugging
               console.error("Failed to add item to cart:", error);
-
-              // Rollback optimistic update
               setItems(previousItems);
-
-              // Extract available stock from error
               const availableStock = extractAvailableStock(error);
-
-              // Map error to user-friendly message
               const errorMessage =
                 error?.message || error?.toString() || "Unknown error";
               const userMessage = mapCartErrorMessage(errorMessage, {
@@ -252,7 +220,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
                 productName: product.name,
               });
 
-              // Display error with retry option for network errors
               if (isNetworkError(error)) {
                 toast.error(userMessage, {
                   action: {
@@ -269,17 +236,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
                 toast.error(userMessage);
               }
             },
-          },
+          }
         );
       } else {
-        // Guest mode: use local state only (no localStorage)
         setItems((prev) => {
           const existing = prev.find((i) => i.product.id === product.id);
           if (existing) {
             return prev.map((i) =>
               i.product.id === product.id
                 ? { ...i, quantity: i.quantity + quantity }
-                : i,
+                : i
             );
           }
           return [...prev, { product, quantity }];
@@ -287,33 +253,23 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         setIsCartOpen(true);
       }
     },
-    [isAuthenticated, items, addToCartMutation],
+    [isAuthenticated, addToCartMutation]
   );
 
   const removeFromCart = useCallback(
     (productId: string) => {
       if (isAuthenticated) {
-        // Backend mode: use mutation with optimistic update
-        const previousItems = [...items];
-
-        // Optimistic update: immediately remove from UI
+        const previousItems = [...itemsRef.current];
         setItems((prev) => prev.filter((i) => i.product.id !== productId));
 
-        // Call backend API
         removeFromCartMutation.mutate(productId, {
           onError: (error: Error) => {
-            // Log error for debugging
             console.error("Failed to remove item from cart:", error);
-
-            // Rollback optimistic update
             setItems(previousItems);
-
-            // Map error to user-friendly message
             const errorMessage =
               error?.message || error?.toString() || "Unknown error";
             const userMessage = mapCartErrorMessage(errorMessage);
 
-            // Display error with retry option for network errors
             if (isNetworkError(error)) {
               toast.error(userMessage, {
                 action: {
@@ -329,102 +285,47 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           },
         });
       } else {
-        // Guest mode: use local state only (no localStorage)
         setItems((prev) => prev.filter((i) => i.product.id !== productId));
       }
     },
-    [isAuthenticated, items, removeFromCartMutation],
+    [isAuthenticated, removeFromCartMutation]
   );
 
   const updateQuantity = useCallback(
     (productId: string, quantity: number) => {
       if (quantity <= 0) {
-        // Remove item if quantity is 0 or negative
-        if (isAuthenticated) {
-          const previousItems = [...items];
-          setItems((prev) => prev.filter((i) => i.product.id !== productId));
-
-          removeFromCartMutation.mutate(productId, {
-            onError: (error: Error) => {
-              // Log error for debugging
-              console.error("Failed to remove item from cart:", error);
-
-              setItems(previousItems);
-
-              // Map error to user-friendly message
-              const errorMessage =
-                error?.message || error?.toString() || "Unknown error";
-              const userMessage = mapCartErrorMessage(errorMessage);
-
-              // Display error with retry option for network errors
-              if (isNetworkError(error)) {
-                toast.error(userMessage, {
-                  action: {
-                    label: "Retry",
-                    onClick: () => {
-                      removeFromCartMutation.mutate(productId);
-                    },
-                  },
-                });
-              } else {
-                toast.error(userMessage);
-              }
-            },
-          });
-        } else {
-          setItems((prev) => prev.filter((i) => i.product.id !== productId));
-        }
+        removeFromCart(productId);
         return;
       }
 
       if (isAuthenticated) {
-        // Backend mode: use mutation with optimistic update and debouncing
-        const previousItems = [...items];
-
-        // Optimistic update: immediately update quantity in UI
+        const previousItems = [...itemsRef.current];
         setItems((prev) =>
-          prev.map((i) =>
-            i.product.id === productId ? { ...i, quantity } : i,
-          ),
+          prev.map((i) => (i.product.id === productId ? { ...i, quantity } : i))
         );
-
-        // Debounce backend call (500ms) - pending calls are automatically cancelled on unmount
         debouncedBackendUpdate(productId, quantity, previousItems);
       } else {
-        // Guest mode: use local state only (no localStorage)
         setItems((prev) =>
-          prev.map((i) =>
-            i.product.id === productId ? { ...i, quantity } : i,
-          ),
+          prev.map((i) => (i.product.id === productId ? { ...i, quantity } : i))
         );
       }
     },
-    [isAuthenticated, items, removeFromCartMutation, debouncedBackendUpdate],
+    [isAuthenticated, removeFromCart, debouncedBackendUpdate]
   );
 
   const clearCart = useCallback(() => {
     if (isAuthenticated) {
-      // Backend mode: use mutation with optimistic update
-      const previousItems = [...items];
-
-      // Optimistic update: immediately clear cart in UI
+      const previousItems = itemsRef.current;
       setItems([]);
 
-      // Call backend API
       clearCartMutation.mutate(undefined, {
         onError: (error: Error) => {
-          // Log error for debugging
           console.error("Failed to clear cart:", error);
-
-          // Rollback optimistic update
           setItems(previousItems);
-
-          // Map error to user-friendly message
           const errorMessage =
             error?.message || error?.toString() || "Unknown error";
           const userMessage = mapCartErrorMessage(errorMessage);
 
-          // Display error with retry option for network errors
           if (isNetworkError(error)) {
             toast.error(userMessage, {
               action: {
@@ -440,10 +341,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         },
       });
     } else {
-      // Guest mode: use local state only (no localStorage)
       setItems([]);
     }
-  }, [isAuthenticated, items, clearCartMutation]);
+  }, [isAuthenticated, clearCartMutation]);
 
   const applyCoupon = useCallback(
     async (code: string) => {
@@ -452,7 +352,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
 
-      // Optimistic update
       const previousCouponCode = couponCode;
       const previousDiscount = discount;
       setCouponCode(code);
@@ -461,14 +360,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         await applyCouponMutation.mutateAsync(code);
         toast.success("Coupon applied successfully");
       } catch (error: unknown) {
-        // Log error for debugging
         console.error("Failed to apply coupon:", error);
-
-        // Rollback optimistic update
         setCouponCode(previousCouponCode);
         setDiscount(previousDiscount);
-
-        // Map error to user-friendly message
         const errorMessage =
           error instanceof Error
             ? error.message
@@ -477,8 +371,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           couponCode: code,
         });
 
-        // Display error with retry option for network errors
-        if (isNetworkError(error)) {
+        if (isNetworkError(error as Error)) {
           toast.error(userMessage, {
             action: {
               label: "Retry",
@@ -492,15 +385,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         }
       }
     },
-    [isAuthenticated, couponCode, discount, applyCouponMutation],
+    [isAuthenticated, couponCode, discount, applyCouponMutation]
   );
 
   const removeCoupon = useCallback(async () => {
-    if (!isAuthenticated) {
-      return;
-    }
+    if (!isAuthenticated) return;
 
-    // Optimistic update
     const previousCouponCode = couponCode;
     const previousDiscount = discount;
     setCouponCode(undefined);
@@ -510,22 +400,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       await removeCouponMutation.mutateAsync();
       toast.success("Coupon removed");
     } catch (error: unknown) {
-      // Log error for debugging
       console.error("Failed to remove coupon:", error);
-
-      // Rollback optimistic update
       setCouponCode(previousCouponCode);
       setDiscount(previousDiscount);
-
-      // Map error to user-friendly message
       const errorMessage =
         error instanceof Error
           ? error.message
           : String(error) || "Unknown error";
       const userMessage = mapCartErrorMessage(errorMessage);
 
-      // Display error with retry option for network errors
-      if (isNetworkError(error)) {
+      if (isNetworkError(error as Error)) {
         toast.error(userMessage, {
           action: {
             label: "Retry",
@@ -543,12 +427,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const openCart = useCallback(() => setIsCartOpen(true), []);
   const closeCart = useCallback(() => setIsCartOpen(false), []);
 
-  // Calculate totals
-  // For authenticated users with backend cart, use backend totals
-  // For guest users, calculate from items
   const calculatedSubtotal = items.reduce(
     (sum, i) => sum + i.product.price * i.quantity,
-    0,
+    0
   );
   const total =
     isAuthenticated && backendCart ? backendCart.total : calculatedSubtotal;
