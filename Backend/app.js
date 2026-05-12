@@ -48,7 +48,7 @@ app.set("trust proxy", 1);
 // ── CORS ──────────────────────────────────────────────────────────────────────
 const allowedOrigins = process.env.CLIENT_URL
   ? process.env.CLIENT_URL.split(",").map((url) => url.trim())
-  : ["http://localhost:5173", "http://localhost:3000"];
+  : ["http://localhost:5173", "http://localhost:3000","https://seid-electronic-store.vercel.app"];
 
 app.use(
   cors({
