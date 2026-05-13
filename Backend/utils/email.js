@@ -3,11 +3,22 @@
 const nodemailer = require("nodemailer");
 const config = require("../config/env");
 const logger = require("../logs/logger");
+const { Resend } = require("resend");
 
-// ─── Gmail Setup ─────────────────────────────────────────────────────────────
+// ─── Setup ──────────────────────────────────────────────────────────────────
 let transporter;
+let resend;
 
 const getTransporter = () => {
+  if (config.email.provider === "resend") {
+    if (!resend) {
+      resend = new Resend(config.email.resendApiKey);
+      logger.info("📧 Using Resend API for email delivery");
+    }
+    return resend;
+  }
+
+  // Fallback to Gmail SMTP
   if (transporter) return transporter;
 
   if (!config.email.username || !config.email.password) {
@@ -40,6 +51,25 @@ const getTransporter = () => {
 
 // ─── Base send function ──────────────────────────────────────────────────────
 const sendEmail = async ({ to, subject, text, html }) => {
+  if (config.email.provider === "resend") {
+    const { data, error } = await getTransporter().emails.send({
+      from: config.email.from,
+      to,
+      subject,
+      text,
+      html,
+    });
+
+    if (error) {
+      logger.error(`❌ Resend Error: ${error.message}`);
+      throw error;
+    }
+
+    logger.info(`📧 Email sent via Resend: ${data.id} → ${to}`);
+    return data;
+  }
+
+  // Gmail SMTP
   const info = await getTransporter().sendMail({
     from: config.email.from,
     to,
@@ -219,6 +249,28 @@ const sendContactNotificationEmail = async ({
     </div>
   `;
 
+  if (config.email.provider === "resend") {
+    const { data, error } = await getTransporter().emails.send({
+      from: config.email.from,
+      to: recipients.split(","), // Resend expects array for multiple recipients
+      replyTo: `"${name}" <${email}>`,
+      subject: emailSubject,
+      text,
+      html,
+    });
+
+    if (error) {
+      logger.error(`❌ Resend Error: ${error.message}`);
+      throw error;
+    }
+
+    logger.info(
+      `📧 Contact notification sent via Resend: ${data.id} → ${recipients}`,
+    );
+    return data;
+  }
+
+  // Gmail SMTP
   const info = await getTransporter().sendMail({
     from: config.email.from,
     to: recipients,
