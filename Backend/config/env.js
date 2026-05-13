@@ -14,15 +14,9 @@ const required = [
   "CLOUDINARY_API_SECRET",
   "EMAIL_FROM",
   "OWNER_EMAIL",
+  "GMAIL_USER",
+  "GMAIL_APP_PASSWORD",
 ];
-
-// Conditional requirements based on provider
-const EMAIL_PROVIDER = process.env.EMAIL_PROVIDER || "gmail";
-if (EMAIL_PROVIDER === "gmail") {
-  required.push("GMAIL_USER", "GMAIL_APP_PASSWORD");
-} else if (EMAIL_PROVIDER === "resend") {
-  required.push("RESEND_API_KEY");
-}
 
 const missing = required.filter((key) => !process.env[key]);
 if (missing.length) {
@@ -38,10 +32,8 @@ module.exports = {
   jwtExpiresIn: `${process.env.JWT_EXPIRES_IN_DAYS}d`,
   adminSecret: process.env.ADMIN_SECRET,
   email: {
-    provider: EMAIL_PROVIDER,
     username: process.env.GMAIL_USER,
     password: process.env.GMAIL_APP_PASSWORD,
-    resendApiKey: process.env.RESEND_API_KEY,
     from: process.env.EMAIL_FROM,
     clientUrl:
       process.env.PROD_CLIENT_URL ||
