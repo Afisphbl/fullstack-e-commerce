@@ -24,7 +24,7 @@ export const ProductFormInventoryTab = ({
           name="price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Regular Price ($)</FormLabel>
+              <FormLabel>Regular Price (ETB)</FormLabel>
               <FormControl>
                 <Input type="number" step="0.01" {...field} />
               </FormControl>
