@@ -110,8 +110,8 @@ if (process.env.NODE_ENV === "development") {
 app.use("/api", globalLimiter);
 
 // ── Body & cookie parsing ─────────────────────────────────────────────────────
-app.use(express.json({ limit: "10kb" }));
-app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+app.use(express.json({ limit: "5mb" }));
+app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 app.use(cookieParser());
 
 // ── Data sanitisation ─────────────────────────────────────────────────────────

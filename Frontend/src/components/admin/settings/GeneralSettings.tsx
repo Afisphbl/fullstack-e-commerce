@@ -1,29 +1,52 @@
 import { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, X } from "lucide-react";
+import { Upload, X, Loader2 } from "lucide-react";
 import { SiteSettings } from "@/contexts/SiteSettingsContext";
 import { Field } from "./Field";
+import { toast } from "sonner";
+import { apiFetch } from "@/lib/api-client";
+import { UploadResponse } from "@/lib/api";
 
 interface GeneralSettingsProps {
   draft: SiteSettings;
-  update: <K extends keyof SiteSettings>(key: K, value: SiteSettings[K]) => void;
+  update: <K extends keyof SiteSettings>(
+    key: K,
+    value: SiteSettings[K]
+  ) => void;
 }
 
 export const GeneralSettings = ({ draft, update }: GeneralSettingsProps) => {
   const [logoPreview, setLogoPreview] = useState<string>(draft.logoUrl);
+  const [isUploading, setIsUploading] = useState(false);
   const logoInputRef = useRef<HTMLInputElement>(null);
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        setLogoPreview(result);
-        update("logoUrl", result);
-      };
-      reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append("image", file);
+
+      setIsUploading(true);
+      const toastId = toast.loading("Uploading logo...");
+      try {
+        const response = await apiFetch<UploadResponse>("/api/v1/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (response.status === "success") {
+          const result = response.url;
+          setLogoPreview(result);
+          update("logoUrl", result);
+          toast.success("Logo uploaded successfully!", { id: toastId });
+        }
+      } catch (error) {
+        const err = error as Error;
+        toast.error(err.message || "Failed to upload logo", { id: toastId });
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
@@ -48,10 +71,15 @@ export const GeneralSettings = ({ draft, update }: GeneralSettingsProps) => {
       <Field label="Logo" hint="Upload your company logo (optional).">
         <div className="space-y-3">
           <div
-            className="relative group aspect-[3/1] max-w-md rounded-xl border-2 border-dashed border-border/50 bg-muted/30 flex flex-col items-center justify-center overflow-hidden hover:border-primary/50 transition-colors cursor-pointer"
-            onClick={() => logoInputRef.current?.click()}
+            className="relative group aspect-[3/1] max-w-sm rounded-xl border-2 border-dashed border-border/50 bg-muted/30 flex flex-col items-center justify-center overflow-hidden hover:border-primary/50 transition-colors cursor-pointer"
+            onClick={() => !isUploading && logoInputRef.current?.click()}
           >
-            {logoPreview ? (
+            {isUploading ? (
+              <div className="flex flex-col items-center gap-2">
+                <Loader2 className="h-8 w-8 text-primary animate-spin" />
+                <p className="text-xs text-muted-foreground">Uploading...</p>
+              </div>
+            ) : logoPreview ? (
               <>
                 <img
                   src={logoPreview}
@@ -94,6 +122,7 @@ export const GeneralSettings = ({ draft, update }: GeneralSettingsProps) => {
             accept="image/*"
             className="hidden"
             onChange={handleLogoUpload}
+            disabled={isUploading}
           />
         </div>
       </Field>
