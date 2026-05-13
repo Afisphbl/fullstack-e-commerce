@@ -4,10 +4,35 @@ const nodemailer = require("nodemailer");
 const config = require("../config/env");
 const logger = require("../logs/logger");
 
-// ─── Singleton Transporter for connection reuse ──────────────────────────────
+// ─── Email Provider Selection ─────────────────────────────────────────────────
+const EMAIL_PROVIDER = process.env.EMAIL_PROVIDER || "gmail"; // 'gmail' or 'resend'
+
+// ─── Resend Setup (if using Resend) ───────────────────────────────────────────
+let Resend;
+let resendClient;
+
+if (EMAIL_PROVIDER === "resend") {
+  try {
+    const { Resend: ResendClass } = require("resend");
+    Resend = ResendClass;
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error(
+        "RESEND_API_KEY not configured. Please set it in environment variables.",
+      );
+    }
+    resendClient = new Resend(process.env.RESEND_API_KEY);
+    logger.info("📧 Using Resend for email delivery");
+  } catch (error) {
+    logger.error("Failed to initialize Resend:", error);
+    throw error;
+  }
+}
+
+// ─── Gmail Setup (if using Gmail) ─────────────────────────────────────────────
 let transporter;
 
 const getTransporter = () => {
+  if (EMAIL_PROVIDER !== "gmail") return null;
   if (transporter) return transporter;
 
   if (!config.email.username || !config.email.password) {
@@ -27,20 +52,41 @@ const getTransporter = () => {
     },
   });
 
+  logger.info("📧 Using Gmail SMTP for email delivery");
   return transporter;
 };
 
-// ─── Base send function (Gmail) ───────────────────────────────────────────────
+// ─── Base send function (supports both Gmail and Resend) ─────────────────────
 const sendEmail = async ({ to, subject, text, html }) => {
-  const info = await getTransporter().sendMail({
-    from: config.email.from,
-    to,
-    subject,
-    text,
-    html,
-  });
-  logger.info(`Email sent via Gmail: ${info.messageId} → ${to}`);
-  return info;
+  if (EMAIL_PROVIDER === "resend") {
+    // Use Resend
+    const { data, error } = await resendClient.emails.send({
+      from: config.email.from,
+      to,
+      subject,
+      text,
+      html,
+    });
+
+    if (error) {
+      logger.error(`📧 Resend error:`, error);
+      throw new Error(error.message || "Failed to send email via Resend");
+    }
+
+    logger.info(`📧 Email sent via Resend: ${data.id} → ${to}`);
+    return data;
+  } else {
+    // Use Gmail
+    const info = await getTransporter().sendMail({
+      from: config.email.from,
+      to,
+      subject,
+      text,
+      html,
+    });
+    logger.info(`📧 Email sent via Gmail: ${info.messageId} → ${to}`);
+    return info;
+  }
 };
 
 // ─── Template helpers ─────────────────────────────────────────────────────────
@@ -145,8 +191,9 @@ const sendWelcomeEmail = async ({ email, name }) => {
 };
 
 /**
- * Send contact-form notification to the owner and staff via Gmail.
+ * Send contact-form notification to the owner and staff.
  * Reply-To is set to the customer's email for one-click replies.
+ * Supports both Gmail and Resend.
  */
 const sendContactNotificationEmail = async ({
   name,
@@ -166,7 +213,6 @@ const sendContactNotificationEmail = async ({
   const staffEmails = process.env.STAFF_EMAILS || "";
   const recipients = staffEmails ? `${ownerEmail},${staffEmails}` : ownerEmail;
 
-  const transporter = getTransporter();
   const emailSubject = `📬 New Contact Message: ${subject}`;
 
   const text =
@@ -213,19 +259,43 @@ const sendContactNotificationEmail = async ({
     </div>
   `;
 
-  const info = await transporter.sendMail({
-    from: config.email.from,
-    to: recipients,
-    replyTo: `"${name}" <${email}>`,
-    subject: emailSubject,
-    text,
-    html,
-  });
+  if (EMAIL_PROVIDER === "resend") {
+    // Resend
+    const { data, error } = await resendClient.emails.send({
+      from: config.email.from,
+      to: recipients.split(","),
+      replyTo: email,
+      subject: emailSubject,
+      text,
+      html,
+    });
 
-  logger.info(
-    `Contact notification sent via Gmail: ${info.messageId} → ${recipients}`,
-  );
-  return info;
+    if (error) {
+      logger.error(`📧 Resend error:`, error);
+      throw new Error(error.message || "Failed to send contact notification");
+    }
+
+    logger.info(
+      `📧 Contact notification sent via Resend: ${data.id} → ${recipients}`,
+    );
+    return data;
+  } else {
+    // Gmail
+    const transporter = getTransporter();
+    const info = await transporter.sendMail({
+      from: config.email.from,
+      to: recipients,
+      replyTo: `"${name}" <${email}>`,
+      subject: emailSubject,
+      text,
+      html,
+    });
+
+    logger.info(
+      `📧 Contact notification sent via Gmail: ${info.messageId} → ${recipients}`,
+    );
+    return info;
+  }
 };
 
 module.exports = {

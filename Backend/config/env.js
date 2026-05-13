@@ -2,6 +2,8 @@
 
 require("dotenv").config();
 
+const EMAIL_PROVIDER = process.env.EMAIL_PROVIDER || "gmail";
+
 const required = [
   "PORT",
   "DATABASE_HOST",
@@ -12,11 +14,16 @@ const required = [
   "CLOUDINARY_CLOUD_NAME",
   "CLOUDINARY_API_KEY",
   "CLOUDINARY_API_SECRET",
-  "GMAIL_USER",
-  "GMAIL_APP_PASSWORD",
   "EMAIL_FROM",
   "OWNER_EMAIL",
 ];
+
+// Add provider-specific required variables
+if (EMAIL_PROVIDER === "gmail") {
+  required.push("GMAIL_USER", "GMAIL_APP_PASSWORD");
+} else if (EMAIL_PROVIDER === "resend") {
+  required.push("RESEND_API_KEY");
+}
 
 const missing = required.filter((key) => !process.env[key]);
 if (missing.length) {
