@@ -17,26 +17,21 @@ const getTransporter = () => {
   }
 
   transporter = nodemailer.createTransport({
-    // host: "smtp.gmail.com",
-    // port: 587,
-    // secure: false, // use SSL
-    // pool: true, // Use connection pooling
-    // maxConnections: 5,
-    // maxMessages: 100,
-    // auth: {
-    //   user: config.email.username,
-    //   pass: config.email.password,
-    // },
-    // // Force IPv4 to avoid ENETUNREACH on systems with broken IPv6
-    // family: 4,
-    service: "gmail",
-
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // true for port 465, false for other ports
+    pool: true, // Use connection pooling
+    maxConnections: 5,
+    maxMessages: 100,
     auth: {
       user: config.email.username,
       pass: config.email.password,
     },
-
+    // Force IPv4 to avoid ENETUNREACH/timeout on systems with broken IPv6
     family: 4,
+    // Add timeouts to handle slow network responses
+    connectionTimeout: 10000, // 10 seconds
+    greetingTimeout: 10000, // 10 seconds
   });
 
   logger.info("📧 Using Gmail SMTP for email delivery");
