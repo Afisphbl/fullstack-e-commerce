@@ -19,6 +19,7 @@ import {
 import { Eye, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
+import { formatCurrency } from "@/lib/formatters";
 
 const statusColors: Record<string, string> = {
   placed: "bg-primary/10 text-primary border-primary/30",
@@ -172,7 +173,7 @@ const AdminOrdersPage = () => {
                     {o.items.length} items
                   </td>
                   <td className="p-3 text-sm font-medium text-foreground">
-                    ${o.total.toFixed(2)}
+                    {formatCurrency(o.total)}
                   </td>
                   <td className="p-3">
                     <Select
@@ -265,14 +266,14 @@ const AdminOrdersPage = () => {
                       </p>
                     </div>
                     <span className="text-sm font-medium text-foreground">
-                      ${(i.price * i.quantity).toFixed(2)}
+                      {formatCurrency(i.price * i.quantity)}
                     </span>
                   </div>
                 ))}
               </div>
               <div className="flex justify-between font-display font-bold text-foreground pt-2 border-t border-border">
                 <span>Total</span>
-                <span>${selected.total.toFixed(2)}</span>
+                <span>{formatCurrency(selected.total)}</span>
               </div>
             </div>
           )}

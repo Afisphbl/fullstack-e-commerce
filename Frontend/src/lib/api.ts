@@ -845,8 +845,10 @@ export const deleteMessage = async (id: string) => {
 };
 
 export const getUnreadMessagesCount = async (): Promise<number> => {
-  const data = await apiFetch<ApiResponse<{ count: number }>>(
-    "/api/v1/messages/unread-count"
-  );
-  return data.data.data.count;
+  const data = await apiFetch<{
+    data: { data?: { count: number }; count?: number };
+  }>("/api/v1/messages/unread-count");
+  // Handle inconsistent nesting from backend: data.data.count or data.data.data.count
+  const count = data.data?.data?.count ?? data.data?.count;
+  return typeof count === "number" ? count : 0;
 };

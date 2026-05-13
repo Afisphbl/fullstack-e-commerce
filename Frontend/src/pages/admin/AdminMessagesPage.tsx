@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Mail,
@@ -81,12 +81,18 @@ const AdminMessagesPage = () => {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [search, setSearch] = useState("");
-  const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
+  const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(
+    null
+  );
   const [sheetOpen, setSheetOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<ContactMessage | null>(null);
   const limit = 10;
 
-  const queryParams: Record<string, string | number> = { page, limit, sort: "-createdAt" };
+  const queryParams: Record<string, string | number> = {
+    page,
+    limit,
+    sort: "-createdAt",
+  };
   if (statusFilter && statusFilter !== "all") queryParams.status = statusFilter;
   if (search.trim()) queryParams.search = search.trim();
 
@@ -99,7 +105,11 @@ const AdminMessagesPage = () => {
   const messages = data?.messages || [];
   const total = data?.total || 0;
   const totalPages = Math.max(Math.ceil(total / limit), 1);
-  const countsByStatus = data?.countsByStatus || { unread: 0, read: 0, archived: 0 };
+  const countsByStatus = data?.countsByStatus || {
+    unread: 0,
+    read: 0,
+    archived: 0,
+  };
   const unreadCount = countsByStatus.unread;
 
   const invalidate = () => {
@@ -109,13 +119,19 @@ const AdminMessagesPage = () => {
 
   const readMutation = useMutation({
     mutationFn: (id: string) => markMessageAsRead(id),
-    onSuccess: () => { toast.success("Marked as read"); invalidate(); },
+    onSuccess: () => {
+      toast.success("Marked as read");
+      invalidate();
+    },
     onError: () => toast.error("Failed to update status"),
   });
 
   const archiveMutation = useMutation({
     mutationFn: (id: string) => archiveMessage(id),
-    onSuccess: () => { toast.success("Message archived"); invalidate(); },
+    onSuccess: () => {
+      toast.success("Message archived");
+      invalidate();
+    },
     onError: () => toast.error("Failed to archive message"),
   });
 
@@ -163,7 +179,9 @@ const AdminMessagesPage = () => {
           disabled={isFetching}
           className="rounded-xl gap-2"
         >
-          <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
+          <RefreshCw
+            className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`}
+          />
           Refresh
         </Button>
       </div>
@@ -190,7 +208,9 @@ const AdminMessagesPage = () => {
                   {s}
                 </span>
               </span>
-              <span className="text-2xl font-bold text-foreground">{count}</span>
+              <span className="text-2xl font-bold text-foreground">
+                {count}
+              </span>
             </button>
           );
         })}
@@ -202,14 +222,20 @@ const AdminMessagesPage = () => {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
             placeholder="Search by name, email, or subject..."
             className="pl-9 rounded-xl"
           />
         </div>
         <Select
           value={statusFilter}
-          onValueChange={(v) => { setStatusFilter(v); setPage(1); }}
+          onValueChange={(v) => {
+            setStatusFilter(v);
+            setPage(1);
+          }}
         >
           <SelectTrigger className="w-[160px] rounded-xl">
             <Filter className="mr-2 h-4 w-4 text-muted-foreground" />
@@ -246,7 +272,9 @@ const AdminMessagesPage = () => {
         ) : messages.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-16 text-center">
             <Mail className="h-10 w-10 text-muted-foreground/40" />
-            <p className="text-lg font-medium text-foreground">No messages found</p>
+            <p className="text-lg font-medium text-foreground">
+              No messages found
+            </p>
             <p className="text-sm text-muted-foreground">
               {statusFilter !== "all" || search
                 ? "Try adjusting your filters."
@@ -257,11 +285,21 @@ const AdminMessagesPage = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border/70 bg-muted/30">
-                <th className="px-5 py-3.5 text-left font-medium text-muted-foreground">Sender</th>
-                <th className="hidden px-5 py-3.5 text-left font-medium text-muted-foreground md:table-cell">Subject</th>
-                <th className="hidden px-5 py-3.5 text-left font-medium text-muted-foreground lg:table-cell">Time</th>
-                <th className="px-5 py-3.5 text-left font-medium text-muted-foreground">Status</th>
-                <th className="px-5 py-3.5 text-right font-medium text-muted-foreground">Actions</th>
+                <th className="px-5 py-3.5 text-left font-medium text-muted-foreground">
+                  Sender
+                </th>
+                <th className="hidden px-5 py-3.5 text-left font-medium text-muted-foreground md:table-cell">
+                  Subject
+                </th>
+                <th className="hidden px-5 py-3.5 text-left font-medium text-muted-foreground lg:table-cell">
+                  Time
+                </th>
+                <th className="px-5 py-3.5 text-left font-medium text-muted-foreground">
+                  Status
+                </th>
+                <th className="px-5 py-3.5 text-right font-medium text-muted-foreground">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
@@ -278,17 +316,24 @@ const AdminMessagesPage = () => {
                         {msg.name.charAt(0).toUpperCase()}
                       </div>
                       <div className="min-w-0">
-                        <p className={`font-medium text-foreground truncate ${msg.status === "unread" ? "font-semibold" : ""}`}>
+                        <p
+                          className={`font-medium text-foreground truncate ${msg.status === "unread" ? "font-semibold" : ""}`}
+                        >
                           {msg.name}
                         </p>
-                        <p className="text-xs text-muted-foreground truncate">{msg.email}</p>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {msg.email}
+                        </p>
                       </div>
                     </div>
                   </td>
                   <td className="hidden px-5 py-4 md:table-cell">
-                    <p className="truncate max-w-[240px] text-foreground">{msg.subject}</p>
+                    <p className="truncate max-w-[240px] text-foreground">
+                      {msg.subject}
+                    </p>
                     <p className="truncate max-w-[240px] text-xs text-muted-foreground mt-0.5">
-                      {msg.message.substring(0, 60)}{msg.message.length > 60 ? "..." : ""}
+                      {msg.message.substring(0, 60)}
+                      {msg.message.length > 60 ? "..." : ""}
                     </p>
                   </td>
                   <td className="hidden px-5 py-4 lg:table-cell">
@@ -411,8 +456,12 @@ const AdminMessagesPage = () => {
                     {selectedMessage.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="font-semibold text-foreground">{selectedMessage.name}</p>
-                    <p className="text-xs text-muted-foreground">Contact Person</p>
+                    <p className="font-semibold text-foreground">
+                      {selectedMessage.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Contact Person
+                    </p>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 gap-2 text-sm">
@@ -455,12 +504,10 @@ const AdminMessagesPage = () => {
 
               {/* Actions */}
               <div className="flex flex-wrap gap-2">
-                <Button
-                  asChild
-                  variant="default"
-                  className="rounded-xl flex-1"
-                >
-                  <a href={`mailto:${selectedMessage.email}?subject=Re: ${encodeURIComponent(selectedMessage.subject)}`}>
+                <Button asChild variant="default" className="rounded-xl flex-1">
+                  <a
+                    href={`mailto:${selectedMessage.email}?subject=Re: ${encodeURIComponent(selectedMessage.subject)}`}
+                  >
                     <Mail className="mr-2 h-4 w-4" /> Reply via Email
                   </a>
                 </Button>
@@ -491,7 +538,10 @@ const AdminMessagesPage = () => {
       </Sheet>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Message?</AlertDialogTitle>
@@ -505,7 +555,9 @@ const AdminMessagesPage = () => {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => deleteTarget && deleteMutation.mutate(deleteTarget._id)}
+              onClick={() =>
+                deleteTarget && deleteMutation.mutate(deleteTarget._id)
+              }
               disabled={deleteMutation.isPending}
             >
               {deleteMutation.isPending ? "Deleting..." : "Delete"}
