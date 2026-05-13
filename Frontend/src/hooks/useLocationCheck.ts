@@ -68,8 +68,7 @@ export const useLocationCheck = (): LocationCheckResult => {
               ).toLowerCase();
 
               const allowed = allowedCities.some(
-                (allowedCity) =>
-                  city.includes(allowedCity) || allowedCity.includes(city)
+                (allowedCity) => city === allowedCity
               );
 
               if (isMounted) {

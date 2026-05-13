@@ -33,7 +33,12 @@ const generalRules = [
   body("allowedDeliveryCities")
     .optional()
     .isArray()
-    .withMessage("allowedDeliveryCities must be an array of strings."),
+    .withMessage("allowedDeliveryCities must be an array of strings.")
+    .custom((value) => {
+      if (!Array.isArray(value)) return true;
+      return value.every((item) => typeof item === "string");
+    })
+    .withMessage("Each city must be a string."),
 ];
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────

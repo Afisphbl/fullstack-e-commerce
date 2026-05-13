@@ -15,9 +15,15 @@ const buildOrder = async (userId, body, next) => {
   // 0) Validate location if restriction is enabled
   const settings = await GeneralSettings.findOne();
   if (settings && settings.enableLocationRestriction) {
+    const requestedCity = shippingAddress?.city?.trim();
+    if (!requestedCity) {
+      throw new AppError(
+        "Shipping city is required for delivery validation.",
+        400,
+      );
+    }
     const isAllowed = settings.allowedDeliveryCities.some(
-      (city) =>
-        city.trim().toLowerCase() === shippingAddress.city.trim().toLowerCase(),
+      (city) => city.trim().toLowerCase() === requestedCity.toLowerCase(),
     );
     if (!isAllowed) {
       throw new AppError(
