@@ -634,10 +634,23 @@ export const fetchFAQs = async (): Promise<FAQ[]> => {
 
 // Settings
 export const fetchGeneralSettings = async () => {
-  const data = await apiFetch<{ data: { data: any } }>(
+  const data = await apiFetch<{ data: { data: Record<string, unknown> } }>(
     "/api/v1/settings/general"
   );
   return data.data.data;
+};
+
+// Locations
+export const fetchEthiopianCities = async (): Promise<string[]> => {
+  try {
+    const data = await apiFetch<{ status: string; data: string[] }>(
+      "/api/v1/settings/cities"
+    );
+    return data.data;
+  } catch (error) {
+    console.error("Failed to fetch cities", error);
+    return [];
+  }
 };
 
 // Team

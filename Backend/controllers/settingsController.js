@@ -80,6 +80,49 @@ const social = makeSettingsHandlers(SocialSettings);
 const commerce = makeSettingsHandlers(CommerceSettings);
 const preferences = makeSettingsHandlers(PreferencesSettings);
 
+const getEthiopianCities = catchAsync(async (req, res, next) => {
+  try {
+    const response = await fetch(
+      "https://countriesnow.space/api/v0.1/countries/cities",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ country: "ethiopia" }),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to reach external API");
+    }
+
+    const data = await response.json();
+    res.status(200).json({
+      status: "success",
+      data: data.data || [],
+    });
+  } catch (error) {
+    // Fallback if external API fails
+    const fallbackCities = [
+      "Addis Ababa",
+      "Dire Dawa",
+      "Mekelle",
+      "Gondar",
+      "Bahir Dar",
+      "Hawassa",
+      "Adama",
+      "Jimma",
+      "Dessie",
+      "Bishoftu",
+      "Shashamane",
+    ];
+    res.status(200).json({
+      status: "success",
+      data: fallbackCities,
+      note: "Used fallback list",
+    });
+  }
+});
+
 module.exports = {
   general,
   hero,
@@ -88,4 +131,5 @@ module.exports = {
   social,
   commerce,
   preferences,
+  getEthiopianCities,
 };
