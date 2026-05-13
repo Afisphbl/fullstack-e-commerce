@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { ChevronDown } from "lucide-react";
 import { Order } from "@/lib/api";
+import { formatCurrency } from "@/lib/formatters";
 
 const statusColors: Record<string, string> = {
   processing: "bg-warning/10 text-warning border-warning/30",
@@ -51,7 +52,7 @@ export const OrderCard = ({ order }: OrderCardProps) => {
             {order.status}
           </Badge>
           <span className="font-display font-bold text-foreground">
-            ${order.total.toFixed(2)}
+            {formatCurrency(order.total)}
           </span>
           <ChevronDown
             className={`h-4 w-4 text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`}
@@ -101,7 +102,7 @@ export const OrderCard = ({ order }: OrderCardProps) => {
                   </p>
                 </div>
                 <span className="text-sm font-semibold text-foreground">
-                  ${(item.price * item.quantity).toFixed(2)}
+                  {formatCurrency(item.price * item.quantity)}
                 </span>
               </div>
             ))}

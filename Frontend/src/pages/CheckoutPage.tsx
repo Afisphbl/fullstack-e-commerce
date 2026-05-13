@@ -4,6 +4,7 @@ import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { createOrder } from "@/lib/api";
 import { initializeChapaPayment } from "@/lib/payment-api";
+import { formatCurrency } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -363,7 +364,7 @@ const CheckoutPage = () => {
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-bold text-foreground">
-                        ${(product.price * quantity).toFixed(2)}
+                        {formatCurrency(product.price * quantity)}
                       </p>
                     </div>
                   </div>
@@ -412,8 +413,8 @@ const CheckoutPage = () => {
                 "Continue to Payment"
               ) : (
                 <>
-                  <Check className="h-4 w-4 mr-2" /> Place Order — $
-                  {grandTotal.toFixed(2)}
+                  <Check className="h-4 w-4 mr-2" /> Place Order —{" "}
+                  {formatCurrency(grandTotal)}
                 </>
               )}
             </Button>
@@ -428,30 +429,30 @@ const CheckoutPage = () => {
             <div className="flex justify-between">
               <span className="text-muted-foreground">Items Price</span>
               <span className="text-foreground font-medium">
-                ${(subtotal || total).toFixed(2)}
+                {formatCurrency(subtotal || total)}
               </span>
             </div>
             {discount > 0 && (
               <div className="flex justify-between text-green-600 dark:text-green-400">
                 <span>Discount</span>
-                <span>-${discount.toFixed(2)}</span>
+                <span>-{formatCurrency(discount)}</span>
               </div>
             )}
             <div className="flex justify-between">
               <span className="text-muted-foreground">Shipping</span>
               <span className="text-foreground font-medium">
-                {shipping === 0 ? "FREE" : `$${shipping.toFixed(2)}`}
+                {shipping === 0 ? "FREE" : formatCurrency(shipping)}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Estimated Tax</span>
               <span className="text-foreground font-medium">
-                ${tax.toFixed(2)}
+                {formatCurrency(tax)}
               </span>
             </div>
             <div className="border-t border-border pt-4 flex justify-between font-display font-bold text-xl">
               <span className="text-foreground">Total</span>
-              <span className="text-primary">${grandTotal.toFixed(2)}</span>
+              <span className="text-primary">{formatCurrency(grandTotal)}</span>
             </div>
           </div>
 

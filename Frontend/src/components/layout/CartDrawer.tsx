@@ -10,6 +10,7 @@ import {
   Tag,
 } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { formatCurrency } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -196,9 +197,9 @@ export const CartDrawer = () => {
                         <span
                           className="text-sm font-bold text-foreground transition-all duration-300"
                           aria-live="polite"
-                          aria-label={`Item total: $${(product.price * quantity).toFixed(2)}`}
+                          aria-label={`Item total: ${formatCurrency(product.price * quantity)}`}
                         >
-                          ${(product.price * quantity).toFixed(2)}
+                          {formatCurrency(product.price * quantity)}
                         </span>
                       </div>
                     </div>
@@ -266,30 +267,30 @@ export const CartDrawer = () => {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
                   <span className="text-foreground">
-                    ${(subtotal || total).toFixed(2)}
+                    {formatCurrency(subtotal || total)}
                   </span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-green-600 dark:text-green-400">
                     <span>Discount</span>
-                    <span>-${discount.toFixed(2)}</span>
+                    <span>-{formatCurrency(discount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Shipping</span>
                   <span className="text-foreground">
-                    {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+                    {shipping === 0 ? "Free" : formatCurrency(shipping)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Tax</span>
-                  <span className="text-foreground">${tax.toFixed(2)}</span>
+                  <span className="text-foreground">{formatCurrency(tax)}</span>
                 </div>
               </div>
               <div className="mb-4 flex items-center justify-between border-t border-border pt-3">
                 <span className="font-semibold text-foreground">Total</span>
                 <span className="text-lg font-bold text-foreground">
-                  ${grandTotal.toFixed(2)}
+                  {formatCurrency(grandTotal)}
                 </span>
               </div>
               <div className="flex gap-2">

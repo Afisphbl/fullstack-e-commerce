@@ -10,6 +10,7 @@ import { isAdminRole } from "@/lib/roles";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { OptimizedImage } from "@/components/shared/OptimizedImage";
+import { formatCurrency } from "@/lib/formatters";
 
 interface ProductCardProps {
   product: Product;
@@ -20,12 +21,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { isInCompare, addToCompare, removeFromCompare } = useCompare();
-  
+
   // Hide zero-stock products from non-admin users
   if (product.stock === 0 && !isAdminRole(user?.role)) {
     return null;
   }
-  
+
   const discount = product.originalPrice
     ? Math.round((1 - product.price / product.originalPrice) * 100)
     : 0;
@@ -112,11 +113,11 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         <div className="mt-auto flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="font-display font-bold text-foreground">
-              ${product.price}
+              {formatCurrency(product.price)}
             </span>
             {product.originalPrice && (
               <span className="text-xs text-muted-foreground line-through">
-                ${product.originalPrice}
+                {formatCurrency(product.originalPrice)}
               </span>
             )}
           </div>

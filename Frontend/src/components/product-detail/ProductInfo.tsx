@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Star as StarIcon } from "lucide-react";
 import { Product } from "@/lib/api";
+import { formatCurrency } from "@/lib/formatters";
 
 interface ProductInfoProps {
   product: Product;
@@ -46,12 +47,12 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
 
       <div className="flex items-center gap-3 mb-6">
         <span className="text-3xl font-display font-bold text-foreground">
-          ${product.price}
+          {formatCurrency(product.price)}
         </span>
         {product.originalPrice && (
           <>
             <span className="text-lg text-muted-foreground line-through">
-              ${product.originalPrice}
+              {formatCurrency(product.originalPrice)}
             </span>
             <Badge className="bg-destructive text-destructive-foreground">
               -{discount}%

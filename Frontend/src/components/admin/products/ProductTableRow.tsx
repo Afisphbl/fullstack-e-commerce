@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit, Trash2 } from "lucide-react";
 import { Product } from "@/lib/api";
+import { formatCurrency } from "@/lib/formatters";
 
 interface ProductTableRowProps {
   product: Product;
@@ -39,11 +40,11 @@ export const ProductTableRow = ({
       </td>
       <td className="p-4">
         <div className="text-sm font-medium text-foreground">
-          ${product.price}
+          {formatCurrency(product.price)}
         </div>
         {product.originalPrice && product.originalPrice !== product.price && (
           <div className="text-xs text-muted-foreground line-through">
-            ${product.originalPrice}
+            {formatCurrency(product.originalPrice)}
           </div>
         )}
       </td>
