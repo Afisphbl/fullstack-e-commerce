@@ -17,17 +17,25 @@ const getTransporter = () => {
   }
 
   transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false, // use SSL
-    pool: true, // Use connection pooling
-    maxConnections: 5,
-    maxMessages: 100,
+    // host: "smtp.gmail.com",
+    // port: 587,
+    // secure: false, // use SSL
+    // pool: true, // Use connection pooling
+    // maxConnections: 5,
+    // maxMessages: 100,
+    // auth: {
+    //   user: config.email.username,
+    //   pass: config.email.password,
+    // },
+    // // Force IPv4 to avoid ENETUNREACH on systems with broken IPv6
+    // family: 4,
+    service: "gmail",
+
     auth: {
       user: config.email.username,
       pass: config.email.password,
     },
-    // Force IPv4 to avoid ENETUNREACH on systems with broken IPv6
+
     family: 4,
   });
 
