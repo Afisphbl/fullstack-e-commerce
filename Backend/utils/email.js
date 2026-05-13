@@ -18,8 +18,8 @@ const getTransporter = () => {
 
   transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
-    port: 465,
-    secure: true, // use SSL
+    port: 587,
+    secure: false, // use SSL
     pool: true, // Use connection pooling
     maxConnections: 5,
     maxMessages: 100,
