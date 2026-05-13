@@ -327,7 +327,7 @@ const mapReview = (r: RawReview): Review => ({
 
 // Products
 export const fetchProducts = async (
-  params: Record<string, string | number | boolean> = {},
+  params: Record<string, string | number | boolean> = {}
 ): Promise<{
   products: Product[];
   total: number;
@@ -343,7 +343,7 @@ export const fetchProducts = async (
     });
 
     const data = await apiFetch<ApiResponse<RawProduct[]>>(
-      `/api/v1/products?${query.toString()}`,
+      `/api/v1/products?${query.toString()}`
     );
     return {
       products: data.data.data.map(mapProduct),
@@ -363,40 +363,41 @@ export const fetchProducts = async (
 };
 
 export const fetchProductBySlug = async (
-  slug: string,
+  slug: string
 ): Promise<Product | undefined> => {
   try {
     const res = await apiFetch<ApiResponse<RawProduct[]>>(
-      `/api/v1/products?slug=${slug}`,
+      `/api/v1/products?slug=${slug}`
     );
-    if (res.data.data.length > 0) {
-      return mapProduct(res.data.data[0]);
+    const products = res.data.data;
+    if (products && products.length > 0 && products[0]) {
+      return mapProduct(products[0]);
     }
     return undefined;
   } catch (error) {
     return (productsData as unknown as RawProduct[]).find(
-      (p) => p.slug === slug,
+      (p) => p.slug === slug
     )
       ? mapProduct(
           (productsData as unknown as RawProduct[]).find(
-            (p) => p.slug === slug,
-          )!,
+            (p) => p.slug === slug
+          )!
         )
       : undefined;
   }
 };
 
 export const fetchProductById = async (
-  id: string,
+  id: string
 ): Promise<Product | undefined> => {
   try {
     const res = await apiFetch<ApiResponse<RawProduct>>(
-      `/api/v1/products/${id}`,
+      `/api/v1/products/${id}`
     );
     return mapProduct(res.data.data);
   } catch (error) {
     const found = (productsData as unknown as RawProduct[]).find(
-      (p) => p.id === id || p._id === id,
+      (p) => p.id === id || p._id === id
     );
     return found ? mapProduct(found) : undefined;
   }
@@ -405,7 +406,7 @@ export const fetchProductById = async (
 export const fetchFeaturedProducts = async (): Promise<Product[]> => {
   try {
     const res = await apiFetch<ApiResponse<{ products: RawProduct[] }>>(
-      "/api/v1/products/featured",
+      "/api/v1/products/featured"
     );
     return res.data.data.products.map(mapProduct);
   } catch (error) {
@@ -416,14 +417,14 @@ export const fetchFeaturedProducts = async (): Promise<Product[]> => {
 };
 
 export const fetchProductsByCategory = async (
-  category: string,
+  category: string
 ): Promise<Product[]> => {
   const result = await fetchProducts({ category });
   return result.products;
 };
 
 export const createProduct = async (
-  productData: Record<string, unknown> | FormData,
+  productData: Record<string, unknown> | FormData
 ) => {
   const data = await apiFetch<ApiResponse<RawProduct>>("/api/v1/products", {
     method: "POST",
@@ -437,7 +438,7 @@ export const createProduct = async (
 
 export const updateProduct = async (
   id: string,
-  productData: Record<string, unknown> | FormData,
+  productData: Record<string, unknown> | FormData
 ) => {
   const data = await apiFetch<ApiResponse<RawProduct>>(
     `/api/v1/products/${id}`,
@@ -447,7 +448,7 @@ export const updateProduct = async (
         productData instanceof FormData
           ? productData
           : JSON.stringify(productData),
-    },
+    }
   );
   return mapProduct(data.data.data);
 };
@@ -467,21 +468,21 @@ export const createSpecification = async (specData: {
     {
       method: "POST",
       body: JSON.stringify(specData),
-    },
+    }
   );
   return data.data.data;
 };
 
 export const updateSpecification = async (
   id: string,
-  specData: { details: SpecGroup[] },
+  specData: { details: SpecGroup[] }
 ) => {
   const data = await apiFetch<ApiResponse<Specification>>(
     `/api/v1/specifications/${id}`,
     {
       method: "PATCH",
       body: JSON.stringify(specData),
-    },
+    }
   );
   return data.data.data;
 };
@@ -518,7 +519,7 @@ export const updateCategory = async (id: string, categoryData: FormData) => {
     {
       method: "PATCH",
       body: categoryData,
-    },
+    }
   );
   return mapCategory(data.data.data);
 };
@@ -533,7 +534,7 @@ export const deleteCategory = async (id: string) => {
 export const fetchReviewsByProduct = async (
   productId: string,
   page = 1,
-  limit = 10,
+  limit = 10
 ): Promise<{
   reviews: Review[];
   total: number;
@@ -542,7 +543,7 @@ export const fetchReviewsByProduct = async (
 }> => {
   try {
     const data = await apiFetch<ApiResponse<RawReview[]>>(
-      `/api/v1/products/${productId}/reviews?page=${page}&limit=${limit}&sort=-createdAt`,
+      `/api/v1/products/${productId}/reviews?page=${page}&limit=${limit}&sort=-createdAt`
     );
     return {
       reviews: data.data.data.map(mapReview),
@@ -558,28 +559,28 @@ export const fetchReviewsByProduct = async (
 
 export const createReview = async (
   productId: string,
-  reviewData: { rating: number; review: string },
+  reviewData: { rating: number; review: string }
 ) => {
   return await apiFetch<ApiResponse<RawReview>>(
     `/api/v1/products/${productId}/reviews`,
     {
       method: "POST",
       body: JSON.stringify(reviewData),
-    },
+    }
   );
 };
 
 export const updateReview = async (
   productId: string,
   reviewId: string,
-  reviewData: { rating?: number; review?: string },
+  reviewData: { rating?: number; review?: string }
 ) => {
   return await apiFetch<ApiResponse<RawReview>>(
     `/api/v1/products/${productId}/reviews/${reviewId}`,
     {
       method: "PATCH",
       body: JSON.stringify(reviewData),
-    },
+    }
   );
 };
 
@@ -589,32 +590,22 @@ export const fetchBlogs = async (): Promise<Blog[]> => {
 };
 
 export const fetchBlogBySlug = async (
-  slug: string,
+  slug: string
 ): Promise<Blog | undefined> => {
   return (blogsData as Blog[]).find((b) => b.slug === slug);
 };
 
 // Orders
 export const fetchOrders = async (): Promise<Order[]> => {
-  try {
-    const res = await apiFetch<ApiResponse<RawOrder[]>>("/api/v1/orders");
-    return res.data.data.map(mapOrder);
-  } catch (error) {
-    console.error("Failed to fetch orders:", error);
-    return ordersData as Order[];
-  }
+  const res = await apiFetch<ApiResponse<RawOrder[]>>("/api/v1/orders");
+  return res.data.data.map(mapOrder);
 };
 
 export const fetchOrderById = async (
-  id: string,
+  id: string
 ): Promise<Order | undefined> => {
-  try {
-    const res = await apiFetch<ApiResponse<RawOrder>>(`/api/v1/orders/${id}`);
-    return mapOrder(res.data.data);
-  } catch (error) {
-    console.error("Failed to fetch order:", error);
-    return (ordersData as Order[]).find((o) => o.id === id);
-  }
+  const res = await apiFetch<ApiResponse<RawOrder>>(`/api/v1/orders/${id}`);
+  return mapOrder(res.data.data);
 };
 
 export const createOrder = async (orderData: Record<string, unknown>) => {
@@ -626,7 +617,7 @@ export const createOrder = async (orderData: Record<string, unknown>) => {
 
 export const updateOrder = async (
   id: string,
-  orderData: Record<string, unknown>,
+  orderData: Record<string, unknown>
 ) => {
   const data = await apiFetch<ApiResponse<RawOrder>>(`/api/v1/orders/${id}`, {
     method: "PATCH",
@@ -717,7 +708,7 @@ export const fetchAdminDashboardData =
   };
 
 export const fetchAdminUsers = async (
-  params: Record<string, string | number | boolean> = {},
+  params: Record<string, string | number | boolean> = {}
 ): Promise<AdminUsersResponse> => {
   const query = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
@@ -727,7 +718,7 @@ export const fetchAdminUsers = async (
   });
 
   const data = await apiFetch<ApiResponse<RawAdminUser[]>>(
-    `/api/v1/users?${query.toString()}`,
+    `/api/v1/users?${query.toString()}`
   );
   const responseData = data.data as unknown as {
     data: RawAdminUser[];
@@ -746,7 +737,7 @@ export const fetchAdminUsers = async (
 };
 
 export const createAdminUser = async (
-  payload: Record<string, unknown> | FormData,
+  payload: Record<string, unknown> | FormData
 ) => {
   const data = await apiFetch<ApiResponse<RawAdminUser>>("/api/v1/users", {
     method: "POST",
@@ -758,14 +749,14 @@ export const createAdminUser = async (
 
 export const updateAdminUser = async (
   id: string,
-  payload: Record<string, unknown> | FormData,
+  payload: Record<string, unknown> | FormData
 ) => {
   const data = await apiFetch<ApiResponse<RawAdminUser>>(
     `/api/v1/users/${id}`,
     {
       method: "PATCH",
       body: payload instanceof FormData ? payload : JSON.stringify(payload),
-    },
+    }
   );
 
   return mapAdminUser(data.data.data);
@@ -809,7 +800,7 @@ export const submitContactForm = async (payload: ContactFormPayload) => {
 };
 
 export const fetchAdminMessages = async (
-  params: Record<string, string | number> = {},
+  params: Record<string, string | number> = {}
 ): Promise<{
   messages: ContactMessage[];
   total: number;
@@ -824,7 +815,7 @@ export const fetchAdminMessages = async (
     }
   });
   const data = await apiFetch<ApiResponse<ContactMessage[]>>(
-    `/api/v1/messages?${query.toString()}`,
+    `/api/v1/messages?${query.toString()}`
   );
   return {
     messages: data.data.data,
@@ -855,7 +846,7 @@ export const deleteMessage = async (id: string) => {
 
 export const getUnreadMessagesCount = async (): Promise<number> => {
   const data = await apiFetch<ApiResponse<{ count: number }>>(
-    "/api/v1/messages/unread-count",
+    "/api/v1/messages/unread-count"
   );
   return data.data.data.count;
 };

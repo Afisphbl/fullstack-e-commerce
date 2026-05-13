@@ -15,8 +15,10 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 
 // ── My orders filter ──────────────────────────────────────────────────────────
 exports.setUserFilter = (req, _res, next) => {
-  // Non-admins can only see their own orders
-  if (req.user.role === ROLES.USER) req.filterObj = { user: req.user._id };
+  // Admins see everything. Users see only their own orders.
+  if (req.user.role !== ROLES.ADMIN) {
+    req.filterObj = { user: req.user._id };
+  }
   next();
 };
 
