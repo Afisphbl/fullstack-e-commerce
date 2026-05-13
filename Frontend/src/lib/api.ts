@@ -1,7 +1,7 @@
 import productsData from "@/data/products.json";
 import categoriesData from "@/data/categories.json";
 import blogsData from "@/data/blogs.json";
-import ordersData from "@/data/orders.json";
+
 import faqsData from "@/data/faqs.json";
 import teamData from "@/data/team.json";
 import { apiFetch } from "./api-client";
@@ -81,6 +81,7 @@ export interface RawProduct {
   tags?: string[];
   status?: ProductStatus;
   originalPrice?: number | null;
+  totalRevenue?: number;
 }
 
 export interface RawCategory {
@@ -678,32 +679,21 @@ export const fetchWishlistAnalytics = async (): Promise<WishlistAnalytics> => {
 
 export const fetchAdminDashboardData =
   async (): Promise<AdminDashboardData> => {
-    const [
-      orderStats,
-      productStats,
-      wishlistAnalytics,
-      productsRes,
-      orders,
-      categories,
-    ] = await Promise.all([
-      fetchOrderStats(),
-      fetchProductStats(),
-      fetchWishlistAnalytics(),
-      fetchProducts({ limit: 10, sort: "-sold" }),
-      fetchOrders(),
-      fetchCategories(),
-    ]);
+    interface DashboardRawResponse extends Omit<
+      AdminDashboardData,
+      "topProducts" | "recentOrders"
+    > {
+      topProducts: RawProduct[];
+      recentOrders: RawOrder[];
+    }
+    const res =
+      await apiFetch<ApiResponse<DashboardRawResponse>>("/api/v1/dashboard");
+    const data = res.data.data;
 
     return {
-      orderStats,
-      productStats,
-      wishlistAnalytics,
-      topProducts: productsRes.products,
-      totalOrders: orders.length,
-      totalProducts: productsRes.total,
-      totalCategories: categories.length,
-      recentOrders: orders.slice(0, 5),
-      revenue: orders.reduce((acc, curr) => acc + curr.total, 0),
+      ...data,
+      topProducts: (data.topProducts || []).map(mapProduct),
+      recentOrders: (data.recentOrders || []).map(mapOrder),
     };
   };
 

@@ -198,16 +198,34 @@ export interface WishlistAnalytics {
   };
 }
 
+export interface DashboardRevenueChart {
+  name: string;
+  current: number;
+  previous: number;
+}
+
+export interface DashboardCategorySale {
+  name: string;
+  value: number;
+  color: string;
+}
+
 export interface AdminDashboardData {
-  orderStats: Record<string, unknown>;
-  productStats: Record<string, unknown>;
-  wishlistAnalytics: WishlistAnalytics;
-  topProducts: Product[];
+  revenue: number;
   totalOrders: number;
   totalProducts: number;
+  totalCustomers: number;
   totalCategories: number;
+  revenueChart: DashboardRevenueChart[];
+  categorySales: DashboardCategorySale[];
+  topProducts: Product[];
   recentOrders: Order[];
-  revenue: number;
+  wishlistAnalytics?: WishlistAnalytics;
+  stats?: {
+    revenueGrowth: number;
+    orderGrowth: number;
+    customerGrowth: number;
+  };
 }
 export interface Review {
   id: string;
