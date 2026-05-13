@@ -11,10 +11,18 @@ const logger = require("../logs/logger");
 
 // ─── signup ───────────────────────────────────────────────────────────────────
 const signup = async (body, res) => {
-  const { name, email, password, passwordConfirm, role } = body;
+  const { name, email, password, passwordConfirm, city, country } = body;
 
   // Prevent privilege escalation through the request body
-  const newUser = await User.create({ name, email, password, passwordConfirm });
+  const newUser = await User.create({
+    name,
+    email,
+    password,
+    passwordConfirm,
+    addresses: city
+      ? [{ city, country: country || "Ethiopia", isDefault: true }]
+      : [],
+  });
 
   // Send welcome email in background (don't block the response)
   sendWelcomeEmail({ email: newUser.email, name: newUser.name }).catch(

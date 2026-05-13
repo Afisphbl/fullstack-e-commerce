@@ -21,6 +21,9 @@ const router = express.Router();
 // Storefront-public sections — anyone can GET; only admins can PATCH
 // ─────────────────────────────────────────────────────────────────────────────
 
+// External Location Proxies
+router.get("/cities", ctrl.getEthiopianCities);
+
 // General  (/api/v1/settings/general)
 router
   .route("/general")

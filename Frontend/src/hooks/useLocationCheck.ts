@@ -41,7 +41,7 @@ export const useLocationCheck = (): LocationCheckResult => {
         }
 
         const allowedCities: string[] = (
-          settings.allowedDeliveryCities || []
+          (settings.allowedDeliveryCities as string[]) || []
         ).map((c: string) => c.toLowerCase());
 
         // Ask for GPS
