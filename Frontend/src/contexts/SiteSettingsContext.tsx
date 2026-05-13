@@ -29,6 +29,8 @@ export interface SiteSettings {
   tagline: string;
   logoUrl: string;
   description: string;
+  enableLocationRestriction: boolean;
+  allowedDeliveryCities: string[];
 
   // Hero
   heroEyebrow: string;
@@ -82,6 +84,8 @@ const DEFAULTS: SiteSettings = {
   tagline: "Next-Gen Electronics",
   logoUrl: "",
   description: "Your premium destination for cutting-edge electronics.",
+  enableLocationRestriction: false,
+  allowedDeliveryCities: ["Addis Ababa"],
 
   heroEyebrow: "NEXT-GEN ELECTRONICS",
   heroTitle: "Experience The",
@@ -260,6 +264,8 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
           tagline: s.tagline,
           logoUrl: s.logoUrl,
           description: s.description,
+          enableLocationRestriction: s.enableLocationRestriction,
+          allowedDeliveryCities: s.allowedDeliveryCities,
         },
         hero: {
           heroEyebrow: s.heroEyebrow,

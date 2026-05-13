@@ -1,18 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Heart,
-  ShoppingCart,
-  GitCompare,
-  Minus,
-  Plus,
-} from "lucide-react";
+import { Heart, ShoppingCart, GitCompare, Minus, Plus } from "lucide-react";
 import { Product } from "@/lib/api";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useCompare } from "@/contexts/CompareContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { isAdminRole } from "@/lib/roles";
+import { useLocationCheck } from "@/hooks/useLocationCheck";
 
 interface ProductActionsProps {
   product: Product;
@@ -24,6 +19,7 @@ export const ProductActions = ({ product }: ProductActionsProps) => {
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { isInCompare, addToCompare, removeFromCompare } = useCompare();
+  const { isDeliveryAvailable } = useLocationCheck();
 
   const handleAddToCart = () => {
     if (product.stock === 0 || quantity > product.stock) return;
@@ -39,9 +35,7 @@ export const ProductActions = ({ product }: ProductActionsProps) => {
           size="lg"
           onClick={() => toggleFavorite(product)}
           className={
-            isFavorite(product.id)
-              ? "border-destructive text-destructive"
-              : ""
+            isFavorite(product.id) ? "border-destructive text-destructive" : ""
           }
         >
           <Heart
@@ -96,21 +90,28 @@ export const ProductActions = ({ product }: ProductActionsProps) => {
       <div className="flex gap-3 mb-8">
         <Button
           onClick={handleAddToCart}
-          disabled={product.stock === 0 || quantity > product.stock}
+          disabled={
+            product.stock === 0 ||
+            quantity > product.stock ||
+            !isDeliveryAvailable
+          }
           size="lg"
-          className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 shadow-neon"
+          className="flex-1 shadow-neon transition-colors"
+          variant={isDeliveryAvailable ? "default" : "secondary"}
         >
-          <ShoppingCart className="h-5 w-5 mr-2" /> 
-          {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+          <ShoppingCart className="h-5 w-5 mr-2" />
+          {!isDeliveryAvailable
+            ? "Delivery not available in your region"
+            : product.stock === 0
+              ? "Out of Stock"
+              : "Add to Cart"}
         </Button>
         <Button
           variant="outline"
           size="lg"
           onClick={() => toggleFavorite(product)}
           className={
-            isFavorite(product.id)
-              ? "border-destructive text-destructive"
-              : ""
+            isFavorite(product.id) ? "border-destructive text-destructive" : ""
           }
         >
           <Heart

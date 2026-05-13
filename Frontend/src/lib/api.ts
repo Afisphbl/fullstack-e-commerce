@@ -632,6 +632,14 @@ export const fetchFAQs = async (): Promise<FAQ[]> => {
   return faqsData as FAQ[];
 };
 
+// Settings
+export const fetchGeneralSettings = async () => {
+  const data = await apiFetch<{ data: { data: any } }>(
+    "/api/v1/settings/general"
+  );
+  return data.data.data;
+};
+
 // Team
 export const fetchTeam = async (): Promise<TeamMember[]> => {
   return teamData as TeamMember[];

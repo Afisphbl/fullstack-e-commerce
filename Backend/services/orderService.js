@@ -1,20 +1,38 @@
-'use strict';
+"use strict";
 
-const Order = require('../models/orderModel');
-const Product = require('../models/productModel');
-const Coupon = require('../models/couponModel');
-const AppError = require('../utils/AppError');
-const { ORDER_STATUS, PAYMENT_STATUS } = require('../constants/enums');
+const Order = require("../models/orderModel");
+const Product = require("../models/productModel");
+const Coupon = require("../models/couponModel");
+const GeneralSettings = require("../models/generalSettingsModel");
+const AppError = require("../utils/AppError");
+const { ORDER_STATUS, PAYMENT_STATUS } = require("../constants/enums");
 
 // ─── Build a new order from request body ──────────────────────────────────────
 const buildOrder = async (userId, body, next) => {
-  const { orderItems, shippingAddress, paymentMethod, couponCode, notes } = body;
+  const { orderItems, shippingAddress, paymentMethod, couponCode, notes } =
+    body;
+
+  // 0) Validate location if restriction is enabled
+  const settings = await GeneralSettings.findOne();
+  if (settings && settings.enableLocationRestriction) {
+    const isAllowed = settings.allowedDeliveryCities.some(
+      (city) =>
+        city.trim().toLowerCase() === shippingAddress.city.trim().toLowerCase(),
+    );
+    if (!isAllowed) {
+      throw new AppError(
+        `Sorry, delivery is not yet supported in ${shippingAddress.city}.`,
+        400,
+      );
+    }
+  }
 
   // 1) Validate products & calculate prices
   const itemsWithPrices = await Promise.all(
     orderItems.map(async (item) => {
       const product = await Product.findById(item.product).lean();
-      if (!product) throw new AppError(`Product ${item.product} not found.`, 404);
+      if (!product)
+        throw new AppError(`Product ${item.product} not found.`, 404);
       if (product.stock < item.quantity)
         throw new AppError(`Insufficient stock for "${product.name}".`, 400);
       return {
@@ -24,12 +42,12 @@ const buildOrder = async (userId, body, next) => {
         price: product.finalPrice ?? product.price,
         quantity: item.quantity,
       };
-    })
+    }),
   );
 
   const itemsPrice = itemsWithPrices.reduce(
     (sum, i) => sum + i.price * i.quantity,
-    0
+    0,
   );
 
   // 2) Apply coupon
@@ -37,7 +55,7 @@ const buildOrder = async (userId, body, next) => {
   let couponDoc = null;
   if (couponCode) {
     couponDoc = await Coupon.findOne({ code: couponCode.toUpperCase() });
-    if (!couponDoc) throw new AppError('Invalid coupon code.', 400);
+    if (!couponDoc) throw new AppError("Invalid coupon code.", 400);
 
     const { ok, reason } = couponDoc.isApplicable(userId, itemsPrice);
     if (!ok) throw new AppError(reason, 400);
@@ -47,7 +65,12 @@ const buildOrder = async (userId, body, next) => {
 
   const taxPrice = +(itemsPrice * 0.1).toFixed(2); // 10% tax
   const shippingPrice = itemsPrice > 100 ? 0 : 10;
-  const totalPrice = +(itemsPrice + taxPrice + shippingPrice - discount).toFixed(2);
+  const totalPrice = +(
+    itemsPrice +
+    taxPrice +
+    shippingPrice -
+    discount
+  ).toFixed(2);
 
   const order = await Order.create({
     user: userId,
@@ -68,8 +91,8 @@ const buildOrder = async (userId, body, next) => {
     itemsWithPrices.map((i) =>
       Product.findByIdAndUpdate(i.product, {
         $inc: { stock: -i.quantity, sold: i.quantity },
-      })
-    )
+      }),
+    ),
   );
 
   // 4) Mark coupon as used
@@ -87,10 +110,10 @@ const getOrderStats = async () => {
   const stats = await Order.aggregate([
     {
       $group: {
-        _id: '$orderStatus',
+        _id: "$orderStatus",
         count: { $sum: 1 },
-        totalRevenue: { $sum: '$totalPrice' },
-        avgOrderValue: { $avg: '$totalPrice' },
+        totalRevenue: { $sum: "$totalPrice" },
+        avgOrderValue: { $avg: "$totalPrice" },
       },
     },
     { $sort: { totalRevenue: -1 } },
@@ -101,7 +124,7 @@ const getOrderStats = async () => {
 // ─── Mark order delivered ─────────────────────────────────────────────────────
 const markDelivered = async (orderId, next) => {
   const order = await Order.findById(orderId);
-  if (!order) throw new AppError('Order not found.', 404);
+  if (!order) throw new AppError("Order not found.", 404);
 
   order.orderStatus = ORDER_STATUS.DELIVERED;
   order.deliveredAt = Date.now();
@@ -112,7 +135,7 @@ const markDelivered = async (orderId, next) => {
 // ─── Mark order paid ──────────────────────────────────────────────────────────
 const markPaid = async (orderId, paymentResult) => {
   const order = await Order.findById(orderId);
-  if (!order) throw new AppError('Order not found.', 404);
+  if (!order) throw new AppError("Order not found.", 404);
 
   order.paymentStatus = PAYMENT_STATUS.PAID;
   order.paidAt = Date.now();
