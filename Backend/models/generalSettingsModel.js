@@ -27,6 +27,14 @@ const generalSettingsSchema = new mongoose.Schema(
       maxlength: [500, "Description must be at most 500 characters."],
       default: "Your premium destination for cutting-edge electronics.",
     },
+    enableLocationRestriction: {
+      type: Boolean,
+      default: false,
+    },
+    allowedDeliveryCities: {
+      type: [String],
+      default: ["Addis Ababa"],
+    },
   },
   { timestamps: true },
 );

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { OptimizedImage } from "@/components/shared/OptimizedImage";
 import { formatCurrency } from "@/lib/formatters";
+import { useLocationCheck } from "@/hooks/useLocationCheck";
 
 interface ProductCardProps {
   product: Product;
@@ -21,6 +22,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { isInCompare, addToCompare, removeFromCompare } = useCompare();
+  const { isDeliveryAvailable } = useLocationCheck();
 
   // Hide zero-stock products from non-admin users
   if (product.stock === 0 && !isAdminRole(user?.role)) {
@@ -125,9 +127,16 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             <Button
               size="sm"
               onClick={() => addToCart(product)}
-              className="h-8 px-3 bg-primary text-primary-foreground hover:bg-primary/90 text-xs"
+              disabled={!isDeliveryAvailable}
+              className={`h-8 px-3 text-xs ${!isDeliveryAvailable ? "bg-muted text-muted-foreground" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}
+              title={
+                !isDeliveryAvailable
+                  ? "Delivery is not available in your region"
+                  : ""
+              }
             >
-              <ShoppingCart className="mr-1 h-3.5 w-3.5" /> Add
+              <ShoppingCart className="mr-1 h-3.5 w-3.5" />
+              {!isDeliveryAvailable ? "Not available" : "Add"}
             </Button>
           )}
         </div>

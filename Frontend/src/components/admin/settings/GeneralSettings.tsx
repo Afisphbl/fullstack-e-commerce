@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { Upload, X, Loader2 } from "lucide-react";
 import { SiteSettings } from "@/contexts/SiteSettingsContext";
 import { Field } from "./Field";
@@ -133,6 +134,52 @@ export const GeneralSettings = ({ draft, update }: GeneralSettingsProps) => {
           className="bg-background"
         />
       </Field>
+
+      <div className="pt-4 border-t border-border mt-4">
+        <h3 className="text-lg font-semibold text-foreground mb-4">
+          Location Settings
+        </h3>
+        <div className="grid gap-6">
+          <Field
+            label="Enable Location Restrictions"
+            hint="If enabled, orders will only be accepted for the cities specified below."
+          >
+            <div className="flex items-center h-10">
+              <Switch
+                checked={draft.enableLocationRestriction}
+                onCheckedChange={(checked) =>
+                  update("enableLocationRestriction", checked)
+                }
+              />
+            </div>
+          </Field>
+
+          {draft.enableLocationRestriction && (
+            <Field
+              label="Allowed Delivery Cities"
+              hint="Comma separated list of cities where you deliver."
+            >
+              <Textarea
+                value={(draft.allowedDeliveryCities || []).join(", ")}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  update(
+                    "allowedDeliveryCities",
+                    val
+                      ? val
+                          .split(",")
+                          .map((c) => c.trim())
+                          .filter(Boolean)
+                      : []
+                  );
+                }}
+                className="bg-background"
+                placeholder="e.g. Addis Ababa, Dire Dawa"
+              />
+            </Field>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

@@ -26,6 +26,14 @@ const generalRules = [
     .trim()
     .isLength({ max: 500 })
     .withMessage("Description must be at most 500 characters."),
+  body("enableLocationRestriction")
+    .optional()
+    .isBoolean()
+    .withMessage("enableLocationRestriction must be a boolean."),
+  body("allowedDeliveryCities")
+    .optional()
+    .isArray()
+    .withMessage("allowedDeliveryCities must be an array of strings."),
 ];
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
