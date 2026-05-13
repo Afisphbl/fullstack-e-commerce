@@ -22,10 +22,12 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { isAdminRole } from "@/lib/roles";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { useLocationCheck } from "@/hooks/useLocationCheck";
 
 const ProductDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
+  const { isLoading: isLocationLoading } = useLocationCheck();
   const [product, setProduct] = useState<Product | null>(null);
   const [related, setRelated] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -88,7 +90,7 @@ const ProductDetailPage = () => {
           (a, b) =>
             b.score - a.score ||
             new Date(b.item.createdAt || 0).getTime() -
-              new Date(a.item.createdAt || 0).getTime(),
+              new Date(a.item.createdAt || 0).getTime()
         )
         .slice(0, 4)
         .map((entry) => entry.item);
@@ -110,7 +112,7 @@ const ProductDetailPage = () => {
       const reviewsRes = await fetchReviewsByProduct(
         product.id,
         reviewPage,
-        reviewLimit,
+        reviewLimit
       );
       setReviews(reviewsRes.reviews);
       setTotalReviews(reviewsRes.total);
@@ -142,11 +144,11 @@ const ProductDetailPage = () => {
     await loadReviews();
   };
 
-  if (isLoading) return <ProductDetailSkeleton />;
+  if (isLoading || isLocationLoading) return <ProductDetailSkeleton />;
 
   if (!product) {
     return (
-      <div className='container mx-auto px-4 py-16 text-center text-muted-foreground'>
+      <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">
         Product not found.
       </div>
     );
@@ -155,22 +157,22 @@ const ProductDetailPage = () => {
   // Hide zero-stock products from non-admin users
   if (product.stock === 0 && !isAdminRole(user?.role)) {
     return (
-      <div className='container mx-auto px-4 py-16 text-center text-muted-foreground'>
+      <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">
         Product not found.
       </div>
     );
   }
 
   return (
-    <div className='container mx-auto px-4 py-8'>
+    <div className="container mx-auto px-4 py-8">
       <Link
-        to='/shop'
-        className='inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-6'
+        to="/shop"
+        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-6"
       >
-        <ChevronLeft className='h-4 w-4' /> Back to Shop
+        <ChevronLeft className="h-4 w-4" /> Back to Shop
       </Link>
 
-      <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16'>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
         <ProductImageGallery
           images={product.images}
           productName={product.name}
@@ -184,8 +186,8 @@ const ProductDetailPage = () => {
       </div>
 
       {/* Reviews Section */}
-      <div className='grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16'>
-        <div className='lg:col-span-2 space-y-8'>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16">
+        <div className="lg:col-span-2 space-y-8">
           <ReviewsList
             reviews={reviews}
             totalReviews={totalReviews}
@@ -195,7 +197,7 @@ const ProductDetailPage = () => {
           />
         </div>
 
-        <div className='space-y-6'>
+        <div className="space-y-6">
           <ReviewForm
             productId={product.id}
             existingReview={existingReview}

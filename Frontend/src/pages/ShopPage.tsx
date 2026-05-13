@@ -9,17 +9,20 @@ import { ShopPagination } from "@/components/shop/ShopPagination";
 import { useAuth } from "@/contexts/AuthContext";
 import { isAdminRole } from "@/lib/roles";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { useLocationCheck } from "@/hooks/useLocationCheck";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 
 const ShopPage = () => {
   usePageTitle("Shop");
   const { user } = useAuth();
+  const { isLoading: isLocationLoading } = useLocationCheck();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState(searchParams.get("sort") || "featured");
   const [selectedCategory, setSelectedCategory] = useState(
-    searchParams.get("category") || "all",
+    searchParams.get("category") || "all"
   );
   const [selectedBrand, setSelectedBrand] = useState("all");
   const [priceCap, setPriceCap] = useState(10000);
@@ -44,11 +47,11 @@ const ShopPage = () => {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        const backendParams: Record<string, string | number | undefined> = {
+        const backendParams: Record<string, string | number | boolean> = {
           page: currentPage,
           limit: pageSize,
-          search: search || undefined,
         };
+        if (search) backendParams.search = search;
 
         if (selectedCategory !== "all")
           backendParams.category = selectedCategory;
@@ -86,7 +89,7 @@ const ShopPage = () => {
         if (productsRes.total > 0 && priceCap === 2500) {
           const max =
             Math.ceil(
-              Math.max(...productsRes.products.map((p) => p.price)) / 50,
+              Math.max(...productsRes.products.map((p) => p.price)) / 50
             ) * 50;
           if (max > priceCap) setPriceCap(max);
         }
@@ -113,7 +116,7 @@ const ShopPage = () => {
   }, [sortBy, selectedCategory, selectedBrand, maxPrice, inStockOnly, search]);
 
   const brands = [...new Set(products.map((product) => product.brand))].sort(
-    (a, b) => a.localeCompare(b),
+    (a, b) => a.localeCompare(b)
   );
 
   const handleSortChange = (value: string) => {
@@ -177,13 +180,22 @@ const ShopPage = () => {
             onSortChange={handleSortChange}
           />
 
-          <ProductsGrid
-            products={products}
-            isLoading={isLoading}
-            totalProducts={totalProducts}
-          />
+          {isLocationLoading ? (
+            <div className="flex h-64 items-center justify-center">
+              <LoadingSpinner
+                size="lg"
+                label="Checking delivery availability in your region..."
+              />
+            </div>
+          ) : (
+            <ProductsGrid
+              products={products}
+              isLoading={isLoading}
+              totalProducts={totalProducts}
+            />
+          )}
 
-          {totalProducts > pageSize && (
+          {totalProducts > pageSize && !isLocationLoading && (
             <ShopPagination
               currentPage={currentPage}
               totalPages={totalPages}
