@@ -17,7 +17,7 @@ export const useLocationCheck = (): LocationCheckResult => {
   const [isLoading, setIsLoading] = useState<boolean>(
     cachedLocationStatus === null
   );
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
 
   useEffect(() => {
     // If it's already cached the final result, no need to re-run
@@ -47,6 +47,21 @@ export const useLocationCheck = (): LocationCheckResult => {
         // Ask for GPS
         if (!navigator.geolocation) {
           throw new Error("Geolocation not supported");
+        }
+
+        try {
+          if (navigator.permissions && navigator.permissions.query) {
+            const permission = await navigator.permissions.query({
+              name: "geolocation",
+            });
+            if (permission.state === "denied") {
+              throw new Error(
+                "Geolocation explicitly denied by user or policy"
+              );
+            }
+          }
+        } catch (e) {
+          // Ignored. Not all browsers support permission query exactly this way.
         }
 
         navigator.geolocation.getCurrentPosition(

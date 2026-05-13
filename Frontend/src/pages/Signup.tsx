@@ -80,10 +80,24 @@ export default function Signup() {
 
       // Request location permission proactively upon auth
       if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          () => {},
-          () => {}
-        );
+        if (navigator.permissions && navigator.permissions.query) {
+          navigator.permissions
+            .query({ name: "geolocation" })
+            .then((result) => {
+              if (result.state !== "denied") {
+                navigator.geolocation.getCurrentPosition(
+                  () => {},
+                  () => {}
+                );
+              }
+            })
+            .catch(() => {});
+        } else {
+          navigator.geolocation.getCurrentPosition(
+            () => {},
+            () => {}
+          );
+        }
       }
 
       toast.success("Account created successfully!");

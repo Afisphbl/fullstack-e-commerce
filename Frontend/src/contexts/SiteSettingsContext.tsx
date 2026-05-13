@@ -6,6 +6,8 @@ import {
   SECTIONS,
   SettingsSection,
 } from "@/lib/api/settings";
+import { useAuth } from "./AuthContext";
+import { isAdminRole } from "@/lib/roles";
 
 export interface HeroSlide {
   image: string;
@@ -188,6 +190,7 @@ const SiteSettingsContext = createContext<Ctx | null>(null);
 export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [settings, setSettings] = useState<SiteSettings>(() => {
     try {
@@ -224,10 +227,10 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, []);
 
-  // Use a second effect to fetch admin-only sections if token exists (or user is admin)
+  // Use a second effect to fetch admin-only sections if token exists and user is admin
   useEffect(() => {
     const token = localStorage.getItem("auth_token");
-    if (!token) return;
+    if (!token || !user || !isAdminRole(user.role)) return;
 
     let active = true;
     const loadAdmin = async () => {
