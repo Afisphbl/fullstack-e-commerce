@@ -18,9 +18,9 @@ const getTransporter = () => {
 
   transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
-    port: 465,
-    secure: true, // true for port 465, false for other ports
-    pool: true, // Use connection pooling
+    port: 587,
+    secure: false, // true for port 465, false for other ports (587)
+    pool: true,
     maxConnections: 5,
     maxMessages: 100,
     auth: {
@@ -30,8 +30,8 @@ const getTransporter = () => {
     // Force IPv4 to avoid ENETUNREACH/timeout on systems with broken IPv6
     family: 4,
     // Add timeouts to handle slow network responses
-    connectionTimeout: 10000, // 10 seconds
-    greetingTimeout: 10000, // 10 seconds
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
   });
 
   logger.info("📧 Using Gmail SMTP for email delivery");
