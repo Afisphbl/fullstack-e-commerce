@@ -15,16 +15,19 @@ if (EMAIL_PROVIDER === "resend") {
   try {
     const { Resend: ResendClass } = require("resend");
     Resend = ResendClass;
-    if (!process.env.RESEND_API_KEY) {
-      throw new Error(
-        "RESEND_API_KEY not configured. Please set it in environment variables.",
-      );
+
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      logger.error("❌ RESEND_API_KEY is missing in environment variables.");
+    } else {
+      resendClient = new Resend(apiKey);
+      logger.info("📧 Using Resend for email delivery");
     }
-    resendClient = new Resend(process.env.RESEND_API_KEY);
-    logger.info("📧 Using Resend for email delivery");
   } catch (error) {
-    logger.error("Failed to initialize Resend:", error);
-    throw error;
+    logger.error(
+      "Failed to initialize Resend. Ensure 'resend' package is installed:",
+      error,
+    );
   }
 }
 
@@ -42,7 +45,9 @@ const getTransporter = () => {
   }
 
   transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // use SSL
     pool: true, // Use connection pooling
     maxConnections: 5,
     maxMessages: 100,
@@ -50,6 +55,9 @@ const getTransporter = () => {
       user: config.email.username,
       pass: config.email.password,
     },
+    // Force IPv4 to avoid ENETUNREACH on systems with broken IPv6
+    // Note: nodemailer uses 'family' option for this
+    family: 4,
   });
 
   logger.info("📧 Using Gmail SMTP for email delivery");
