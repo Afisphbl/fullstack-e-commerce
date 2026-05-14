@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import {
   ShoppingCart,
@@ -9,7 +9,6 @@ import {
   Moon,
   GitCompare,
   User,
-  Shield,
 } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
@@ -42,7 +41,10 @@ export const Header = () => {
     <header className="sticky top-0 z-50 glass border-b border-border/50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="font-display text-xl font-bold text-gradient">
+          <Link
+            to="/"
+            className="font-display text-xl font-bold text-gradient flex-shrink-0"
+          >
             {settings.companyName.toUpperCase()}
           </Link>
 
@@ -150,7 +152,7 @@ export const Header = () => {
                       </div>
                     )}
                   </div>
-                  <span className="hidden sm:inline text-xs font-semibold">
+                  <span className="hidden sm:inline text-xs font-semibold truncate max-w-[80px]">
                     {user.name.split(" ")[0]}
                   </span>
                 </div>

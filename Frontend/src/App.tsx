@@ -98,7 +98,7 @@ const StorefrontLayout = () => (
     <main className="flex-1" aria-label="Main content">
       <Suspense
         fallback={
-          <div className="flex h-[60vh] items-center justify-center bg-background">
+          <div className="flex flex-1 min-h-[50vh] items-center justify-center bg-background">
             <LoadingSpinner size="lg" label="Loading page content..." />
           </div>
         }

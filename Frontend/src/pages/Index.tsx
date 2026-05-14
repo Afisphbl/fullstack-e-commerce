@@ -44,7 +44,7 @@ const Index = () => {
       .then((products) => {
         // Filter out zero-stock products for non-admin users
         const filtered = products.filter(
-          (product) => product.stock > 0 || isAdminRole(user?.role),
+          (product) => product.stock > 0 || isAdminRole(user?.role)
         );
         setFeatured(filtered);
         setLoadingFeatured(false);
@@ -58,7 +58,7 @@ const Index = () => {
         const filtered = res.products.filter(
           (product) =>
             (product.isNew && product.stock > 0) ||
-            (product.isNew && isAdminRole(user?.role)),
+            (product.isNew && isAdminRole(user?.role))
         );
         setNewArrivals(filtered);
         setLoadingNewArrivals(false);
@@ -96,55 +96,55 @@ const Index = () => {
         srcSet: heroSrcSet,
         sizes: heroSizes,
         fetchPriority: "high",
-      },
+      }
     );
   }, [activeHeroSlide?.image, heroSizes, heroSrcSet]);
 
   return (
-    <div className='min-h-screen'>
+    <div className="min-h-screen">
       {/* Hero */}
-      <section className='bg-gradient-hero text-primary-foreground relative overflow-hidden'>
-        <div className='absolute inset-0 opacity-20'>
-          <div className='absolute top-20 left-10 w-72 h-72 bg-primary/30 rounded-full blur-3xl animate-float' />
-          <div className='absolute bottom-20 right-10 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-float [animation-delay:3s]' />
+      <section className="bg-gradient-hero text-primary-foreground relative overflow-hidden">
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-primary/30 rounded-full blur-3xl animate-float" />
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-float [animation-delay:3s]" />
         </div>
-        <div className='container mx-auto px-4 py-24 md:py-32 relative z-10'>
-          <div className='grid grid-cols-1 items-center gap-10 lg:grid-cols-2'>
-            <div className='max-w-2xl animate-slide-up'>
-              <p className='text-accent font-display text-sm tracking-widest mb-4 uppercase'>
+        <div className="container mx-auto px-4 py-24 md:py-32 relative z-10">
+          <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
+            <div className="max-w-2xl animate-slide-up">
+              <p className="text-accent font-display text-sm tracking-widest mb-4 uppercase">
                 {settings.heroEyebrow}
               </p>
-              <h1 className='text-4xl md:text-6xl font-display font-bold mb-6 leading-tight whitespace-pre-wrap'>
+              <h1 className="text-4xl md:text-6xl font-display font-bold mb-6 leading-tight whitespace-pre-wrap">
                 {settings.heroTitle}{" "}
-                <span className='text-gradient'>{settings.heroHighlight}</span>
+                <span className="text-gradient">{settings.heroHighlight}</span>
               </h1>
-              <p className='text-lg text-primary-foreground/70 mb-8 font-body whitespace-pre-wrap'>
+              <p className="text-lg text-primary-foreground/70 mb-8 font-body whitespace-pre-wrap">
                 {settings.heroSubtitle}
               </p>
-              <div className='flex gap-4'>
+              <div className="flex gap-4">
                 <Button
                   asChild
-                  size='lg'
-                  className='bg-primary text-primary-foreground hover:bg-primary/90 shadow-neon font-display text-sm'
+                  size="lg"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-neon font-display text-sm"
                 >
                   <Link to={settings.heroCtaLink || "/shop"}>
                     {settings.heroCtaText || "Shop Now"}{" "}
-                    <ArrowRight className='ml-2 h-4 w-4' />
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
                 <Button
                   asChild
-                  variant='outline'
-                  size='lg'
-                  className='border-border bg-background/90 text-foreground hover:bg-background font-display text-sm'
+                  variant="outline"
+                  size="lg"
+                  className="border-border bg-background/90 text-foreground hover:bg-background font-display text-sm"
                 >
-                  <Link to='/about'>Learn More</Link>
+                  <Link to="/about">Learn More</Link>
                 </Button>
               </div>
             </div>
 
-            <div className='relative overflow-hidden rounded-2xl border border-white/20 bg-black/20 p-2 shadow-2xl'>
-              <div className='relative aspect-[16/11] overflow-hidden rounded-xl'>
+            <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black/20 p-2 shadow-2xl">
+              <div className="relative aspect-[16/11] overflow-hidden rounded-xl">
                 {activeHeroSlide && (
                   <OptimizedImage
                     key={activeHeroSlide.image}
@@ -154,26 +154,26 @@ const Index = () => {
                     sizes={heroSizes}
                     optimizeWidth={1280}
                     optimizeHeight={880}
-                    crop='fill'
-                    fetchPriority='high'
-                    loading='eager'
-                    className='absolute inset-0 h-full w-full object-cover animate-fade-in'
+                    crop="fill"
+                    fetchPriority="high"
+                    loading="eager"
+                    className="absolute inset-0 h-full w-full object-cover animate-fade-in"
                   />
                 )}
-                <div className='absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent' />
-                <div className='absolute bottom-4 left-4 right-4'>
-                  <p className='text-xs uppercase tracking-[0.15em] text-accent'>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4">
+                  <p className="text-xs uppercase tracking-[0.15em] text-accent">
                     Featured
                   </p>
-                  <h3 className='text-xl font-display font-bold text-white'>
+                  <h3 className="text-xl font-display font-bold text-white">
                     {heroSlides[slideIndex]?.title}
                   </h3>
-                  <p className='text-sm text-white/80'>
+                  <p className="text-sm text-white/80">
                     {heroSlides[slideIndex]?.subtitle}
                   </p>
                 </div>
               </div>
-              <div className='mt-3 flex justify-center gap-1.5'>
+              <div className="mt-3 flex justify-center gap-1.5">
                 {heroSlides.map((_, idx) => (
                   <button
                     key={idx}
@@ -189,9 +189,9 @@ const Index = () => {
       </section>
 
       {/* Features */}
-      <section className='py-12 border-b border-border bg-card'>
-        <div className='container mx-auto px-4'>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
+      <section className="py-12 border-b border-border bg-card">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
                 icon: Truck,
@@ -205,13 +205,13 @@ const Index = () => {
               },
               { icon: Zap, title: "Fast Support", desc: "24/7 expert help" },
             ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className='flex items-center gap-4'>
-                <div className='p-3 rounded-lg bg-primary/10'>
-                  <Icon className='h-6 w-6 text-primary' />
+              <div key={title} className="flex items-center gap-4">
+                <div className="p-3 rounded-lg bg-primary/10">
+                  <Icon className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className='font-semibold text-foreground'>{title}</h3>
-                  <p className='text-sm text-muted-foreground'>{desc}</p>
+                  <h3 className="font-semibold text-foreground">{title}</h3>
+                  <p className="text-sm text-muted-foreground">{desc}</p>
                 </div>
               </div>
             ))}
@@ -220,30 +220,30 @@ const Index = () => {
       </section>
 
       {/* Categories */}
-      <section className='py-16 bg-background'>
-        <div className='container mx-auto px-4'>
-          <div className='flex items-center justify-between mb-8'>
-            <h2 className='text-2xl font-display font-bold text-foreground'>
+      <section className="py-16 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-display font-bold text-foreground">
               Shop by Category
             </h2>
             <Link
-              to='/shop'
-              className='text-sm text-primary hover:underline flex items-center gap-1'
+              to="/shop"
+              className="text-sm text-primary hover:underline flex items-center gap-1"
             >
-              View All <ChevronRight className='h-4 w-4' />
+              View All <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4'>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {loadingCategories
               ? // Skeleton loaders for categories
                 Array.from({ length: 5 }).map((_, idx) => (
                   <div
                     key={idx}
-                    className='relative rounded-lg overflow-hidden aspect-square bg-muted animate-pulse'
+                    className="relative rounded-lg overflow-hidden aspect-square bg-muted animate-pulse"
                   >
-                    <div className='absolute bottom-3 left-3 space-y-2'>
-                      <div className='h-4 w-24 bg-muted-foreground/20 rounded' />
-                      <div className='h-3 w-16 bg-muted-foreground/20 rounded' />
+                    <div className="absolute bottom-3 left-3 space-y-2">
+                      <div className="h-4 w-24 bg-muted-foreground/20 rounded" />
+                      <div className="h-3 w-16 bg-muted-foreground/20 rounded" />
                     </div>
                   </div>
                 ))
@@ -251,24 +251,24 @@ const Index = () => {
                   <Link
                     key={cat.id}
                     to={`/shop?category=${cat.id}`}
-                    className='group relative rounded-lg overflow-hidden aspect-square'
+                    className="group relative rounded-lg overflow-hidden aspect-square"
                   >
                     <OptimizedImage
                       src={cat.image}
                       alt={cat.name}
                       widths={[240, 360, 480, 640]}
-                      sizes='(min-width: 1024px) 20vw, (min-width: 768px) 33vw, 50vw'
+                      sizes="(min-width: 1024px) 20vw, (min-width: 768px) 33vw, 50vw"
                       optimizeWidth={480}
                       optimizeHeight={480}
-                      crop='fill'
-                      className='w-full h-full object-cover group-hover:scale-110 transition-transform duration-500'
+                      crop="fill"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
-                    <div className='absolute inset-0 bg-gradient-to-t from-black/65 to-transparent dark:from-white/80 dark:to-white/15' />
-                    <div className='absolute bottom-3 left-3'>
-                      <h3 className='font-display text-sm font-bold text-white dark:text-black'>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent dark:from-white/80 dark:to-white/15" />
+                    <div className="absolute bottom-3 left-3">
+                      <h3 className="font-display text-sm font-bold text-white dark:text-black">
                         {cat.name}
                       </h3>
-                      <p className='text-xs text-white/80 dark:text-black/80'>
+                      <p className="text-xs text-white/80 dark:text-black/80">
                         {cat.count} products
                       </p>
                     </div>
@@ -279,34 +279,40 @@ const Index = () => {
       </section>
 
       {/* Featured Products */}
-      <section className='py-16 bg-card'>
-        <div className='container mx-auto px-4'>
-          <div className='flex items-center justify-between mb-8'>
-            <h2 className='text-2xl font-display font-bold text-foreground'>
+      <section className="py-16 bg-card">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-display font-bold text-foreground">
               Featured Products
             </h2>
             <Link
-              to='/shop'
-              className='text-sm text-primary hover:underline flex items-center gap-1'
+              to="/shop"
+              className="text-sm text-primary hover:underline flex items-center gap-1"
             >
-              View All <ChevronRight className='h-4 w-4' />
+              View All <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {loadingFeatured
               ? // Skeleton loaders for products
                 Array.from({ length: 4 }).map((_, idx) => (
                   <div
                     key={idx}
-                    className='rounded-lg border border-border bg-card overflow-hidden animate-pulse'
+                    className="rounded-lg border border-border bg-card overflow-hidden animate-pulse"
                   >
-                    <div className='aspect-square bg-muted' />
-                    <div className='p-4 space-y-3'>
-                      <div className='h-4 bg-muted rounded w-3/4' />
-                      <div className='h-3 bg-muted rounded w-1/2' />
-                      <div className='flex items-center justify-between'>
-                        <div className='h-5 bg-muted rounded w-20' />
-                        <div className='h-8 bg-muted rounded w-24' />
+                    <div className="aspect-[4/3] bg-muted" />
+                    <div className="p-3 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="h-3 bg-muted rounded w-16" />
+                        <div className="h-3 bg-muted rounded w-12" />
+                      </div>
+                      <div className="space-y-2">
+                        <div className="h-4 bg-muted rounded w-full" />
+                        <div className="h-4 bg-muted rounded w-2/3" />
+                      </div>
+                      <div className="flex items-center justify-between pt-1">
+                        <div className="h-5 bg-muted rounded w-20" />
+                        <div className="h-8 bg-muted rounded w-16" />
                       </div>
                     </div>
                   </div>
@@ -321,34 +327,40 @@ const Index = () => {
       </section>
 
       {/* New Arrivals */}
-      <section className='py-16 bg-background'>
-        <div className='container mx-auto px-4'>
-          <div className='flex items-center justify-between mb-8'>
-            <h2 className='text-2xl font-display font-bold text-foreground'>
+      <section className="py-16 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-display font-bold text-foreground">
               New Arrivals
             </h2>
             <Link
-              to='/shop'
-              className='text-sm text-primary hover:underline flex items-center gap-1'
+              to="/shop"
+              className="text-sm text-primary hover:underline flex items-center gap-1"
             >
-              View All <ChevronRight className='h-4 w-4' />
+              View All <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {loadingNewArrivals
               ? // Skeleton loaders for products
                 Array.from({ length: 4 }).map((_, idx) => (
                   <div
                     key={idx}
-                    className='rounded-lg border border-border bg-card overflow-hidden animate-pulse'
+                    className="rounded-lg border border-border bg-card overflow-hidden animate-pulse"
                   >
-                    <div className='aspect-square bg-muted' />
-                    <div className='p-4 space-y-3'>
-                      <div className='h-4 bg-muted rounded w-3/4' />
-                      <div className='h-3 bg-muted rounded w-1/2' />
-                      <div className='flex items-center justify-between'>
-                        <div className='h-5 bg-muted rounded w-20' />
-                        <div className='h-8 bg-muted rounded w-24' />
+                    <div className="aspect-[4/3] bg-muted" />
+                    <div className="p-3 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="h-3 bg-muted rounded w-16" />
+                        <div className="h-3 bg-muted rounded w-12" />
+                      </div>
+                      <div className="space-y-2">
+                        <div className="h-4 bg-muted rounded w-full" />
+                        <div className="h-4 bg-muted rounded w-2/3" />
+                      </div>
+                      <div className="flex items-center justify-between pt-1">
+                        <div className="h-5 bg-muted rounded w-20" />
+                        <div className="h-8 bg-muted rounded w-16" />
                       </div>
                     </div>
                   </div>
@@ -363,25 +375,25 @@ const Index = () => {
       </section>
 
       {/* CTA */}
-      <section className='py-20 bg-gradient-hero text-primary-foreground relative overflow-hidden'>
-        <div className='absolute inset-0 opacity-10'>
-          <div className='absolute top-0 right-0 w-96 h-96 bg-primary rounded-full blur-3xl' />
+      <section className="py-20 bg-gradient-hero text-primary-foreground relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-primary rounded-full blur-3xl" />
         </div>
-        <div className='container mx-auto px-4 text-center relative z-10'>
-          <h2 className='text-3xl font-display font-bold mb-4'>
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <h2 className="text-3xl font-display font-bold mb-4">
             Ready to Upgrade?
           </h2>
-          <p className='text-primary-foreground/70 mb-8 max-w-xl mx-auto'>
+          <p className="text-primary-foreground/70 mb-8 max-w-xl mx-auto">
             Join thousands of tech enthusiasts who trust VoltEdge for the latest
             in consumer electronics.
           </p>
           <Button
             asChild
-            size='lg'
-            className='bg-primary text-primary-foreground hover:bg-primary/90 shadow-neon font-display text-sm'
+            size="lg"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-neon font-display text-sm"
           >
-            <Link to='/shop'>
-              Explore Collection <ArrowRight className='ml-2 h-4 w-4' />
+            <Link to="/shop">
+              Explore Collection <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
         </div>
