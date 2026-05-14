@@ -104,7 +104,7 @@ const AdminUsersPage = () => {
         onSuccess: () => {
           setDialogOpen(false);
         },
-      },
+      }
     );
   };
 
@@ -133,7 +133,7 @@ const AdminUsersPage = () => {
   };
 
   return (
-    <div className='space-y-6 pb-8'>
+    <div className="space-y-6 pb-8">
       <UserPageHeader
         analytics={{
           totalUsers: data?.analytics.totalUsers || 0,
@@ -144,42 +144,42 @@ const AdminUsersPage = () => {
         isLoading={isLoading}
       />
 
-      <section className='grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]'>
-        <div className='overflow-hidden rounded-[28px] border border-border/70 bg-card shadow-card'>
-          <div className='border-b border-border/70 px-6 py-5'>
-            <div className='flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between'>
+      <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="overflow-hidden rounded-[28px] border border-border/70 bg-card shadow-card">
+          <div className="border-b border-border/70 px-6 py-5">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <h3 className='text-2xl font-display font-semibold text-foreground'>
+                <h3 className="text-2xl font-display font-semibold text-foreground">
                   User Management
                 </h3>
-                <p className='mt-1 text-sm text-muted-foreground'>
+                <p className="mt-1 text-sm text-muted-foreground">
                   Manage roles, permissions, account status, registration
                   details, and staff assignments.
                 </p>
               </div>
 
-              <div className='flex flex-wrap items-center gap-3'>
+              <div className="flex flex-wrap items-center gap-3">
                 <Button
-                  variant='outline'
-                  className='rounded-xl'
+                  variant="outline"
+                  className="rounded-xl"
                   onClick={handleExport}
                   disabled={isExporting}
                 >
-                  <Download className='mr-2 h-4 w-4' />
+                  <Download className="mr-2 h-4 w-4" />
                   {isExporting ? "Exporting..." : "Export CSV"}
                 </Button>
                 <Button
-                  className='rounded-xl shadow-sm'
+                  className="rounded-xl shadow-sm"
                   onClick={openCreateDialog}
                 >
-                  <Plus className='mr-2 h-4 w-4' />
+                  <Plus className="mr-2 h-4 w-4" />
                   {isStaffTab ? "Add Staff" : "Add User"}
                 </Button>
               </div>
             </div>
           </div>
 
-          <div className='space-y-5 p-6'>
+          <div className="space-y-5 p-6">
             <Tabs
               value={tab}
               onValueChange={(value) =>
@@ -189,11 +189,11 @@ const AdminUsersPage = () => {
                 })
               }
             >
-              <TabsList className='grid w-full max-w-[320px] grid-cols-2 rounded-2xl bg-muted/60 p-1'>
-                <TabsTrigger value='all' className='rounded-xl'>
+              <TabsList className="grid w-full max-w-[320px] grid-cols-2 rounded-2xl bg-muted/60 p-1">
+                <TabsTrigger value="all" className="rounded-xl">
                   All Users
                 </TabsTrigger>
-                <TabsTrigger value='staff' className='rounded-xl'>
+                <TabsTrigger value="staff" className="rounded-xl">
                   Staff Members
                 </TabsTrigger>
               </TabsList>
@@ -241,7 +241,7 @@ const AdminUsersPage = () => {
           </div>
         </div>
 
-        <div className='space-y-6'>
+        <div className="space-y-6">
           <UserStatusChart users={users} />
           <UserNotifications events={data?.recentEvents || []} />
         </div>

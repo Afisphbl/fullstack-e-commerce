@@ -286,7 +286,7 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left">
+            <table className="w-full min-w-[800px] md:min-w-0 text-left">
               <thead>
                 <tr className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold border-b border-border">
                   <th className="px-6 py-4">Product Name</th>

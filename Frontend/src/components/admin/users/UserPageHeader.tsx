@@ -18,7 +18,7 @@ export const UserPageHeader: React.FC<UserPageHeaderProps> = ({
 }) => {
   return (
     <section className="rounded-[28px] border border-border/70 bg-gradient-to-br from-card via-card to-primary/5 p-6 shadow-card">
-      <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-2xl space-y-3">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
             <Shield className="h-3.5 w-3.5" />
@@ -37,7 +37,7 @@ export const UserPageHeader: React.FC<UserPageHeaderProps> = ({
           </div>
         </div>
 
-        <div className="grid min-w-full gap-3 sm:grid-cols-2 xl:min-w-[420px]">
+        <div className="grid min-w-full gap-3 sm:grid-cols-2 lg:min-w-[420px]">
           <UserStatsCard
             title="Total users"
             value={analytics.totalUsers}

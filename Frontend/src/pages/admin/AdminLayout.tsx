@@ -96,7 +96,7 @@ const AdminLayout = () => {
   const currentTitle = pageTitles[location.pathname] || "Admin";
 
   return (
-    <div className="min-h-screen flex bg-[radial-gradient(circle_at_top,#dfe9ff_0%,transparent_28%),hsl(var(--background))] w-[768px] md:w-full">
+    <div className="min-h-screen flex bg-[radial-gradient(circle_at_top,#dfe9ff_0%,transparent_28%),hsl(var(--background))] w-full">
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
         <div

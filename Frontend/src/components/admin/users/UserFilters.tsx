@@ -40,8 +40,8 @@ export const UserFilters: React.FC<UserFiltersProps> = ({
   onRoleChange,
 }) => {
   return (
-    <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-      <div className="relative w-full xl:max-w-md">
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="relative w-full lg:max-w-md">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={searchInput}

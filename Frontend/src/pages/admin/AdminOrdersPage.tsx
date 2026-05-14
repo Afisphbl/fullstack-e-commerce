@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { fetchOrders, Order, updateOrder } from "@/lib/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -20,13 +19,6 @@ import { Eye, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { formatCurrency } from "@/lib/formatters";
-
-const statusColors: Record<string, string> = {
-  placed: "bg-primary/10 text-primary border-primary/30",
-  processing: "bg-warning/10 text-warning border-warning/30",
-  shipped: "bg-info/10 text-info border-info/30",
-  delivered: "bg-success/10 text-success border-success/30",
-};
 
 const AdminOrdersPage = () => {
   const [selected, setSelected] = useState<Order | null>(null);
@@ -110,7 +102,7 @@ const AdminOrdersPage = () => {
       </div>
 
       <div className="bg-card rounded-lg border border-border overflow-hidden overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full min-w-[800px] md:min-w-0">
           <thead className="bg-muted">
             <tr>
               <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">
