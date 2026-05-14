@@ -62,12 +62,17 @@ const ShopPage = () => {
           backendParams["finalPrice[lte]"] = maxPrice;
         }
 
-        if (inStockOnly) backendParams["stock[gt]"] = 0;
+        // Non-admins should only see in-stock products
+        if (inStockOnly || !isAdminRole(user?.role)) {
+          backendParams["stock[gt]"] = 0;
+        }
 
         // Sorting
         if (sortBy === "newest") backendParams.sort = "-createdAt";
         else if (sortBy === "price-low") backendParams.sort = "price";
         else if (sortBy === "price-high") backendParams.sort = "-price";
+        else if (sortBy === "name-asc") backendParams.sort = "name";
+        else if (sortBy === "name-desc") backendParams.sort = "-name";
         else if (sortBy === "rating") backendParams.sort = "-ratingsAverage";
         else backendParams.sort = "-ratingsAverage"; // featured
 
@@ -76,13 +81,8 @@ const ShopPage = () => {
           fetchCategories(),
         ]);
 
-        // Filter out zero-stock products for non-admin users
-        const filteredProducts = productsRes.products.filter(
-          (product) => product.stock > 0 || isAdminRole(user?.role)
-        );
-
-        setProducts(filteredProducts);
-        setTotalProducts(filteredProducts.length);
+        setProducts(productsRes.products);
+        setTotalProducts(productsRes.total);
         setCategories(categoriesRes);
 
         // Update price cap based on first fetch if needed
@@ -115,9 +115,9 @@ const ShopPage = () => {
     setCurrentPage(1);
   }, [sortBy, selectedCategory, selectedBrand, maxPrice, inStockOnly, search]);
 
-  const brands = [...new Set(products.map((product) => product.brand))].sort(
-    (a, b) => a.localeCompare(b)
-  );
+  const brands = [...new Set(products.map((product) => product.brand))]
+    .filter((brand): brand is string => Boolean(brand))
+    .sort((a, b) => a.localeCompare(b));
 
   const handleSortChange = (value: string) => {
     setSortBy(value);
@@ -154,6 +154,25 @@ const ShopPage = () => {
       <ShopHeader search={search} onSearchChange={setSearch} />
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
+        {/* <ShopFilters
+          categories={categories}
+          brands={brands}
+          selectedCategory={selectedCategory}
+          selectedBrand={selectedBrand}
+          maxPrice={maxPrice}
+          priceCap={priceCap}
+          inStockOnly={inStockOnly}
+          discountOnly={discountOnly}
+          newOnly={newOnly}
+          onCategoryChange={handleCategoryChange}
+          onBrandChange={setSelectedBrand}
+          onMaxPriceChange={setMaxPrice}
+          onInStockChange={setInStockOnly}
+          onDiscountChange={setDiscountOnly}
+          onNewChange={setNewOnly}
+          onClearFilters={clearFilters}
+        /> */}
+
         <ShopFilters
           categories={categories}
           brands={brands}

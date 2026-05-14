@@ -52,5 +52,50 @@
     "passwordConfirm": "user1234",
     "role": "user",
     "photo": "default.jpg"
+  },
+  {
+    "_id": "664200000000000000000016",
+    "name": "David Brown",
+    "email": "david@ecom.dev",
+    "password": "user1234",
+    "passwordConfirm": "user1234",
+    "role": "user",
+    "photo": "default.jpg"
+  },
+  {
+    "_id": "664200000000000000000017",
+    "name": "Eva Martinez",
+    "email": "eva@ecom.dev",
+    "password": "user1234",
+    "passwordConfirm": "user1234",
+    "role": "user",
+    "photo": "default.jpg"
+  },
+  {
+    "_id": "664200000000000000000018",
+    "name": "Frank Wilson",
+    "email": "frank@ecom.dev",
+    "password": "user1234",
+    "passwordConfirm": "user1234",
+    "role": "user",
+    "photo": "default.jpg"
+  },
+  {
+    "_id": "664200000000000000000019",
+    "name": "Grace Lee",
+    "email": "grace@ecom.dev",
+    "password": "user1234",
+    "passwordConfirm": "user1234",
+    "role": "user",
+    "photo": "default.jpg"
+  },
+  {
+    "_id": "664200000000000000000020",
+    "name": "Henry Taylor",
+    "email": "henry@ecom.dev",
+    "password": "user1234",
+    "passwordConfirm": "user1234",
+    "role": "user",
+    "photo": "default.jpg"
   }
 ]

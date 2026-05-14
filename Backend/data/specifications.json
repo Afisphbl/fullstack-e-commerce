@@ -1,82 +1,1550 @@
 [
   {
-    "_id": "664200000000000000000201",
-    "product": "664200000000000000000101",
+    "_id": "664200000000000000002100",
+    "product": "664200000000000000001100",
     "details": [
       {
-        "group": "Audio",
+        "group": "General",
         "specs": [
-          { "name": "Driver Type", "value": "40mm Dome Type" },
-          { "name": "Frequency Response", "value": "4Hz - 40,000Hz" },
-          { "name": "Noise Cancelling", "value": "Yes (Active)" }
-        ]
-      },
-      {
-        "group": "Battery",
-        "specs": [
-          { "name": "Life", "value": "Up to 30 hours" },
-          { "name": "Charge Time", "value": "3 hours" }
+          {
+            "name": "Processor",
+            "value": "Octa-core 3.2GHz"
+          },
+          {
+            "name": "RAM",
+            "value": "8GB DDR4"
+          },
+          {
+            "name": "Storage",
+            "value": "512GB NVMe"
+          },
+          {
+            "name": "Screen Size",
+            "value": "32 inch"
+          },
+          {
+            "name": "Battery",
+            "value": "11 hours"
+          }
         ]
       }
     ]
   },
   {
-    "_id": "664200000000000000000202",
-    "product": "664200000000000000000102",
+    "_id": "664200000000000000002101",
+    "product": "664200000000000000001101",
     "details": [
       {
-        "group": "Display",
+        "group": "General",
         "specs": [
-          { "name": "Type", "value": "AMOLED" },
-          { "name": "Size", "value": "1.4 inch" }
-        ]
-      },
-      {
-        "group": "Sensors",
-        "specs": [
-          { "name": "Heart Rate", "value": "Yes" },
-          { "name": "GPS", "value": "Built-in" }
-        ]
-      }
-    ]
-  },
-  {
-    "_id": "664200000000000000000203",
-    "product": "664200000000000000000103",
-    "details": [
-      {
-        "group": "Material",
-        "specs": [
-          { "name": "Outer", "value": "100% Genuine Leather" },
-          { "name": "Inner Lining", "value": "Viscose" }
+          {
+            "name": "CPU",
+            "value": "Octa-core 3.2GHz"
+          },
+          {
+            "name": "GPU",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "RAM",
+            "value": "16GB DDR4"
+          },
+          {
+            "name": "SSD",
+            "value": "1024GB NVMe"
+          },
+          {
+            "name": "Display",
+            "value": "15.6 inch"
+          }
         ]
       }
     ]
   },
   {
-    "_id": "664200000000000000000204",
-    "product": "664200000000000000000104",
+    "_id": "664200000000000000002102",
+    "product": "664200000000000000001102",
     "details": [
       {
-        "group": "Dimensions",
+        "group": "General",
         "specs": [
-          { "name": "Width", "value": "120 cm" },
-          { "name": "Depth", "value": "60 cm" },
-          { "name": "Height", "value": "75 cm" }
+          {
+            "name": "OS",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Storage",
+            "value": "512GB NVMe"
+          },
+          {
+            "name": "Screen",
+            "value": "32 inch"
+          },
+          {
+            "name": "Connectivity",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Weight",
+            "value": "Standard High-End"
+          }
         ]
       }
     ]
   },
   {
-    "_id": "664200000000000000000205",
-    "product": "664200000000000000000105",
+    "_id": "664200000000000000002103",
+    "product": "664200000000000000001103",
     "details": [
       {
-        "group": "Book Details",
+        "group": "General",
         "specs": [
-          { "name": "Format", "value": "Hardcover" },
-          { "name": "Pages", "value": "180" },
-          { "name": "Language", "value": "English" }
+          {
+            "name": "Compatibility",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Sensor",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Water Resistance",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Battery Life",
+            "value": "17 hours"
+          },
+          {
+            "name": "Display Type",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002104",
+    "product": "664200000000000000001104",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Driver",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Frequency Response",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Wireless",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "ANC",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Weight",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002105",
+    "product": "664200000000000000001105",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Sensor Type",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Resolution",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "ISO Range",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Mount",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Video",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002106",
+    "product": "664200000000000000001106",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Resolution",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Refresh Rate",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Panel Type",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Brightness",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Ports",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002107",
+    "product": "664200000000000000001107",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Switch Type",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Layout",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Backlight",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Connectivity",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Programmable Keys",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002108",
+    "product": "664200000000000000001108",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "DPI",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Sensor",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Weight",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Buttons",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Shape",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002109",
+    "product": "664200000000000000001109",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Output Power",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Connectivity",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Battery",
+            "value": "44 hours"
+          },
+          {
+            "name": "Waterproofing",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Range",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002110",
+    "product": "664200000000000000001110",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Processor",
+            "value": "Octa-core 3.2GHz"
+          },
+          {
+            "name": "RAM",
+            "value": "32GB DDR4"
+          },
+          {
+            "name": "Storage",
+            "value": "256GB NVMe"
+          },
+          {
+            "name": "Screen Size",
+            "value": "6.1 inch"
+          },
+          {
+            "name": "Battery",
+            "value": "43 hours"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002111",
+    "product": "664200000000000000001111",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "CPU",
+            "value": "Octa-core 3.2GHz"
+          },
+          {
+            "name": "GPU",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "RAM",
+            "value": "32GB DDR4"
+          },
+          {
+            "name": "SSD",
+            "value": "256GB NVMe"
+          },
+          {
+            "name": "Display",
+            "value": "32 inch"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002112",
+    "product": "664200000000000000001112",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "OS",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Storage",
+            "value": "1024GB NVMe"
+          },
+          {
+            "name": "Screen",
+            "value": "27 inch"
+          },
+          {
+            "name": "Connectivity",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Weight",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002113",
+    "product": "664200000000000000001113",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Compatibility",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Sensor",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Water Resistance",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Battery Life",
+            "value": "40 hours"
+          },
+          {
+            "name": "Display Type",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002114",
+    "product": "664200000000000000001114",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Driver",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Frequency Response",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Wireless",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "ANC",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Weight",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002115",
+    "product": "664200000000000000001115",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Sensor Type",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Resolution",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "ISO Range",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Mount",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Video",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002116",
+    "product": "664200000000000000001116",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Resolution",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Refresh Rate",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Panel Type",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Brightness",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Ports",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002117",
+    "product": "664200000000000000001117",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Switch Type",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Layout",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Backlight",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Connectivity",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Programmable Keys",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002118",
+    "product": "664200000000000000001118",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "DPI",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Sensor",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Weight",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Buttons",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Shape",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002119",
+    "product": "664200000000000000001119",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Output Power",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Connectivity",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Battery",
+            "value": "46 hours"
+          },
+          {
+            "name": "Waterproofing",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Range",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002120",
+    "product": "664200000000000000001120",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Processor",
+            "value": "Octa-core 3.2GHz"
+          },
+          {
+            "name": "RAM",
+            "value": "32GB DDR4"
+          },
+          {
+            "name": "Storage",
+            "value": "512GB NVMe"
+          },
+          {
+            "name": "Screen Size",
+            "value": "6.1 inch"
+          },
+          {
+            "name": "Battery",
+            "value": "49 hours"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002121",
+    "product": "664200000000000000001121",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "CPU",
+            "value": "Octa-core 3.2GHz"
+          },
+          {
+            "name": "GPU",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "RAM",
+            "value": "8GB DDR4"
+          },
+          {
+            "name": "SSD",
+            "value": "512GB NVMe"
+          },
+          {
+            "name": "Display",
+            "value": "32 inch"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002122",
+    "product": "664200000000000000001122",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "OS",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Storage",
+            "value": "256GB NVMe"
+          },
+          {
+            "name": "Screen",
+            "value": "32 inch"
+          },
+          {
+            "name": "Connectivity",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Weight",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002123",
+    "product": "664200000000000000001123",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Compatibility",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Sensor",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Water Resistance",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Battery Life",
+            "value": "40 hours"
+          },
+          {
+            "name": "Display Type",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002124",
+    "product": "664200000000000000001124",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Driver",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Frequency Response",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Wireless",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "ANC",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Weight",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002125",
+    "product": "664200000000000000001125",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Sensor Type",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Resolution",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "ISO Range",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Mount",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Video",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002126",
+    "product": "664200000000000000001126",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Resolution",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Refresh Rate",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Panel Type",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Brightness",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Ports",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002127",
+    "product": "664200000000000000001127",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Switch Type",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Layout",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Backlight",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Connectivity",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Programmable Keys",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002128",
+    "product": "664200000000000000001128",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "DPI",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Sensor",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Weight",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Buttons",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Shape",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002129",
+    "product": "664200000000000000001129",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Output Power",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Connectivity",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Battery",
+            "value": "48 hours"
+          },
+          {
+            "name": "Waterproofing",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Range",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002130",
+    "product": "664200000000000000001130",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Processor",
+            "value": "Octa-core 3.2GHz"
+          },
+          {
+            "name": "RAM",
+            "value": "32GB DDR4"
+          },
+          {
+            "name": "Storage",
+            "value": "512GB NVMe"
+          },
+          {
+            "name": "Screen Size",
+            "value": "6.1 inch"
+          },
+          {
+            "name": "Battery",
+            "value": "33 hours"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002131",
+    "product": "664200000000000000001131",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "CPU",
+            "value": "Octa-core 3.2GHz"
+          },
+          {
+            "name": "GPU",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "RAM",
+            "value": "8GB DDR4"
+          },
+          {
+            "name": "SSD",
+            "value": "512GB NVMe"
+          },
+          {
+            "name": "Display",
+            "value": "15.6 inch"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002132",
+    "product": "664200000000000000001132",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "OS",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Storage",
+            "value": "1024GB NVMe"
+          },
+          {
+            "name": "Screen",
+            "value": "13.3 inch"
+          },
+          {
+            "name": "Connectivity",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Weight",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002133",
+    "product": "664200000000000000001133",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Compatibility",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Sensor",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Water Resistance",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Battery Life",
+            "value": "24 hours"
+          },
+          {
+            "name": "Display Type",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002134",
+    "product": "664200000000000000001134",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Driver",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Frequency Response",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Wireless",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "ANC",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Weight",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002135",
+    "product": "664200000000000000001135",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Sensor Type",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Resolution",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "ISO Range",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Mount",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Video",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002136",
+    "product": "664200000000000000001136",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Resolution",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Refresh Rate",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Panel Type",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Brightness",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Ports",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002137",
+    "product": "664200000000000000001137",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Switch Type",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Layout",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Backlight",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Connectivity",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Programmable Keys",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002138",
+    "product": "664200000000000000001138",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "DPI",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Sensor",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Weight",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Buttons",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Shape",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002139",
+    "product": "664200000000000000001139",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Output Power",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Connectivity",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Battery",
+            "value": "30 hours"
+          },
+          {
+            "name": "Waterproofing",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Range",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002140",
+    "product": "664200000000000000001140",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Processor",
+            "value": "Octa-core 3.2GHz"
+          },
+          {
+            "name": "RAM",
+            "value": "32GB DDR4"
+          },
+          {
+            "name": "Storage",
+            "value": "1024GB NVMe"
+          },
+          {
+            "name": "Screen Size",
+            "value": "6.1 inch"
+          },
+          {
+            "name": "Battery",
+            "value": "17 hours"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002141",
+    "product": "664200000000000000001141",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "CPU",
+            "value": "Octa-core 3.2GHz"
+          },
+          {
+            "name": "GPU",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "RAM",
+            "value": "32GB DDR4"
+          },
+          {
+            "name": "SSD",
+            "value": "1024GB NVMe"
+          },
+          {
+            "name": "Display",
+            "value": "15.6 inch"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002142",
+    "product": "664200000000000000001142",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "OS",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Storage",
+            "value": "1024GB NVMe"
+          },
+          {
+            "name": "Screen",
+            "value": "13.3 inch"
+          },
+          {
+            "name": "Connectivity",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Weight",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002143",
+    "product": "664200000000000000001143",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Compatibility",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Sensor",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Water Resistance",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Battery Life",
+            "value": "49 hours"
+          },
+          {
+            "name": "Display Type",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002144",
+    "product": "664200000000000000001144",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Driver",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Frequency Response",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Wireless",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "ANC",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Weight",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002145",
+    "product": "664200000000000000001145",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Sensor Type",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Resolution",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "ISO Range",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Mount",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Video",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002146",
+    "product": "664200000000000000001146",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Resolution",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Refresh Rate",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Panel Type",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Brightness",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Ports",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002147",
+    "product": "664200000000000000001147",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Switch Type",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Layout",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Backlight",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Connectivity",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Programmable Keys",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002148",
+    "product": "664200000000000000001148",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "DPI",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Sensor",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Weight",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Buttons",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Shape",
+            "value": "Standard High-End"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "664200000000000000002149",
+    "product": "664200000000000000001149",
+    "details": [
+      {
+        "group": "General",
+        "specs": [
+          {
+            "name": "Output Power",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Connectivity",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Battery",
+            "value": "10 hours"
+          },
+          {
+            "name": "Waterproofing",
+            "value": "Standard High-End"
+          },
+          {
+            "name": "Range",
+            "value": "Standard High-End"
+          }
         ]
       }
     ]

@@ -57,7 +57,7 @@ export const ShopFilters = ({
         </Button>
       </div>
 
-      <div className="mb-5 space-y-2 border-b border-border/70 pb-5">
+      {/* <div className="mb-5 space-y-2 border-b border-border/70 pb-5">
         <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Category
         </h3>
@@ -67,14 +67,16 @@ export const ShopFilters = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Categories</SelectItem>
-            {categories.map((category) => (
-              <SelectItem key={category.id} value={category.id}>
-                {category.name}
-              </SelectItem>
-            ))}
+            {categories
+              .filter((cat) => cat.id)
+              .map((category) => (
+                <SelectItem key={category.id} value={category.id}>
+                  {category.name}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
-      </div>
+      </div> */}
 
       <div className="mb-5 space-y-2 border-b border-border/70 pb-5">
         <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -86,11 +88,13 @@ export const ShopFilters = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Brands</SelectItem>
-            {brands.map((brand) => (
-              <SelectItem key={brand} value={brand}>
-                {brand}
-              </SelectItem>
-            ))}
+            {brands
+              .filter((brand) => brand)
+              .map((brand) => (
+                <SelectItem key={brand} value={brand}>
+                  {brand}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
       </div>

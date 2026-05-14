@@ -65,13 +65,13 @@ const Index = () => {
       })
       .catch(() => setLoadingNewArrivals(false));
 
-    setLoadingCategories(true);
-    fetchCategories()
-      .then((cats) => {
-        setCategories(cats);
-        setLoadingCategories(false);
-      })
-      .catch(() => setLoadingCategories(false));
+    // setLoadingCategories(true);
+    // fetchCategories()
+    //   .then((cats) => {
+    //     setCategories(cats);
+    //     setLoadingCategories(false);
+    //   })
+    //   .catch(() => setLoadingCategories(false));
   }, [user?.role]);
 
   useEffect(() => {
@@ -219,8 +219,59 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Categories */}
+      {/* Brands */}
       <section className="py-16 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-display font-bold text-foreground">
+              Shop by Brand
+            </h2>
+            <Link
+              to="/shop"
+              className="text-sm text-primary hover:underline flex items-center gap-1"
+            >
+              View All <ChevronRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {loadingFeatured || loadingNewArrivals
+              ? Array.from({ length: 5 }).map((_, idx) => (
+                  <div
+                    key={idx}
+                    className="relative rounded-xl overflow-hidden aspect-[3/2] bg-muted animate-pulse"
+                  />
+                ))
+              : Array.from(
+                  new Set(
+                    [...featured, ...newArrivals]
+                      .map((p) => p.brand)
+                      .filter(Boolean)
+                  )
+                )
+                  .slice(0, 10)
+                  .map((brand) => (
+                    <Link
+                      key={brand}
+                      to={`/shop?brand=${brand}`}
+                      className="group relative rounded-xl overflow-hidden aspect-[3/2] border border-border bg-card hover:border-primary/50 transition-all shadow-sm hover:shadow-md"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 group-hover:from-primary/10 group-hover:to-accent/10 transition-colors" />
+                      <div className="absolute inset-0 flex items-center justify-center p-4">
+                        <h3 className="font-display text-lg font-bold text-foreground group-hover:text-primary transition-colors text-center">
+                          {brand}
+                        </h3>
+                      </div>
+                      <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <ArrowRight className="h-4 w-4 text-primary" />
+                      </div>
+                    </Link>
+                  ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Categories - Commented out for electronics-only focus */}
+      {/* <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-display font-bold text-foreground">
@@ -276,7 +327,7 @@ const Index = () => {
                 ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Featured Products */}
       <section className="py-16 bg-card">

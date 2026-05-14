@@ -62,7 +62,7 @@ export const ProductFormGeneralTab = ({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormField
+        {/* <FormField
           control={control}
           name="category"
           render={({ field }) => (
@@ -75,17 +75,19 @@ export const ProductFormGeneralTab = ({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {categories?.map((c) => (
-                    <SelectItem key={c.id} value={c._id || c.id}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
+                  {categories
+                    ?.filter((c) => c._id || c.id)
+                    .map((c) => (
+                      <SelectItem key={c.id} value={c._id || c.id}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
         <FormField
           control={control}
           name="status"

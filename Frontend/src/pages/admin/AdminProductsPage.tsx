@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useDeferredValue, useEffect } from "react";
 import { fetchProducts, Product, fetchCategories } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -6,10 +6,10 @@ import {
   ProductSearchBar,
   ProductTable,
   ProductFormDialog,
-  useProductFilters,
   useProductMutations,
 } from "@/components/admin/products";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { ShopPagination } from "@/components/shop/ShopPagination";
 
 const AdminProductsPage = () => {
   usePageTitle("Admin - Products");
@@ -17,14 +17,38 @@ const AdminProductsPage = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedBrand, setSelectedBrand] = useState("all");
+  const [search, setSearch] = useState("");
+  const deferredSearch = useDeferredValue(search);
+  const [sortBy, setSortBy] = useState("newest");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   const { data: productsData, isLoading: productsLoading } = useQuery({
-    queryKey: ["adminProducts", selectedCategory, selectedBrand],
-    queryFn: () => fetchProducts({ 
-      limit: 100,
-      ...(selectedCategory !== "all" && { category: selectedCategory }),
-      ...(selectedBrand !== "all" && { brand: selectedBrand }),
-    }),
+    queryKey: [
+      "adminProducts",
+      selectedCategory,
+      selectedBrand,
+      deferredSearch,
+      sortBy,
+      currentPage,
+    ],
+    queryFn: () => {
+      const backendParams: Record<string, string | number | boolean> = {
+        page: currentPage,
+        limit: pageSize,
+        ...(selectedCategory !== "all" && { category: selectedCategory }),
+        ...(selectedBrand !== "all" && { brand: selectedBrand }),
+        ...(deferredSearch && { search: deferredSearch }),
+      };
+
+      if (sortBy === "name-asc") backendParams.sort = "name";
+      else if (sortBy === "name-desc") backendParams.sort = "-name";
+      else if (sortBy === "price-low") backendParams.sort = "price";
+      else if (sortBy === "price-high") backendParams.sort = "-price";
+      else if (sortBy === "newest") backendParams.sort = "-createdAt";
+
+      return fetchProducts(backendParams);
+    },
   });
 
   const { data: categories = [] } = useQuery({
@@ -32,19 +56,21 @@ const AdminProductsPage = () => {
     queryFn: fetchCategories,
   });
 
-  // Extract unique brands from products
+  // Extract unique brands from products - Note: this will only show brands from current page
+  // In a real app, you might want a separate brands endpoint
   const brands = Array.from(
     new Set(productsData?.products?.map((p) => p.brand).filter(Boolean) || [])
   ).sort();
-
-  const { search, setSearch, filteredProducts } = useProductFilters(
-    productsData?.products
-  );
 
   const { deleteMutation } = useProductMutations(editingProduct, () => {
     setDialogOpen(false);
     setEditingProduct(null);
   });
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, selectedBrand, deferredSearch]);
 
   const handleAddProduct = () => {
     setEditingProduct(null);
@@ -65,6 +91,11 @@ const AdminProductsPage = () => {
     setEditingProduct(null);
   };
 
+  const totalPages = Math.max(
+    1,
+    Math.ceil((productsData?.total || 0) / pageSize)
+  );
+
   return (
     <div className="space-y-6">
       <ProductPageHeader
@@ -76,16 +107,28 @@ const AdminProductsPage = () => {
         selectedBrand={selectedBrand}
         onCategoryChange={setSelectedCategory}
         onBrandChange={setSelectedBrand}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
       />
 
       <ProductSearchBar value={search} onChange={setSearch} />
 
       <ProductTable
-        products={filteredProducts}
+        products={productsData?.products || []}
         isLoading={productsLoading}
         onEdit={handleEditProduct}
         onDelete={handleDeleteProduct}
       />
+
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-8">
+          <ShopPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </div>
+      )}
 
       <ProductFormDialog
         open={dialogOpen}

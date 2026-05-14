@@ -1,74 +1,952 @@
 [
   {
-    "_id": "664200000000000000000101",
-    "name": "Wireless Noise Cancelling Headphones",
-    "description": "Premium wireless headphones with active noise cancellation and 30-hour battery life.",
-    "price": 299.99,
+    "_id": "664200000000000000001100",
+    "name": "Apple Smartphone 363",
+    "description": "The latest Apple Smartphone 363 offering top-tier performance and features in the Smartphone category. Ideal for professionals and enthusiasts alike.",
+    "price": 781.93,
     "category": "664200000000000000000001",
-    "stock": 50,
+    "stock": 95,
+    "sold": 268,
+    "status": "active",
+    "imageCover": "product-electronic-1.jpg",
+    "images": [
+      "product-electronic-1-1.jpg",
+      "product-electronic-1-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 3.6,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002100"
+  },
+  {
+    "_id": "664200000000000000001101",
+    "name": "Lenovo Laptop 909",
+    "description": "The latest Lenovo Laptop 909 offering top-tier performance and features in the Laptop category. Ideal for professionals and enthusiasts alike.",
+    "price": 1578.64,
+    "category": "664200000000000000000001",
+    "stock": 63,
+    "sold": 263,
+    "status": "active",
+    "imageCover": "product-electronic-2.jpg",
+    "images": [
+      "product-electronic-2-1.jpg",
+      "product-electronic-2-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 3.8,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002101"
+  },
+  {
+    "_id": "664200000000000000001102",
+    "name": "Microsoft Tablet 502",
+    "description": "The latest Microsoft Tablet 502 offering top-tier performance and features in the Tablet category. Ideal for professionals and enthusiasts alike.",
+    "price": 1770.55,
+    "category": "664200000000000000000001",
+    "stock": 6,
+    "sold": 111,
+    "status": "active",
+    "imageCover": "product-electronic-3.jpg",
+    "images": [
+      "product-electronic-3-1.jpg",
+      "product-electronic-3-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 4,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002102"
+  },
+  {
+    "_id": "664200000000000000001103",
+    "name": "Fitbit Smartwatch 591",
+    "description": "The latest Fitbit Smartwatch 591 offering top-tier performance and features in the Smartwatch category. Ideal for professionals and enthusiasts alike.",
+    "price": 1264.41,
+    "category": "664200000000000000000001",
+    "stock": 66,
+    "sold": 495,
+    "status": "active",
+    "imageCover": "product-electronic-4.jpg",
+    "images": [
+      "product-electronic-4-1.jpg",
+      "product-electronic-4-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4.6,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002103"
+  },
+  {
+    "_id": "664200000000000000001104",
+    "name": "Sennheiser Headphones 356",
+    "description": "The latest Sennheiser Headphones 356 offering top-tier performance and features in the Headphones category. Ideal for professionals and enthusiasts alike.",
+    "price": 1894.49,
+    "category": "664200000000000000000001",
+    "stock": 33,
+    "sold": 141,
+    "status": "active",
+    "imageCover": "product-electronic-5.jpg",
+    "images": [
+      "product-electronic-5-1.jpg",
+      "product-electronic-5-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 3.9,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002104"
+  },
+  {
+    "_id": "664200000000000000001105",
+    "name": "Canon Camera 890",
+    "description": "The latest Canon Camera 890 offering top-tier performance and features in the Camera category. Ideal for professionals and enthusiasts alike.",
+    "price": 127.35,
+    "category": "664200000000000000000001",
+    "stock": 61,
+    "sold": 299,
+    "status": "active",
+    "imageCover": "product-electronic-6.jpg",
+    "images": [
+      "product-electronic-6-1.jpg",
+      "product-electronic-6-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4.6,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002105"
+  },
+  {
+    "_id": "664200000000000000001106",
+    "name": "Acer Monitor 876",
+    "description": "The latest Acer Monitor 876 offering top-tier performance and features in the Monitor category. Ideal for professionals and enthusiasts alike.",
+    "price": 1044.17,
+    "category": "664200000000000000000001",
+    "stock": 82,
+    "sold": 183,
+    "status": "active",
+    "imageCover": "product-electronic-7.jpg",
+    "images": [
+      "product-electronic-7-1.jpg",
+      "product-electronic-7-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 5,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002106"
+  },
+  {
+    "_id": "664200000000000000001107",
+    "name": "Keychron Keyboard 972",
+    "description": "The latest Keychron Keyboard 972 offering top-tier performance and features in the Keyboard category. Ideal for professionals and enthusiasts alike.",
+    "price": 826.37,
+    "category": "664200000000000000000001",
+    "stock": 86,
+    "sold": 261,
+    "status": "active",
+    "imageCover": "product-electronic-8.jpg",
+    "images": [
+      "product-electronic-8-1.jpg",
+      "product-electronic-8-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4.1,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002107"
+  },
+  {
+    "_id": "664200000000000000001108",
+    "name": "SteelSeries Mouse 666",
+    "description": "The latest SteelSeries Mouse 666 offering top-tier performance and features in the Mouse category. Ideal for professionals and enthusiasts alike.",
+    "price": 1386.51,
+    "category": "664200000000000000000001",
+    "stock": 12,
+    "sold": 413,
+    "status": "active",
+    "imageCover": "product-electronic-9.jpg",
+    "images": [
+      "product-electronic-9-1.jpg",
+      "product-electronic-9-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 3.6,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002108"
+  },
+  {
+    "_id": "664200000000000000001109",
+    "name": "JBL Speaker 212",
+    "description": "The latest JBL Speaker 212 offering top-tier performance and features in the Speaker category. Ideal for professionals and enthusiasts alike.",
+    "price": 1137.63,
+    "category": "664200000000000000000001",
+    "stock": 21,
+    "sold": 177,
+    "status": "active",
+    "imageCover": "product-electronic-10.jpg",
+    "images": [
+      "product-electronic-10-1.jpg",
+      "product-electronic-10-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4.9,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002109"
+  },
+  {
+    "_id": "664200000000000000001110",
+    "name": "Xiaomi Smartphone 703",
+    "description": "The latest Xiaomi Smartphone 703 offering top-tier performance and features in the Smartphone category. Ideal for professionals and enthusiasts alike.",
+    "price": 836.27,
+    "category": "664200000000000000000001",
+    "stock": 96,
+    "sold": 473,
+    "status": "active",
+    "imageCover": "product-electronic-11.jpg",
+    "images": [
+      "product-electronic-11-1.jpg",
+      "product-electronic-11-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 4.7,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002110"
+  },
+  {
+    "_id": "664200000000000000001111",
+    "name": "HP Laptop 736",
+    "description": "The latest HP Laptop 736 offering top-tier performance and features in the Laptop category. Ideal for professionals and enthusiasts alike.",
+    "price": 1239.63,
+    "category": "664200000000000000000001",
+    "stock": 85,
+    "sold": 252,
+    "status": "active",
+    "imageCover": "product-electronic-12.jpg",
+    "images": [
+      "product-electronic-12-1.jpg",
+      "product-electronic-12-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 3.8,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002111"
+  },
+  {
+    "_id": "664200000000000000001112",
+    "name": "Amazon Tablet 457",
+    "description": "The latest Amazon Tablet 457 offering top-tier performance and features in the Tablet category. Ideal for professionals and enthusiasts alike.",
+    "price": 924.09,
+    "category": "664200000000000000000001",
+    "stock": 58,
+    "sold": 364,
+    "status": "active",
+    "imageCover": "product-electronic-13.jpg",
+    "images": [
+      "product-electronic-13-1.jpg",
+      "product-electronic-13-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 4.7,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002112"
+  },
+  {
+    "_id": "664200000000000000001113",
+    "name": "Fitbit Smartwatch 253",
+    "description": "The latest Fitbit Smartwatch 253 offering top-tier performance and features in the Smartwatch category. Ideal for professionals and enthusiasts alike.",
+    "price": 788.22,
+    "category": "664200000000000000000001",
+    "stock": 57,
+    "sold": 72,
+    "status": "active",
+    "imageCover": "product-electronic-14.jpg",
+    "images": [
+      "product-electronic-14-1.jpg",
+      "product-electronic-14-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 3.8,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002113"
+  },
+  {
+    "_id": "664200000000000000001114",
+    "name": "JBL Headphones 574",
+    "description": "The latest JBL Headphones 574 offering top-tier performance and features in the Headphones category. Ideal for professionals and enthusiasts alike.",
+    "price": 292.56,
+    "category": "664200000000000000000001",
+    "stock": 54,
+    "sold": 234,
+    "status": "active",
+    "imageCover": "product-electronic-15.jpg",
+    "images": [
+      "product-electronic-15-1.jpg",
+      "product-electronic-15-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002114"
+  },
+  {
+    "_id": "664200000000000000001115",
+    "name": "Nikon Camera 243",
+    "description": "The latest Nikon Camera 243 offering top-tier performance and features in the Camera category. Ideal for professionals and enthusiasts alike.",
+    "price": 606.42,
+    "category": "664200000000000000000001",
+    "stock": 21,
+    "sold": 76,
+    "status": "active",
+    "imageCover": "product-electronic-16.jpg",
+    "images": [
+      "product-electronic-16-1.jpg",
+      "product-electronic-16-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 4.6,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002115"
+  },
+  {
+    "_id": "664200000000000000001116",
+    "name": "Acer Monitor 344",
+    "description": "The latest Acer Monitor 344 offering top-tier performance and features in the Monitor category. Ideal for professionals and enthusiasts alike.",
+    "price": 609.79,
+    "category": "664200000000000000000001",
+    "stock": 92,
+    "sold": 172,
+    "status": "active",
+    "imageCover": "product-electronic-17.jpg",
+    "images": [
+      "product-electronic-17-1.jpg",
+      "product-electronic-17-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 4.7,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002116"
+  },
+  {
+    "_id": "664200000000000000001117",
+    "name": "Logitech Keyboard 412",
+    "description": "The latest Logitech Keyboard 412 offering top-tier performance and features in the Keyboard category. Ideal for professionals and enthusiasts alike.",
+    "price": 776.99,
+    "category": "664200000000000000000001",
+    "stock": 29,
+    "sold": 244,
+    "status": "active",
+    "imageCover": "product-electronic-18.jpg",
+    "images": [
+      "product-electronic-18-1.jpg",
+      "product-electronic-18-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4.8,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002117"
+  },
+  {
+    "_id": "664200000000000000001118",
+    "name": "Glorious Mouse 733",
+    "description": "The latest Glorious Mouse 733 offering top-tier performance and features in the Mouse category. Ideal for professionals and enthusiasts alike.",
+    "price": 1063.1,
+    "category": "664200000000000000000001",
+    "stock": 20,
+    "sold": 421,
+    "status": "active",
+    "imageCover": "product-electronic-19.jpg",
+    "images": [
+      "product-electronic-19-1.jpg",
+      "product-electronic-19-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4.5,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002118"
+  },
+  {
+    "_id": "664200000000000000001119",
+    "name": "Sony Speaker 737",
+    "description": "The latest Sony Speaker 737 offering top-tier performance and features in the Speaker category. Ideal for professionals and enthusiasts alike.",
+    "price": 812.67,
+    "category": "664200000000000000000001",
+    "stock": 12,
+    "sold": 358,
+    "status": "active",
+    "imageCover": "product-electronic-20.jpg",
+    "images": [
+      "product-electronic-20-1.jpg",
+      "product-electronic-20-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 3.9,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002119"
+  },
+  {
+    "_id": "664200000000000000001120",
+    "name": "Xiaomi Smartphone 632",
+    "description": "The latest Xiaomi Smartphone 632 offering top-tier performance and features in the Smartphone category. Ideal for professionals and enthusiasts alike.",
+    "price": 1135.19,
+    "category": "664200000000000000000001",
+    "stock": 85,
+    "sold": 279,
+    "status": "active",
+    "imageCover": "product-electronic-21.jpg",
+    "images": [
+      "product-electronic-21-1.jpg",
+      "product-electronic-21-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 4,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002120"
+  },
+  {
+    "_id": "664200000000000000001121",
+    "name": "Asus Laptop 934",
+    "description": "The latest Asus Laptop 934 offering top-tier performance and features in the Laptop category. Ideal for professionals and enthusiasts alike.",
+    "price": 1336.49,
+    "category": "664200000000000000000001",
+    "stock": 82,
+    "sold": 481,
+    "status": "active",
+    "imageCover": "product-electronic-22.jpg",
+    "images": [
+      "product-electronic-22-1.jpg",
+      "product-electronic-22-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 3.9,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002121"
+  },
+  {
+    "_id": "664200000000000000001122",
+    "name": "Lenovo Tablet 693",
+    "description": "The latest Lenovo Tablet 693 offering top-tier performance and features in the Tablet category. Ideal for professionals and enthusiasts alike.",
+    "price": 407.08,
+    "category": "664200000000000000000001",
+    "stock": 87,
+    "sold": 227,
+    "status": "active",
+    "imageCover": "product-electronic-23.jpg",
+    "images": [
+      "product-electronic-23-1.jpg",
+      "product-electronic-23-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 3.7,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002122"
+  },
+  {
+    "_id": "664200000000000000001123",
+    "name": "Samsung Smartwatch 609",
+    "description": "The latest Samsung Smartwatch 609 offering top-tier performance and features in the Smartwatch category. Ideal for professionals and enthusiasts alike.",
+    "price": 1644.49,
+    "category": "664200000000000000000001",
+    "stock": 96,
+    "sold": 287,
+    "status": "active",
+    "imageCover": "product-electronic-24.jpg",
+    "images": [
+      "product-electronic-24-1.jpg",
+      "product-electronic-24-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 4.6,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002123"
+  },
+  {
+    "_id": "664200000000000000001124",
+    "name": "Audio-Technica Headphones 497",
+    "description": "The latest Audio-Technica Headphones 497 offering top-tier performance and features in the Headphones category. Ideal for professionals and enthusiasts alike.",
+    "price": 1310.56,
+    "category": "664200000000000000000001",
+    "stock": 26,
+    "sold": 275,
+    "status": "active",
+    "imageCover": "product-electronic-25.jpg",
+    "images": [
+      "product-electronic-25-1.jpg",
+      "product-electronic-25-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4.8,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002124"
+  },
+  {
+    "_id": "664200000000000000001125",
+    "name": "Nikon Camera 179",
+    "description": "The latest Nikon Camera 179 offering top-tier performance and features in the Camera category. Ideal for professionals and enthusiasts alike.",
+    "price": 712.17,
+    "category": "664200000000000000000001",
+    "stock": 55,
+    "sold": 397,
+    "status": "active",
+    "imageCover": "product-electronic-26.jpg",
+    "images": [
+      "product-electronic-26-1.jpg",
+      "product-electronic-26-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 4.8,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002125"
+  },
+  {
+    "_id": "664200000000000000001126",
+    "name": "Dell Monitor 359",
+    "description": "The latest Dell Monitor 359 offering top-tier performance and features in the Monitor category. Ideal for professionals and enthusiasts alike.",
+    "price": 484.49,
+    "category": "664200000000000000000001",
+    "stock": 53,
+    "sold": 259,
+    "status": "active",
+    "imageCover": "product-electronic-27.jpg",
+    "images": [
+      "product-electronic-27-1.jpg",
+      "product-electronic-27-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4.8,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002126"
+  },
+  {
+    "_id": "664200000000000000001127",
+    "name": "Razer Keyboard 878",
+    "description": "The latest Razer Keyboard 878 offering top-tier performance and features in the Keyboard category. Ideal for professionals and enthusiasts alike.",
+    "price": 819.39,
+    "category": "664200000000000000000001",
+    "stock": 28,
+    "sold": 224,
+    "status": "active",
+    "imageCover": "product-electronic-28.jpg",
+    "images": [
+      "product-electronic-28-1.jpg",
+      "product-electronic-28-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 3.7,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002127"
+  },
+  {
+    "_id": "664200000000000000001128",
+    "name": "Zowie Mouse 826",
+    "description": "The latest Zowie Mouse 826 offering top-tier performance and features in the Mouse category. Ideal for professionals and enthusiasts alike.",
+    "price": 181.25,
+    "category": "664200000000000000000001",
+    "stock": 49,
+    "sold": 405,
+    "status": "active",
+    "imageCover": "product-electronic-29.jpg",
+    "images": [
+      "product-electronic-29-1.jpg",
+      "product-electronic-29-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4.9,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002128"
+  },
+  {
+    "_id": "664200000000000000001129",
+    "name": "JBL Speaker 828",
+    "description": "The latest JBL Speaker 828 offering top-tier performance and features in the Speaker category. Ideal for professionals and enthusiasts alike.",
+    "price": 730.06,
+    "category": "664200000000000000000001",
+    "stock": 92,
+    "sold": 153,
+    "status": "active",
+    "imageCover": "product-electronic-30.jpg",
+    "images": [
+      "product-electronic-30-1.jpg",
+      "product-electronic-30-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4.7,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002129"
+  },
+  {
+    "_id": "664200000000000000001130",
+    "name": "Apple Smartphone 639",
+    "description": "The latest Apple Smartphone 639 offering top-tier performance and features in the Smartphone category. Ideal for professionals and enthusiasts alike.",
+    "price": 176.91,
+    "category": "664200000000000000000001",
+    "stock": 91,
+    "sold": 400,
+    "status": "active",
+    "imageCover": "product-electronic-31.jpg",
+    "images": [
+      "product-electronic-31-1.jpg",
+      "product-electronic-31-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 3.5,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002130"
+  },
+  {
+    "_id": "664200000000000000001131",
+    "name": "Apple Laptop 194",
+    "description": "The latest Apple Laptop 194 offering top-tier performance and features in the Laptop category. Ideal for professionals and enthusiasts alike.",
+    "price": 193.85,
+    "category": "664200000000000000000001",
+    "stock": 27,
+    "sold": 109,
+    "status": "active",
+    "imageCover": "product-electronic-32.jpg",
+    "images": [
+      "product-electronic-32-1.jpg",
+      "product-electronic-32-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 3.9,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002131"
+  },
+  {
+    "_id": "664200000000000000001132",
+    "name": "Microsoft Tablet 524",
+    "description": "The latest Microsoft Tablet 524 offering top-tier performance and features in the Tablet category. Ideal for professionals and enthusiasts alike.",
+    "price": 1882.38,
+    "category": "664200000000000000000001",
+    "stock": 34,
+    "sold": 333,
+    "status": "active",
+    "imageCover": "product-electronic-33.jpg",
+    "images": [
+      "product-electronic-33-1.jpg",
+      "product-electronic-33-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 4.9,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002132"
+  },
+  {
+    "_id": "664200000000000000001133",
+    "name": "Samsung Smartwatch 835",
+    "description": "The latest Samsung Smartwatch 835 offering top-tier performance and features in the Smartwatch category. Ideal for professionals and enthusiasts alike.",
+    "price": 1613.02,
+    "category": "664200000000000000000001",
+    "stock": 88,
+    "sold": 125,
+    "status": "active",
+    "imageCover": "product-electronic-34.jpg",
+    "images": [
+      "product-electronic-34-1.jpg",
+      "product-electronic-34-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 4.3,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002133"
+  },
+  {
+    "_id": "664200000000000000001134",
+    "name": "Sony Headphones 254",
+    "description": "The latest Sony Headphones 254 offering top-tier performance and features in the Headphones category. Ideal for professionals and enthusiasts alike.",
+    "price": 1495.61,
+    "category": "664200000000000000000001",
+    "stock": 31,
+    "sold": 332,
+    "status": "active",
+    "imageCover": "product-electronic-35.jpg",
+    "images": [
+      "product-electronic-35-1.jpg",
+      "product-electronic-35-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 3.8,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002134"
+  },
+  {
+    "_id": "664200000000000000001135",
+    "name": "Panasonic Camera 256",
+    "description": "The latest Panasonic Camera 256 offering top-tier performance and features in the Camera category. Ideal for professionals and enthusiasts alike.",
+    "price": 555.39,
+    "category": "664200000000000000000001",
+    "stock": 99,
+    "sold": 63,
+    "status": "active",
+    "imageCover": "product-electronic-36.jpg",
+    "images": [
+      "product-electronic-36-1.jpg",
+      "product-electronic-36-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4.2,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002135"
+  },
+  {
+    "_id": "664200000000000000001136",
+    "name": "LG Monitor 973",
+    "description": "The latest LG Monitor 973 offering top-tier performance and features in the Monitor category. Ideal for professionals and enthusiasts alike.",
+    "price": 914.77,
+    "category": "664200000000000000000001",
+    "stock": 35,
+    "sold": 59,
+    "status": "active",
+    "imageCover": "product-electronic-37.jpg",
+    "images": [
+      "product-electronic-37-1.jpg",
+      "product-electronic-37-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002136"
+  },
+  {
+    "_id": "664200000000000000001137",
+    "name": "Razer Keyboard 858",
+    "description": "The latest Razer Keyboard 858 offering top-tier performance and features in the Keyboard category. Ideal for professionals and enthusiasts alike.",
+    "price": 313.7,
+    "category": "664200000000000000000001",
+    "stock": 71,
+    "sold": 55,
+    "status": "active",
+    "imageCover": "product-electronic-38.jpg",
+    "images": [
+      "product-electronic-38-1.jpg",
+      "product-electronic-38-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4.6,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002137"
+  },
+  {
+    "_id": "664200000000000000001138",
+    "name": "Zowie Mouse 169",
+    "description": "The latest Zowie Mouse 169 offering top-tier performance and features in the Mouse category. Ideal for professionals and enthusiasts alike.",
+    "price": 248.94,
+    "category": "664200000000000000000001",
+    "stock": 43,
+    "sold": 370,
+    "status": "active",
+    "imageCover": "product-electronic-39.jpg",
+    "images": [
+      "product-electronic-39-1.jpg",
+      "product-electronic-39-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4.7,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002138"
+  },
+  {
+    "_id": "664200000000000000001139",
+    "name": "JBL Speaker 272",
+    "description": "The latest JBL Speaker 272 offering top-tier performance and features in the Speaker category. Ideal for professionals and enthusiasts alike.",
+    "price": 1292,
+    "category": "664200000000000000000001",
+    "stock": 58,
     "sold": 150,
     "status": "active",
-    "imageCover": "product-headphone-cover.jpg",
-    "images": ["product-headphone-1.jpg", "product-headphone-2.jpg"],
+    "imageCover": "product-electronic-40.jpg",
+    "images": [
+      "product-electronic-40-1.jpg",
+      "product-electronic-40-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4.8,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002139"
+  },
+  {
+    "_id": "664200000000000000001140",
+    "name": "Samsung Smartphone 737",
+    "description": "The latest Samsung Smartphone 737 offering top-tier performance and features in the Smartphone category. Ideal for professionals and enthusiasts alike.",
+    "price": 1567.92,
+    "category": "664200000000000000000001",
+    "stock": 13,
+    "sold": 333,
+    "status": "active",
+    "imageCover": "product-electronic-41.jpg",
+    "images": [
+      "product-electronic-41-1.jpg",
+      "product-electronic-41-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002140"
+  },
+  {
+    "_id": "664200000000000000001141",
+    "name": "Apple Laptop 283",
+    "description": "The latest Apple Laptop 283 offering top-tier performance and features in the Laptop category. Ideal for professionals and enthusiasts alike.",
+    "price": 1940.69,
+    "category": "664200000000000000000001",
+    "stock": 54,
+    "sold": 284,
+    "status": "active",
+    "imageCover": "product-electronic-42.jpg",
+    "images": [
+      "product-electronic-42-1.jpg",
+      "product-electronic-42-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 3.9,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002141"
+  },
+  {
+    "_id": "664200000000000000001142",
+    "name": "Lenovo Tablet 364",
+    "description": "The latest Lenovo Tablet 364 offering top-tier performance and features in the Tablet category. Ideal for professionals and enthusiasts alike.",
+    "price": 1324.01,
+    "category": "664200000000000000000001",
+    "stock": 41,
+    "sold": 28,
+    "status": "active",
+    "imageCover": "product-electronic-43.jpg",
+    "images": [
+      "product-electronic-43-1.jpg",
+      "product-electronic-43-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 3.7,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002142"
+  },
+  {
+    "_id": "664200000000000000001143",
+    "name": "Apple Smartwatch 576",
+    "description": "The latest Apple Smartwatch 576 offering top-tier performance and features in the Smartwatch category. Ideal for professionals and enthusiasts alike.",
+    "price": 1567.3,
+    "category": "664200000000000000000001",
+    "stock": 84,
+    "sold": 478,
+    "status": "active",
+    "imageCover": "product-electronic-44.jpg",
+    "images": [
+      "product-electronic-44-1.jpg",
+      "product-electronic-44-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4.1,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002143"
+  },
+  {
+    "_id": "664200000000000000001144",
+    "name": "Bose Headphones 392",
+    "description": "The latest Bose Headphones 392 offering top-tier performance and features in the Headphones category. Ideal for professionals and enthusiasts alike.",
+    "price": 1316.38,
+    "category": "664200000000000000000001",
+    "stock": 69,
+    "sold": 227,
+    "status": "active",
+    "imageCover": "product-electronic-45.jpg",
+    "images": [
+      "product-electronic-45-1.jpg",
+      "product-electronic-45-2.jpg"
+    ],
     "isFeatured": true,
     "ratingsAverage": 4.5,
-    "ratingsQuantity": 2,
-    "specification": "664200000000000000000201"
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002144"
   },
   {
-    "_id": "664200000000000000000102",
-    "name": "Smart Fitness Watch",
-    "description": "Advanced fitness tracker with heart rate monitor, GPS, and water resistance up to 50m.",
-    "price": 199.50,
-    "discountPrice": 149.99,
-    "category": "664200000000000000000004",
-    "stock": 200,
-    "sold": 45,
+    "_id": "664200000000000000001145",
+    "name": "Panasonic Camera 501",
+    "description": "The latest Panasonic Camera 501 offering top-tier performance and features in the Camera category. Ideal for professionals and enthusiasts alike.",
+    "price": 1047.57,
+    "category": "664200000000000000000001",
+    "stock": 82,
+    "sold": 250,
     "status": "active",
-    "imageCover": "product-watch-cover.jpg",
+    "imageCover": "product-electronic-46.jpg",
+    "images": [
+      "product-electronic-46-1.jpg",
+      "product-electronic-46-2.jpg"
+    ],
     "isFeatured": true,
-    "ratingsAverage": 4.0,
-    "ratingsQuantity": 1,
-    "specification": "664200000000000000000202"
+    "ratingsAverage": 3.8,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002145"
   },
   {
-    "_id": "664200000000000000000103",
-    "name": "Men's Classic Leather Jacket",
-    "description": "Genuine leather jacket with a timeless design. Perfect for casual or semi-formal wear.",
-    "price": 150.00,
-    "category": "664200000000000000000002",
-    "stock": 30,
+    "_id": "664200000000000000001146",
+    "name": "BenQ Monitor 763",
+    "description": "The latest BenQ Monitor 763 offering top-tier performance and features in the Monitor category. Ideal for professionals and enthusiasts alike.",
+    "price": 500.12,
+    "category": "664200000000000000000001",
+    "stock": 49,
+    "sold": 357,
+    "status": "active",
+    "imageCover": "product-electronic-47.jpg",
+    "images": [
+      "product-electronic-47-1.jpg",
+      "product-electronic-47-2.jpg"
+    ],
+    "isFeatured": true,
+    "ratingsAverage": 4.6,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002146"
+  },
+  {
+    "_id": "664200000000000000001147",
+    "name": "SteelSeries Keyboard 925",
+    "description": "The latest SteelSeries Keyboard 925 offering top-tier performance and features in the Keyboard category. Ideal for professionals and enthusiasts alike.",
+    "price": 1894.82,
+    "category": "664200000000000000000001",
+    "stock": 8,
+    "sold": 124,
+    "status": "active",
+    "imageCover": "product-electronic-48.jpg",
+    "images": [
+      "product-electronic-48-1.jpg",
+      "product-electronic-48-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4.4,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002147"
+  },
+  {
+    "_id": "664200000000000000001148",
+    "name": "Glorious Mouse 311",
+    "description": "The latest Glorious Mouse 311 offering top-tier performance and features in the Mouse category. Ideal for professionals and enthusiasts alike.",
+    "price": 1437.07,
+    "category": "664200000000000000000001",
+    "stock": 18,
     "sold": 12,
     "status": "active",
-    "imageCover": "product-jacket-cover.jpg",
-    "ratingsAverage": 5.0,
-    "ratingsQuantity": 1,
-    "specification": "664200000000000000000203"
-  },
-  {
-    "_id": "664200000000000000000104",
-    "name": "Minimalist Wooden Desk",
-    "description": "Sleek and modern wooden desk for your home office. Easy to assemble.",
-    "price": 350.00,
-    "category": "664200000000000000000003",
-    "stock": 15,
-    "sold": 8,
-    "status": "active",
-    "imageCover": "product-desk-cover.jpg",
+    "imageCover": "product-electronic-49.jpg",
+    "images": [
+      "product-electronic-49-1.jpg",
+      "product-electronic-49-2.jpg"
+    ],
     "isFeatured": false,
-    "specification": "664200000000000000000204"
+    "ratingsAverage": 5,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002148"
   },
   {
-    "_id": "664200000000000000000105",
-    "name": "The Great Gatsby - Hardcover",
-    "description": "Classic novel by F. Scott Fitzgerald. A must-read for any literature enthusiast.",
-    "price": 25.00,
-    "category": "664200000000000000000005",
-    "stock": 100,
-    "sold": 300,
+    "_id": "664200000000000000001149",
+    "name": "JBL Speaker 365",
+    "description": "The latest JBL Speaker 365 offering top-tier performance and features in the Speaker category. Ideal for professionals and enthusiasts alike.",
+    "price": 1318.62,
+    "category": "664200000000000000000001",
+    "stock": 84,
+    "sold": 305,
     "status": "active",
-    "imageCover": "product-book-cover.jpg",
-    "isFeatured": true,
-    "specification": "664200000000000000000205"
+    "imageCover": "product-electronic-50.jpg",
+    "images": [
+      "product-electronic-50-1.jpg",
+      "product-electronic-50-2.jpg"
+    ],
+    "isFeatured": false,
+    "ratingsAverage": 4.2,
+    "ratingsQuantity": 5,
+    "specification": "664200000000000000002149"
   }
 ]
