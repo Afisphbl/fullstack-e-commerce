@@ -1,4 +1,4 @@
-export default (uptimeStr) => `<!doctype html>
+module.exports = (uptimeStr) => `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
