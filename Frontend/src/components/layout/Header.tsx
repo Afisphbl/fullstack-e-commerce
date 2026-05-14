@@ -45,7 +45,16 @@ export const Header = () => {
             to="/"
             className="font-display text-xl font-bold text-gradient flex-shrink-0"
           >
-            {settings.companyName.toUpperCase()}
+            <span className="hidden sm:inline">
+              {settings.companyName.toUpperCase()}
+            </span>
+            <span className="sm:hidden">
+              {settings.companyName
+                .split(/\s+/)
+                .map((word, i) => (i < 2 ? word[0] : ""))
+                .join("")
+                .toUpperCase()}
+            </span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">

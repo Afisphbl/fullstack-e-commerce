@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from "react";
+import { useState, Suspense } from "react";
 import {
   Link,
   NavLink,
@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { apiFetch, removeAuthToken } from "@/lib/api-client";
 import { getUnreadMessagesCount } from "@/lib/api";
@@ -18,7 +19,6 @@ import {
   Package,
   ShoppingCart,
   Users,
-  Tag,
   Settings,
   BarChart3,
   Monitor,
@@ -60,6 +60,7 @@ const pageTitles: Record<string, string> = {
 const AdminLayout = () => {
   const { user } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { settings } = useSiteSettings();
   const location = useLocation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -109,15 +110,21 @@ const AdminLayout = () => {
       <aside
         className={`${collapsed ? "w-20" : "w-72"} ${
           mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0 fixed lg:sticky top-0 h-screen border-r border-border/70 bg-card/95 backdrop-blur flex flex-col transition-all duration-300 z-50`}
+        } lg:translate-x-0 fixed lg:sticky top-0 h-[100dvh] border-r border-border/70 bg-card/95 backdrop-blur flex flex-col transition-all duration-300 z-50`}
       >
         <div className="border-b border-border/70 p-5">
           <div className="flex items-center justify-between gap-2">
             <Link
               to="/admin"
-              className="font-display text-lg font-bold text-gradient"
+              className="font-display text-lg font-bold text-gradient uppercase"
             >
-              {collapsed ? "VE" : "VOLTEDGE"}
+              {collapsed
+                ? settings.companyName
+                    .split(/\s+/)
+                    .map((w) => w[0])
+                    .slice(0, 2)
+                    .join("")
+                : settings.companyName}
             </Link>
             <Button
               variant="ghost"
@@ -138,7 +145,7 @@ const AdminLayout = () => {
             </p>
           )}
         </div>
-        <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
+        <nav className="flex-1 min-h-0 space-y-1 p-4 overflow-y-auto">
           {navItems.map(({ to, icon: Icon, label }) => {
             const isMessages = to === "/admin/messages";
             return (
