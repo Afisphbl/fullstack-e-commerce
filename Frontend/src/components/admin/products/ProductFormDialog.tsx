@@ -8,6 +8,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form } from "@/components/ui/form";
 import { Save } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Product, Category } from "@/lib/api";
 import { useProductForm } from "./hooks/useProductForm";
 import { useProductMutations } from "./hooks/useProductMutations";
@@ -15,6 +16,22 @@ import { ProductFormGeneralTab } from "./ProductFormGeneralTab";
 import { ProductFormInventoryTab } from "./ProductFormInventoryTab";
 import { ProductFormMediaTab } from "./ProductFormMediaTab";
 import { ProductFormSpecsTab } from "./ProductFormSpecsTab";
+import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+const STEPS = [
+  { id: "general", label: "General Info" },
+  { id: "inventory", label: "Pricing & Stock" },
+  { id: "media", label: "Media" },
+  { id: "specs", label: "Specifications" },
+] as const;
 
 interface ProductFormDialogProps {
   open: boolean;
@@ -38,6 +55,27 @@ export const ProductFormDialog = ({
     onOpenChange(false);
   });
 
+  const [activeTab, setActiveTab] =
+    useState<(typeof STEPS)[number]["id"]>("general");
+
+  const currentStepIndex = STEPS.findIndex((s) => s.id === activeTab);
+  const isFirstStep = currentStepIndex === 0;
+  const isLastStep = currentStepIndex === STEPS.length - 1;
+
+  const handleNext = () => {
+    const nextStepId = STEPS[currentStepIndex + 1]?.id;
+    if (nextStepId) {
+      setActiveTab(nextStepId);
+    }
+  };
+
+  const handleBack = () => {
+    const prevStepId = STEPS[currentStepIndex - 1]?.id;
+    if (prevStepId) {
+      setActiveTab(prevStepId);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0 border-none bg-background">
@@ -52,34 +90,47 @@ export const ProductFormDialog = ({
             onSubmit={form.handleSubmit((v) => saveMutation.mutate(v))}
             className="space-y-0"
           >
-            <Tabs defaultValue="general" className="w-full">
+            <Tabs
+              value={activeTab}
+              onValueChange={(v) =>
+                setActiveTab(v as (typeof STEPS)[number]["id"])
+              }
+              className="w-full"
+            >
               <div className="px-6 border-b bg-muted/30">
-                <TabsList className="h-12 bg-transparent gap-6">
-                  <TabsTrigger
-                    value="general"
-                    className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-12"
-                  >
-                    General Info
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="inventory"
-                    className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-12"
-                  >
-                    Pricing & Stock
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="media"
-                    className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-12"
-                  >
-                    Media
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="specs"
-                    className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-12"
-                  >
-                    Specifications
-                  </TabsTrigger>
+                {/* Desktop Tabs */}
+                <TabsList className="hidden md:flex h-12 bg-transparent gap-6">
+                  {STEPS.map((step) => (
+                    <TabsTrigger
+                      key={step.id}
+                      value={step.id}
+                      className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none h-12"
+                    >
+                      {step.label}
+                    </TabsTrigger>
+                  ))}
                 </TabsList>
+
+                {/* Mobile Section Selector */}
+                <div className="md:hidden py-3">
+                  <Select
+                    value={activeTab}
+                    onValueChange={(v) =>
+                      setActiveTab(v as (typeof STEPS)[number]["id"])
+                    }
+                  >
+                    <SelectTrigger className="w-full h-11 bg-background">
+                      <SelectValue placeholder="Select Section" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {STEPS.map((step) => (
+                        <SelectItem key={step.id} value={step.id}>
+                          {step.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <div className="p-6">
@@ -110,26 +161,57 @@ export const ProductFormDialog = ({
               </div>
             </Tabs>
 
-            <div className="p-6 border-t flex justify-end gap-3 bg-muted/10">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => onOpenChange(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={saveMutation.isPending}
-                className="gap-2 px-8"
-              >
-                <Save className="h-4 w-4" />
-                {saveMutation.isPending
-                  ? "Saving..."
-                  : editingProduct
-                    ? "Update Product"
-                    : "Create Product"}
-              </Button>
+            <div className="p-4 sm:p-6 border-t flex flex-col-reverse sm:flex-row justify-between gap-3 bg-muted/10">
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onOpenChange(false)}
+                  className="hidden sm:flex"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleBack}
+                  disabled={isFirstStep}
+                  className="flex sm:hidden flex-1"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Back
+                </Button>
+                {!isLastStep && (
+                  <Button
+                    type="button"
+                    onClick={handleNext}
+                    className="flex sm:hidden flex-1"
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                )}
+              </div>
+
+              <div className="flex gap-2 w-full sm:w-auto">
+                <Button
+                  type="submit"
+                  disabled={saveMutation.isPending}
+                  className={cn(
+                    "gap-2 w-full sm:w-auto transition-all",
+                    !isLastStep && "sm:opacity-100"
+                  )}
+                >
+                  <Save className="h-4 w-4" />
+                  {saveMutation.isPending
+                    ? "Saving..."
+                    : isLastStep
+                      ? editingProduct
+                        ? "Update Product"
+                        : "Create Product"
+                      : "Save Progress"}
+                </Button>
+              </div>
             </div>
           </form>
         </Form>
