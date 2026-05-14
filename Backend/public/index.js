@@ -1,4 +1,4 @@
-export default `<!doctype html>
+export default (uptimeStr) => `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />

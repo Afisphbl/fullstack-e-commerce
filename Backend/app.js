@@ -138,7 +138,7 @@ app.get("/", (req, res) => {
   const seconds = Math.floor(uptime % 60);
   const uptimeStr = `${hours}h ${minutes}m ${seconds}s`;
 
-  res.status(200).send(landingPage);
+  res.status(200).send(landingPage(uptimeStr));
 });
 
 // ── Health check ──────────────────────────────────────────────────────────────

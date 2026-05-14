@@ -10,7 +10,8 @@ export interface LocationCheckResult {
 
 export const useLocationCheck = (): LocationCheckResult => {
   const { user } = useAuth();
-  const [isDeliveryAvailable, setIsDeliveryAvailable] = useState<boolean>(true);
+  const [isDeliveryAvailable, setIsDeliveryAvailable] =
+    useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error] = useState<string | null>(null);
 
@@ -58,7 +59,7 @@ export const useLocationCheck = (): LocationCheckResult => {
       } catch (err) {
         console.error("Failed to fetch settings", err);
         if (isMounted) {
-          setIsDeliveryAvailable(true);
+          setIsDeliveryAvailable(false); // Stay restricted on failure for safety
           setIsLoading(false);
         }
       }

@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { Heart, ShoppingCart, GitCompare } from "lucide-react";
 import { Product } from "@/lib/api";
@@ -22,7 +21,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { isInCompare, addToCompare, removeFromCompare } = useCompare();
-  const { isDeliveryAvailable } = useLocationCheck();
+  const { isDeliveryAvailable, isLoading: isLocChecking } = useLocationCheck();
 
   // Hide zero-stock products from non-admin users
   if (product.stock === 0 && !isAdminRole(user?.role)) {
@@ -127,16 +126,22 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             <Button
               size="sm"
               onClick={() => addToCart(product)}
-              disabled={!isDeliveryAvailable}
-              className={`h-8 px-3 text-xs ${!isDeliveryAvailable ? "bg-muted text-muted-foreground" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}
+              disabled={isLocChecking || !isDeliveryAvailable}
+              className={`h-8 px-3 text-xs ${isLocChecking || !isDeliveryAvailable ? "bg-muted text-muted-foreground" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}
               title={
-                !isDeliveryAvailable
-                  ? "Delivery is not available in your region"
-                  : ""
+                isLocChecking
+                  ? "Checking availability..."
+                  : !isDeliveryAvailable
+                    ? "Delivery is not available in your region"
+                    : ""
               }
             >
               <ShoppingCart className="mr-1 h-3.5 w-3.5" />
-              {!isDeliveryAvailable ? "Not available" : "Add"}
+              {isLocChecking
+                ? "Checking..."
+                : !isDeliveryAvailable
+                  ? "Not available"
+                  : "Add"}
             </Button>
           )}
         </div>

@@ -1,9 +1,4 @@
-import productsData from "@/data/products.json";
-import categoriesData from "@/data/categories.json";
-import blogsData from "@/data/blogs.json";
-
-import faqsData from "@/data/faqs.json";
-import teamData from "@/data/team.json";
+// Data endpoints now enforce strict backend calls with empty array fallbacks.
 import { apiFetch } from "./api-client";
 import {
   User,
@@ -352,13 +347,13 @@ export const fetchProducts = async (
       page: data.page || 1,
       limit: data.limit || 10,
     };
-  } catch (error) {
-    console.error("Failed to fetch products:", error);
+  } catch (err) {
+    console.error("Failed to fetch products:", err);
     return {
-      products: (productsData as unknown as RawProduct[]).map(mapProduct),
-      total: productsData.length,
+      products: [],
+      total: 0,
       page: 1,
-      limit: productsData.length,
+      limit: 10,
     };
   }
 };
@@ -376,15 +371,7 @@ export const fetchProductBySlug = async (
     }
     return undefined;
   } catch (error) {
-    return (productsData as unknown as RawProduct[]).find(
-      (p) => p.slug === slug
-    )
-      ? mapProduct(
-          (productsData as unknown as RawProduct[]).find(
-            (p) => p.slug === slug
-          )!
-        )
-      : undefined;
+    return undefined;
   }
 };
 
@@ -397,10 +384,7 @@ export const fetchProductById = async (
     );
     return mapProduct(res.data.data);
   } catch (error) {
-    const found = (productsData as unknown as RawProduct[]).find(
-      (p) => p.id === id || p._id === id
-    );
-    return found ? mapProduct(found) : undefined;
+    return undefined;
   }
 };
 
@@ -411,9 +395,7 @@ export const fetchFeaturedProducts = async (): Promise<Product[]> => {
     );
     return res.data.data.products.map(mapProduct);
   } catch (error) {
-    return (productsData as unknown as RawProduct[])
-      .filter((p) => p.featured || p.isFeatured)
-      .map(mapProduct);
+    return [];
   }
 };
 
@@ -502,7 +484,7 @@ export const fetchCategories = async (): Promise<Category[]> => {
     return res.data.data.map(mapCategory);
   } catch (error) {
     console.error("Failed to fetch categories:", error);
-    return (categoriesData as unknown as RawCategory[]).map(mapCategory);
+    return [];
   }
 };
 
@@ -587,13 +569,20 @@ export const updateReview = async (
 
 // Blogs
 export const fetchBlogs = async (): Promise<Blog[]> => {
-  return blogsData as Blog[];
+  // Coming soon - disabled fetch
+  return [];
 };
 
 export const fetchBlogBySlug = async (
   slug: string
 ): Promise<Blog | undefined> => {
-  return (blogsData as Blog[]).find((b) => b.slug === slug);
+  try {
+    const res = await apiFetch<ApiResponse<Blog>>(`/api/v1/blogs/${slug}`);
+    return res.data.data;
+  } catch (err) {
+    console.error("Failed to fetch blog by slug:", err);
+    return undefined;
+  }
 };
 
 // Orders
@@ -629,7 +618,8 @@ export const updateOrder = async (
 
 // FAQ
 export const fetchFAQs = async (): Promise<FAQ[]> => {
-  return faqsData as FAQ[];
+  // Coming soon - disabled fetch
+  return [];
 };
 
 // Settings
@@ -655,7 +645,13 @@ export const fetchEthiopianCities = async (): Promise<string[]> => {
 
 // Team
 export const fetchTeam = async (): Promise<TeamMember[]> => {
-  return teamData as TeamMember[];
+  try {
+    const res = await apiFetch<ApiResponse<TeamMember[]>>("/api/v1/team");
+    return res.data.data;
+  } catch (err) {
+    console.error("Failed to fetch team:", err);
+    return [];
+  }
 };
 
 // Admin Stats

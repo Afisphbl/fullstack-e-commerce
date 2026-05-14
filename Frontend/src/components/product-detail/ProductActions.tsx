@@ -19,7 +19,7 @@ export const ProductActions = ({ product }: ProductActionsProps) => {
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { isInCompare, addToCompare, removeFromCompare } = useCompare();
-  const { isDeliveryAvailable } = useLocationCheck();
+  const { isDeliveryAvailable, isLoading: isLocChecking } = useLocationCheck();
 
   const handleAddToCart = () => {
     if (product.stock === 0 || quantity > product.stock) return;
@@ -93,18 +93,23 @@ export const ProductActions = ({ product }: ProductActionsProps) => {
           disabled={
             product.stock === 0 ||
             quantity > product.stock ||
+            isLocChecking ||
             !isDeliveryAvailable
           }
           size="lg"
           className="flex-1 shadow-neon transition-colors"
-          variant={isDeliveryAvailable ? "default" : "secondary"}
+          variant={
+            isLocChecking || !isDeliveryAvailable ? "secondary" : "default"
+          }
         >
           <ShoppingCart className="h-5 w-5 mr-2" />
-          {!isDeliveryAvailable
-            ? "Delivery not available in your region"
-            : product.stock === 0
-              ? "Out of Stock"
-              : "Add to Cart"}
+          {isLocChecking
+            ? "Checking availability..."
+            : !isDeliveryAvailable
+              ? "Delivery not available in your region"
+              : product.stock === 0
+                ? "Out of Stock"
+                : "Add to Cart"}
         </Button>
         <Button
           variant="outline"
