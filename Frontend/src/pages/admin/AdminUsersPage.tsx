@@ -59,11 +59,6 @@ const AdminUsersPage = () => {
   const totalPages = Math.max(Math.ceil((data?.total || 0) / limit), 1);
   const isStaffTab = tab === "staff";
 
-  const openCreateDialog = () => {
-    setEditingUser(null);
-    setDialogOpen(true);
-  };
-
   const openEditDialog = (user: AdminUser) => {
     setEditingUser(user);
     setDialogOpen(true);
@@ -146,7 +141,7 @@ const AdminUsersPage = () => {
 
       <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="overflow-hidden rounded-[28px] border border-border/70 bg-card shadow-card">
-          <div className="border-b border-border/70 px-6 py-5">
+          <div className="border-b border-border/70 px-4 py-4 sm:px-6 sm:py-5">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <h3 className="text-2xl font-display font-semibold text-foreground">
@@ -168,18 +163,11 @@ const AdminUsersPage = () => {
                   <Download className="mr-2 h-4 w-4" />
                   {isExporting ? "Exporting..." : "Export CSV"}
                 </Button>
-                <Button
-                  className="rounded-xl shadow-sm"
-                  onClick={openCreateDialog}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  {isStaffTab ? "Add Staff" : "Add User"}
-                </Button>
               </div>
             </div>
           </div>
 
-          <div className="space-y-5 p-6">
+          <div className="space-y-5 p-4 sm:p-6">
             <Tabs
               value={tab}
               onValueChange={(value) =>

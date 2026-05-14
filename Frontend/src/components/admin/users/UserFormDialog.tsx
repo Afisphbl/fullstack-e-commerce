@@ -128,14 +128,8 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl rounded-[28px] border-none p-0 shadow-elevated flex flex-col max-h-[96vh] sm:max-h-[90vh]">
-        <DialogHeader className="border-b border-border/70 px-6 py-5">
-          <DialogTitle className="text-2xl font-display">
-            {editingUser
-              ? "Edit User"
-              : isStaffTab
-                ? "Add Staff Member"
-                : "Add User"}
-          </DialogTitle>
+        <DialogHeader className="border-b border-border/70 px-4 sm:px-6 py-4 sm:py-5">
+          <DialogTitle className="text-2xl font-display">Edit User</DialogTitle>
           <DialogDescription>
             Update profile details, role access, and operational permissions.
           </DialogDescription>
@@ -146,7 +140,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex flex-col flex-1 overflow-hidden"
           >
-            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 scrollbar-thin scrollbar-thumb-border hover:scrollbar-thumb-muted-foreground/30">
+            <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-6 space-y-6 scrollbar-thin scrollbar-thumb-border hover:scrollbar-thumb-muted-foreground/30">
               <div className="grid gap-5 md:grid-cols-2">
                 <FormField
                   control={form.control}
@@ -314,48 +308,9 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
                   </FormItem>
                 )}
               />
-
-              {!editingUser && (
-                <div className="grid gap-5 md:grid-cols-2">
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="password"
-                            {...field}
-                            className="h-11 rounded-xl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="passwordConfirm"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Confirm Password</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="password"
-                            {...field}
-                            className="h-11 rounded-xl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              )}
             </div>
 
-            <div className="flex flex-col-reverse gap-3 border-t border-border/70 p-6 sm:flex-row sm:justify-end bg-background sticky bottom-0 rounded-b-[28px]">
+            <div className="flex flex-col-reverse gap-3 border-t border-border/70 p-4 sm:p-6 sm:flex-row sm:justify-end bg-background sticky bottom-0 rounded-b-[28px]">
               <Button
                 type="button"
                 variant="outline"
@@ -365,11 +320,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
                 Cancel
               </Button>
               <Button type="submit" className="rounded-xl" disabled={isPending}>
-                {isPending
-                  ? "Saving..."
-                  : editingUser
-                    ? "Update User"
-                    : "Create User"}
+                {isPending ? "Saving..." : "Update User"}
               </Button>
             </div>
           </form>

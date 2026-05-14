@@ -186,19 +186,31 @@ export const ContactSettings = ({ draft, update }: ContactSettingsProps) => {
           {workingHours.map((day, index) => (
             <div
               key={day.day}
-              className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 border rounded-lg"
+              className="grid grid-cols-[1fr_auto] gap-3 sm:flex sm:flex-row sm:items-center sm:gap-4 p-3 border border-border/50 rounded-xl"
             >
-              <div className="w-full sm:w-32 font-medium">{day.day}</div>
+              <div className="font-medium self-center sm:w-32">{day.day}</div>
+              <div className="flex items-center gap-2 justify-end sm:hidden">
+                <Label htmlFor={`open-mobile-${index}`} className="text-sm">
+                  Open
+                </Label>
+                <Switch
+                  id={`open-mobile-${index}`}
+                  checked={day.isOpen}
+                  onCheckedChange={(checked) =>
+                    handleWorkingHoursChange(index, "isOpen", checked)
+                  }
+                />
+              </div>
               <Input
                 value={day.hours}
                 onChange={(e) =>
                   handleWorkingHoursChange(index, "hours", e.target.value)
                 }
-                className="flex-1 w-full"
+                className="col-span-2 sm:col-span-1 flex-1 w-full rounded-lg"
                 disabled={!day.isOpen}
                 placeholder="9:00 AM - 5:00 PM"
               />
-              <div className="flex items-center gap-2 self-start sm:self-auto mt-2 sm:mt-0">
+              <div className="hidden sm:flex items-center gap-2">
                 <Label htmlFor={`open-${index}`} className="text-sm">
                   Open
                 </Label>
