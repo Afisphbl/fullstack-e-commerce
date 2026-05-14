@@ -282,124 +282,126 @@ const AdminMessagesPage = () => {
             </p>
           </div>
         ) : (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border/70 bg-muted/30">
-                <th className="px-5 py-3.5 text-left font-medium text-muted-foreground">
-                  Sender
-                </th>
-                <th className="hidden px-5 py-3.5 text-left font-medium text-muted-foreground md:table-cell">
-                  Subject
-                </th>
-                <th className="hidden px-5 py-3.5 text-left font-medium text-muted-foreground lg:table-cell">
-                  Time
-                </th>
-                <th className="px-5 py-3.5 text-left font-medium text-muted-foreground">
-                  Status
-                </th>
-                <th className="px-5 py-3.5 text-right font-medium text-muted-foreground">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/50">
-              {messages.map((msg) => (
-                <tr
-                  key={msg._id}
-                  className={`group transition-colors hover:bg-muted/30 ${
-                    msg.status === "unread" ? "bg-primary/[0.02]" : ""
-                  }`}
-                >
-                  <td className="px-5 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-sm font-bold">
-                        {msg.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div className="min-w-0">
-                        <p
-                          className={`font-medium text-foreground truncate ${msg.status === "unread" ? "font-semibold" : ""}`}
-                        >
-                          {msg.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground truncate">
-                          {msg.email}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="hidden px-5 py-4 md:table-cell">
-                    <p className="truncate max-w-[240px] text-foreground">
-                      {msg.subject}
-                    </p>
-                    <p className="truncate max-w-[240px] text-xs text-muted-foreground mt-0.5">
-                      {msg.message.substring(0, 60)}
-                      {msg.message.length > 60 ? "..." : ""}
-                    </p>
-                  </td>
-                  <td className="hidden px-5 py-4 lg:table-cell">
-                    <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
-                      <Clock className="h-3 w-3" />
-                      {formatDate(msg.createdAt)}
-                    </div>
-                  </td>
-                  <td className="px-5 py-4">
-                    <span
-                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_COLORS[msg.status]}`}
-                    >
-                      {STATUS_ICONS[msg.status]}
-                      <span className="capitalize">{msg.status}</span>
-                    </span>
-                  </td>
-                  <td className="px-5 py-4">
-                    <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 rounded-lg"
-                        title="View message"
-                        onClick={() => openDetails(msg)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      {msg.status !== "read" && msg.status !== "archived" && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 rounded-lg"
-                          title="Mark as read"
-                          onClick={() => readMutation.mutate(msg._id)}
-                          disabled={readMutation.isPending}
-                        >
-                          <MailOpen className="h-4 w-4" />
-                        </Button>
-                      )}
-                      {msg.status !== "archived" && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 rounded-lg"
-                          title="Archive"
-                          onClick={() => archiveMutation.mutate(msg._id)}
-                          disabled={archiveMutation.isPending}
-                        >
-                          <Archive className="h-4 w-4" />
-                        </Button>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 rounded-lg text-destructive hover:text-destructive"
-                        title="Delete"
-                        onClick={() => setDeleteTarget(msg)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[800px] md:min-w-0 text-sm">
+              <thead>
+                <tr className="border-b border-border/70 bg-muted/30">
+                  <th className="px-5 py-3.5 text-left font-medium text-muted-foreground">
+                    Sender
+                  </th>
+                  <th className="hidden px-5 py-3.5 text-left font-medium text-muted-foreground md:table-cell">
+                    Subject
+                  </th>
+                  <th className="hidden px-5 py-3.5 text-left font-medium text-muted-foreground lg:table-cell">
+                    Time
+                  </th>
+                  <th className="px-5 py-3.5 text-left font-medium text-muted-foreground">
+                    Status
+                  </th>
+                  <th className="px-5 py-3.5 text-right font-medium text-muted-foreground">
+                    Actions
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-border/50">
+                {messages.map((msg) => (
+                  <tr
+                    key={msg._id}
+                    className={`group transition-colors hover:bg-muted/30 ${
+                      msg.status === "unread" ? "bg-primary/[0.02]" : ""
+                    }`}
+                  >
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-sm font-bold">
+                          {msg.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="min-w-0">
+                          <p
+                            className={`font-medium text-foreground truncate ${msg.status === "unread" ? "font-semibold" : ""}`}
+                          >
+                            {msg.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground truncate">
+                            {msg.email}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="hidden px-5 py-4 md:table-cell">
+                      <p className="truncate max-w-[240px] text-foreground">
+                        {msg.subject}
+                      </p>
+                      <p className="truncate max-w-[240px] text-xs text-muted-foreground mt-0.5">
+                        {msg.message.substring(0, 60)}
+                        {msg.message.length > 60 ? "..." : ""}
+                      </p>
+                    </td>
+                    <td className="hidden px-5 py-4 lg:table-cell">
+                      <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
+                        <Clock className="h-3 w-3" />
+                        {formatDate(msg.createdAt)}
+                      </div>
+                    </td>
+                    <td className="px-5 py-4">
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_COLORS[msg.status]}`}
+                      >
+                        {STATUS_ICONS[msg.status]}
+                        <span className="capitalize">{msg.status}</span>
+                      </span>
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 rounded-lg"
+                          title="View message"
+                          onClick={() => openDetails(msg)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        {msg.status !== "read" && msg.status !== "archived" && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 rounded-lg"
+                            title="Mark as read"
+                            onClick={() => readMutation.mutate(msg._id)}
+                            disabled={readMutation.isPending}
+                          >
+                            <MailOpen className="h-4 w-4" />
+                          </Button>
+                        )}
+                        {msg.status !== "archived" && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 rounded-lg"
+                            title="Archive"
+                            onClick={() => archiveMutation.mutate(msg._id)}
+                            disabled={archiveMutation.isPending}
+                          >
+                            <Archive className="h-4 w-4" />
+                          </Button>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 rounded-lg text-destructive hover:text-destructive"
+                          title="Delete"
+                          onClick={() => setDeleteTarget(msg)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 

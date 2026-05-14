@@ -50,11 +50,12 @@ export const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
 
   return (
     <AlertDialog open={!!user} onOpenChange={handleOpenChange}>
-      <AlertDialogContent className="rounded-[24px] border-none">
+      <AlertDialogContent className="rounded-[24px] border-none max-w-md">
         <AlertDialogHeader>
           <AlertDialogTitle>Delete this user?</AlertDialogTitle>
           <AlertDialogDescription>
-            This permanently removes the account record for {user?.name}. This action cannot be undone.
+            This permanently removes the account record for {user?.name}. This
+            action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

@@ -31,7 +31,8 @@ export const ProductFormDialog = ({
   categories,
   onSuccess,
 }: ProductFormDialogProps) => {
-  const { form, specGroups, appendGroup, removeGroup } = useProductForm(editingProduct);
+  const { form, specGroups, appendGroup, removeGroup } =
+    useProductForm(editingProduct);
   const { saveMutation } = useProductMutations(editingProduct, () => {
     onSuccess();
     onOpenChange(false);
@@ -39,7 +40,7 @@ export const ProductFormDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0 gap-0 border-none bg-background">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0 border-none bg-background">
         <DialogHeader className="p-6 border-b">
           <DialogTitle className="text-xl font-display">
             {editingProduct ? "Edit Product" : "Create New Product"}
@@ -126,8 +127,8 @@ export const ProductFormDialog = ({
                 {saveMutation.isPending
                   ? "Saving..."
                   : editingProduct
-                  ? "Update Product"
-                  : "Create Product"}
+                    ? "Update Product"
+                    : "Create Product"}
               </Button>
             </div>
           </form>

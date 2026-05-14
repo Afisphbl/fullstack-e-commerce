@@ -16,7 +16,10 @@ interface WorkingHour {
 
 interface ContactSettingsProps {
   draft: SiteSettings;
-  update: <K extends keyof SiteSettings>(key: K, value: SiteSettings[K]) => void;
+  update: <K extends keyof SiteSettings>(
+    key: K,
+    value: SiteSettings[K]
+  ) => void;
 }
 
 export const ContactSettings = ({ draft, update }: ContactSettingsProps) => {
@@ -25,14 +28,24 @@ export const ContactSettings = ({ draft, update }: ContactSettingsProps) => {
 
   // Parse working hours from string to structured format
   const parseWorkingHours = (hoursString: string): WorkingHour[] => {
-    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const days = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
     const lines = hoursString.split("\n").filter(Boolean);
-    
+
     return days.map((day) => {
-      const line = lines.find((l) => l.toLowerCase().includes(day.toLowerCase()));
+      const line = lines.find((l) =>
+        l.toLowerCase().includes(day.toLowerCase())
+      );
       if (line) {
         const match = line.match(/:\s*(.+)/);
-        const hours = match ? match[1].trim() : "9:00 AM - 5:00 PM";
+        const hours = match && match[1] ? match[1].trim() : "9:00 AM - 5:00 PM";
         return { day, hours, isOpen: !hours.toLowerCase().includes("closed") };
       }
       return { day, hours: "9:00 AM - 5:00 PM", isOpen: true };
@@ -49,7 +62,7 @@ export const ContactSettings = ({ draft, update }: ContactSettingsProps) => {
     value: string | boolean
   ) => {
     const updated = [...workingHours];
-    updated[index] = { ...updated[index], [field]: value };
+    updated[index] = Object.assign({}, updated[index], { [field]: value });
     setWorkingHours(updated);
 
     // Convert back to string format
@@ -173,19 +186,19 @@ export const ContactSettings = ({ draft, update }: ContactSettingsProps) => {
           {workingHours.map((day, index) => (
             <div
               key={day.day}
-              className="flex items-center gap-4 p-3 border rounded-lg"
+              className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 border rounded-lg"
             >
-              <div className="w-32 font-medium">{day.day}</div>
+              <div className="w-full sm:w-32 font-medium">{day.day}</div>
               <Input
                 value={day.hours}
                 onChange={(e) =>
                   handleWorkingHoursChange(index, "hours", e.target.value)
                 }
-                className="flex-1"
+                className="flex-1 w-full"
                 disabled={!day.isOpen}
                 placeholder="9:00 AM - 5:00 PM"
               />
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 self-start sm:self-auto mt-2 sm:mt-0">
                 <Label htmlFor={`open-${index}`} className="text-sm">
                   Open
                 </Label>
@@ -208,8 +221,8 @@ export const ContactSettings = ({ draft, update }: ContactSettingsProps) => {
           <MapPin className="h-5 w-5 text-primary" />
           Map Location
         </h3>
-        <div className="flex flex-wrap items-end gap-3">
-          <div className="flex-1 min-w-[140px]">
+        <div className="grid grid-cols-1 sm:flex sm:flex-wrap items-end gap-3">
+          <div className="w-full sm:flex-1 sm:min-w-[140px]">
             <Label>Latitude</Label>
             <Input
               value={draft.mapLat}
@@ -218,7 +231,7 @@ export const ContactSettings = ({ draft, update }: ContactSettingsProps) => {
               className="bg-background mt-1"
             />
           </div>
-          <div className="flex-1 min-w-[140px]">
+          <div className="w-full sm:flex-1 sm:min-w-[140px]">
             <Label>Longitude</Label>
             <Input
               value={draft.mapLng}
@@ -227,7 +240,7 @@ export const ContactSettings = ({ draft, update }: ContactSettingsProps) => {
               className="bg-background mt-1"
             />
           </div>
-          <div className="w-24">
+          <div className="w-full sm:w-24">
             <Label>Zoom</Label>
             <Input
               value={draft.mapZoom}
@@ -235,24 +248,27 @@ export const ContactSettings = ({ draft, update }: ContactSettingsProps) => {
               className="bg-background mt-1"
             />
           </div>
-          <Button
-            type="button"
-            onClick={getCurrentLocation}
-            disabled={gettingLocation}
-            className="bg-primary text-primary-foreground hover:bg-primary/90"
-          >
-            <MapPin className="h-4 w-4 mr-2" />
-            {gettingLocation ? "Getting..." : "Use My Location"}
-          </Button>
-          <Button
-            type="button"
-            onClick={findCoordsFromAddress}
-            disabled={geocoding}
-            variant="outline"
-          >
-            <Search className="h-4 w-4 mr-2" />
-            {geocoding ? "Searching..." : "From Address"}
-          </Button>
+          <div className="grid grid-cols-1 sm:flex gap-3 w-full sm:w-auto">
+            <Button
+              type="button"
+              onClick={getCurrentLocation}
+              disabled={gettingLocation}
+              className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              <MapPin className="h-4 w-4 mr-2" />
+              {gettingLocation ? "Getting..." : "Use My Location"}
+            </Button>
+            <Button
+              type="button"
+              onClick={findCoordsFromAddress}
+              disabled={geocoding}
+              variant="outline"
+              className="w-full sm:w-auto"
+            >
+              <Search className="h-4 w-4 mr-2" />
+              {geocoding ? "Searching..." : "From Address"}
+            </Button>
+          </div>
         </div>
         <p className="text-xs text-muted-foreground">
           Click "Use My Location" to auto-fill with your current coordinates, or
