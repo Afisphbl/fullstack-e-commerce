@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchGeneralSettings } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 export interface LocationCheckResult {
   isDeliveryAvailable: boolean;
@@ -7,25 +8,13 @@ export interface LocationCheckResult {
   error: string | null;
 }
 
-// Simple in-memory cache to avoid repeated geolocation prompts on every product card load
-let cachedLocationStatus: boolean | null = null;
-
 export const useLocationCheck = (): LocationCheckResult => {
-  const [isDeliveryAvailable, setIsDeliveryAvailable] = useState<boolean>(
-    cachedLocationStatus !== null ? cachedLocationStatus : true
-  );
-  const [isLoading, setIsLoading] = useState<boolean>(
-    cachedLocationStatus === null
-  );
+  const { user } = useAuth();
+  const [isDeliveryAvailable, setIsDeliveryAvailable] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error] = useState<string | null>(null);
 
   useEffect(() => {
-    // If it's already cached the final result, no need to re-run
-    if (cachedLocationStatus !== null) {
-      setIsLoading(false);
-      return;
-    }
-
     let isMounted = true;
 
     const checkLocation = async () => {
@@ -35,7 +24,6 @@ export const useLocationCheck = (): LocationCheckResult => {
           if (isMounted) {
             setIsDeliveryAvailable(true);
             setIsLoading(false);
-            cachedLocationStatus = true;
           }
           return;
         }
@@ -44,79 +32,33 @@ export const useLocationCheck = (): LocationCheckResult => {
           (settings.allowedDeliveryCities as string[]) || []
         ).map((c: string) => c.toLowerCase());
 
-        // Ask for GPS
-        if (!navigator.geolocation) {
-          throw new Error("Geolocation not supported");
-        }
+        if (isMounted) {
+          if (!user) {
+            // For guests, we can't reliably know their city without GPS. Default to true.
+            // Checkout strictly validates the city entered anyway.
+            setIsDeliveryAvailable(true);
+          } else {
+            // Find default user city from addresses
+            const defaultAddress =
+              user.addresses?.find(
+                (a: { isDefault?: boolean; city?: string }) => a.isDefault
+              ) || user.addresses?.[0];
+            const userCity = defaultAddress?.city?.toLowerCase() || null;
 
-        try {
-          if (navigator.permissions && navigator.permissions.query) {
-            const permission = await navigator.permissions.query({
-              name: "geolocation",
-            });
-            if (permission.state === "denied") {
-              throw new Error(
-                "Geolocation explicitly denied by user or policy"
-              );
+            if (userCity) {
+              const allowed = allowedCities.includes(userCity);
+              setIsDeliveryAvailable(allowed);
+            } else {
+              // Known user but no address set yet; let them browse
+              setIsDeliveryAvailable(true);
             }
           }
-        } catch (e) {
-          // Ignored. Not all browsers support permission query exactly this way.
+          setIsLoading(false);
         }
-
-        navigator.geolocation.getCurrentPosition(
-          async (position) => {
-            if (!isMounted) return;
-            try {
-              const { latitude, longitude } = position.coords;
-              const res = await fetch(
-                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`
-              );
-              const data = await res.json();
-
-              const city = (
-                data.address?.city ||
-                data.address?.town ||
-                data.address?.state ||
-                data.address?.region ||
-                ""
-              ).toLowerCase();
-
-              const allowed = allowedCities.some(
-                (allowedCity) => city === allowedCity
-              );
-
-              if (isMounted) {
-                setIsDeliveryAvailable(allowed);
-                cachedLocationStatus = allowed;
-                setIsLoading(false);
-              }
-            } catch (err) {
-              console.error("Reverse geocoding failed", err);
-              if (isMounted) {
-                // Default to allowed if network fails
-                setIsDeliveryAvailable(true);
-                cachedLocationStatus = true;
-                setIsLoading(false);
-              }
-            }
-          },
-          (err) => {
-            console.warn("Geolocation denied or failed", err);
-            // Default to true if user denies GPS (handled at checkout)
-            if (isMounted) {
-              setIsDeliveryAvailable(true);
-              cachedLocationStatus = true;
-              setIsLoading(false);
-            }
-          },
-          { timeout: 5000 }
-        );
       } catch (err) {
         console.error("Failed to fetch settings", err);
         if (isMounted) {
           setIsDeliveryAvailable(true);
-          cachedLocationStatus = true;
           setIsLoading(false);
         }
       }
@@ -127,7 +69,7 @@ export const useLocationCheck = (): LocationCheckResult => {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [user]);
 
   return { isDeliveryAvailable, isLoading, error };
 };

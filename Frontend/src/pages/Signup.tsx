@@ -78,7 +78,8 @@ export default function Signup() {
         setAuthToken(data.token);
       }
 
-      // Request location permission proactively upon auth
+      // Request location permission proactively upon auth (Currently disabled)
+      /*
       if ("geolocation" in navigator) {
         if (navigator.permissions && navigator.permissions.query) {
           navigator.permissions
@@ -99,6 +100,7 @@ export default function Signup() {
           );
         }
       }
+      */
 
       toast.success("Account created successfully!");
       queryClient.setQueryData(["currentUser"], data.data.user);
