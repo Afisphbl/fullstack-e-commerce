@@ -12,8 +12,10 @@ interface UserPageHeaderProps {
   isLoading?: boolean;
 }
 
-export const UserPageHeader: React.FC<UserPageHeaderProps> = ({ analytics, isLoading }) => {
-
+export const UserPageHeader: React.FC<UserPageHeaderProps> = ({
+  analytics,
+  isLoading,
+}) => {
   return (
     <section className="rounded-[28px] border border-border/70 bg-gradient-to-br from-card via-card to-primary/5 p-6 shadow-card">
       <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
@@ -24,10 +26,13 @@ export const UserPageHeader: React.FC<UserPageHeaderProps> = ({ analytics, isLoa
           </div>
           <div>
             <h2 className="text-3xl font-display font-bold tracking-tight text-foreground">
-              Manage customers, staff, and privileged access from one control center.
+              Manage customers, staff, and privileged access from one control
+              center.
             </h2>
             <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
-              This workspace is connected to the backend user API, supports live filtering with URL state, and keeps account operations fast for daily admin work.
+              This workspace is connected to the backend user API, supports live
+              filtering with URL state, and keeps account operations fast for
+              daily admin work.
             </p>
           </div>
         </div>
@@ -61,7 +66,6 @@ export const UserPageHeader: React.FC<UserPageHeaderProps> = ({ analytics, isLoa
             icon={<Bell className="h-5 w-5" />}
             isLoading={isLoading}
           />
-
         </div>
       </div>
     </section>
