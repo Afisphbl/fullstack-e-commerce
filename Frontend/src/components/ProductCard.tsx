@@ -14,9 +14,15 @@ import { useLocationCheck } from "@/hooks/useLocationCheck";
 
 interface ProductCardProps {
   product: Product;
+  loading?: "lazy" | "eager";
+  fetchPriority?: "high" | "low" | "auto";
 }
 
-export const ProductCard = ({ product }: ProductCardProps) => {
+export const ProductCard = ({
+  product,
+  loading,
+  fetchPriority,
+}: ProductCardProps) => {
   const { user } = useAuth();
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -50,6 +56,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             optimizeWidth={480}
             optimizeHeight={360}
             crop="fill"
+            loading={loading}
+            fetchPriority={fetchPriority}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         </Link>

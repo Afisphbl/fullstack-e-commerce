@@ -319,8 +319,13 @@ const Index = () => {
                 ))
               : featured
                   .slice(0, 4)
-                  .map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                  .map((product, idx) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      loading={idx === 0 ? "eager" : "lazy"}
+                      fetchPriority={idx === 0 ? "high" : "auto"}
+                    />
                   ))}
           </div>
         </div>
