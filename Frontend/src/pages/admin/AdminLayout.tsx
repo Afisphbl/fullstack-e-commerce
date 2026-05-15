@@ -33,6 +33,7 @@ import {
   Globe,
 } from "lucide-react";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 
 const AdminLayout = () => {
   const { t } = useTranslation(["admin", "common"]);
@@ -265,6 +266,7 @@ const AdminLayout = () => {
               </h1>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
+              <LanguageSwitcher />
               <Button
                 variant="outline"
                 size="icon"

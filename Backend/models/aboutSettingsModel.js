@@ -5,15 +5,27 @@ const mongoose = require("mongoose");
 const aboutStatSchema = new mongoose.Schema(
   {
     value: { type: String, trim: true, default: "" },
-    label: { type: String, trim: true, default: "" },
+    label: {
+      am: { type: String, trim: true, default: "" },
+      en: { type: String, trim: true, default: "" },
+      om: { type: String, trim: true, default: "" },
+    },
   },
   { _id: false },
 );
 
 const aboutValueSchema = new mongoose.Schema(
   {
-    title: { type: String, trim: true, default: "" },
-    desc: { type: String, trim: true, default: "" },
+    title: {
+      am: { type: String, trim: true, default: "" },
+      en: { type: String, trim: true, default: "" },
+      om: { type: String, trim: true, default: "" },
+    },
+    desc: {
+      am: { type: String, trim: true, default: "" },
+      en: { type: String, trim: true, default: "" },
+      om: { type: String, trim: true, default: "" },
+    },
   },
   { _id: false },
 );
@@ -21,27 +33,24 @@ const aboutValueSchema = new mongoose.Schema(
 const aboutSettingsSchema = new mongoose.Schema(
   {
     aboutEyebrow: {
-      type: String,
-      trim: true,
-      default: "Who We Are",
+      am: { type: String, trim: true, default: "Who We Are" },
+      en: { type: String, trim: true, default: "Who We Are" },
+      om: { type: String, trim: true, default: "Who We Are" },
     },
     aboutTitle: {
-      type: String,
-      trim: true,
-      maxlength: [120, "About title must be at most 120 characters."],
-      default: "About",
+      am: { type: String, trim: true, maxlength: 120, default: "About" },
+      en: { type: String, trim: true, maxlength: 120, default: "About" },
+      om: { type: String, trim: true, maxlength: 120, default: "About" },
     },
     aboutHighlight: {
-      type: String,
-      trim: true,
-      maxlength: [60, "About highlight must be at most 60 characters."],
-      default: "VoltEdge",
+      am: { type: String, trim: true, maxlength: 60, default: "VoltEdge" },
+      en: { type: String, trim: true, maxlength: 60, default: "VoltEdge" },
+      om: { type: String, trim: true, maxlength: 60, default: "VoltEdge" },
     },
     aboutIntro: {
-      type: String,
-      trim: true,
-      maxlength: [1000, "About intro must be at most 1000 characters."],
-      default: "",
+      am: { type: String, trim: true, maxlength: 1000, default: "" },
+      en: { type: String, trim: true, maxlength: 1000, default: "" },
+      om: { type: String, trim: true, maxlength: 1000, default: "" },
     },
     aboutImage: {
       type: String,

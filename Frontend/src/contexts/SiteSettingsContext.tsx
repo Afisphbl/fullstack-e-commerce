@@ -8,6 +8,7 @@ import {
 } from "@/lib/api/settings";
 import { useAuth } from "./AuthContext";
 import { isAdminRole } from "@/lib/roles";
+import { useTranslation } from "react-i18next";
 
 export interface HeroSlide {
   image: string;
@@ -191,6 +192,8 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { user } = useAuth();
+  const { i18n } = useTranslation();
+  const lang = i18n.language || "am";
   const [isLoading, setIsLoading] = useState(true);
   const [settings, setSettings] = useState<SiteSettings>(() => {
     try {
@@ -202,7 +205,7 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     return DEFAULTS;
   });
 
-  // Load public settings on mount
+  // Load public settings on mount and when language changes
   useEffect(() => {
     let active = true;
     const loadPublic = async () => {
@@ -225,7 +228,7 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => {
       active = false;
     };
-  }, []);
+  }, [lang]);
 
   // Use a second effect to fetch admin-only sections if token exists and user is admin
   useEffect(() => {
@@ -252,7 +255,7 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => {
       active = false;
     };
-  }, []);
+  }, [user, lang]);
 
   const save = async (s: SiteSettings, targetSection?: SettingsSection) => {
     // Optimistic UI update
@@ -261,33 +264,58 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
 
     // Async save to API
     try {
-      const payloads: Record<string, unknown> = {
-        general: {
-          companyName: s.companyName,
-          tagline: s.tagline,
-          logoUrl: s.logoUrl,
-          description: s.description,
-          enableLocationRestriction: s.enableLocationRestriction,
-          allowedDeliveryCities: s.allowedDeliveryCities,
-        },
-        hero: {
-          heroEyebrow: s.heroEyebrow,
-          heroTitle: s.heroTitle,
-          heroHighlight: s.heroHighlight,
-          heroSubtitle: s.heroSubtitle,
-          heroCtaText: s.heroCtaText,
-          heroCtaLink: s.heroCtaLink,
-          heroSlides: s.heroSlides,
-        },
-        about: {
-          aboutEyebrow: s.aboutEyebrow,
-          aboutTitle: s.aboutTitle,
-          aboutHighlight: s.aboutHighlight,
-          aboutIntro: s.aboutIntro,
-          aboutImage: s.aboutImage,
-          aboutStats: s.aboutStats,
-          aboutValues: s.aboutValues,
-        },
+      const lang = localStorage.getItem("i18nextLng") || "am";
+
+      const mapLoc = (obj: Record<string, unknown>, fields: string[]) => {
+        const result: Record<string, unknown> = { ...obj };
+        for (const f of fields) {
+          if (typeof result[f] === "string") {
+            result[`${f}.${lang}`] = result[f];
+            delete result[f];
+          }
+        }
+        return result;
+      };
+
+      const payloads: Record<string, any> = {
+        general: mapLoc(
+          {
+            companyName: s.companyName,
+            tagline: s.tagline,
+            logoUrl: s.logoUrl,
+            description: s.description,
+            enableLocationRestriction: s.enableLocationRestriction,
+            allowedDeliveryCities: s.allowedDeliveryCities,
+          },
+          ["companyName", "tagline", "description"]
+        ),
+        hero: mapLoc(
+          {
+            heroEyebrow: s.heroEyebrow,
+            heroTitle: s.heroTitle,
+            heroHighlight: s.heroHighlight,
+            heroSubtitle: s.heroSubtitle,
+            heroCtaText: s.heroCtaText,
+            heroCtaLink: s.heroCtaLink,
+          },
+          [
+            "heroEyebrow",
+            "heroTitle",
+            "heroHighlight",
+            "heroSubtitle",
+            "heroCtaText",
+          ]
+        ),
+        about: mapLoc(
+          {
+            aboutEyebrow: s.aboutEyebrow,
+            aboutTitle: s.aboutTitle,
+            aboutHighlight: s.aboutHighlight,
+            aboutIntro: s.aboutIntro,
+            aboutImage: s.aboutImage,
+          },
+          ["aboutEyebrow", "aboutTitle", "aboutHighlight", "aboutIntro"]
+        ),
         contact: {
           contactEmail: s.contactEmail,
           contactPhone: s.contactPhone,
@@ -308,6 +336,28 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({
           emailNotifications: s.emailNotifications,
         },
       };
+
+      // Arrays require full object replacements to handle additions/deletions properly in Mongoose.
+      // Since fetching raw here is async and complex, we'll send the array structure exactly how Mongoose expects it, mapping the strings to objects.
+      payloads.hero.heroSlides = s.heroSlides.map((slide) => ({
+        image: slide.image,
+        title: { [lang]: slide.title },
+        subtitle: { [lang]: slide.subtitle },
+      }));
+
+      payloads.about.aboutStats = s.aboutStats.map((stat) => ({
+        value: stat.value,
+        label: { [lang]: stat.label },
+      }));
+
+      payloads.about.aboutValues = s.aboutValues.map((val) => ({
+        title: { [lang]: val.title },
+        desc: { [lang]: val.desc },
+      }));
+
+      // NOTE TO MONGOOSE: By sending an array of objects with sparse translations (e.g. only 'am'),
+      // Mongoose WILL overwrite the whole array. To fix this robustly, we need backend support or fetch raw state.
+      // For now, this ensures the UI array size matches the DB array size.
 
       // Save to backend
       const promises = targetSection

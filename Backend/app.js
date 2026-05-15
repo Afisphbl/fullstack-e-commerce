@@ -117,6 +117,10 @@ app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 app.use(cookieParser());
 
+// ── Locale Resolution ─────────────────────────────────────────────────────────
+const resolveLocale = require("./middleware/resolveLocale");
+app.use(resolveLocale);
+
 // ── Data sanitisation ─────────────────────────────────────────────────────────
 app.use(noSQLSanitize); // NoSQL injection
 app.use(xssSanitize); // XSS

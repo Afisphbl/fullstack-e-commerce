@@ -36,7 +36,7 @@ export const removeAuthToken = () => {
 
 export const apiFetch = async <T = unknown>(
   url: string,
-  options: RequestInit = {},
+  options: RequestInit = {}
 ): Promise<T> => {
   const isFormData = options.body instanceof FormData;
 
@@ -47,6 +47,10 @@ export const apiFetch = async <T = unknown>(
   if (!isFormData) {
     headers["Content-Type"] = "application/json";
   }
+
+  // Auto-inject locale for backend multi-language support (Phase 7)
+  const lang = localStorage.getItem("i18nextLng") || "am";
+  headers["Accept-Language"] = lang;
 
   // Add Authorization header if token exists
   const token = getAuthToken();
@@ -69,10 +73,11 @@ export const apiFetch = async <T = unknown>(
     const data = text ? JSON.parse(text) : null;
 
     if (!response.ok) {
-      const errorMessage = data?.message || `HTTP ${response.status}: ${response.statusText}`;
+      const errorMessage =
+        data?.message || `HTTP ${response.status}: ${response.statusText}`;
       logger.apiError(url, new Error(errorMessage), {
         status: response.status,
-        method: options.method || 'GET',
+        method: options.method || "GET",
       });
       throw new Error(errorMessage);
     }
@@ -80,10 +85,10 @@ export const apiFetch = async <T = unknown>(
     return data as T;
   } catch (error) {
     // Log network errors
-    if (error instanceof TypeError && error.message.includes('fetch')) {
+    if (error instanceof TypeError && error.message.includes("fetch")) {
       logger.apiError(url, error, {
-        type: 'network_error',
-        method: options.method || 'GET',
+        type: "network_error",
+        method: options.method || "GET",
       });
     }
     throw error;
