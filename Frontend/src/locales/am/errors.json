@@ -1,0 +1,32 @@
+{
+  "cart": {
+    "productUnavailable": "ይህ ምርት ከአሁን ጀምሮ አይገኝም",
+    "productCurrentlyUnavailable": "ይህ ምርት በአሁኑ ጊዜ አይገኝም",
+    "onlyUnitsAvailable": "{{count}} ቁራጭ ብቻ ይገኛል",
+    "onlyUnitsAvailable_plural": "{{count}} ቁራጮች ብቻ ይገኛሉ",
+    "insufficientStock": "በቂ ክምችት የለም",
+    "cartNotFound": "ጋሪዎ ሊጫን አልቻለም። እባክዎ እንደገና ይሞክሩ።",
+    "cartEmpty": "ጋሪዎ ባዶ ነው",
+    "couponInvalid": "ይህ የኩፖን ኮድ ልክ ያልሆነ ነው",
+    "couponExpired": "ይህ ኩፖን ጊዜው አልፏል",
+    "couponNotApplicable": "ይህ ኩፖን ለጋሪዎ ሊተነፈ አይችልም",
+    "connectionError": "የርብርብ ስህተት። እባክዎ ኢንተርኔتዎን ያረጋግጡ እና እንደገና ይሞክሩ።",
+    "loginRequired": "ጋሪዎን ለማስተዳደር እባክዎ ይግቡ",
+    "serverError": "ከፍጻሜ ዘንድ ችግር ተፈጥሯል። እባክዎ ቆየት ብለው ይሞክሩ።",
+    "updateFailed": "ጋሪ ማዘመን አልቻለም። እባክዎ እንደገና ይሞክሩ።"
+  },
+  "general": {
+    "somethingWentWrong": "ችግር ተፈጥሯል። እባክዎ እንደገና ይሞክሩ።",
+    "networkError": "የኔትወርክ ስህተት። ግንኙነትዎን ያረጋግጡ።",
+    "notFound": "እየፈለጉት ያለው ገጽ ወይም ሀብት አልተገኘም።",
+    "unauthorized": "ይህን ገጽ ለማየት ፈቃድ የለዎትም።",
+    "sessionExpired": "ክፍለ ጊዜዎ ጊዜው አልፏል። እባክዎ እንደገና ይግቡ።",
+    "validationFailed": "እባክዎ ግቤቶን ያረጋግጡ እና እንደገና ይሞክሩ።"
+  },
+  "boundary": {
+    "title": "ችግር ተፈጥሯል",
+    "message": "ያልተጠበቀ ስህተት ተከስቷል። እባክዎ ገጹን ያድሱ።",
+    "refresh": "ገጽ አድስ",
+    "goHome": "ወደ ዋና ገጽ ሂድ"
+  }
+}

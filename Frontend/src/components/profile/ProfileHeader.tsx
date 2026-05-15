@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { apiFetch, removeAuthToken } from "@/lib/api-client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
 export const ProfileHeader = () => {
+  const { t } = useTranslation(["account", "common"]);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -17,7 +19,7 @@ export const ProfileHeader = () => {
     onSuccess: () => {
       // Remove the token from localStorage
       removeAuthToken();
-      toast.success("Logged out successfully");
+      toast.success(t("common:nav.logout"));
       // Clear all user-related data from cache
       queryClient.setQueryData(["currentUser"], null);
       queryClient.removeQueries({ queryKey: ["wishlist"] });
@@ -33,7 +35,7 @@ export const ProfileHeader = () => {
   return (
     <div className="flex justify-between items-center mb-8">
       <h1 className="text-3xl font-display font-bold text-foreground">
-        My Profile
+        {t("account:pageTitle")}
       </h1>
       <Button
         variant="outline"
@@ -42,7 +44,9 @@ export const ProfileHeader = () => {
         disabled={logoutMutation.isPending}
       >
         <LogOut className="h-4 w-4" />
-        {logoutMutation.isPending ? "Logging out..." : "Logout"}
+        {logoutMutation.isPending
+          ? t("common:buttons.loading")
+          : t("common:nav.logout")}
       </Button>
     </div>
   );

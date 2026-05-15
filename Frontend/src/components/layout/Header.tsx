@@ -10,6 +10,7 @@ import {
   GitCompare,
   User,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useCompare } from "@/contexts/CompareContext";
@@ -18,17 +19,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 import { Button } from "@/components/ui/button";
 import { isAdminRole } from "@/lib/roles";
-
-const navLinks = [
-  { to: "/", label: "Home" },
-  { to: "/shop", label: "Shop" },
-  { to: "/blog", label: "Blog" },
-  { to: "/about", label: "About" },
-  { to: "/contact", label: "Contact" },
-  { to: "/faq", label: "FAQ" },
-];
+import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 
 export const Header = () => {
+  const { t } = useTranslation("common");
   const { itemCount, openCart } = useCart();
   const { favorites } = useFavorites();
   const { compareList } = useCompare();
@@ -36,6 +30,15 @@ export const Header = () => {
   const { user } = useAuth();
   const { settings } = useSiteSettings();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const navLinks = [
+    { to: "/", label: t("nav.home") },
+    { to: "/shop", label: t("nav.shop") },
+    { to: "/blog", label: t("nav.blog") },
+    { to: "/about", label: t("nav.about") },
+    { to: "/contact", label: t("nav.contact") },
+    { to: "/faq", label: t("nav.faq") },
+  ];
 
   return (
     <header className="sticky top-0 z-50 glass border-b border-border/50">
@@ -73,12 +76,16 @@ export const Header = () => {
           </nav>
 
           <div className="flex items-center gap-1 sm:gap-2">
+            {/* Language Switcher */}
+            <LanguageSwitcher />
+
             <Button
               variant="ghost"
               size="icon"
-              title="Toggle Theme"
+              title={t("buttons.cancel")}
               onClick={toggleTheme}
               className="text-muted-foreground hover:text-primary h-9 w-9"
+              aria-label="Toggle theme"
             >
               {theme === "dark" ? (
                 <Sun className="h-4 w-4" />
@@ -88,7 +95,7 @@ export const Header = () => {
             </Button>
             <NavLink
               to="/compare"
-              title="Compare"
+              title={t("nav.compare")}
               className={({ isActive }) =>
                 `relative p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`
               }
@@ -102,7 +109,7 @@ export const Header = () => {
             </NavLink>
             <NavLink
               to="/favorites"
-              title="Favorites"
+              title={t("nav.favorites")}
               className={({ isActive }) =>
                 `relative p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`
               }
@@ -116,9 +123,9 @@ export const Header = () => {
             </NavLink>
             <button
               onClick={openCart}
-              title="Cart"
+              title={t("nav.cart")}
               className="relative p-2 text-muted-foreground hover:text-primary transition-colors"
-              aria-label="Open cart"
+              aria-label={t("nav.cart")}
             >
               <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
               {itemCount > 0 && (
@@ -138,9 +145,9 @@ export const Header = () => {
               title={
                 user
                   ? isAdminRole(user.role)
-                    ? "Admin Dashboard"
-                    : "Profile"
-                  : "Login / Register"
+                    ? t("nav.admin")
+                    : t("nav.profile")
+                  : t("nav.login")
               }
               className={({ isActive }) =>
                 `flex items-center gap-1 sm:gap-2 p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`
@@ -201,6 +208,10 @@ export const Header = () => {
                 {link.label}
               </NavLink>
             ))}
+            {/* Language switcher in mobile menu */}
+            <div className="px-2 pt-2 border-t border-border/30 mt-2">
+              <LanguageSwitcher className="w-full justify-start" />
+            </div>
           </nav>
         )}
       </div>

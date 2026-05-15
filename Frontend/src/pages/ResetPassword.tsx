@@ -3,9 +3,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { apiFetch } from "@/lib/api-client";
 import { ProfileResponse } from "@/lib/api";
 import { toast } from "sonner";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -24,27 +26,28 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-const resetPasswordSchema = z
-  .object({
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    passwordConfirm: z.string().min(8, "Please confirm your password"),
-  })
-  .refine((data) => data.password === data.passwordConfirm, {
-    message: "Passwords do not match",
-    path: ["passwordConfirm"],
-  });
-
 export default function ResetPassword() {
+  const { t } = useTranslation("auth");
+  usePageTitle(t("resetPassword.pageTitle"));
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  const resetPasswordSchema = z
+    .object({
+      password: z.string().min(8, t("validation.passwordLength")),
+      passwordConfirm: z
+        .string()
+        .min(8, t("validation.passwordConfirmRequired")),
+    })
+    .refine((data) => data.password === data.passwordConfirm, {
+      message: t("validation.passwordMismatch"),
+      path: ["passwordConfirm"],
+    });
+
   const form = useForm<z.infer<typeof resetPasswordSchema>>({
     resolver: zodResolver(resetPasswordSchema),
-    defaultValues: {
-      password: "",
-      passwordConfirm: "",
-    },
+    defaultValues: { password: "", passwordConfirm: "" },
   });
 
   const mutation = useMutation({
@@ -54,7 +57,7 @@ export default function ResetPassword() {
         body: JSON.stringify(values),
       }),
     onSuccess: (data) => {
-      toast.success("Password reset successfully!");
+      toast.success(t("resetPassword.successToast"));
       queryClient.setQueryData(["currentUser"], data.data.user);
       navigate("/profile");
     },
@@ -68,25 +71,27 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className='flex items-center justify-center min-h-[calc(100vh-200px)] px-4 py-12'>
-      <Card className='w-full max-w-md'>
-        <CardHeader className='space-y-1 text-center'>
-          <CardTitle className='text-3xl font-bold'>Reset Password</CardTitle>
-          <CardDescription>Enter your new password below</CardDescription>
+    <div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-4 py-12">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-3xl font-bold">
+            {t("resetPassword.title")}
+          </CardTitle>
+          <CardDescription>{t("resetPassword.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name='password'
+                name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>New Password</FormLabel>
+                    <FormLabel>{t("resetPassword.passwordLabel")}</FormLabel>
                     <FormControl>
                       <Input
-                        type='password'
-                        placeholder='••••••••'
+                        type="password"
+                        placeholder={t("resetPassword.passwordPlaceholder")}
                         {...field}
                       />
                     </FormControl>
@@ -96,14 +101,18 @@ export default function ResetPassword() {
               />
               <FormField
                 control={form.control}
-                name='passwordConfirm'
+                name="passwordConfirm"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm New Password</FormLabel>
+                    <FormLabel>
+                      {t("resetPassword.confirmPasswordLabel")}
+                    </FormLabel>
                     <FormControl>
                       <Input
-                        type='password'
-                        placeholder='••••••••'
+                        type="password"
+                        placeholder={t(
+                          "resetPassword.confirmPasswordPlaceholder"
+                        )}
                         {...field}
                       />
                     </FormControl>
@@ -112,11 +121,13 @@ export default function ResetPassword() {
                 )}
               />
               <Button
-                type='submit'
-                className='w-full'
+                type="submit"
+                className="w-full"
                 disabled={mutation.isPending}
               >
-                {mutation.isPending ? "Resetting..." : "Reset Password"}
+                {mutation.isPending
+                  ? t("resetPassword.submitting")
+                  : t("resetPassword.submitButton")}
               </Button>
             </form>
           </Form>

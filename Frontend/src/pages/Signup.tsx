@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { apiFetch, setAuthToken } from "@/lib/api-client";
 import { AuthResponse, fetchEthiopianCities } from "@/lib/api";
 import { toast } from "sonner";
@@ -26,27 +27,31 @@ import {
 } from "@/components/ui/card";
 import { isAdminRole } from "@/lib/roles";
 
-const signupSchema = z
-  .object({
-    name: z
-      .string()
-      .min(2, "Name must be at least 2 characters")
-      .max(60, "Name must be at most 60 characters"),
-    email: z.string().email("Please enter a valid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    passwordConfirm: z.string().min(8, "Please confirm your password"),
-    country: z.string().optional(),
-    city: z.string().optional(),
-  })
-  .refine((data) => data.password === data.passwordConfirm, {
-    message: "Passwords do not match",
-    path: ["passwordConfirm"],
-  });
-
 export default function Signup() {
-  usePageTitle("Register");
+  const { t } = useTranslation("auth");
+  usePageTitle(t("signup.pageTitle"));
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  // Build schema inside component so validation messages are reactive to language
+  const signupSchema = z
+    .object({
+      name: z
+        .string()
+        .min(2, t("validation.nameLength"))
+        .max(60, t("validation.nameLength")),
+      email: z.string().email(t("validation.emailInvalid")),
+      password: z.string().min(8, t("validation.passwordLength")),
+      passwordConfirm: z
+        .string()
+        .min(8, t("validation.passwordConfirmRequired")),
+      country: z.string().optional(),
+      city: z.string().optional(),
+    })
+    .refine((data) => data.password === data.passwordConfirm, {
+      message: t("validation.passwordMismatch"),
+      path: ["passwordConfirm"],
+    });
 
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
@@ -73,36 +78,8 @@ export default function Signup() {
         body: JSON.stringify(values),
       }),
     onSuccess: (data) => {
-      // Store the token
-      if (data.token) {
-        setAuthToken(data.token);
-      }
-
-      // Request location permission proactively upon auth (Currently disabled)
-      /*
-      if ("geolocation" in navigator) {
-        if (navigator.permissions && navigator.permissions.query) {
-          navigator.permissions
-            .query({ name: "geolocation" })
-            .then((result) => {
-              if (result.state !== "denied") {
-                navigator.geolocation.getCurrentPosition(
-                  () => {},
-                  () => {}
-                );
-              }
-            })
-            .catch(() => {});
-        } else {
-          navigator.geolocation.getCurrentPosition(
-            () => {},
-            () => {}
-          );
-        }
-      }
-      */
-
-      toast.success("Account created successfully!");
+      if (data.token) setAuthToken(data.token);
+      toast.success(t("signup.successToast"));
       queryClient.setQueryData(["currentUser"], data.data.user);
       if (isAdminRole(data.data.user.role)) {
         navigate("/admin");
@@ -124,11 +101,9 @@ export default function Signup() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-3xl font-bold">
-            Create an account
+            {t("signup.title")}
           </CardTitle>
-          <CardDescription>
-            Enter your details below to create your account
-          </CardDescription>
+          <CardDescription>{t("signup.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -142,10 +117,10 @@ export default function Signup() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel>{t("signup.nameLabel")}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="John Doe"
+                        placeholder={t("signup.namePlaceholder")}
                         autoComplete="new-password"
                         {...field}
                       />
@@ -159,10 +134,10 @@ export default function Signup() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t("signup.emailLabel")}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="m@example.com"
+                        placeholder={t("signup.emailPlaceholder")}
                         autoComplete="new-password"
                         {...field}
                       />
@@ -176,11 +151,11 @@ export default function Signup() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t("signup.passwordLabel")}</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="••••••••"
+                        placeholder={t("signup.passwordPlaceholder")}
                         autoComplete="new-password"
                         {...field}
                       />
@@ -194,11 +169,11 @@ export default function Signup() {
                 name="passwordConfirm"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
+                    <FormLabel>{t("signup.confirmPasswordLabel")}</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="••••••••"
+                        placeholder={t("signup.confirmPasswordPlaceholder")}
                         autoComplete="new-password"
                         {...field}
                       />
@@ -213,7 +188,7 @@ export default function Signup() {
                   name="country"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Country</FormLabel>
+                      <FormLabel>{t("signup.nameLabel")}</FormLabel>
                       <FormControl>
                         <Input placeholder="Ethiopia" {...field} disabled />
                       </FormControl>
@@ -251,17 +226,19 @@ export default function Signup() {
                 className="w-full"
                 disabled={mutation.isPending}
               >
-                {mutation.isPending ? "Creating account..." : "Sign up"}
+                {mutation.isPending
+                  ? t("signup.submitting")
+                  : t("signup.submitButton")}
               </Button>
             </form>
           </Form>
           <div className="mt-4 text-center text-sm">
-            Already have an account?{" "}
+            {t("signup.hasAccount")}{" "}
             <Link
               to="/login"
               className="text-primary hover:underline font-medium"
             >
-              Sign in
+              {t("signup.loginLink")}
             </Link>
           </div>
         </CardContent>

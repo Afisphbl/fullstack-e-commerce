@@ -6,6 +6,7 @@ import {
   Outlet,
   useNavigate,
 } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useSiteSettings } from "@/contexts/SiteSettingsContext";
@@ -33,31 +34,8 @@ import {
 } from "lucide-react";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 
-const navItems = [
-  { to: "/admin", icon: LayoutDashboard, label: "Dashboard" },
-  { to: "/admin/products", icon: Package, label: "Products" },
-  { to: "/admin/orders", icon: ShoppingCart, label: "Orders" },
-  { to: "/admin/users", icon: Users, label: "Users" },
-  // { to: "/admin/categories", icon: Tag, label: "Categories" },
-  { to: "/admin/pos", icon: Monitor, label: "POS" },
-  { to: "/admin/summary", icon: BarChart3, label: "Summary" },
-  { to: "/admin/messages", icon: MessageSquare, label: "Messages" },
-  { to: "/admin/settings", icon: Settings, label: "Settings" },
-];
-
-const pageTitles: Record<string, string> = {
-  "/admin": "Dashboard",
-  "/admin/products": "Products",
-  "/admin/orders": "Orders",
-  "/admin/users": "Users",
-  // "/admin/categories": "Categories",
-  "/admin/pos": "POS",
-  "/admin/summary": "Summary",
-  "/admin/messages": "Messages",
-  "/admin/settings": "Settings",
-};
-
 const AdminLayout = () => {
+  const { t } = useTranslation(["admin", "common"]);
   const { user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { settings } = useSiteSettings();
@@ -67,10 +45,56 @@ const AdminLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const navItems = [
+    {
+      to: "/admin",
+      icon: LayoutDashboard,
+      label: t("admin:sidebar.dashboard"),
+    },
+    {
+      to: "/admin/products",
+      icon: Package,
+      label: t("admin:sidebar.products"),
+    },
+    {
+      to: "/admin/orders",
+      icon: ShoppingCart,
+      label: t("admin:sidebar.orders"),
+    },
+    { to: "/admin/users", icon: Users, label: t("admin:sidebar.users") },
+    { to: "/admin/pos", icon: Monitor, label: t("admin:sidebar.pos") },
+    {
+      to: "/admin/summary",
+      icon: BarChart3,
+      label: t("admin:sidebar.summary"),
+    },
+    {
+      to: "/admin/messages",
+      icon: MessageSquare,
+      label: t("admin:sidebar.messages"),
+    },
+    {
+      to: "/admin/settings",
+      icon: Settings,
+      label: t("admin:sidebar.settings"),
+    },
+  ];
+
+  const pageTitles: Record<string, string> = {
+    "/admin": t("admin:sidebar.dashboard"),
+    "/admin/products": t("admin:sidebar.products"),
+    "/admin/orders": t("admin:sidebar.orders"),
+    "/admin/users": t("admin:sidebar.users"),
+    "/admin/pos": t("admin:sidebar.pos"),
+    "/admin/summary": t("admin:sidebar.summary"),
+    "/admin/messages": t("admin:sidebar.messages"),
+    "/admin/settings": t("admin:sidebar.settings"),
+  };
+
   const { data: unreadCount = 0 } = useQuery({
     queryKey: ["unreadMessagesCount"],
     queryFn: getUnreadMessagesCount,
-    refetchInterval: 30000, // Check every 30s
+    refetchInterval: 30000,
   });
 
   const logoutMutation = useMutation({
@@ -79,10 +103,8 @@ const AdminLayout = () => {
         method: "POST",
       }),
     onSuccess: () => {
-      // Remove the token from localStorage
       removeAuthToken();
-      toast.success("Logged out successfully");
-      // Clear all user-related data from cache
+      toast.success(t("common:nav.logout"));
       queryClient.setQueryData(["currentUser"], null);
       queryClient.removeQueries({ queryKey: ["wishlist"] });
       queryClient.removeQueries({ queryKey: ["cart"] });
@@ -94,7 +116,7 @@ const AdminLayout = () => {
     },
   });
 
-  const currentTitle = pageTitles[location.pathname] || "Admin";
+  const currentTitle = pageTitles[location.pathname] || t("admin:pageTitle");
 
   return (
     <div className="min-h-screen flex bg-[radial-gradient(circle_at_top,#dfe9ff_0%,transparent_28%),hsl(var(--background))] w-full">
@@ -141,7 +163,7 @@ const AdminLayout = () => {
           </div>
           {!collapsed && (
             <p className="mt-1 text-xs text-muted-foreground">
-              Commerce Control Center
+              {t("admin:controlCenter")}
             </p>
           )}
         </div>
@@ -230,7 +252,6 @@ const AdminLayout = () => {
         <header className="sticky top-0 z-20 border-b border-border/70 bg-background/85 backdrop-blur">
           <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-4">
             <div className="flex items-center gap-3">
-              {/* Mobile Menu Button */}
               <Button
                 variant="ghost"
                 size="icon"
@@ -249,7 +270,7 @@ const AdminLayout = () => {
                 size="icon"
                 onClick={() => navigate("/")}
                 className="rounded-2xl h-9 w-9 sm:h-10 sm:w-10 text-primary hover:text-primary"
-                title="View Store"
+                title={t("admin:viewStore")}
               >
                 <Globe className="h-4 w-4" />
               </Button>
@@ -257,7 +278,7 @@ const AdminLayout = () => {
                 variant="outline"
                 size="icon"
                 className="rounded-2xl h-9 w-9 sm:h-10 sm:w-10"
-                title="Notifications"
+                title={t("admin:notifications")}
               >
                 <Bell className="h-4 w-4" />
               </Button>
@@ -301,10 +322,7 @@ const AdminLayout = () => {
           <Suspense
             fallback={
               <div className="flex h-[60vh] items-center justify-center">
-                <LoadingSpinner
-                  size="lg"
-                  label="Loading dashboard content..."
-                />
+                <LoadingSpinner size="lg" label={t("admin:loadingDashboard")} />
               </div>
             }
           >

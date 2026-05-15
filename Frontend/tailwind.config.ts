@@ -19,8 +19,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Roboto", "sans-serif"],
-        body: ["Roboto", "sans-serif"],
+        sans: ['"Noto Sans Ethiopic"', "Roboto", "system-ui", "sans-serif"],
+        display: ['"Noto Sans Ethiopic"', "Roboto", "sans-serif"],
+        body: ['"Noto Sans Ethiopic"', "Roboto", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -104,6 +105,6 @@ export default {
   },
   plugins: [
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    require("tailwindcss-animate")
+    require("tailwindcss-animate"),
   ],
 } satisfies Config;

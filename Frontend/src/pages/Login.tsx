@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { apiFetch, setAuthToken } from "@/lib/api-client";
 import { AuthResponse } from "@/lib/api";
 import { toast } from "sonner";
@@ -26,22 +27,21 @@ import {
 import { isAdminRole } from "@/lib/roles";
 import { usePageTitle } from "@/hooks/usePageTitle";
 
-const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(1, "Password is required"),
-});
-
 export default function Login() {
-  usePageTitle("Login");
+  const { t } = useTranslation("auth");
+  usePageTitle(t("login.pageTitle"));
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  // Build schema inside component so validation messages are reactive to language
+  const loginSchema = z.object({
+    email: z.string().email(t("validation.emailInvalid")),
+    password: z.string().min(1, t("validation.passwordRequired")),
+  });
+
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues: { email: "", password: "" },
   });
 
   const mutation = useMutation({
@@ -51,36 +51,8 @@ export default function Login() {
         body: JSON.stringify(values),
       }),
     onSuccess: (data) => {
-      // Store the token
-      if (data.token) {
-        setAuthToken(data.token);
-      }
-
-      // Request location permission proactively upon auth (Currently Disabled)
-      /*
-      if ("geolocation" in navigator) {
-        if (navigator.permissions && navigator.permissions.query) {
-          navigator.permissions
-            .query({ name: "geolocation" })
-            .then((result) => {
-              if (result.state !== "denied") {
-                navigator.geolocation.getCurrentPosition(
-                  () => {},
-                  () => {}
-                );
-              }
-            })
-            .catch(() => {});
-        } else {
-          navigator.geolocation.getCurrentPosition(
-            () => {},
-            () => {}
-          );
-        }
-      }
-      */
-
-      toast.success("Login successful!");
+      if (data.token) setAuthToken(data.token);
+      toast.success(t("login.successToast"));
       queryClient.setQueryData(["currentUser"], data.data.user);
       if (isAdminRole(data.data.user.role)) {
         navigate("/admin");
@@ -101,10 +73,10 @@ export default function Login() {
     <div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-3xl font-bold">Sign in</CardTitle>
-          <CardDescription>
-            Enter your email and password to access your account
-          </CardDescription>
+          <CardTitle className="text-3xl font-bold">
+            {t("login.title")}
+          </CardTitle>
+          <CardDescription>{t("login.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -118,10 +90,10 @@ export default function Login() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t("login.emailLabel")}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="m@example.com"
+                        placeholder={t("login.emailPlaceholder")}
                         autoComplete="new-password"
                         {...field}
                       />
@@ -135,11 +107,11 @@ export default function Login() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t("login.passwordLabel")}</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="••••••••"
+                        placeholder={t("login.passwordPlaceholder")}
                         autoComplete="new-password"
                         {...field}
                       />
@@ -150,7 +122,7 @@ export default function Login() {
                         to="/forgot-password"
                         className="text-sm text-primary hover:underline mt-1"
                       >
-                        Forgot password?
+                        {t("login.forgotPassword")}
                       </Link>
                     </div>
                   </FormItem>
@@ -161,17 +133,19 @@ export default function Login() {
                 className="w-full"
                 disabled={mutation.isPending}
               >
-                {mutation.isPending ? "Signing in..." : "Sign in"}
+                {mutation.isPending
+                  ? t("login.submitting")
+                  : t("login.submitButton")}
               </Button>
             </form>
           </Form>
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
+            {t("login.noAccount")}{" "}
             <Link
               to="/signup"
               className="text-primary hover:underline font-medium"
             >
-              Sign up
+              {t("login.signupLink")}
             </Link>
           </div>
         </CardContent>

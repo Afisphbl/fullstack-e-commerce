@@ -16,6 +16,7 @@ import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { CompareProvider } from "@/contexts/CompareContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SiteSettingsProvider } from "@/contexts/SiteSettingsContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -114,125 +115,136 @@ const StorefrontLayout = () => (
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <ThemeProvider>
-        <TooltipProvider>
-          <SiteSettingsProvider>
-            <CartProvider>
-              <FavoritesProvider>
-                <CompareProvider>
-                  <Toaster />
-                  <SonnerToaster />
-                  <BrowserRouter>
-                    <Routes>
-                      {/* Auth Pages (No Header/Footer) */}
-                      <Route
-                        path="/login"
-                        element={
-                          <Suspense fallback={<LoadingSpinner />}>
-                            <Login />
-                          </Suspense>
-                        }
-                      />
-                      <Route
-                        path="/signup"
-                        element={
-                          <Suspense fallback={<LoadingSpinner />}>
-                            <Signup />
-                          </Suspense>
-                        }
-                      />
-                      <Route
-                        path="/forgot-password"
-                        element={
-                          <Suspense fallback={<LoadingSpinner />}>
-                            <ForgotPassword />
-                          </Suspense>
-                        }
-                      />
-                      <Route
-                        path="/reset-password/:token"
-                        element={
-                          <Suspense fallback={<LoadingSpinner />}>
-                            <ResetPassword />
-                          </Suspense>
-                        }
-                      />
+      <LanguageProvider>
+        <ThemeProvider>
+          <TooltipProvider>
+            <SiteSettingsProvider>
+              <CartProvider>
+                <FavoritesProvider>
+                  <CompareProvider>
+                    <Toaster />
+                    <SonnerToaster />
+                    <BrowserRouter>
+                      <Routes>
+                        {/* Auth Pages (No Header/Footer) */}
+                        <Route
+                          path="/login"
+                          element={
+                            <Suspense fallback={<LoadingSpinner />}>
+                              <Login />
+                            </Suspense>
+                          }
+                        />
+                        <Route
+                          path="/signup"
+                          element={
+                            <Suspense fallback={<LoadingSpinner />}>
+                              <Signup />
+                            </Suspense>
+                          }
+                        />
+                        <Route
+                          path="/forgot-password"
+                          element={
+                            <Suspense fallback={<LoadingSpinner />}>
+                              <ForgotPassword />
+                            </Suspense>
+                          }
+                        />
+                        <Route
+                          path="/reset-password/:token"
+                          element={
+                            <Suspense fallback={<LoadingSpinner />}>
+                              <ResetPassword />
+                            </Suspense>
+                          }
+                        />
 
-                      {/* Storefront Pages (Persistent Layout) */}
-                      <Route element={<StorefrontLayout />}>
-                        <Route path="/" element={<Index />} />
-                        <Route path="/shop" element={<ShopPage />} />
-                        <Route
-                          path="/product/:slug"
-                          element={<ProductDetailPage />}
-                        />
-                        <Route path="/checkout" element={<CheckoutPage />} />
-                        <Route path="/blog" element={<BlogPage />} />
-                        <Route
-                          path="/blog/:slug"
-                          element={<BlogDetailPage />}
-                        />
-                        <Route path="/about" element={<AboutPage />} />
-                        <Route path="/contact" element={<ContactPage />} />
-                        <Route path="/faq" element={<FAQPage />} />
-                        <Route path="/compare" element={<ComparePage />} />
-                        <Route path="/favorites" element={<FavoritesPage />} />
-                        <Route path="/profile" element={<ProfilePage />} />
-                        <Route path="/orders" element={<OrdersPage />} />
-                        <Route
-                          path="/orders/:id"
-                          element={<OrderDetailPage />}
-                        />
-                        <Route
-                          path="/payment/success/:orderId"
-                          element={<PaymentSuccessPage />}
-                        />
-                        <Route path="/track/:id" element={<TrackOrderPage />} />
-                      </Route>
+                        {/* Storefront Pages (Persistent Layout) */}
+                        <Route element={<StorefrontLayout />}>
+                          <Route path="/" element={<Index />} />
+                          <Route path="/shop" element={<ShopPage />} />
+                          <Route
+                            path="/product/:slug"
+                            element={<ProductDetailPage />}
+                          />
+                          <Route path="/checkout" element={<CheckoutPage />} />
+                          <Route path="/blog" element={<BlogPage />} />
+                          <Route
+                            path="/blog/:slug"
+                            element={<BlogDetailPage />}
+                          />
+                          <Route path="/about" element={<AboutPage />} />
+                          <Route path="/contact" element={<ContactPage />} />
+                          <Route path="/faq" element={<FAQPage />} />
+                          <Route path="/compare" element={<ComparePage />} />
+                          <Route
+                            path="/favorites"
+                            element={<FavoritesPage />}
+                          />
+                          <Route path="/profile" element={<ProfilePage />} />
+                          <Route path="/orders" element={<OrdersPage />} />
+                          <Route
+                            path="/orders/:id"
+                            element={<OrderDetailPage />}
+                          />
+                          <Route
+                            path="/payment/success/:orderId"
+                            element={<PaymentSuccessPage />}
+                          />
+                          <Route
+                            path="/track/:id"
+                            element={<TrackOrderPage />}
+                          />
+                        </Route>
 
-                      {/* Admin Pages (Persistent Sidebar) */}
-                      <Route
-                        path="/admin"
-                        element={
-                          <AdminRoute>
-                            <AdminLayout />
-                          </AdminRoute>
-                        }
-                      >
-                        <Route index element={<AdminDashboard />} />
+                        {/* Admin Pages (Persistent Sidebar) */}
                         <Route
-                          path="products"
-                          element={<AdminProductsPage />}
-                        />
-                        <Route path="orders" element={<AdminOrdersPage />} />
-                        <Route path="users" element={<AdminUsersPage />} />
-                        <Route
-                          path="categories"
-                          element={<AdminCategoriesPage />}
-                        />
-                        <Route path="pos" element={<AdminPOSPage />} />
-                        <Route path="summary" element={<AdminSummaryPage />} />
-                        <Route
-                          path="settings"
-                          element={<AdminSettingsPage />}
-                        />
-                        <Route
-                          path="messages"
-                          element={<AdminMessagesPage />}
-                        />
-                      </Route>
+                          path="/admin"
+                          element={
+                            <AdminRoute>
+                              <AdminLayout />
+                            </AdminRoute>
+                          }
+                        >
+                          <Route index element={<AdminDashboard />} />
+                          <Route
+                            path="products"
+                            element={<AdminProductsPage />}
+                          />
+                          <Route path="orders" element={<AdminOrdersPage />} />
+                          <Route path="users" element={<AdminUsersPage />} />
+                          <Route
+                            path="categories"
+                            element={<AdminCategoriesPage />}
+                          />
+                          <Route path="pos" element={<AdminPOSPage />} />
+                          <Route
+                            path="summary"
+                            element={<AdminSummaryPage />}
+                          />
+                          <Route
+                            path="settings"
+                            element={<AdminSettingsPage />}
+                          />
+                          <Route
+                            path="messages"
+                            element={<AdminMessagesPage />}
+                          />
+                        </Route>
 
-                      <Route element={<StorefrontLayout />}>
-                        <Route path="*" element={<NotFound />} />
-                      </Route>
-                    </Routes>
-                  </BrowserRouter>
-                </CompareProvider>
-              </FavoritesProvider>
-            </CartProvider>
-          </SiteSettingsProvider>
-        </TooltipProvider>
-      </ThemeProvider>
+                        <Route element={<StorefrontLayout />}>
+                          <Route path="*" element={<NotFound />} />
+                        </Route>
+                      </Routes>
+                    </BrowserRouter>
+                  </CompareProvider>
+                </FavoritesProvider>
+              </CartProvider>
+            </SiteSettingsProvider>
+          </TooltipProvider>
+        </ThemeProvider>
+      </LanguageProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

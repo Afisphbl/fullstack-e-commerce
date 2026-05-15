@@ -1,4 +1,4 @@
-import React from "react";
+import { useTranslation } from "react-i18next";
 import { useCompare } from "@/contexts/CompareContext";
 import { Button } from "@/components/ui/button";
 import { X, GitCompare } from "lucide-react";
@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 
 const ComparePage = () => {
+  const { t } = useTranslation("shop");
   const { compareList, removeFromCompare, clearCompare } = useCompare();
   const { addToCart } = useCart();
 
@@ -14,13 +15,11 @@ const ComparePage = () => {
       <div className="container mx-auto px-4 py-16 text-center">
         <GitCompare className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
         <h1 className="text-2xl font-display font-bold text-foreground mb-2">
-          No Products to Compare
+          {t("compare.empty")}
         </h1>
-        <p className="text-muted-foreground mb-6">
-          Add products to compare their features side by side.
-        </p>
+        <p className="text-muted-foreground mb-6">{t("compare.emptyHint")}</p>
         <Button asChild className="bg-primary text-primary-foreground">
-          <Link to="/shop">Browse Products</Link>
+          <Link to="/shop">{t("compare.addProduct")}</Link>
         </Button>
       </div>
     );
@@ -34,14 +33,14 @@ const ComparePage = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-display font-bold text-foreground">
-          Compare Products
+          {t("compare.pageTitle")}
         </h1>
         <Button
           variant="outline"
           onClick={clearCompare}
           className="text-destructive border-destructive/30"
         >
-          Clear All
+          {t("compare.clearAll")}
         </Button>
       </div>
 
@@ -50,7 +49,7 @@ const ComparePage = () => {
           <thead>
             <tr>
               <th className="text-left p-4 text-muted-foreground font-medium text-sm">
-                Feature
+                {t("compare.feature")}
               </th>
               {compareList.map((p) => (
                 <th key={p.id} className="p-4 text-center min-w-[200px]">
@@ -77,7 +76,9 @@ const ComparePage = () => {
           </thead>
           <tbody>
             <tr className="border-t border-border">
-              <td className="p-4 text-sm text-muted-foreground">Price</td>
+              <td className="p-4 text-sm text-muted-foreground">
+                {t("checkout:order.total")}
+              </td>
               {compareList.map((p) => (
                 <td
                   key={p.id}
@@ -88,7 +89,9 @@ const ComparePage = () => {
               ))}
             </tr>
             <tr className="border-t border-border">
-              <td className="p-4 text-sm text-muted-foreground">Brand</td>
+              <td className="p-4 text-sm text-muted-foreground">
+                {t("product.brand")}
+              </td>
               {compareList.map((p) => (
                 <td key={p.id} className="p-4 text-center text-foreground">
                   {p.brand}
@@ -116,7 +119,7 @@ const ComparePage = () => {
                     onClick={() => addToCart(p)}
                     className="bg-primary text-primary-foreground hover:bg-primary/90"
                   >
-                    Add to Cart
+                    {t("product.addToCart")}
                   </Button>
                 </td>
               ))}

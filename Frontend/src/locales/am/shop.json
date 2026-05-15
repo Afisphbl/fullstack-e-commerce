@@ -1,0 +1,108 @@
+{
+  "pageTitle": "ሱቅ",
+  "hero": {
+    "title": "ሁሉም ምርቶች",
+    "subtitle": "ሙሉ ስብስባችንን ያስሱ"
+  },
+  "search": {
+    "placeholder": "ምርቶችን ፈልግ...",
+    "noResults": "ለ\"{{query}}\" ምንም ምርት አልተገኘም",
+    "clearSearch": "ፍለጋ አጽዳ"
+  },
+  "filters": {
+    "title": "ማጣሪያዎች",
+    "category": "ምድብ",
+    "allCategories": "ሁሉም ምድቦች",
+    "priceRange": "የዋጋ ክልል",
+    "rating": "ደረጃ",
+    "sortBy": "ደርድር",
+    "sortOptions": {
+      "newest": "አዲስ",
+      "priceAsc": "ዋጋ፡ ዝቅ ወደ ከፍ",
+      "priceDesc": "ዋጋ፡ ከፍ ወደ ዝቅ",
+      "rating": "ምርጥ ደረጃ",
+      "popular": "ታዋቂ"
+    },
+    "inStockOnly": "ያለ ብቻ",
+    "featuredOnly": "ተለዩ ብቻ",
+    "apply": "ማጣሪያ ተጠቀም",
+    "clear": "ሁሉ አጽዳ"
+  },
+  "product": {
+    "addToCart": "ወደ ጋሪ ጨምር",
+    "addToWishlist": "ወደ ምኞቶቼ ጨምር",
+    "removeFromWishlist": "ከምኞቶቼ አስወግድ",
+    "addToCompare": "ለማወዳደር ጨምር",
+    "removeFromCompare": "ከማወዳደሪያ አስወግድ",
+    "inStock": "አለ",
+    "outOfStock": "አልቋል",
+    "lowStock": "{{count}} ብቻ ቀርቷል",
+    "sale": "ቅናሽ",
+    "featured": "ተለዩ",
+    "new": "አዲስ",
+    "rating": "{{count}} ግምገማ",
+    "noReviews": "ምንም ግምገማ የለም",
+    "by": "በ",
+    "brand": "ብራንድ",
+    "category": "ምድብ"
+  },
+  "results": {
+    "showing": "{{count}} ምርቶች ታይቷል",
+    "empty": "ምንም ምርት ማጣሪያዎቹን አያሟሉም",
+    "emptyHint": "ፍለጋዎን ወይም ማጣሪያዎን ይቀይሩ"
+  },
+  "detail": {
+    "pageTitle": "{{name}}",
+    "description": "መግለጫ",
+    "specifications": "ዝርዝር መስፈርቶች",
+    "reviews": "ግምገማዎች",
+    "relatedProducts": "ተዛማጅ ምርቶች",
+    "quantity": "ብዛት",
+    "sku": "SKU",
+    "shareProduct": "አጋራ",
+    "productImages": "የምርት ምስሎች",
+    "addedToCart": "ወደ ጋሪ ተጨምሯል!",
+    "addedToWishlist": "ወደ ምኞቶቼ ተጨምሯል",
+    "removedFromWishlist": "ከምኞቶቼ ተወግዷል"
+  },
+  "compare": {
+    "pageTitle": "ምርቶችን አወዳድር",
+    "empty": "ለማወዳደር ምርቶች የሉም",
+    "emptyHint": "ከሱቁ ምርቶችን ለማወዳደር ጨምሩ",
+    "clearAll": "ሁሉ አጽዳ",
+    "addProduct": "ምርት ጨምር",
+    "feature": "ባሕርይ"
+  },
+  "favorites": {
+    "pageTitle": "ተወዳጆቼ",
+    "empty": "ምንም ተወዳጅ የለም",
+    "emptyHint": "ሱቁን ያስሱ እና ምርቶችን ወደ ተወዳጆቼ ይጨምሩ"
+  },
+  "cart": {
+    "title": "ጋሪዎ",
+    "empty": "ጋሪዎ ባዶ ነው",
+    "emptyHint": "ለመጀመር ምርቶችን ይጨምሩ",
+    "continueShopping": "ግዢ ቀጥሉ",
+    "checkout": "መቁጠሪያ",
+    "remove": "አስወግድ",
+    "quantity": "ብዛት",
+    "subtotal": "ንዑስ ድምር",
+    "total": "ድምር",
+    "items": "ዕቃዎች",
+    "item": "ዕቃ",
+    "coupon": {
+      "label": "የኩፖን ኮድ",
+      "placeholder": "የኩፖን ኮድ ያስገቡ",
+      "apply": "ተጠቀም",
+      "remove": "አስወግድ",
+      "applied": "ኩፖን ተተግብሯል!",
+      "discount": "ቅናሽ"
+    },
+    "toast": {
+      "added": "{{name}} ወደ ጋሪ ተጨምሯል",
+      "removed": "ዕቃ ከጋሪ ተወግዷል",
+      "updated": "ጋሪ ተዘምኗል",
+      "cleared": "ጋሪ ጸድቷል"
+    }
+  }
+}

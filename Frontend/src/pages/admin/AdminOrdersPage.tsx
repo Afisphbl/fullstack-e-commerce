@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { fetchOrders, Order, updateOrder } from "@/lib/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -21,6 +22,7 @@ import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { formatCurrency } from "@/lib/formatters";
 
 const AdminOrdersPage = () => {
+  const { t } = useTranslation(["admin", "common"]);
   const [selected, setSelected] = useState<Order | null>(null);
   const [statusFilter, setStatusFilter] = useState("all");
   const queryClient = useQueryClient();
@@ -35,7 +37,6 @@ const AdminOrdersPage = () => {
     queryFn: fetchOrders,
   });
 
-  // Filter orders by status
   const filteredOrders =
     statusFilter === "all"
       ? orders
@@ -46,22 +47,18 @@ const AdminOrdersPage = () => {
       updateOrder(id, { orderStatus: status }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminOrders"] });
-      toast.success("Order status updated successfully");
+      toast.success(t("admin:orders.statusUpdated"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Failed to update order status");
+      toast.error(error.message || t("admin:orders.statusUpdateFailed"));
     },
   });
-
-  const updateStatus = (id: string, status: string) => {
-    updateStatusMutation.mutate({ id, status });
-  };
 
   if (isError) {
     return (
       <div className="p-8 text-center bg-destructive/10 border border-destructive/20 rounded-lg">
         <h2 className="text-lg font-bold text-destructive mb-2">
-          Failed to Load Orders
+          {t("admin:orders.errorTitle")}
         </h2>
         <p className="text-muted-foreground mb-4">{(error as Error).message}</p>
         <Button
@@ -69,7 +66,7 @@ const AdminOrdersPage = () => {
             queryClient.invalidateQueries({ queryKey: ["adminOrders"] })
           }
         >
-          Try Again
+          {t("admin:common.tryAgain")}
         </Button>
       </div>
     );
@@ -79,23 +76,32 @@ const AdminOrdersPage = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-2xl font-display font-bold text-foreground">
-          Orders ({filteredOrders.length})
+          {t("admin:orders.title")} ({filteredOrders.length})
         </h1>
 
-        {/* Status Filter */}
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-muted-foreground" />
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by status" />
+              <SelectValue placeholder={t("admin:orders.filterPlaceholder")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Orders</SelectItem>
-              <SelectItem value="placed">Placed</SelectItem>
-              <SelectItem value="processing">Processing</SelectItem>
-              <SelectItem value="shipped">Shipped</SelectItem>
-              <SelectItem value="delivered">Delivered</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
+              <SelectItem value="all">{t("admin:orders.allOrders")}</SelectItem>
+              <SelectItem value="placed">
+                {t("admin:orders.statuses.placed")}
+              </SelectItem>
+              <SelectItem value="processing">
+                {t("admin:orders.statuses.processing")}
+              </SelectItem>
+              <SelectItem value="shipped">
+                {t("admin:orders.statuses.shipped")}
+              </SelectItem>
+              <SelectItem value="delivered">
+                {t("admin:orders.statuses.delivered")}
+              </SelectItem>
+              <SelectItem value="cancelled">
+                {t("admin:orders.statuses.cancelled")}
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -106,25 +112,25 @@ const AdminOrdersPage = () => {
           <thead className="bg-muted">
             <tr>
               <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">
-                Order ID
+                {t("admin:orders.orderId")}
               </th>
               <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">
-                User
+                {t("admin:orders.user")}
               </th>
               <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">
-                Date
+                {t("admin:orders.date")}
               </th>
               <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">
-                Items
+                {t("admin:orders.items")}
               </th>
               <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">
-                Total
+                {t("admin:orders.total")}
               </th>
               <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">
-                Status
+                {t("admin:orders.status")}
               </th>
               <th className="text-right p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">
-                Actions
+                {t("admin:orders.actions")}
               </th>
             </tr>
           </thead>
@@ -137,8 +143,11 @@ const AdminOrdersPage = () => {
                   colSpan={7}
                   className="p-8 text-center text-muted-foreground"
                 >
-                  No orders found
-                  {statusFilter !== "all" && ` with status "${statusFilter}"`}
+                  {statusFilter !== "all"
+                    ? t("admin:orders.noOrdersWithStatus", {
+                        status: statusFilter,
+                      })
+                    : t("admin:orders.noOrders")}
                 </td>
               </tr>
             ) : (
@@ -152,17 +161,17 @@ const AdminOrdersPage = () => {
                   </td>
                   <td className="p-3">
                     <div className="text-sm font-medium text-foreground">
-                      {o.user?.name || "Unknown"}
+                      {o.user?.name || t("admin:common.unknown")}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      {o.user?.email || "No email"}
+                      {o.user?.email || t("admin:common.noEmail")}
                     </div>
                   </td>
                   <td className="p-3 text-sm text-muted-foreground">
                     {o.date}
                   </td>
                   <td className="p-3 text-sm text-muted-foreground">
-                    {o.items.length} items
+                    {t("admin:orders.itemCount", { count: o.items.length })}
                   </td>
                   <td className="p-3 text-sm font-medium text-foreground">
                     {formatCurrency(o.total)}
@@ -170,7 +179,9 @@ const AdminOrdersPage = () => {
                   <td className="p-3">
                     <Select
                       value={o.status}
-                      onValueChange={(v) => updateStatus(o.id, v)}
+                      onValueChange={(v) =>
+                        updateStatusMutation.mutate({ id: o.id, status: v })
+                      }
                     >
                       <SelectTrigger className="w-32 h-8 text-xs">
                         <SelectValue />
@@ -184,7 +195,7 @@ const AdminOrdersPage = () => {
                           "cancelled",
                         ].map((s) => (
                           <SelectItem key={s} value={s} className="capitalize">
-                            {s}
+                            {t(`admin:orders.statuses.${s}`)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -211,14 +222,16 @@ const AdminOrdersPage = () => {
         <DialogContent className="bg-card max-w-lg">
           <DialogHeader>
             <DialogTitle className="font-display text-foreground">
-              Order {selected?.id}
+              {selected?.id}
             </DialogTitle>
           </DialogHeader>
           {selected && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-sm">
-                  <span className="text-muted-foreground">Customer:</span>{" "}
+                  <span className="text-muted-foreground">
+                    {t("admin:orders.customer_label")}
+                  </span>{" "}
                   <span className="text-foreground block">
                     {selected.user?.name}
                   </span>
@@ -227,19 +240,23 @@ const AdminOrdersPage = () => {
                   </span>
                 </div>
                 <div className="text-sm">
-                  <span className="text-muted-foreground">Date:</span>{" "}
+                  <span className="text-muted-foreground">
+                    {t("admin:orders.date_label")}
+                  </span>{" "}
                   <span className="text-foreground block">{selected.date}</span>
                 </div>
               </div>
               <div className="text-sm">
-                <span className="text-muted-foreground">Address:</span>{" "}
+                <span className="text-muted-foreground">
+                  {t("admin:orders.address_label")}
+                </span>{" "}
                 <span className="text-foreground block">
                   {selected.shippingAddress}
                 </span>
               </div>
               <div>
                 <h4 className="text-sm font-medium text-foreground mb-2">
-                  Items
+                  {t("admin:orders.items")}
                 </h4>
                 {selected.items.map((i) => (
                   <div
@@ -264,7 +281,7 @@ const AdminOrdersPage = () => {
                 ))}
               </div>
               <div className="flex justify-between font-display font-bold text-foreground pt-2 border-t border-border">
-                <span>Total</span>
+                <span>{t("admin:orders.total")}</span>
                 <span>{formatCurrency(selected.total)}</span>
               </div>
             </div>

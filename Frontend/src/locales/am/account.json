@@ -1,0 +1,39 @@
+{
+  "pageTitle": "የእኔ አካውንት",
+  "tabs": {
+    "profile": "ፕሮፋይል",
+    "password": "የይለፍ ቃል",
+    "orders": "ትዕዛዞች",
+    "wishlist": "ምኞት ዝርዝር"
+  },
+  "profile": {
+    "loading": "የፕሮፋይል ዝርዝሮችን በመጫን ላይ...",
+    "personalInfo": "የግል መረጃ",
+    "shippingDetails": "የመላኪያ ዝርዝሮች",
+    "successToast": "ፕሮፋይል በትክክል ተሻሽሏል!"
+  },
+  "orders": {
+    "active": "በሂደት ላይ",
+    "completed": "የተጠናቀቁ",
+    "loading": "ትዕዛዞችን በመጫን ላይ...",
+    "error": "ትዕዛዞችን መጫን አልተቻለም",
+    "empty": "ምንም የ{{type}} ትዕዛዞች አልተገኙም።",
+    "notFound": "ትዕዛዙ አልተገኘም",
+    "backToOrders": "ወደ ትዕዛዞች ተመለስ",
+    "placedOn": "የታዘዘበት ቀን",
+    "progress": "የትዕዛዝ ሂደት",
+    "tracking": "መከታተያ",
+    "estimatedDelivery": "የሚገመትበት ቀን",
+    "toggleDetails": "የትዕዛዝ {{id}} ዝርዝሮችን ቀያይር",
+    "status": {
+      "placed": "ታዟል",
+      "processing": "በሂደት ላይ",
+      "shipped": "ተልኳል",
+      "delivered": " ደርሷል",
+      "cancelled": "ተሰርዟል"
+    }
+  },
+  "wishlist": {
+    "loading": "የምኞት ዝርዝር በመጫን ላይ..."
+  }
+}

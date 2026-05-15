@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Heart, ShoppingCart, GitCompare } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Product } from "@/lib/api";
 import { useCart } from "@/contexts/CartContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
@@ -23,6 +24,7 @@ export const ProductCard = ({
   loading,
   fetchPriority,
 }: ProductCardProps) => {
+  const { t } = useTranslation("shop");
   const { user } = useAuth();
   const { addToCart } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -79,8 +81,8 @@ export const ProductCard = ({
             onClick={() => toggleFavorite(product)}
             aria-label={
               isFavorite(product.id)
-                ? "Remove from favorites"
-                : "Add to favorites"
+                ? t("product.removeFromWishlist")
+                : t("product.addToWishlist")
             }
             className={`p-1.5 rounded-full backdrop-blur-sm transition-colors ${isFavorite(product.id) ? "bg-destructive/90 text-destructive-foreground" : "bg-card/70 text-muted-foreground hover:text-destructive"}`}
           >
@@ -97,7 +99,9 @@ export const ProductCard = ({
                 : addToCompare(product)
             }
             aria-label={
-              isInCompare(product.id) ? "Remove from compare" : "Add to compare"
+              isInCompare(product.id)
+                ? t("product.removeFromCompare")
+                : t("product.addToCompare")
             }
             className={`p-1.5 rounded-full backdrop-blur-sm transition-colors ${isInCompare(product.id) ? "bg-primary/90 text-primary-foreground" : "bg-card/70 text-muted-foreground hover:text-primary"}`}
           >
@@ -111,7 +115,7 @@ export const ProductCard = ({
             {product.brand}
           </p>
           <span className={`text-[11px] font-medium ${stockTone}`}>
-            {product.stock > 0 ? "In Stock" : "Out"}
+            {product.stock > 0 ? t("product.inStock") : t("product.outOfStock")}
           </span>
         </div>
         <Link to={`/product/${product.slug}`}>
@@ -138,7 +142,7 @@ export const ProductCard = ({
               className={`h-8 px-3 text-xs ${isLocChecking || !isDeliveryAvailable ? "bg-muted text-muted-foreground" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}
               title={
                 isLocChecking
-                  ? "Checking availability..."
+                  ? t("common:buttons.loading")
                   : !isDeliveryAvailable
                     ? "Delivery is not available in your region"
                     : ""
@@ -146,10 +150,10 @@ export const ProductCard = ({
             >
               <ShoppingCart className="mr-1 h-3.5 w-3.5" />
               {isLocChecking
-                ? "Checking..."
+                ? t("common:buttons.loading")
                 : !isDeliveryAvailable
                   ? "Not available"
-                  : "Add"}
+                  : t("product.addToCart")}
             </Button>
           )}
         </div>

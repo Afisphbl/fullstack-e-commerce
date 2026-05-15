@@ -1,0 +1,85 @@
+{
+  "pageTitle": "Kaffalii",
+  "steps": {
+    "shipping": "Ergaa",
+    "payment": "Kaffalii",
+    "review": "Madaallii"
+  },
+  "shipping": {
+    "title": "Teessoo Ergaa",
+    "firstName": "Maqaa Duraa",
+    "lastName": "Maqaa Abbaa",
+    "email": "Imeelii",
+    "phone": "Bilbila",
+    "address": "Teessoo Daandii",
+    "city": "Magaalaa",
+    "state": "Naannoo",
+    "zip": "Lakkoofsa Poostaa",
+    "country": "Biyya",
+    "saveAddress": "Teessoo kana kuusi"
+  },
+  "payment": {
+    "title": "Mala Kaffalii",
+    "chapa": "Chapaatiin Kaffali",
+    "cash": "Yeroo Geessamu Kaffali",
+    "card": "Kaardii Liqeessitoo/Deebii",
+    "payNow": "Amma Kaffali",
+    "processing": "Kaffalii ilaalaa jira...",
+    "secureNote": "Kaffaliin kee SSL bit-256 fayyadamuun eegameera",
+    "verifying": "Kaffaltii mirkaneessaa jira...",
+    "confirmingNote": "Maaloo hanga nuyi haala kaffaltii keetii mirkaneessinutti eegi",
+    "verificationFailed": "Mirkaneessi hin danda'amne",
+    "successTitle": "Kaffaltiin Milkaa'eera!",
+    "successMessage": "Ajajni kee mirkanaa'ee hojjetamaa jira",
+    "pendingTitle": "Kaffaltiin Eeggannoo Irra Jiru",
+    "pendingMessage": "Kaffaltiin kee adeemsa irra jira. Kun daqiiqaa muraasa fudhachuu danda'a.",
+    "pendingLongMessage": "Kaffaltiin kee mirkanaa'aa jira. Kun yeroo baay'ee daqiiqaa muraasa fudhata. Haala ajaja keetii fuula ajajaa keetii irratti ilaaluu dandeessa.",
+    "failedTitle": "Kaffaltiin Hin Milkoofne",
+    "failedMessage": "Kaffaltii kee adeemsisuu hin dandeenye. Maaloo deebisii yaali.",
+    "failedLongMessage": "Kaffaltiin kee adeemsifamuu hin dandeenye. Ajajni kee uumameera garuu hin kaffalamne. Fuula bal'ina ajajaa keetii irraa deebisitee yaaluu dandeessa.",
+    "whatsNext": "Itti aansee maaltu jira?",
+    "emailNote": "Imeelii mirkaneessaa ajajaa dhiyootti si ga'a",
+    "trackNote": "Haala ajaja keetii fuula ajajaa keetii irratti hordofi",
+    "shipNote": "Yeroo ajajni kee ergame si beeksisna",
+    "retryPayment": "Kaffaltii Deebisii Yaali",
+    "needHelp": "Gargaarsa barbaaddaa?",
+    "status": {
+      "paid": "Kaffalameera",
+      "unpaid": "Hin kaffalamne",
+      "pending": "Eeggannoo irra",
+      "failed": "Hin milkoofne"
+    }
+  },
+  "order": {
+    "summary": "Cuunfaa Ajajaa",
+    "items": "Meeshaalee",
+    "subtotal": "Walakkaa",
+    "shipping": "Ergaa",
+    "tax": "Gibiraa",
+    "discount": "Hir'ina Gatii",
+    "total": "Hanga Waligalaa",
+    "freeShipping": "Bilisaa",
+    "placeOrder": "Ajajaa Kaa'i",
+    "placing": "Ajajaa galmeessaa jira..."
+  },
+  "success": {
+    "title": "Ajajni Kaa'ame!",
+    "message": "Ajajaa keetif galata. Mirkanaa'inni imeelii kee irraan ergama.",
+    "orderNumber": "Lakkoofsa Ajajaa",
+    "continueShopping": "Bitachuu Itti Fufaa",
+    "trackOrder": "Ajajaa Hordofaa",
+    "viewOrders": "Ajajaawwan Koo Ilaali",
+    "details": "Bal'ina Ajajaa Ilaali"
+  },
+  "validation": {
+    "firstNameRequired": "Maqaan duraa ni barbaachisa",
+    "lastNameRequired": "Maqaan abbaa ni barbaachisa",
+    "emailRequired": "Imeelii ni barbaachisa",
+    "emailInvalid": "Maaloo imeelii sirrii galchi",
+    "phoneRequired": "Lakkoofsa bilbilaa ni barbaachisa",
+    "addressRequired": "Teessoon daandii ni barbaachisa",
+    "cityRequired": "Magaalaan ni barbaachisa",
+    "zipRequired": "Lakkoofsi poostaa ni barbaachisa",
+    "countryRequired": "Biyya ni barbaachisa"
+  }
+}

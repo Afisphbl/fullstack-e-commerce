@@ -1,0 +1,108 @@
+{
+  "pageTitle": "Shop",
+  "hero": {
+    "title": "Shop All Products",
+    "subtitle": "Browse our full collection"
+  },
+  "search": {
+    "placeholder": "Search products...",
+    "noResults": "No products found for \"{{query}}\"",
+    "clearSearch": "Clear search"
+  },
+  "filters": {
+    "title": "Filters",
+    "category": "Category",
+    "allCategories": "All Categories",
+    "priceRange": "Price Range",
+    "rating": "Rating",
+    "sortBy": "Sort By",
+    "sortOptions": {
+      "newest": "Newest",
+      "priceAsc": "Price: Low to High",
+      "priceDesc": "Price: High to Low",
+      "rating": "Best Rated",
+      "popular": "Most Popular"
+    },
+    "inStockOnly": "In Stock Only",
+    "featuredOnly": "Featured Only",
+    "apply": "Apply Filters",
+    "clear": "Clear All"
+  },
+  "product": {
+    "addToCart": "Add to Cart",
+    "addToWishlist": "Add to Wishlist",
+    "removeFromWishlist": "Remove from Wishlist",
+    "addToCompare": "Add to Compare",
+    "removeFromCompare": "Remove from Compare",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "lowStock": "Only {{count}} left",
+    "sale": "Sale",
+    "featured": "Featured",
+    "new": "New",
+    "rating": "{{count}} reviews",
+    "noReviews": "No reviews yet",
+    "by": "By",
+    "brand": "Brand",
+    "category": "Category"
+  },
+  "results": {
+    "showing": "Showing {{count}} products",
+    "empty": "No products match your filters",
+    "emptyHint": "Try adjusting your search or filters"
+  },
+  "detail": {
+    "pageTitle": "{{name}}",
+    "description": "Description",
+    "specifications": "Specifications",
+    "reviews": "Reviews",
+    "relatedProducts": "Related Products",
+    "quantity": "Quantity",
+    "sku": "SKU",
+    "shareProduct": "Share",
+    "productImages": "Product Images",
+    "addedToCart": "Added to cart!",
+    "addedToWishlist": "Added to wishlist",
+    "removedFromWishlist": "Removed from wishlist"
+  },
+  "compare": {
+    "pageTitle": "Compare Products",
+    "empty": "No products to compare",
+    "emptyHint": "Add products to compare from the shop",
+    "clearAll": "Clear All",
+    "addProduct": "Add Product",
+    "feature": "Feature"
+  },
+  "favorites": {
+    "pageTitle": "My Favorites",
+    "empty": "No favorites yet",
+    "emptyHint": "Browse the shop and add products to your favorites"
+  },
+  "cart": {
+    "title": "Your Cart",
+    "empty": "Your cart is empty",
+    "emptyHint": "Add some products to get started",
+    "continueShopping": "Continue Shopping",
+    "checkout": "Checkout",
+    "remove": "Remove",
+    "quantity": "Qty",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "items": "items",
+    "item": "item",
+    "coupon": {
+      "label": "Coupon Code",
+      "placeholder": "Enter coupon code",
+      "apply": "Apply",
+      "remove": "Remove",
+      "applied": "Coupon applied!",
+      "discount": "Discount"
+    },
+    "toast": {
+      "added": "{{name}} added to cart",
+      "removed": "Item removed from cart",
+      "updated": "Cart updated",
+      "cleared": "Cart cleared"
+    }
+  }
+}

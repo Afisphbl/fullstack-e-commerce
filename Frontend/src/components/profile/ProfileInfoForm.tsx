@@ -1,10 +1,9 @@
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { User as UserIcon, MapPin, Camera } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { ProfilePictureUpload } from "./ProfilePictureUpload";
-
+import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -20,19 +19,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
-const updateProfileSchema = z.object({
-  name: z
-    .string()
-    .min(2, "Name must be at least 2 characters")
-    .max(60, "Name must be at most 60 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  street: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  zip: z.string().optional(),
-  country: z.string().optional(),
-});
 
 interface User {
   name: string;
@@ -53,7 +39,21 @@ interface ProfileInfoFormProps {
 }
 
 export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
+  const { t } = useTranslation(["account", "auth", "common"]);
   const queryClient = useQueryClient();
+
+  const updateProfileSchema = z.object({
+    name: z
+      .string()
+      .min(2, t("auth:validation.nameLength"))
+      .max(60, t("auth:validation.nameLength")),
+    email: z.string().email(t("auth:validation.emailInvalid")),
+    street: z.string().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    zip: z.string().optional(),
+    country: z.string().optional(),
+  });
 
   const profileForm = useForm<z.infer<typeof updateProfileSchema>>({
     resolver: zodResolver(updateProfileSchema),
@@ -100,7 +100,6 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
         email: values.email,
       };
 
-      // Handle address updates: send addresses if any field is filled, or clear if user had addresses but all fields are now empty
       const hasAnyAddressField =
         values.street ||
         values.city ||
@@ -126,7 +125,6 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
             ? [updatedFirstAddress, ...existingAddresses.slice(1)]
             : [updatedFirstAddress];
       } else if (user?.addresses && user.addresses.length > 0) {
-        // User had addresses but all fields are now empty - clear addresses
         payload.addresses = [];
       }
 
@@ -136,7 +134,7 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
       });
     },
     onSuccess: (data) => {
-      toast.success("Profile updated successfully!");
+      toast.success(t("account:profile.successToast"));
       queryClient.setQueryData(["currentUser"], data.data.user);
     },
     onError: (error: Error) => {
@@ -148,18 +146,17 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
     <Form {...profileForm}>
       <form
         onSubmit={profileForm.handleSubmit((values) =>
-          updateProfileMutation.mutate(values),
+          updateProfileMutation.mutate(values)
         )}
-        className='space-y-8'
+        className="space-y-8"
       >
-        <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
-          {/* Left Column: Personal Information */}
-          <div className='space-y-4'>
-            <h2 className='font-display font-semibold text-foreground mb-6 text-xl'>
-              Personal Information
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="space-y-4">
+            <h2 className="font-display font-semibold text-foreground mb-6 text-xl">
+              {t("account:profile.personalInfo")}
             </h2>
 
-            <div className='mb-8'>
+            <div className="mb-8">
               <ProfilePictureUpload
                 userName={user.name}
                 currentPhoto={
@@ -180,10 +177,10 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
 
             <FormField
               control={profileForm.control}
-              name='name'
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Full Name</FormLabel>
+                  <FormLabel>{t("auth:signup.nameLabel")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -193,10 +190,10 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
             />
             <FormField
               control={profileForm.control}
-              name='email'
+              name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t("auth:login.emailLabel")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -206,36 +203,36 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
             />
           </div>
 
-          {/* Right Column: Shipping Details (Users Only) */}
           {user.role === "user" && (
-            <div className='space-y-4'>
-              <h2 className='font-display font-semibold text-foreground mb-6 text-xl flex items-center gap-2'>
-                <MapPin className='h-5 w-5 text-primary' /> Shipping Details
+            <div className="space-y-4">
+              <h2 className="font-display font-semibold text-foreground mb-6 text-xl flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-primary" />{" "}
+                {t("account:profile.shippingDetails")}
               </h2>
 
               <FormField
                 control={profileForm.control}
-                name='street'
+                name="street"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Street Address</FormLabel>
+                    <FormLabel>{t("checkout:shipping.address")}</FormLabel>
                     <FormControl>
-                      <Input placeholder='123 Main St' {...field} />
+                      <Input placeholder="123 Main St" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <div className='grid grid-cols-2 gap-4'>
+              <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={profileForm.control}
-                  name='city'
+                  name="city"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>City</FormLabel>
+                      <FormLabel>{t("checkout:shipping.city")}</FormLabel>
                       <FormControl>
-                        <Input placeholder='New York' {...field} />
+                        <Input placeholder="New York" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -243,12 +240,12 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
                 />
                 <FormField
                   control={profileForm.control}
-                  name='state'
+                  name="state"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>State/Province</FormLabel>
+                      <FormLabel>{t("checkout:shipping.state")}</FormLabel>
                       <FormControl>
-                        <Input placeholder='NY' {...field} />
+                        <Input placeholder="NY" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -256,15 +253,15 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
                 />
               </div>
 
-              <div className='grid grid-cols-2 gap-4'>
+              <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={profileForm.control}
-                  name='zip'
+                  name="zip"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Postal Code</FormLabel>
+                      <FormLabel>{t("checkout:shipping.zip")}</FormLabel>
                       <FormControl>
-                        <Input placeholder='10001' {...field} />
+                        <Input placeholder="10001" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -272,12 +269,12 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
                 />
                 <FormField
                   control={profileForm.control}
-                  name='country'
+                  name="country"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Country</FormLabel>
+                      <FormLabel>{t("checkout:shipping.country")}</FormLabel>
                       <FormControl>
-                        <Input placeholder='United States' {...field} />
+                        <Input placeholder="United States" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -288,9 +285,11 @@ export const ProfileInfoForm = ({ user }: ProfileInfoFormProps) => {
           )}
         </div>
 
-        <div className='flex justify-end border-t border-border pt-6'>
-          <Button type='submit' disabled={updateProfileMutation.isPending}>
-            {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
+        <div className="flex justify-end border-t border-border pt-6">
+          <Button type="submit" disabled={updateProfileMutation.isPending}>
+            {updateProfileMutation.isPending
+              ? t("common:buttons.loading")
+              : t("common:buttons.save")}
           </Button>
         </div>
       </form>

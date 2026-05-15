@@ -1,0 +1,32 @@
+{
+  "cart": {
+    "productUnavailable": "This product is no longer available",
+    "productCurrentlyUnavailable": "This product is currently unavailable",
+    "onlyUnitsAvailable": "Only {{count}} unit available",
+    "onlyUnitsAvailable_plural": "Only {{count}} units available",
+    "insufficientStock": "Insufficient stock available",
+    "cartNotFound": "Your cart could not be loaded. Please try again.",
+    "cartEmpty": "Your cart is empty",
+    "couponInvalid": "This coupon code is invalid",
+    "couponExpired": "This coupon has expired",
+    "couponNotApplicable": "This coupon cannot be applied to your cart",
+    "connectionError": "Connection error. Please check your internet and try again.",
+    "loginRequired": "Please log in to manage your cart",
+    "serverError": "Something went wrong on our end. Please try again later.",
+    "updateFailed": "Failed to update cart. Please try again."
+  },
+  "general": {
+    "somethingWentWrong": "Something went wrong. Please try again.",
+    "networkError": "Network error. Please check your connection.",
+    "notFound": "The page or resource you're looking for doesn't exist.",
+    "unauthorized": "You are not authorized to view this page.",
+    "sessionExpired": "Your session has expired. Please log in again.",
+    "validationFailed": "Please check your input and try again."
+  },
+  "boundary": {
+    "title": "Something went wrong",
+    "message": "An unexpected error occurred. Please refresh the page.",
+    "refresh": "Refresh Page",
+    "goHome": "Go to Home"
+  }
+}

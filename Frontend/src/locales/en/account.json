@@ -1,0 +1,39 @@
+{
+  "pageTitle": "My Account",
+  "tabs": {
+    "profile": "Profile",
+    "password": "Password",
+    "orders": "Orders",
+    "wishlist": "Wishlist"
+  },
+  "profile": {
+    "loading": "Loading your profile details...",
+    "personalInfo": "Personal Information",
+    "shippingDetails": "Shipping Details",
+    "successToast": "Profile updated successfully!"
+  },
+  "orders": {
+    "active": "Active",
+    "completed": "Completed",
+    "loading": "Loading orders...",
+    "error": "Failed to load orders",
+    "empty": "No {{type}} orders found.",
+    "notFound": "Order not found",
+    "backToOrders": "Back to Orders",
+    "placedOn": "Placed on",
+    "progress": "Order Progress",
+    "tracking": "Tracking",
+    "estimatedDelivery": "Estimated Delivery",
+    "toggleDetails": "Toggle details for order {{id}}",
+    "status": {
+      "placed": "Placed",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    }
+  },
+  "wishlist": {
+    "loading": "Loading your wishlist..."
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "pageTitle": "Akkaawuntii Koo",
+  "tabs": {
+    "profile": "Piroofayilii",
+    "password": "Jecha icciitii",
+    "orders": "Ajajawwan",
+    "wishlist": "Hawaasuma"
+  },
+  "profile": {
+    "loading": "Bal'ina piroofayilii fe'aa jira...",
+    "personalInfo": "Oofee dhuunfaa",
+    "shippingDetails": "Bal'ina erginsa",
+    "successToast": "Piroofayiliin sirriitti haaromeera!"
+  },
+  "orders": {
+    "active": "Hojii irra",
+    "completed": "Xumurame",
+    "loading": "Ajajawwan fe'aa jira...",
+    "error": "Ajajawwan fe'uun hin danda'amne",
+    "empty": "Ajajni {{type}} hin argamne.",
+    "notFound": "Ajajni hin argamne",
+    "backToOrders": "Gara ajajawwaniitti deebi'i",
+    "placedOn": "Guyyaa ajajame",
+    "progress": "Adeemsa ajajaa",
+    "tracking": "Hordoffii",
+    "estimatedDelivery": "Guyyaa tilmaamaa",
+    "toggleDetails": "Bal'ina ajajaa {{id}} jijjiiri",
+    "status": {
+      "placed": "Ajajameera",
+      "processing": "Adeemsa irra",
+      "shipped": "Ergameera",
+      "delivered": "Ga'eera",
+      "cancelled": "Haqameera"
+    }
+  },
+  "wishlist": {
+    "loading": "Hawaasuma fe'aa jira..."
+  }
+}

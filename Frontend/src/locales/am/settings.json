@@ -1,0 +1,65 @@
+{
+  "hero": {
+    "eyebrow": "የሚቀጥለው ትውልድ ኤሌክትሮኒክስ",
+    "title": "ያጋጥሙ",
+    "highlight": "የወደፊቱን",
+    "subtitle": "ወደር የሌለው አፈጻጸም ያለው ዘዴኛ ኤሌክትሮኒክስ ያግኙ። ከ AI-ሰጪ ላፕቶፕ እስከ ኳንተም ማሳያዎች — ነገ የሚሰራውን ቴክ ዛሬ እናቀርባለን።",
+    "ctaText": "አሁን ይግዙ"
+  },
+  "about": {
+    "eyebrow": "እኛ እነማን ነን",
+    "title": "ስለ",
+    "stats": {
+      "happyCustomers": "ደስተኛ ደንበኞች",
+      "countries": "ሀገሮች",
+      "products": "ምርቶች",
+      "satisfaction": "እርካታ"
+    },
+    "values": {
+      "trustFirst": "መጀመሪያ እምነት",
+      "trustFirstDesc": "ግልጽ ዋጋ፣ የተረጋገጡ ምርቶች እና ደህንነቱ የተጠበቀ ግብይት።",
+      "innovateDaily": "ዕለት ዕለት ፈጠራ",
+      "innovateDailyDesc": "የዕለት ተዕለት ሕይወትን የሚያሻሽሉ ቴክኖሎጂዎችን ያለ ቀን ዋና እንፈልጋለን።",
+      "customerObsessed": "ደንበኛ ወዳድ",
+      "customerObsessedDesc": "ሁሉም ውሳኔ ከደንበኛ ዋጋ እና ቀላልነት ይጀምራል።",
+      "moveFast": "ፈጠን",
+      "moveFastDesc": "ምርጥ ልምዶችን በፍጥነት እናቀርባለን እና አላማ ያለው ሰርቶ ማሻሻያ እናካሂዳለን።"
+    }
+  },
+  "contact": {
+    "pageTitle": "አግኙን",
+    "title": "ተወያዩ",
+    "subtitle": "ከርስዎ መስማት ይወዳሉ።",
+    "nameLabel": "ሙሉ ስም",
+    "emailLabel": "ኢሜይል",
+    "subjectLabel": "ርዕሰ ጉዳይ",
+    "messageLabel": "መልዕክት",
+    "sendButton": "መልዕክት ላክ",
+    "sending": "በመላክ ላይ...",
+    "successMessage": "መልዕክቱ ተልኳል! በቅርቡ ምላሽ እንሰጣለን።",
+    "phone": "ስልክ",
+    "address": "አድራሻ",
+    "workingHours": "የሥራ ሰዓቶች"
+  },
+  "faq": {
+    "pageTitle": "ጥያቄዎች",
+    "title": "ተደጋጋሚ ጥያቄዎች",
+    "subtitle": "ከዚህ በታች ለተደጋጋሚ ጥያቄዎች መልሶችን ያግኙ",
+    "noResults": "ምንም ጥያቄ አልተገኘም"
+  },
+  "blog": {
+    "pageTitle": "ብሎግ",
+    "title": "የቅርብ ጊዜ ዜናዎች",
+    "readMore": "ተጨማሪ አንብብ",
+    "publishedOn": "የታተመበት",
+    "by": "በ",
+    "noPosts": "ምንም የብሎግ ጽሑፍ የለም"
+  },
+  "notFound": {
+    "pageTitle": "404 - ገጽ አልተገኘም",
+    "title": "ገጽ አልተገኘም",
+    "message": "እየፈለጉት ያለው ገጽ አልተገኘም ወይም ተዛወሯል።",
+    "goHome": "ወደ ዋና ገጽ ሂድ",
+    "goShop": "ሱቁን ያስሱ"
+  }
+}
