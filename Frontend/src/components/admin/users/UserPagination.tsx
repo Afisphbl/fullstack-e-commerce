@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface UserPaginationProps {
   currentPage: number;
@@ -20,11 +21,12 @@ export const UserPagination: React.FC<UserPaginationProps> = ({
   isLoading,
   onPageChange,
 }) => {
+  const { t } = useTranslation("admin");
   return (
     <div className="flex flex-col gap-3 border-t border-border/70 pt-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="text-sm text-muted-foreground">
-        Showing {currentRecords} of {totalRecords} records
-        {isFetching && !isLoading ? " • Refreshing..." : ""}
+        {t("showingRecords", { count: currentRecords, total: totalRecords })}
+        {isFetching && !isLoading ? ` • ${t("refreshing")}` : ""}
       </div>
       <div className="flex items-center gap-2">
         <Button
@@ -33,10 +35,10 @@ export const UserPagination: React.FC<UserPaginationProps> = ({
           disabled={currentPage <= 1}
           onClick={() => onPageChange(currentPage - 1)}
         >
-          Previous
+          {t("prev")}
         </Button>
         <div className="rounded-xl border border-border/70 px-4 py-2 text-sm text-muted-foreground">
-          Page {currentPage} of {totalPages}
+          {t("pageOf", { page: currentPage, totalPages: totalPages })}
         </div>
         <Button
           variant="outline"
@@ -44,7 +46,7 @@ export const UserPagination: React.FC<UserPaginationProps> = ({
           disabled={currentPage >= totalPages}
           onClick={() => onPageChange(currentPage + 1)}
         >
-          Next
+          {t("next")}
         </Button>
       </div>
     </div>

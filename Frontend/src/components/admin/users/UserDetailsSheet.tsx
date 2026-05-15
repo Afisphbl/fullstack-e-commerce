@@ -19,6 +19,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { UserDetailCard } from "./UserDetailCard";
+import { useTranslation } from "react-i18next";
 
 interface UserDetailsSheetProps {
   open: boolean;
@@ -37,6 +38,8 @@ export const UserDetailsSheet: React.FC<UserDetailsSheetProps> = ({
   onDelete,
   onToggleStatus,
 }) => {
+  const { t } = useTranslation("admin");
+
   if (!user) return null;
 
   return (
@@ -64,24 +67,33 @@ export const UserDetailsSheet: React.FC<UserDetailsSheetProps> = ({
 
         <div className="space-y-6 px-4 sm:px-6 py-4 sm:py-6">
           <div className="grid grid-cols-2 gap-4">
-            <UserDetailCard label="Role" value={roleLabel(user.role)} />
-            <UserDetailCard label="Status" value={user.status} />
-            <UserDetailCard label="Phone" value={user.phone || "Not set"} />
-            <UserDetailCard label="Joined" value={formatDate(user.createdAt)} />
+            <UserDetailCard label={t("role")} value={roleLabel(user.role)} />
             <UserDetailCard
-              label="Last Login"
+              label={t("status")}
+              value={t(user.status as "active" | "pending" | "suspended")}
+            />
+            <UserDetailCard
+              label={t("phone")}
+              value={user.phone || t("notSet")}
+            />
+            <UserDetailCard
+              label={t("joined")}
+              value={formatDate(user.createdAt)}
+            />
+            <UserDetailCard
+              label={t("lastLogin")}
               value={formatDateTime(user.lastLogin)}
             />
           </div>
 
           <div className="rounded-[24px] border border-border/70 bg-muted/20 p-5">
             <Label className="text-sm font-semibold text-foreground">
-              Permissions
+              {t("permissions")}
             </Label>
             <div className="mt-3 flex flex-wrap gap-2">
               {user.permissions.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
-                  No explicit permissions assigned.
+                  {t("noPermissions")}
                 </p>
               ) : (
                 user.permissions.map((permission) => (
@@ -101,17 +113,17 @@ export const UserDetailsSheet: React.FC<UserDetailsSheetProps> = ({
             <div className="flex items-center justify-between">
               <div>
                 <h4 className="font-display text-lg font-semibold text-foreground">
-                  Quick Actions
+                  {t("quickActions")}
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  Manage access and communicate with the user.
+                  {t("quickActionsDesc")}
                 </p>
               </div>
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <Button className="rounded-xl" onClick={() => onEdit(user)}>
                 <Pencil className="mr-2 h-4 w-4" />
-                Edit User
+                {t("editUser")}
               </Button>
               <Button
                 variant="outline"
@@ -120,13 +132,13 @@ export const UserDetailsSheet: React.FC<UserDetailsSheetProps> = ({
               >
                 <ShieldAlert className="mr-2 h-4 w-4" />
                 {user.status === "suspended"
-                  ? "Activate Account"
-                  : "Suspend Account"}
+                  ? t("activateAccount")
+                  : t("suspendAccount")}
               </Button>
               <Button variant="outline" className="rounded-xl" asChild>
                 <a href={`mailto:${user.email}`}>
                   <Mail className="mr-2 h-4 w-4" />
-                  Send Email
+                  {t("sendEmail")}
                 </a>
               </Button>
               <Button
@@ -135,7 +147,7 @@ export const UserDetailsSheet: React.FC<UserDetailsSheetProps> = ({
                 onClick={() => onDelete(user)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete User
+                {t("deleteUser")}
               </Button>
             </div>
           </div>

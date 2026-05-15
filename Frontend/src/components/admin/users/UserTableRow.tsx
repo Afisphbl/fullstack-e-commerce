@@ -26,12 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-const STATUSES = [
-  { value: "active", label: "Active" },
-  { value: "pending", label: "Pending" },
-  { value: "suspended", label: "Suspended" },
-] as const;
+import { useTranslation } from "react-i18next";
 
 const statusClasses: Record<string, string> = {
   active:
@@ -63,6 +58,14 @@ export const UserTableRow: React.FC<UserTableRowProps> = ({
   onDelete,
   onStatusChange,
 }) => {
+  const { t } = useTranslation("admin");
+
+  const STATUSES = [
+    { value: "active", label: t("active") },
+    { value: "pending", label: t("pending") },
+    { value: "suspended", label: t("suspended") },
+  ] as const;
+
   return (
     <tr className="group transition-colors hover:bg-muted/30">
       <td className="px-4 py-4 max-w-[180px] sm:max-w-none">
@@ -96,7 +99,7 @@ export const UserTableRow: React.FC<UserTableRowProps> = ({
         </Badge>
       </td>
       <td className="hidden px-4 py-4 text-sm text-muted-foreground lg:table-cell">
-        {user.phone || "Not set"}
+        {user.phone || t("notSet")}
       </td>
       <td className="px-4 py-4">
         <Badge
@@ -105,7 +108,7 @@ export const UserTableRow: React.FC<UserTableRowProps> = ({
             statusClasses[user.status]
           )}
         >
-          {user.status}
+          {t(user.status as "active" | "pending" | "suspended")}
         </Badge>
       </td>
       <td className="hidden px-4 py-4 text-sm text-muted-foreground xl:table-cell">
@@ -130,21 +133,21 @@ export const UserTableRow: React.FC<UserTableRowProps> = ({
             className="w-56 rounded-2xl p-2 shadow-xl border-border/50"
           >
             <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Actions
+              {t("actions")}
             </DropdownMenuLabel>
             <DropdownMenuItem
               className="rounded-xl px-3 py-2.5 transition-colors focus:bg-primary/5 focus:text-primary"
               onClick={() => onViewDetails(user)}
             >
               <Eye className="mr-2 h-4 w-4" />
-              <span>View Profile</span>
+              <span>{t("viewProfile")}</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               className="rounded-xl px-3 py-2.5 transition-colors focus:bg-primary/5 focus:text-primary"
               onClick={() => onEdit(user)}
             >
               <Pencil className="mr-2 h-4 w-4" />
-              <span>Edit User</span>
+              <span>{t("editUser")}</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               className="rounded-xl px-3 py-2.5 transition-colors focus:bg-primary/5 focus:text-primary"
@@ -152,13 +155,13 @@ export const UserTableRow: React.FC<UserTableRowProps> = ({
             >
               <a href={`mailto:${user.email}`}>
                 <Mail className="mr-2 h-4 w-4" />
-                <span>Send Email</span>
+                <span>{t("sendEmail")}</span>
               </a>
             </DropdownMenuItem>
 
             <DropdownMenuSeparator className="my-2 bg-border/50" />
             <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Change Status
+              {t("changeStatus")}
             </DropdownMenuLabel>
             <div className="px-2 py-1">
               <Select
@@ -190,7 +193,7 @@ export const UserTableRow: React.FC<UserTableRowProps> = ({
               onClick={() => onDelete(user)}
             >
               <Trash2 className="mr-2 h-4 w-4" />
-              <span>Delete User</span>
+              <span>{t("deleteUser")}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

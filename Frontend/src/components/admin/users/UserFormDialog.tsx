@@ -28,56 +28,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-const ROLES = [
-  { value: "user", label: "Customer" },
-  { value: "admin", label: "Admin" },
-] as const;
-
-const STATUSES = [
-  { value: "active", label: "Active" },
-  { value: "pending", label: "Pending" },
-  { value: "suspended", label: "Suspended" },
-] as const;
-
-const userFormSchema = z
-  .object({
-    name: z.string().min(2, "Full name is required"),
-    email: z.string().email("Enter a valid email"),
-    phone: z.string().optional(),
-    photo: z.any().optional(),
-    role: z.enum(["user", "admin"]),
-    status: z.enum(["active", "pending", "suspended"]),
-    permissions: z.string().optional(),
-    password: z.string().optional(),
-    passwordConfirm: z.string().optional(),
-  })
-  .superRefine((values, ctx) => {
-    if (values.password && values.password.length < 8) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["password"],
-        message: "Password must be at least 8 characters",
-      });
-    }
-
-    if (values.password !== values.passwordConfirm) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["passwordConfirm"],
-        message: "Passwords must match",
-      });
-    }
-  });
-
-type UserFormValues = z.infer<typeof userFormSchema>;
+import { useTranslation } from "react-i18next";
 
 interface UserFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   editingUser: AdminUser | null;
   isStaffTab: boolean;
-  onSubmit: (values: UserFormValues) => void;
+  onSubmit: (values: any) => void;
   isPending: boolean;
 }
 
@@ -89,6 +47,51 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
   onSubmit,
   isPending,
 }) => {
+  const { t } = useTranslation("admin");
+
+  const ROLES = [
+    { value: "user", label: t("customer") },
+    { value: "admin", label: t("admin") },
+  ] as const;
+
+  const STATUSES = [
+    { value: "active", label: t("active") },
+    { value: "pending", label: t("pending") },
+    { value: "suspended", label: t("suspended") },
+  ] as const;
+
+  const userFormSchema = z
+    .object({
+      name: z.string().min(2, t("fullNameRequired")),
+      email: z.string().email(t("validEmail")),
+      phone: z.string().optional(),
+      photo: z.any().optional(),
+      role: z.enum(["user", "admin"]),
+      status: z.enum(["active", "pending", "suspended"]),
+      permissions: z.string().optional(),
+      password: z.string().optional(),
+      passwordConfirm: z.string().optional(),
+    })
+    .superRefine((values, ctx) => {
+      if (values.password && values.password.length < 8) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["password"],
+          message: t("passwordMin"),
+        });
+      }
+
+      if (values.password !== values.passwordConfirm) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["passwordConfirm"],
+          message: t("passwordsMatch"),
+        });
+      }
+    });
+
+  type UserFormValues = z.infer<typeof userFormSchema>;
+
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(
     editingUser?.photo || null
   );
@@ -129,10 +132,10 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl rounded-[28px] border-none p-0 shadow-elevated flex flex-col max-h-[96vh] sm:max-h-[90vh]">
         <DialogHeader className="border-b border-border/70 px-4 sm:px-6 py-4 sm:py-5">
-          <DialogTitle className="text-2xl font-display">Edit User</DialogTitle>
-          <DialogDescription>
-            Update profile details, role access, and operational permissions.
-          </DialogDescription>
+          <DialogTitle className="text-2xl font-display">
+            {t("editUser")}
+          </DialogTitle>
+          <DialogDescription>{t("editUserDesc")}</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -147,7 +150,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Full Name</FormLabel>
+                      <FormLabel>{t("fullName")}</FormLabel>
                       <FormControl>
                         <Input {...field} className="h-11 rounded-xl" />
                       </FormControl>
@@ -160,7 +163,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>{t("email")}</FormLabel>
                       <FormControl>
                         <Input {...field} className="h-11 rounded-xl" />
                       </FormControl>
@@ -173,7 +176,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
+                      <FormLabel>{t("phoneNumber")}</FormLabel>
                       <FormControl>
                         <Input {...field} className="h-11 rounded-xl" />
                       </FormControl>
@@ -186,7 +189,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
                   name="photo"
                   render={({ field: { value, onChange, ...field } }) => (
                     <FormItem>
-                      <FormLabel>Profile Picture</FormLabel>
+                      <FormLabel>{t("profilePicture")}</FormLabel>
                       <FormControl>
                         <div className="flex items-center gap-4">
                           {previewUrl && (
@@ -229,7 +232,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
                   name="role"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Role</FormLabel>
+                      <FormLabel>{t("role")}</FormLabel>
                       <Select
                         value={field.value}
                         onValueChange={(value) => {
@@ -262,7 +265,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
                   name="status"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Account Status</FormLabel>
+                      <FormLabel>{t("accountStatus")}</FormLabel>
                       <Select
                         value={field.value}
                         onValueChange={field.onChange}
@@ -291,18 +294,18 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
                 name="permissions"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Permissions</FormLabel>
+                    <FormLabel>{t("permissions")}</FormLabel>
                     <FormControl>
                       <Textarea
                         {...field}
                         rows={3}
                         disabled={form.watch("role") === "user"}
-                        placeholder="orders.manage, users.edit, reports.view"
+                        placeholder={t("permissionsPlaceholder")}
                         className="rounded-2xl"
                       />
                     </FormControl>
                     <p className="text-xs text-muted-foreground">
-                      Enter comma-separated permissions for admin role.
+                      {t("permissionsHint")}
                     </p>
                     <FormMessage />
                   </FormItem>
@@ -317,10 +320,10 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({
                 className="rounded-xl"
                 onClick={() => onOpenChange(false)}
               >
-                Cancel
+                {t("cancel")}
               </Button>
               <Button type="submit" className="rounded-xl" disabled={isPending}>
-                {isPending ? "Saving..." : "Update User"}
+                {isPending ? t("saving") : t("updateUser")}
               </Button>
             </div>
           </form>

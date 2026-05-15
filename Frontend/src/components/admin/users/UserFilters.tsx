@@ -8,19 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-const STATUSES = [
-  { value: "all", label: "All status" },
-  { value: "active", label: "Active" },
-  { value: "pending", label: "Pending" },
-  { value: "suspended", label: "Suspended" },
-] as const;
-
-const ROLES = [
-  { value: "all", label: "All roles" },
-  { value: "user", label: "Customer" },
-  { value: "admin", label: "Admin" },
-] as const;
+import { useTranslation } from "react-i18next";
 
 interface UserFiltersProps {
   searchInput: string;
@@ -39,6 +27,21 @@ export const UserFilters: React.FC<UserFiltersProps> = ({
   role,
   onRoleChange,
 }) => {
+  const { t } = useTranslation("admin");
+
+  const STATUSES = [
+    { value: "all", label: t("allStatus") },
+    { value: "active", label: t("active") },
+    { value: "pending", label: t("pending") },
+    { value: "suspended", label: t("suspended") },
+  ] as const;
+
+  const ROLES = [
+    { value: "all", label: t("allRoles") },
+    { value: "user", label: t("customer") },
+    { value: "admin", label: t("admin") },
+  ] as const;
+
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
       <div className="relative w-full lg:max-w-md">
@@ -46,7 +49,7 @@ export const UserFilters: React.FC<UserFiltersProps> = ({
         <Input
           value={searchInput}
           onChange={(event) => onSearchChange(event.target.value)}
-          placeholder="Search by name, email, or phone"
+          placeholder={t("searchUserPlaceholder")}
           className="h-11 rounded-xl border-border/80 bg-background pl-10"
         />
       </div>
@@ -54,7 +57,7 @@ export const UserFilters: React.FC<UserFiltersProps> = ({
       <div className="flex flex-col gap-3 sm:flex-row">
         <Select value={status} onValueChange={onStatusChange}>
           <SelectTrigger className="h-11 w-full rounded-xl sm:w-[170px]">
-            <SelectValue placeholder="All status" />
+            <SelectValue placeholder={t("allStatus")} />
           </SelectTrigger>
           <SelectContent>
             {STATUSES.map((item) => (
@@ -67,7 +70,7 @@ export const UserFilters: React.FC<UserFiltersProps> = ({
 
         <Select value={role} onValueChange={onRoleChange}>
           <SelectTrigger className="h-11 w-full rounded-xl sm:w-[170px]">
-            <SelectValue placeholder="All roles" />
+            <SelectValue placeholder={t("allRoles")} />
           </SelectTrigger>
           <SelectContent>
             {ROLES.map((item) => (

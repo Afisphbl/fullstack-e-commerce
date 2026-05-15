@@ -1,6 +1,7 @@
 import React from "react";
 import { Bell } from "lucide-react";
 import { formatDateTime } from "@/lib/utils/formatters";
+import { useTranslation } from "react-i18next";
 
 interface UserEvent {
   id: string;
@@ -12,16 +13,19 @@ interface UserNotificationsProps {
   events: UserEvent[];
 }
 
-export const UserNotifications: React.FC<UserNotificationsProps> = ({ events }) => {
+export const UserNotifications: React.FC<UserNotificationsProps> = ({
+  events,
+}) => {
+  const { t } = useTranslation("admin");
   return (
     <div className="rounded-[28px] border border-border/70 bg-card p-5 shadow-card">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="font-display text-lg font-semibold text-foreground">
-            Notifications
+            {t("notifications")}
           </h3>
           <p className="text-sm text-muted-foreground">
-            Updated every 30 seconds
+            {t("updatedEvery30s")}
           </p>
         </div>
         <div className="rounded-full bg-primary/10 p-2 text-primary">
@@ -32,7 +36,7 @@ export const UserNotifications: React.FC<UserNotificationsProps> = ({ events }) 
       <div className="mt-5 space-y-3">
         {events.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border/70 px-4 py-8 text-center text-sm text-muted-foreground">
-            No recent user events yet.
+            {t("noRecentEvents")}
           </div>
         ) : (
           events.map((event) => (
@@ -45,7 +49,9 @@ export const UserNotifications: React.FC<UserNotificationsProps> = ({ events }) 
                   <Bell className="h-4 w-4" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-foreground">{event.title}</p>
+                  <p className="text-sm font-medium text-foreground">
+                    {event.title}
+                  </p>
                   <p className="mt-1 text-xs text-muted-foreground">
                     {formatDateTime(event.time)}
                   </p>

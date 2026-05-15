@@ -16,8 +16,10 @@ import { DeleteUserDialog } from "@/components/admin/users/DeleteUserDialog";
 import { useUserFilters } from "@/components/admin/users/hooks/useUserFilters";
 import { useUserMutations } from "@/components/admin/users/hooks/useUserMutations";
 import { useUserExport } from "@/components/admin/users/hooks/useUserExport";
+import { useTranslation } from "react-i18next";
 
 const AdminUsersPage = () => {
+  const { t } = useTranslation("admin");
   const {
     searchInput,
     setSearchInput,
@@ -145,11 +147,10 @@ const AdminUsersPage = () => {
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <h3 className="text-2xl font-display font-semibold text-foreground">
-                  User Management
+                  {t("userManagement")}
                 </h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Manage roles, permissions, account status, registration
-                  details, and staff assignments.
+                  {t("userManagementDesc")}
                 </p>
               </div>
 
@@ -161,7 +162,7 @@ const AdminUsersPage = () => {
                   disabled={isExporting}
                 >
                   <Download className="mr-2 h-4 w-4" />
-                  {isExporting ? "Exporting..." : "Export CSV"}
+                  {isExporting ? t("exporting") : t("exportCsv")}
                 </Button>
               </div>
             </div>
@@ -179,10 +180,10 @@ const AdminUsersPage = () => {
             >
               <TabsList className="grid w-full max-w-[320px] grid-cols-2 rounded-2xl bg-muted/60 p-1">
                 <TabsTrigger value="all" className="rounded-xl">
-                  All Users
+                  {t("allUsers")}
                 </TabsTrigger>
                 <TabsTrigger value="staff" className="rounded-xl">
-                  Staff Members
+                  {t("staffMembers")}
                 </TabsTrigger>
               </TabsList>
             </Tabs>

@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useTranslation } from "react-i18next";
 
 interface DeleteUserDialogProps {
   user: AdminUser | null;
@@ -22,6 +23,7 @@ export const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
   onConfirm,
   onCancel,
 }) => {
+  const { t } = useTranslation("admin");
   const [isConfirming, setIsConfirming] = useState(false);
 
   // Reset the flag when dialog opens
@@ -52,19 +54,20 @@ export const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({
     <AlertDialog open={!!user} onOpenChange={handleOpenChange}>
       <AlertDialogContent className="rounded-[24px] border-none max-w-md">
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete this user?</AlertDialogTitle>
+          <AlertDialogTitle>{t("deleteUserQuestion")}</AlertDialogTitle>
           <AlertDialogDescription>
-            This permanently removes the account record for {user?.name}. This
-            action cannot be undone.
+            {t("deleteUserConfirm", { name: user?.name })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+          <AlertDialogCancel className="rounded-xl">
+            {t("cancel")}
+          </AlertDialogCancel>
           <AlertDialogAction
             className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90"
             onClick={handleConfirm}
           >
-            Delete User
+            {t("deleteUser")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

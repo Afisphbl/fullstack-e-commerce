@@ -4,6 +4,7 @@ import { AdminUser, AdminUserStatus } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { UserTableRow } from "./UserTableRow";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
+import { useTranslation } from "react-i18next";
 
 interface UserTableProps {
   users: AdminUser[];
@@ -28,6 +29,8 @@ export const UserTable: React.FC<UserTableProps> = ({
   onStatusChange,
   onRetry,
 }) => {
+  const { t } = useTranslation("admin");
+
   return (
     <div className="overflow-hidden rounded-[24px] border border-border/70">
       <div className="overflow-x-auto">
@@ -35,20 +38,22 @@ export const UserTable: React.FC<UserTableProps> = ({
           <thead className="bg-muted/40 text-left text-xs uppercase tracking-[0.14em] text-muted-foreground">
             <tr>
               <th className="px-4 py-4 font-medium max-w-[180px] sm:max-w-none">
-                User
+                {t("user")}
               </th>
-              <th className="px-4 py-4 font-medium">Role</th>
+              <th className="px-4 py-4 font-medium">{t("role")}</th>
               <th className="hidden px-4 py-4 font-medium lg:table-cell">
-                Phone
+                {t("phone")}
               </th>
-              <th className="px-4 py-4 font-medium">Status</th>
+              <th className="px-4 py-4 font-medium">{t("status")}</th>
               <th className="hidden px-4 py-4 font-medium xl:table-cell">
-                Registration
+                {t("registration")}
               </th>
               <th className="hidden px-4 py-4 font-medium xl:table-cell">
-                Last login
+                {t("lastLogin")}
               </th>
-              <th className="px-4 py-4 text-right font-medium">Actions</th>
+              <th className="px-4 py-4 text-right font-medium">
+                {t("actions")}
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/70 bg-card">
@@ -61,12 +66,10 @@ export const UserTable: React.FC<UserTableProps> = ({
                     <ShieldAlert className="h-12 w-12 text-rose-500" />
                     <div>
                       <p className="text-sm font-medium text-foreground">
-                        Failed to load users
+                        {t("failedLoadUsers")}
                       </p>
                       <p className="mt-1 text-sm text-muted-foreground">
-                        {error instanceof Error
-                          ? error.message
-                          : "An unexpected error occurred"}
+                        {error instanceof Error ? error.message : t("tryAgain")}
                       </p>
                     </div>
                     <Button
@@ -74,7 +77,7 @@ export const UserTable: React.FC<UserTableProps> = ({
                       className="rounded-xl"
                       onClick={onRetry}
                     >
-                      Try Again
+                      {t("tryAgain")}
                     </Button>
                   </div>
                 </td>
@@ -85,7 +88,7 @@ export const UserTable: React.FC<UserTableProps> = ({
                   colSpan={7}
                   className="px-4 py-16 text-center text-sm text-muted-foreground"
                 >
-                  No users match the current filters.
+                  {t("noUsersMatch")}
                 </td>
               </tr>
             ) : (
