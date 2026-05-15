@@ -5,6 +5,8 @@ const Product = require("../models/productModel");
 const Coupon = require("../models/couponModel");
 const AppError = require("../utils/AppError");
 
+const { extractLanguage } = require("../utils/multilingualSchema");
+
 // ── Populate cart items ──────────────────────────────────────────────────────
 const populateCartItems = (query) => {
   return query.populate({
@@ -49,7 +51,7 @@ const addItem = async (userId, { productId, quantity = 1 }) => {
       product: product._id,
       quantity,
       price: product.finalPrice ?? product.price,
-      name: product.name,
+      name: extractLanguage(product.name, "en"), // Default to English for cart item snapshot
       imageCover: product.imageCover,
     });
   }

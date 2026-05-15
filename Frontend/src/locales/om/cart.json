@@ -21,5 +21,25 @@
   "tax": "Gibira",
   "total": "Ida'ama",
   "clear": "Qulqulleessi",
-  "checkout": "Kaffali"
+  "checkout": "Kaffali",
+  "errors": {
+    "productNotFound": "Oomishni kun ammaan booda hin jiru",
+    "productUnavailable": "Oomishni kun yeroof hin jiru",
+    "insufficientStock": "Kuusaan ga'aa hin jiru",
+    "onlyUnitsAvailable": "Oomisha {{count}} qofatu jira",
+    "onlyUnitsAvailable_plural": "Oomishaalee {{count}} qofatu jira",
+    "cartLoadFailed": "Kaartii fe'uun hin danda'amne. Maaloo irra deebi'ii yaali.",
+    "invalidCoupon": "Koodiin kuupponii kun sirrii miti",
+    "expiredCoupon": "Kuupponiin kun yeroon isaa darbeera",
+    "couponNotApplicable": "Kuupponiin kun kaartii keetiif hin hojjetu",
+    "connectionError": "Dogoggora walitti hidhamiinsaa. Maaloo interneetii kee mirkaneeffadhu.",
+    "loginRequired": "Kaartii kee bulchuuf maaloo seeni",
+    "serverError": "Gara keenyaan rakkoon uumameera. Maaloo booda irra deebi'ii yaali.",
+    "genericError": "Kaartii haaromsuun hin danda'amne. Maaloo irra deebi'ii yaali.",
+    "applyCouponLogin": "Kuupponii fayyadamuuf maaloo seeni"
+  },
+  "messages": {
+    "couponApplied": "Kuupponiin milkaa'inaan raawwatameera",
+    "couponRemoved": "Kuupponiin haqameera"
+  }
 }

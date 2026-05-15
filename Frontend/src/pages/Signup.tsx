@@ -25,28 +25,30 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { isAdminRole } from "@/lib/roles";
-
-const signupSchema = z
-  .object({
-    name: z
-      .string()
-      .min(2, "Name must be at least 2 characters")
-      .max(60, "Name must be at most 60 characters"),
-    email: z.string().email("Please enter a valid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    passwordConfirm: z.string().min(8, "Please confirm your password"),
-    country: z.string().optional(),
-    city: z.string().optional(),
-  })
-  .refine((data) => data.password === data.passwordConfirm, {
-    message: "Passwords do not match",
-    path: ["passwordConfirm"],
-  });
+import { useTranslation } from "react-i18next";
 
 export default function Signup() {
-  usePageTitle("Register");
+  const { t } = useTranslation("auth");
+  usePageTitle(t("seo.signup.title"));
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const signupSchema = z
+    .object({
+      name: z
+        .string()
+        .min(2, t("validation.nameMin"))
+        .max(60, t("validation.nameMax")),
+      email: z.string().email(t("validation.emailInvalid")),
+      password: z.string().min(8, t("validation.passwordMin")),
+      passwordConfirm: z.string().min(8, t("validation.confirmPasswordRequired")),
+      country: z.string().optional(),
+      city: z.string().optional(),
+    })
+    .refine((data) => data.password === data.passwordConfirm, {
+      message: t("validation.passwordsNoMatch"),
+      path: ["passwordConfirm"],
+    });
 
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
@@ -102,7 +104,7 @@ export default function Signup() {
       }
       */
 
-      toast.success("Account created successfully!");
+      toast.success(t("accountCreatedSuccess"));
       queryClient.setQueryData(["currentUser"], data.data.user);
       if (isAdminRole(data.data.user.role)) {
         navigate("/admin");
@@ -124,10 +126,10 @@ export default function Signup() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-3xl font-bold">
-            Create an account
+            {t("createAccount")}
           </CardTitle>
           <CardDescription>
-            Enter your details below to create your account
+            {t("createAccountDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -142,10 +144,10 @@ export default function Signup() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel>{t("fullName")}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="John Doe"
+                        placeholder={t("fullNamePlaceholder")}
                         autoComplete="new-password"
                         {...field}
                       />
@@ -159,10 +161,10 @@ export default function Signup() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t("email")}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="m@example.com"
+                        placeholder={t("emailPlaceholder")}
                         autoComplete="new-password"
                         {...field}
                       />
@@ -176,11 +178,11 @@ export default function Signup() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t("password")}</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="••••••••"
+                        placeholder={t("passwordPlaceholder")}
                         autoComplete="new-password"
                         {...field}
                       />
@@ -194,11 +196,11 @@ export default function Signup() {
                 name="passwordConfirm"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
+                    <FormLabel>{t("confirmPassword")}</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="••••••••"
+                        placeholder={t("passwordPlaceholder")}
                         autoComplete="new-password"
                         {...field}
                       />
@@ -213,7 +215,7 @@ export default function Signup() {
                   name="country"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Country</FormLabel>
+                      <FormLabel>{t("country")}</FormLabel>
                       <FormControl>
                         <Input placeholder="Ethiopia" {...field} disabled />
                       </FormControl>
@@ -226,12 +228,12 @@ export default function Signup() {
                   name="city"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>City</FormLabel>
+                      <FormLabel>{t("city")}</FormLabel>
                       <FormControl>
                         <div>
                           <Input
                             list="ethiopian-cities"
-                            placeholder="Select your city"
+                            placeholder={t("cityPlaceholder")}
                             {...field}
                           />
                           <datalist id="ethiopian-cities">
@@ -251,18 +253,28 @@ export default function Signup() {
                 className="w-full"
                 disabled={mutation.isPending}
               >
-                {mutation.isPending ? "Creating account..." : "Sign up"}
+                {mutation.isPending ? t("creatingAccount") : t("signup")}
               </Button>
             </form>
           </Form>
-          <div className="mt-4 text-center text-sm">
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="text-primary hover:underline font-medium"
-            >
-              Sign in
-            </Link>
+          <div className="mt-4 text-center text-sm space-y-2">
+            <div>
+              {t("alreadyHaveAccount")}{" "}
+              <Link
+                to="/login"
+                className="text-primary hover:underline font-medium"
+              >
+                {t("login")}
+              </Link>
+            </div>
+            <div>
+              <Link
+                to="/"
+                className="text-muted-foreground hover:text-primary hover:underline"
+              >
+                ← {t("backToHome")}
+              </Link>
+            </div>
           </div>
         </CardContent>
       </Card>

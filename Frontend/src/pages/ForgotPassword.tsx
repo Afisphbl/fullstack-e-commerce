@@ -23,12 +23,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-const forgotPasswordSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-});
+import { usePageTitle } from "@/hooks/usePageTitle";
+import { useTranslation } from "react-i18next";
 
 export default function ForgotPassword() {
+  const { t } = useTranslation("auth");
+  usePageTitle(t("seo.forgotPassword.title"));
+
+  const forgotPasswordSchema = z.object({
+    email: z.string().email(t("validation.emailInvalid")),
+  });
+
   const form = useForm<z.infer<typeof forgotPasswordSchema>>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
@@ -43,7 +48,7 @@ export default function ForgotPassword() {
         body: JSON.stringify(values),
       }),
     onSuccess: (data) => {
-      toast.success(data.message || "Password reset email sent!");
+      toast.success(data.message || t("passwordResetSent"));
       form.reset();
     },
     onError: (error: Error) => {
@@ -59,10 +64,9 @@ export default function ForgotPassword() {
     <div className='flex items-center justify-center min-h-[calc(100vh-200px)] px-4 py-12'>
       <Card className='w-full max-w-md'>
         <CardHeader className='space-y-1 text-center'>
-          <CardTitle className='text-3xl font-bold'>Forgot Password</CardTitle>
+          <CardTitle className='text-3xl font-bold'>{t("forgotPasswordTitle")}</CardTitle>
           <CardDescription>
-            Enter your email address and we'll send you a link to reset your
-            password.
+            {t("forgotPasswordDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -73,9 +77,9 @@ export default function ForgotPassword() {
                 name='email'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t("email")}</FormLabel>
                     <FormControl>
-                      <Input placeholder='m@example.com' {...field} />
+                      <Input placeholder={t("emailPlaceholder")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -86,18 +90,28 @@ export default function ForgotPassword() {
                 className='w-full'
                 disabled={mutation.isPending}
               >
-                {mutation.isPending ? "Sending..." : "Send Reset Link"}
+                {mutation.isPending ? t("sending") : t("sendResetLink")}
               </Button>
             </form>
           </Form>
-          <div className='mt-4 text-center text-sm'>
-            Remember your password?{" "}
-            <Link
-              to='/login'
-              className='text-primary hover:underline font-medium'
-            >
-              Back to login
-            </Link>
+          <div className='mt-4 text-center text-sm space-y-2'>
+            <div>
+              {t("rememberPassword")}{" "}
+              <Link
+                to='/login'
+                className='text-primary hover:underline font-medium'
+              >
+                {t("backToLogin")}
+              </Link>
+            </div>
+            <div>
+              <Link
+                to='/'
+                className='text-muted-foreground hover:text-primary hover:underline'
+              >
+                ← {t("backToHome", "Back to Home")}
+              </Link>
+            </div>
           </div>
         </CardContent>
       </Card>

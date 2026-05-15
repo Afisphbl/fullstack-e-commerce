@@ -39,30 +39,30 @@ export interface AppError {
  * Type guard to check if an error is an AppError object
  */
 const isObjectError = (
-  error: AppError | string | null | undefined,
+  error: AppError | string | null | undefined
 ): error is AppError => {
   return typeof error === "object" && error !== null;
 };
 
 /**
- * Maps backend error messages to user-friendly messages
+ * Maps backend error messages to translation keys
  *
  * @param errorMessage - The error message from the backend or error object
  * @param context - Optional context with additional information (e.g., available stock)
- * @returns User-friendly error message
+ * @returns Object with translation key and optional params
  */
 export function mapCartErrorMessage(
   errorMessage: string,
-  context?: CartErrorContext,
-): string {
-  const message = errorMessage.toLowerCase();
+  context?: CartErrorContext
+): { key: string; values?: Record<string, string | number> } {
+  const message = (errorMessage || "").toLowerCase();
 
   // Product not found errors
   if (
     message.includes("product not found") ||
     message.includes("product does not exist")
   ) {
-    return "This product is no longer available";
+    return { key: "cart:errors.productNotFound" };
   }
 
   // Product availability errors
@@ -70,25 +70,31 @@ export function mapCartErrorMessage(
     message.includes("product is not available") ||
     message.includes("product is unavailable")
   ) {
-    return "This product is currently unavailable";
+    return { key: "cart:errors.productUnavailable" };
   }
 
-  // Stock validation errors - include available stock quantity
+  // Stock validation errors
   if (
     message.includes("insufficient stock") ||
     message.includes("not enough stock")
   ) {
     if (context?.availableStock !== undefined) {
-      return `Only ${context.availableStock} unit${context.availableStock === 1 ? "" : "s"} available`;
+      return {
+        key: "cart:errors.onlyUnitsAvailable",
+        values: { count: context.availableStock },
+      };
     }
-    return "Insufficient stock available";
+    return { key: "cart:errors.insufficientStock" };
   }
 
   // Specific stock quantity errors (e.g., "Only 5 units available")
   const stockMatch = message.match(/only (\d+) units? available/i);
-  if (stockMatch) {
+  if (stockMatch && stockMatch[1]) {
     const stock = parseInt(stockMatch[1], 10);
-    return `Only ${stock} unit${stock === 1 ? "" : "s"} available`;
+    return {
+      key: "cart:errors.onlyUnitsAvailable",
+      values: { count: stock },
+    };
   }
 
   // Cart not found errors
@@ -96,12 +102,7 @@ export function mapCartErrorMessage(
     message.includes("cart not found") ||
     message.includes("cart does not exist")
   ) {
-    return "Your cart could not be loaded. Please try again.";
-  }
-
-  // Empty cart errors
-  if (message.includes("cart is empty")) {
-    return "Your cart is empty";
+    return { key: "cart:errors.cartLoadFailed" };
   }
 
   // Coupon validation errors
@@ -110,21 +111,21 @@ export function mapCartErrorMessage(
     message.includes("coupon not found") ||
     message.includes("coupon does not exist")
   ) {
-    return "This coupon code is invalid";
+    return { key: "cart:errors.invalidCoupon" };
   }
 
   if (
     message.includes("coupon expired") ||
     message.includes("coupon has expired")
   ) {
-    return "This coupon has expired";
+    return { key: "cart:errors.expiredCoupon" };
   }
 
   if (
     message.includes("coupon not applicable") ||
     message.includes("minimum order")
   ) {
-    return "This coupon cannot be applied to your cart";
+    return { key: "cart:errors.couponNotApplicable" };
   }
 
   // Network errors
@@ -135,7 +136,7 @@ export function mapCartErrorMessage(
     message.includes("timeout") ||
     message.includes("failed to fetch")
   ) {
-    return "Connection error. Please check your internet and try again.";
+    return { key: "cart:errors.connectionError" };
   }
 
   // Authentication errors
@@ -144,7 +145,7 @@ export function mapCartErrorMessage(
     message.includes("not authenticated") ||
     message.includes("not logged in")
   ) {
-    return "Please log in to manage your cart";
+    return { key: "cart:errors.loginRequired" };
   }
 
   // Server errors (5xx)
@@ -153,11 +154,11 @@ export function mapCartErrorMessage(
     message.includes("internal error") ||
     message.match(/5\d{2}/)
   ) {
-    return "Something went wrong on our end. Please try again later.";
+    return { key: "cart:errors.serverError" };
   }
 
   // Generic fallback
-  return "Failed to update cart. Please try again.";
+  return { key: "cart:errors.genericError" };
 }
 
 /**
@@ -167,7 +168,7 @@ export function mapCartErrorMessage(
  * @returns Available stock quantity if found, undefined otherwise
  */
 export function extractAvailableStock(
-  error: AppError | string | null | undefined,
+  error: AppError | string | null | undefined
 ): number | undefined {
   if (!error) return undefined;
 
@@ -182,8 +183,7 @@ export function extractAvailableStock(
   // Try to extract from error message
   const message = typeof error === "string" ? error : error.message || "";
   const stockMatch = message.match(/only (\d+) units? available/i);
-
-  if (stockMatch) {
+  if (stockMatch && stockMatch[1]) {
     return parseInt(stockMatch[1], 10);
   }
 
@@ -202,7 +202,7 @@ export function extractAvailableStock(
  * @returns True if the error is network-related
  */
 export function isNetworkError(
-  error: AppError | string | null | undefined,
+  error: AppError | string | null | undefined
 ): boolean {
   if (!error) return false;
 
@@ -228,7 +228,7 @@ export function isNetworkError(
  * @returns True if the error is a validation error
  */
 export function isValidationError(
-  error: AppError | string | null | undefined,
+  error: AppError | string | null | undefined
 ): boolean {
   if (!error) return false;
 
@@ -256,7 +256,7 @@ export function isValidationError(
  * @returns True if the operation should be retried
  */
 export function shouldRetryError(
-  error: AppError | string | null | undefined,
+  error: AppError | string | null | undefined
 ): boolean {
   // Retry network errors
   if (isNetworkError(error)) {

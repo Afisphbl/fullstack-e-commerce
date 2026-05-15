@@ -243,25 +243,35 @@ const AdminDashboard = () => {
                 </ResponsiveContainer>
               </div>
               <div className="w-full space-y-3">
-                {data.categorySales.map((source) => (
-                  <div
-                    key={source.name}
-                    className="flex items-center justify-between text-xs"
-                  >
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-2.5 h-2.5 rounded-full"
-                        style={{ backgroundColor: source.color }}
-                      />
-                      <span className="text-muted-foreground font-medium">
-                        {source.name}
+                {data.categorySales.map((source) => {
+                  const localizedCategoryName =
+                    typeof source.name === "string"
+                      ? source.name
+                      : (source.name as any)?.en ||
+                        (source.name as any)?.am ||
+                        (source.name as any)?.om ||
+                        "";
+
+                  return (
+                    <div
+                      key={localizedCategoryName}
+                      className="flex items-center justify-between text-xs"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="w-2.5 h-2.5 rounded-full"
+                          style={{ backgroundColor: source.color }}
+                        />
+                        <span className="text-muted-foreground font-medium">
+                          {localizedCategoryName}
+                        </span>
+                      </div>
+                      <span className="text-foreground font-bold">
+                        {formatCurrency(source.value)}
                       </span>
                     </div>
-                    <span className="text-foreground font-bold">
-                      {formatCurrency(source.value)}
-                    </span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -493,9 +503,9 @@ const AdminDashboard = () => {
                       const localizedProductName =
                         typeof item.productName === "string"
                           ? item.productName
-                          : item.productName?.en ||
-                            item.productName?.am ||
-                            item.productName?.om ||
+                          : (item.productName as any)?.en ||
+                            (item.productName as any)?.am ||
+                            (item.productName as any)?.om ||
                             "";
 
                       return (

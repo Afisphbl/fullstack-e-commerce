@@ -48,10 +48,10 @@ const AdminOrdersPage = () => {
       updateOrder(id, { orderStatus: status }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminOrders"] });
-      toast.success("Order status updated successfully");
+      toast.success(t("orderStatusUpdated"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Failed to update order status");
+      toast.error(error.message || t("failedUpdateOrder"));
     },
   });
 
@@ -63,7 +63,7 @@ const AdminOrdersPage = () => {
     return (
       <div className="p-8 text-center bg-destructive/10 border border-destructive/20 rounded-lg">
         <h2 className="text-lg font-bold text-destructive mb-2">
-          Failed to Load Orders
+          {t("failedLoadOrders")}
         </h2>
         <p className="text-muted-foreground mb-4">{(error as Error).message}</p>
         <Button
@@ -71,7 +71,7 @@ const AdminOrdersPage = () => {
             queryClient.invalidateQueries({ queryKey: ["adminOrders"] })
           }
         >
-          Try Again
+          {t("tryAgain")}
         </Button>
       </div>
     );
@@ -93,11 +93,11 @@ const AdminOrdersPage = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t("allOrders")}</SelectItem>
-              <SelectItem value="placed">Placed</SelectItem>
-              <SelectItem value="processing">Processing</SelectItem>
-              <SelectItem value="shipped">Shipped</SelectItem>
-              <SelectItem value="delivered">Delivered</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
+              <SelectItem value="placed">{t("placed")}</SelectItem>
+              <SelectItem value="processing">{t("processing")}</SelectItem>
+              <SelectItem value="shipped">{t("shipped")}</SelectItem>
+              <SelectItem value="delivered">{t("delivered")}</SelectItem>
+              <SelectItem value="cancelled">{t("cancelled")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -141,7 +141,7 @@ const AdminOrdersPage = () => {
                 >
                   {t("noOrdersFound")}
                   {statusFilter !== "all" &&
-                    ` ${t("withStatus")} "${statusFilter}"`}
+                    ` ${t("withStatus")} "${t(statusFilter)}"`}
                 </td>
               </tr>
             ) : (
@@ -155,17 +155,17 @@ const AdminOrdersPage = () => {
                   </td>
                   <td className="p-3">
                     <div className="text-sm font-medium text-foreground">
-                      {o.user?.name || "Unknown"}
+                      {o.user?.name || t("unknown")}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      {o.user?.email || "No email"}
+                      {o.user?.email || t("noEmail")}
                     </div>
                   </td>
                   <td className="p-3 text-sm text-muted-foreground">
                     {o.date}
                   </td>
                   <td className="p-3 text-sm text-muted-foreground">
-                    {o.items.length} items
+                    {o.items.length} {t("items")}
                   </td>
                   <td className="p-3 text-sm font-medium text-foreground">
                     {formatCurrency(o.total)}
@@ -187,7 +187,7 @@ const AdminOrdersPage = () => {
                           "cancelled",
                         ].map((s) => (
                           <SelectItem key={s} value={s} className="capitalize">
-                            {s}
+                            {t(s)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -214,14 +214,16 @@ const AdminOrdersPage = () => {
         <DialogContent className="bg-card max-w-lg">
           <DialogHeader>
             <DialogTitle className="font-display text-foreground">
-              Order {selected?.id}
+              {t("order")} {selected?.id}
             </DialogTitle>
           </DialogHeader>
           {selected && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-sm">
-                  <span className="text-muted-foreground">Customer:</span>{" "}
+                  <span className="text-muted-foreground">
+                    {t("customerLabel")}:
+                  </span>{" "}
                   <span className="text-foreground block">
                     {selected.user?.name}
                   </span>
@@ -230,19 +232,19 @@ const AdminOrdersPage = () => {
                   </span>
                 </div>
                 <div className="text-sm">
-                  <span className="text-muted-foreground">Date:</span>{" "}
+                  <span className="text-muted-foreground">{t("date")}:</span>{" "}
                   <span className="text-foreground block">{selected.date}</span>
                 </div>
               </div>
               <div className="text-sm">
-                <span className="text-muted-foreground">Address:</span>{" "}
+                <span className="text-muted-foreground">{t("address")}:</span>{" "}
                 <span className="text-foreground block">
                   {selected.shippingAddress}
                 </span>
               </div>
               <div>
                 <h4 className="text-sm font-medium text-foreground mb-2">
-                  Items
+                  {t("items")}
                 </h4>
                 {selected.items.map((i) => (
                   <div
@@ -267,7 +269,7 @@ const AdminOrdersPage = () => {
                 ))}
               </div>
               <div className="flex justify-between font-display font-bold text-foreground pt-2 border-t border-border">
-                <span>Total</span>
+                <span>{t("total")}</span>
                 <span>{formatCurrency(selected.total)}</span>
               </div>
             </div>

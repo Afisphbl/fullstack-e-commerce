@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -23,21 +23,25 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-const resetPasswordSchema = z
-  .object({
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    passwordConfirm: z.string().min(8, "Please confirm your password"),
-  })
-  .refine((data) => data.password === data.passwordConfirm, {
-    message: "Passwords do not match",
-    path: ["passwordConfirm"],
-  });
+import { usePageTitle } from "@/hooks/usePageTitle";
+import { useTranslation } from "react-i18next";
 
 export default function ResetPassword() {
+  const { t } = useTranslation("auth");
+  usePageTitle(t("seo.resetPassword.title"));
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const resetPasswordSchema = z
+    .object({
+      password: z.string().min(8, t("validation.passwordMin")),
+      passwordConfirm: z.string().min(8, t("validation.confirmPasswordRequired")),
+    })
+    .refine((data) => data.password === data.passwordConfirm, {
+      message: t("validation.passwordsNoMatch"),
+      path: ["passwordConfirm"],
+    });
 
   const form = useForm<z.infer<typeof resetPasswordSchema>>({
     resolver: zodResolver(resetPasswordSchema),
@@ -54,7 +58,7 @@ export default function ResetPassword() {
         body: JSON.stringify(values),
       }),
     onSuccess: (data) => {
-      toast.success("Password reset successfully!");
+      toast.success(t("passwordResetSuccess"));
       queryClient.setQueryData(["currentUser"], data.data.user);
       navigate("/profile");
     },
@@ -71,8 +75,8 @@ export default function ResetPassword() {
     <div className='flex items-center justify-center min-h-[calc(100vh-200px)] px-4 py-12'>
       <Card className='w-full max-w-md'>
         <CardHeader className='space-y-1 text-center'>
-          <CardTitle className='text-3xl font-bold'>Reset Password</CardTitle>
-          <CardDescription>Enter your new password below</CardDescription>
+          <CardTitle className='text-3xl font-bold'>{t("resetPassword")}</CardTitle>
+          <CardDescription>{t("resetPasswordDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -82,11 +86,11 @@ export default function ResetPassword() {
                 name='password'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>New Password</FormLabel>
+                    <FormLabel>{t("newPassword")}</FormLabel>
                     <FormControl>
                       <Input
                         type='password'
-                        placeholder='••••••••'
+                        placeholder={t("passwordPlaceholder")}
                         {...field}
                       />
                     </FormControl>
@@ -99,11 +103,11 @@ export default function ResetPassword() {
                 name='passwordConfirm'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm New Password</FormLabel>
+                    <FormLabel>{t("confirmNewPassword")}</FormLabel>
                     <FormControl>
                       <Input
                         type='password'
-                        placeholder='••••••••'
+                        placeholder={t("passwordPlaceholder")}
                         {...field}
                       />
                     </FormControl>
@@ -116,10 +120,18 @@ export default function ResetPassword() {
                 className='w-full'
                 disabled={mutation.isPending}
               >
-                {mutation.isPending ? "Resetting..." : "Reset Password"}
+                {mutation.isPending ? t("resetting") : t("resetPassword")}
               </Button>
             </form>
           </Form>
+          <div className='mt-4 text-center text-sm'>
+            <Link
+              to='/'
+              className='text-muted-foreground hover:text-primary hover:underline'
+            >
+              ← {t("backToHome")}
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 import { createOrder, fetchGeneralSettings } from "@/lib/api";
 import { initializeChapaPayment } from "@/lib/payment-api";
 import { formatCurrency } from "@/lib/formatters";
@@ -19,7 +20,8 @@ import {
 import { usePageTitle } from "@/hooks/usePageTitle";
 
 const CheckoutPage = () => {
-  usePageTitle("Checkout");
+  const { t } = useTranslation(["checkout", "cart"]);
+  usePageTitle(t("checkout:checkout"));
   const { items, total, subtotal, discount, couponCode, clearCart } = useCart();
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -107,7 +109,9 @@ const CheckoutPage = () => {
 
     // Check if user is authenticated
     if (!isAuthenticated) {
-      toast.error("Please log in to place an order");
+      toast.error(
+        t("auth:pleaseLoginToOrder") || "Please log in to place an order"
+      );
       navigate("/login");
       return;
     }
@@ -167,12 +171,16 @@ const CheckoutPage = () => {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <h1 className="text-3xl font-display font-bold text-foreground mb-8">
-        Checkout
+        {t("checkout:checkout")}
       </h1>
 
       {/* Steps Visualization */}
       <div className="flex items-center justify-center gap-4 mb-8">
-        {["Shipping", "Payment", "Review"].map((label, i) => (
+        {[
+          t("checkout:shipping"),
+          t("checkout:payment"),
+          t("checkout:review"),
+        ].map((label, i) => (
           <div key={label} className="flex items-center gap-2">
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${i + 1 <= step ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
@@ -201,11 +209,13 @@ const CheckoutPage = () => {
           {step === 1 && (
             <div className="space-y-4">
               <h2 className="font-display font-semibold text-foreground mb-4">
-                Shipping Information
+                {t("checkout:shippingInformation")}
               </h2>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-foreground">First Name</Label>
+                  <Label className="text-foreground">
+                    {t("checkout:firstName")}
+                  </Label>
                   <Input
                     name="firstName"
                     value={shippingInfo.firstName}
@@ -214,7 +224,9 @@ const CheckoutPage = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-foreground">Last Name</Label>
+                  <Label className="text-foreground">
+                    {t("checkout:lastName")}
+                  </Label>
                   <Input
                     name="lastName"
                     value={shippingInfo.lastName}
@@ -224,7 +236,9 @@ const CheckoutPage = () => {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-foreground">Email Address</Label>
+                <Label className="text-foreground">
+                  {t("checkout:emailAddress")}
+                </Label>
                 <Input
                   name="email"
                   type="email"
@@ -234,7 +248,9 @@ const CheckoutPage = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-foreground">Phone Number</Label>
+                <Label className="text-foreground">
+                  {t("checkout:phoneNumber")}
+                </Label>
                 <Input
                   name="phone"
                   type="tel"
@@ -243,11 +259,13 @@ const CheckoutPage = () => {
                   onChange={handleInputChange}
                 />
                 <p className="text-[11px] text-muted-foreground">
-                  Required for Telebirr payments
+                  {t("checkout:phoneRequiredTip")}
                 </p>
               </div>
               <div className="space-y-2">
-                <Label className="text-foreground">Street Address</Label>
+                <Label className="text-foreground">
+                  {t("checkout:streetAddress")}
+                </Label>
                 <Input
                   name="address"
                   value={shippingInfo.address}
@@ -257,7 +275,9 @@ const CheckoutPage = () => {
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-foreground">City</Label>
+                  <Label className="text-foreground">
+                    {t("checkout:city")}
+                  </Label>
                   {restrictionEnabled && allowedCities.length > 0 ? (
                     <select
                       name="city"
@@ -282,7 +302,9 @@ const CheckoutPage = () => {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-foreground">State</Label>
+                  <Label className="text-foreground">
+                    {t("checkout:state")}
+                  </Label>
                   <Input
                     name="state"
                     value={shippingInfo.state}
@@ -291,7 +313,7 @@ const CheckoutPage = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-foreground">ZIP</Label>
+                  <Label className="text-foreground">{t("checkout:zip")}</Label>
                   <Input
                     name="zip"
                     value={shippingInfo.zip}
@@ -307,11 +329,10 @@ const CheckoutPage = () => {
             <div className="space-y-6 text-center">
               <div className="mb-4">
                 <h2 className="font-display font-semibold text-2xl text-foreground mb-2">
-                  Secure Payment with Chapa
+                  {t("checkout:securePayment")}
                 </h2>
                 <p className="text-muted-foreground text-sm max-w-sm mx-auto">
-                  Safe, secure transactions supporting all major Ethiopian and
-                  international payment methods.
+                  {t("checkout:securePaymentDesc")}
                 </p>
               </div>
 
@@ -323,15 +344,15 @@ const CheckoutPage = () => {
                     </div>
                     <div>
                       <h3 className="font-bold text-lg text-foreground">
-                        Chapa Gateway
+                        {t("checkout:chapaGateway")}
                       </h3>
                       <p className="text-xs text-muted-foreground italic">
-                        Official Payment Partner
+                        {t("checkout:officialPartner")}
                       </p>
                     </div>
                   </div>
                   <div className="bg-primary/10 text-primary text-[10px] uppercase font-black px-2 py-1 rounded">
-                    Recommended
+                    {t("checkout:recommended")}
                   </div>
                 </div>
 
@@ -341,7 +362,7 @@ const CheckoutPage = () => {
                       <Smartphone className="h-5 w-5 text-muted-foreground" />
                     </div>
                     <span className="text-[10px] font-bold uppercase opacity-60">
-                      Telebirr
+                      {t("checkout:telebirr")}
                     </span>
                   </div>
                   <div className="flex flex-col items-center gap-2">
@@ -349,7 +370,7 @@ const CheckoutPage = () => {
                       <Building2 className="h-5 w-5 text-muted-foreground" />
                     </div>
                     <span className="text-[10px] font-bold uppercase opacity-60">
-                      CBE Birr
+                      {t("checkout:cbeBirr")}
                     </span>
                   </div>
                   <div className="flex flex-col items-center gap-2">
@@ -357,7 +378,7 @@ const CheckoutPage = () => {
                       <CreditCard className="h-5 w-5 text-muted-foreground" />
                     </div>
                     <span className="text-[10px] font-bold uppercase opacity-60">
-                      Visa/Master
+                      {t("checkout:visaMaster")}
                     </span>
                   </div>
                   <div className="flex flex-col items-center gap-2">
@@ -365,16 +386,14 @@ const CheckoutPage = () => {
                       <Check className="h-5 w-5 text-muted-foreground" />
                     </div>
                     <span className="text-[10px] font-bold uppercase opacity-60">
-                      & More
+                      {t("checkout:andMore")}
                     </span>
                   </div>
                 </div>
 
                 <div className="bg-primary/5 border border-primary/10 rounded-xl p-4 text-left">
                   <p className="text-xs text-foreground/80 leading-relaxed font-medium">
-                    You'll be redirected to Chapa's official gateway. Choose
-                    your flavor: <strong>Telebirr, CBE Birr, Amole,</strong> or
-                    any <strong>Credit/Debit card</strong>.
+                    {t("checkout:chapaRedirectDesc")}
                   </p>
                 </div>
               </div>
@@ -384,13 +403,17 @@ const CheckoutPage = () => {
           {step === 3 && (
             <div className="space-y-6">
               <h2 className="font-display font-semibold text-foreground mb-4 text-xl">
-                Order Review
+                {t("checkout:orderReview")}
               </h2>
               <div className="space-y-3 mb-6">
                 {items.map(({ product, quantity }) => {
-                  const localizedName = typeof product.name === 'string'
-                    ? product.name
-                    : product.name?.en || product.name?.am || product.name?.om || '';
+                  const localizedName =
+                    typeof product.name === "string"
+                      ? product.name
+                      : product.name?.en ||
+                        product.name?.am ||
+                        product.name?.om ||
+                        "";
                   return (
                     <div
                       key={product.id}
@@ -408,7 +431,7 @@ const CheckoutPage = () => {
                           {localizedName}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          Quantity: {quantity}
+                          {t("checkout:quantity")}: {quantity}
                         </p>
                       </div>
                       <div className="text-right">
@@ -423,7 +446,7 @@ const CheckoutPage = () => {
 
               <div className="bg-muted/30 rounded-xl p-5 border border-border/50">
                 <h3 className="text-xs font-black uppercase text-foreground mb-3 tracking-widest">
-                  Shipping Destination
+                  {t("checkout:shippingDestination")}
                 </h3>
                 <div className="text-sm text-muted-foreground space-y-1">
                   <p className="font-semibold text-foreground">
@@ -447,7 +470,7 @@ const CheckoutPage = () => {
                 className="px-8"
                 onClick={() => setStep(step - 1)}
               >
-                Back
+                {t("checkout:back")}
               </Button>
             )}
             <Button
@@ -457,14 +480,17 @@ const CheckoutPage = () => {
             >
               {loading ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Working...
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />{" "}
+                  {t("checkout:working")}
                 </>
               ) : step < 3 ? (
-                "Continue to Payment"
+                t("checkout:continueToPayment")
               ) : (
                 <>
-                  <Check className="h-4 w-4 mr-2" /> Place Order —{" "}
-                  {formatCurrency(grandTotal)}
+                  <Check className="h-4 w-4 mr-2" />{" "}
+                  {t("checkout:placeOrder", {
+                    total: formatCurrency(grandTotal),
+                  })}
                 </>
               )}
             </Button>
@@ -473,47 +499,57 @@ const CheckoutPage = () => {
 
         <div className="bg-card rounded-lg border border-border p-6 h-fit sticky top-24">
           <h3 className="font-display font-semibold text-foreground mb-6 text-lg border-b border-border pb-2">
-            Summary
+            {t("checkout:summary")}
           </h3>
           <div className="space-y-3 text-sm mb-6">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Items Price</span>
+              <span className="text-muted-foreground">
+                {t("checkout:itemsPrice")}
+              </span>
               <span className="text-foreground font-medium">
                 {formatCurrency(subtotal || total)}
               </span>
             </div>
             {discount > 0 && (
               <div className="flex justify-between text-green-600 dark:text-green-400">
-                <span>Discount</span>
+                <span>{t("cart:discount")}</span>
                 <span>-{formatCurrency(discount)}</span>
               </div>
             )}
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Shipping</span>
+              <span className="text-muted-foreground">
+                {t("cart:shipping")}
+              </span>
               <span className="text-foreground font-medium">
-                {shipping === 0 ? "FREE" : formatCurrency(shipping)}
+                {shipping === 0 ? t("cart:free") : formatCurrency(shipping)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Estimated Tax</span>
+              <span className="text-muted-foreground">
+                {t("checkout:estimatedTax")}
+              </span>
               <span className="text-foreground font-medium">
                 {formatCurrency(tax)}
               </span>
             </div>
             <div className="border-t border-border pt-4 flex justify-between font-display font-bold text-xl">
-              <span className="text-foreground">Total</span>
+              <span className="text-foreground">{t("cart:total")}</span>
               <span className="text-primary">{formatCurrency(grandTotal)}</span>
             </div>
           </div>
 
           <div className="space-y-4">
             <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest mb-2">
-              Cart Preview
+              {t("checkout:cartPreview")}
             </div>
             {items.slice(0, 3).map(({ product, quantity }) => {
-              const localizedName = typeof product.name === 'string'
-                ? product.name
-                : product.name?.en || product.name?.am || product.name?.om || '';
+              const localizedName =
+                typeof product.name === "string"
+                  ? product.name
+                  : product.name?.en ||
+                    product.name?.am ||
+                    product.name?.om ||
+                    "";
               return (
                 <div key={product.id} className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded bg-muted overflow-hidden">
@@ -528,7 +564,7 @@ const CheckoutPage = () => {
                       {localizedName}
                     </p>
                     <p className="text-[10px] text-muted-foreground">
-                      {quantity} unit(s)
+                      {quantity} {t("checkout:units")}
                     </p>
                   </div>
                 </div>
@@ -536,7 +572,7 @@ const CheckoutPage = () => {
             })}
             {items.length > 3 && (
               <p className="text-[10px] text-center text-muted-foreground">
-                +{items.length - 3} more items
+                {t("checkout:moreItems", { count: items.length - 3 })}
               </p>
             )}
           </div>

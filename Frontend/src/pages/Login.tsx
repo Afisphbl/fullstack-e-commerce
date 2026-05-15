@@ -25,16 +25,18 @@ import {
 } from "@/components/ui/card";
 import { isAdminRole } from "@/lib/roles";
 import { usePageTitle } from "@/hooks/usePageTitle";
-
-const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(1, "Password is required"),
-});
+import { useTranslation } from "react-i18next";
 
 export default function Login() {
-  usePageTitle("Login");
+  const { t } = useTranslation("auth");
+  usePageTitle(t("seo.login.title"));
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const loginSchema = z.object({
+    email: z.string().email(t("validation.emailInvalid")),
+    password: z.string().min(1, t("validation.passwordRequired")),
+  });
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -80,7 +82,7 @@ export default function Login() {
       }
       */
 
-      toast.success("Login successful!");
+      toast.success(t("loginSuccess"));
       queryClient.setQueryData(["currentUser"], data.data.user);
       if (isAdminRole(data.data.user.role)) {
         navigate("/admin");
@@ -101,9 +103,9 @@ export default function Login() {
     <div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-3xl font-bold">Sign in</CardTitle>
+          <CardTitle className="text-3xl font-bold">{t("signIn")}</CardTitle>
           <CardDescription>
-            Enter your email and password to access your account
+            {t("signInDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -118,10 +120,10 @@ export default function Login() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t("email")}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="m@example.com"
+                        placeholder={t("emailPlaceholder")}
                         autoComplete="new-password"
                         {...field}
                       />
@@ -135,11 +137,11 @@ export default function Login() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t("password")}</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="••••••••"
+                        placeholder={t("passwordPlaceholder")}
                         autoComplete="new-password"
                         {...field}
                       />
@@ -150,7 +152,7 @@ export default function Login() {
                         to="/forgot-password"
                         className="text-sm text-primary hover:underline mt-1"
                       >
-                        Forgot password?
+                        {t("forgotPassword")}
                       </Link>
                     </div>
                   </FormItem>
@@ -161,18 +163,28 @@ export default function Login() {
                 className="w-full"
                 disabled={mutation.isPending}
               >
-                {mutation.isPending ? "Signing in..." : "Sign in"}
+                {mutation.isPending ? t("signingIn") : t("signIn")}
               </Button>
             </form>
           </Form>
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link
-              to="/signup"
-              className="text-primary hover:underline font-medium"
-            >
-              Sign up
-            </Link>
+          <div className="mt-4 text-center text-sm space-y-2">
+            <div>
+              {t("dontHaveAccount")}{" "}
+              <Link
+                to="/signup"
+                className="text-primary hover:underline font-medium"
+              >
+                {t("signup")}
+              </Link>
+            </div>
+            <div>
+              <Link
+                to="/"
+                className="text-muted-foreground hover:text-primary hover:underline"
+              >
+                ← {t("backToHome")}
+              </Link>
+            </div>
           </div>
         </CardContent>
       </Card>

@@ -58,6 +58,9 @@ import adminOm from "./om/admin.json";
 import compareAm from "./am/compare.json";
 import compareEn from "./en/compare.json";
 import compareOm from "./om/compare.json";
+import checkoutAm from "./am/checkout.json";
+import checkoutEn from "./en/checkout.json";
+import checkoutOm from "./om/checkout.json";
 
 // Configure i18next
 i18n
@@ -80,6 +83,7 @@ i18n
         auth: authAm,
         admin: adminAm,
         compare: compareAm,
+        checkout: checkoutAm,
       },
       en: {
         common: commonEn,
@@ -96,6 +100,7 @@ i18n
         auth: authEn,
         admin: adminEn,
         compare: compareEn,
+        checkout: checkoutEn,
       },
       om: {
         common: commonOm,
@@ -112,6 +117,7 @@ i18n
         auth: authOm,
         admin: adminOm,
         compare: compareOm,
+        checkout: checkoutOm,
       },
     },
     fallbackLng: "am", // Amharic as default
@@ -131,6 +137,7 @@ i18n
       "auth",
       "admin",
       "compare",
+      "checkout",
     ],
 
     interpolation: {

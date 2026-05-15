@@ -25,13 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
-const STEPS = [
-  { id: "general", label: "General Info" },
-  { id: "inventory", label: "Pricing & Stock" },
-  { id: "media", label: "Media" },
-  { id: "specs", label: "Specifications" },
-] as const;
+import { useTranslation } from "react-i18next";
 
 interface ProductFormDialogProps {
   open: boolean;
@@ -48,6 +42,15 @@ export const ProductFormDialog = ({
   categories,
   onSuccess,
 }: ProductFormDialogProps) => {
+  const { t } = useTranslation("admin");
+
+  const STEPS = [
+    { id: "general", label: t("generalInfo") },
+    { id: "inventory", label: t("pricingStock") },
+    { id: "media", label: t("media") },
+    { id: "specs", label: t("specifications") },
+  ] as const;
+
   const { form, specGroups, appendGroup, removeGroup } =
     useProductForm(editingProduct);
   const { saveMutation } = useProductMutations(editingProduct, () => {
@@ -81,7 +84,7 @@ export const ProductFormDialog = ({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0 border-none bg-background">
         <DialogHeader className="p-6 border-b">
           <DialogTitle className="text-xl font-display">
-            {editingProduct ? "Edit Product" : "Create New Product"}
+            {editingProduct ? t("editProduct") : t("createProduct")}
           </DialogTitle>
         </DialogHeader>
 
@@ -120,7 +123,7 @@ export const ProductFormDialog = ({
                     }
                   >
                     <SelectTrigger className="w-full h-11 bg-background">
-                      <SelectValue placeholder="Select Section" />
+                      <SelectValue placeholder={t("selectSection")} />
                     </SelectTrigger>
                     <SelectContent>
                       {STEPS.map((step) => (
@@ -169,7 +172,7 @@ export const ProductFormDialog = ({
                   onClick={() => onOpenChange(false)}
                   className="hidden sm:flex"
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
                 <Button
                   type="button"
@@ -179,7 +182,7 @@ export const ProductFormDialog = ({
                   className="flex sm:hidden flex-1"
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" />
-                  Back
+                  {t("back")}
                 </Button>
                 {!isLastStep && (
                   <Button
@@ -187,7 +190,7 @@ export const ProductFormDialog = ({
                     onClick={handleNext}
                     className="flex sm:hidden flex-1"
                   >
-                    Next
+                    {t("next")}
                     <ChevronRight className="h-4 w-4 ml-1" />
                   </Button>
                 )}
@@ -204,12 +207,12 @@ export const ProductFormDialog = ({
                 >
                   <Save className="h-4 w-4" />
                   {saveMutation.isPending
-                    ? "Saving..."
+                    ? t("saving")
                     : isLastStep
                       ? editingProduct
-                        ? "Update Product"
-                        : "Create Product"
-                      : "Save Progress"}
+                        ? t("updateProduct")
+                        : t("createProduct")
+                      : t("saveProgress")}
                 </Button>
               </div>
             </div>

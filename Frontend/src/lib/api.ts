@@ -729,8 +729,37 @@ export const fetchAdminDashboardData =
 
     return {
       ...data,
+      revenueChart: (data.revenueChart || []).map(
+        (item: {
+          name: string | object;
+          current: number;
+          previous: number;
+        }) => ({
+          ...item,
+          name: extractLocalized(item.name as string | object),
+        })
+      ),
       topProducts: (data.topProducts || []).map(mapProduct),
       recentOrders: (data.recentOrders || []).map(mapOrder),
+      categorySales: (data.categorySales || []).map(
+        (sale: { name: string | object; value: number; color: string }) => ({
+          ...sale,
+          name: extractLocalized(sale.name as string | object),
+        })
+      ),
+      wishlistAnalytics: data.wishlistAnalytics
+        ? {
+            ...data.wishlistAnalytics,
+            topWishlistedProducts: (
+              data.wishlistAnalytics.topWishlistedProducts || []
+            ).map((item) => ({
+              ...item,
+              productName: extractLocalized(
+                item.productName as string | object
+              ),
+            })),
+          }
+        : undefined,
     };
   };
 

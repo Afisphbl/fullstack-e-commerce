@@ -21,5 +21,25 @@
   "tax": "Tax",
   "total": "Total",
   "clear": "Clear",
-  "checkout": "Checkout"
+  "checkout": "Checkout",
+  "errors": {
+    "productNotFound": "This product is no longer available",
+    "productUnavailable": "This product is currently unavailable",
+    "insufficientStock": "Insufficient stock available",
+    "onlyUnitsAvailable": "Only {{count}} unit available",
+    "onlyUnitsAvailable_plural": "Only {{count}} units available",
+    "cartLoadFailed": "Your cart could not be loaded. Please try again.",
+    "invalidCoupon": "This coupon code is invalid",
+    "expiredCoupon": "This coupon has expired",
+    "couponNotApplicable": "This coupon cannot be applied to your cart",
+    "connectionError": "Connection error. Please check your internet and try again.",
+    "loginRequired": "Please log in to manage your cart",
+    "serverError": "Something went wrong on our end. Please try again later.",
+    "genericError": "Failed to update cart. Please try again.",
+    "applyCouponLogin": "Please log in to apply coupons"
+  },
+  "messages": {
+    "couponApplied": "Coupon applied successfully",
+    "couponRemoved": "Coupon removed"
+  }
 }

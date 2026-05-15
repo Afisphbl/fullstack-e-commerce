@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Plus, Filter } from "lucide-react";
-
+import { useTranslation } from "react-i18next";
 import { Category } from "@/types/api";
 
 interface ProductPageHeaderProps {
@@ -35,37 +35,22 @@ export const ProductPageHeader = ({
   sortBy,
   onSortChange,
 }: ProductPageHeaderProps) => {
+  const { t } = useTranslation("admin");
+
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <h1 className="text-2xl font-display font-bold text-foreground">
-        Total Products ({totalProducts})
+        {t("totalProducts")}: {totalProducts}
       </h1>
 
       {/* Filters and Add Button on the right */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-        {/* <div className='flex items-center gap-2'>
-          <Filter className='h-4 w-4 text-muted-foreground flex-shrink-0' />
-          <Select value={selectedCategory} onValueChange={onCategoryChange}>
-            <SelectTrigger className='w-full sm:w-[180px]'>
-              <SelectValue placeholder='All Categories' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='all'>All Categories</SelectItem>
-              {categories.map((category) => (
-                <SelectItem key={category.id} value={category.id}>
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div> */}
-
         <Select value={selectedBrand} onValueChange={onBrandChange}>
           <SelectTrigger className="w-full sm:w-[150px]">
-            <SelectValue placeholder="All Brands" />
+            <SelectValue placeholder={t("allBrands")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Brands</SelectItem>
+            <SelectItem value="all">{t("allBrands")}</SelectItem>
             {brands.map((brand) => (
               <SelectItem key={brand} value={brand}>
                 {brand}
@@ -76,14 +61,14 @@ export const ProductPageHeader = ({
 
         <Select value={sortBy} onValueChange={onSortChange}>
           <SelectTrigger className="w-full sm:w-[150px]">
-            <SelectValue placeholder="Sort by" />
+            <SelectValue placeholder={t("sortBy")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="newest">Newest</SelectItem>
-            <SelectItem value="price-low">Price: Low to High</SelectItem>
-            <SelectItem value="price-high">Price: High to Low</SelectItem>
-            <SelectItem value="name-asc">Name: A-Z</SelectItem>
-            <SelectItem value="name-desc">Name: Z-A</SelectItem>
+            <SelectItem value="newest">{t("newest")}</SelectItem>
+            <SelectItem value="price-low">{t("priceLow")}</SelectItem>
+            <SelectItem value="price-high">{t("priceHigh")}</SelectItem>
+            <SelectItem value="name-asc">{t("nameAsc")}</SelectItem>
+            <SelectItem value="name-desc">{t("nameDesc")}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -91,7 +76,7 @@ export const ProductPageHeader = ({
           onClick={onAddProduct}
           className="bg-primary text-primary-foreground hover:bg-primary/90 w-full sm:w-auto"
         >
-          <Plus className="h-4 w-4 mr-2" /> Add Product
+          <Plus className="h-4 w-4 mr-2" /> {t("addProduct")}
         </Button>
       </div>
     </div>

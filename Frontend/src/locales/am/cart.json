@@ -21,5 +21,25 @@
   "tax": "ግብር",
   "total": "ድምር",
   "clear": "አጽዳ",
-  "checkout": "ክፈል"
+  "checkout": "ክፈል",
+  "errors": {
+    "productNotFound": "ይህ ምርት ከእንግዲህ አይገኝም",
+    "productUnavailable": "ይህ ምርት ለጊዜው አይገኝም",
+    "insufficientStock": "በቂ ምርት በክምችት ውስጥ የለም",
+    "onlyUnitsAvailable": "{{count}} ምርት ብቻ ነው ያለው",
+    "onlyUnitsAvailable_plural": "{{count}} ምርቶች ብቻ ናቸው ያሉት",
+    "cartLoadFailed": "ካርቱን መጫን አልተቻለም። እባክዎ እንደገና ይሞክሩ።",
+    "invalidCoupon": "ይህ የኩፖን ኮድ ትክክል አይደለም",
+    "expiredCoupon": "ይህ ኩፖን ጊዜው አልፎበታል",
+    "couponNotApplicable": "ይህ ኩፖን ለካርትዎ አይሰራም",
+    "connectionError": "የግንኙነት ስህተት። እባክዎ የኢንተርኔት ግንኙነትዎን ያረጋግጡ።",
+    "loginRequired": "ካርቱን ለማስተዳደር እባክዎ ይግቡ",
+    "serverError": "በእኛ በኩል ችግር ተከስቷል። እባክዎ ቆይተው እንደገና ይሞክሩ።",
+    "genericError": "ካርቱን ለማዘመን አልተቻለም። እባክዎ እንደገና ይሞክሩ።",
+    "applyCouponLogin": "ኩፖን ለመጠቀም እባክዎ ይግቡ"
+  },
+  "messages": {
+    "couponApplied": "ኩፖኑ በትክክል ተፈጽሟል",
+    "couponRemoved": "ኩፖኑ ተውግዷል"
+  }
 }

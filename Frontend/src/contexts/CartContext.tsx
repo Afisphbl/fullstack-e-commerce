@@ -22,6 +22,7 @@ import { BackendCartItem } from "@/lib/cart-api";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useKeyedDebounce } from "@/hooks/useDebounce";
+import { useTranslation } from "react-i18next";
 import {
   mapCartErrorMessage,
   extractAvailableStock,
@@ -56,6 +57,7 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
+  const { t } = useTranslation(["cart", "common"]);
   const { isAuthenticated } = useAuth();
   const [items, setItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -103,14 +105,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             const availableStock = extractAvailableStock(error);
             const errorMessage =
               error?.message || error?.toString() || "Unknown error";
-            const userMessage = mapCartErrorMessage(errorMessage, {
+            const mappedError = mapCartErrorMessage(errorMessage, {
               availableStock,
             });
+            const userMessage = t(mappedError.key, mappedError.values);
 
             if (isNetworkError(error)) {
               toast.error(userMessage, {
                 action: {
-                  label: "Retry",
+                  label: t("common:tryAgain"),
                   onClick: () => {
                     updateCartMutation.mutate({ productId, quantity });
                   },
@@ -215,15 +218,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
               const availableStock = extractAvailableStock(error);
               const errorMessage =
                 error?.message || error?.toString() || "Unknown error";
-              const userMessage = mapCartErrorMessage(errorMessage, {
+              const mappedError = mapCartErrorMessage(errorMessage, {
                 availableStock,
                 productName: product.name,
               });
+              const userMessage = t(mappedError.key, mappedError.values);
 
               if (isNetworkError(error)) {
                 toast.error(userMessage, {
                   action: {
-                    label: "Retry",
+                    label: t("common:tryAgain"),
                     onClick: () => {
                       addToCartMutation.mutate({
                         productId: product.id,
@@ -253,7 +257,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         setIsCartOpen(true);
       }
     },
-    [isAuthenticated, addToCartMutation]
+    [isAuthenticated, addToCartMutation, t]
   );
 
   const removeFromCart = useCallback(
@@ -268,12 +272,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             setItems(previousItems);
             const errorMessage =
               error?.message || error?.toString() || "Unknown error";
-            const userMessage = mapCartErrorMessage(errorMessage);
+            const mappedError = mapCartErrorMessage(errorMessage);
+            const userMessage = t(mappedError.key, mappedError.values);
 
             if (isNetworkError(error)) {
               toast.error(userMessage, {
                 action: {
-                  label: "Retry",
+                  label: t("common:tryAgain"),
                   onClick: () => {
                     removeFromCartMutation.mutate(productId);
                   },
@@ -288,7 +293,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         setItems((prev) => prev.filter((i) => i.product.id !== productId));
       }
     },
-    [isAuthenticated, removeFromCartMutation]
+    [isAuthenticated, removeFromCartMutation, t]
   );
 
   const updateQuantity = useCallback(
@@ -324,12 +329,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           setItems(previousItems);
           const errorMessage =
             error?.message || error?.toString() || "Unknown error";
-          const userMessage = mapCartErrorMessage(errorMessage);
+          const mappedError = mapCartErrorMessage(errorMessage);
+          const userMessage = t(mappedError.key, mappedError.values);
 
           if (isNetworkError(error)) {
             toast.error(userMessage, {
               action: {
-                label: "Retry",
+                label: t("common:tryAgain"),
                 onClick: () => {
                   clearCartMutation.mutate(undefined);
                 },
@@ -343,12 +349,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     } else {
       setItems([]);
     }
-  }, [isAuthenticated, clearCartMutation]);
+  }, [isAuthenticated, clearCartMutation, t]);
 
   const applyCoupon = useCallback(
     async (code: string) => {
       if (!isAuthenticated) {
-        toast.error("Please log in to apply coupons");
+        toast.error(t("cart:errors.applyCouponLogin"));
         return;
       }
 
@@ -358,7 +364,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
       try {
         await applyCouponMutation.mutateAsync(code);
-        toast.success("Coupon applied successfully");
+        toast.success(t("cart:messages.couponApplied"));
       } catch (error: unknown) {
         console.error("Failed to apply coupon:", error);
         setCouponCode(previousCouponCode);
@@ -367,14 +373,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           error instanceof Error
             ? error.message
             : String(error) || "Unknown error";
-        const userMessage = mapCartErrorMessage(errorMessage, {
+        const mappedError = mapCartErrorMessage(errorMessage, {
           couponCode: code,
         });
+        const userMessage = t(mappedError.key, mappedError.values);
 
         if (isNetworkError(error as Error)) {
           toast.error(userMessage, {
             action: {
-              label: "Retry",
+              label: t("common:tryAgain"),
               onClick: () => {
                 applyCoupon(code);
               },
@@ -385,7 +392,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         }
       }
     },
-    [isAuthenticated, couponCode, discount, applyCouponMutation]
+    [isAuthenticated, couponCode, discount, applyCouponMutation, t]
   );
 
   const removeCoupon = useCallback(async () => {
@@ -398,7 +405,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       await removeCouponMutation.mutateAsync();
-      toast.success("Coupon removed");
+      toast.success(t("cart:messages.couponRemoved"));
     } catch (error: unknown) {
       console.error("Failed to remove coupon:", error);
       setCouponCode(previousCouponCode);
@@ -407,12 +414,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         error instanceof Error
           ? error.message
           : String(error) || "Unknown error";
-      const userMessage = mapCartErrorMessage(errorMessage);
+      const mappedError = mapCartErrorMessage(errorMessage);
+      const userMessage = t(mappedError.key, mappedError.values);
 
       if (isNetworkError(error as Error)) {
         toast.error(userMessage, {
           action: {
-            label: "Retry",
+            label: t("common:tryAgain"),
             onClick: () => {
               removeCoupon();
             },
@@ -422,7 +430,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         toast.error(userMessage);
       }
     }
-  }, [isAuthenticated, couponCode, discount, removeCouponMutation]);
+  }, [isAuthenticated, couponCode, discount, removeCouponMutation, t]);
 
   const openCart = useCallback(() => setIsCartOpen(true), []);
   const closeCart = useCallback(() => setIsCartOpen(false), []);
