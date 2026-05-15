@@ -1,0 +1,65 @@
+{
+  "hero": {
+    "eyebrow": "NEXT-GEN ELECTRONICS",
+    "title": "Experience The",
+    "highlight": "Future",
+    "subtitle": "Discover cutting-edge electronics with unmatched performance. From AI-powered laptops to quantum displays — we bring tomorrow's tech today.",
+    "ctaText": "Shop Now"
+  },
+  "about": {
+    "eyebrow": "Who We Are",
+    "title": "About",
+    "stats": {
+      "happyCustomers": "Happy Customers",
+      "countries": "Countries",
+      "products": "Products",
+      "satisfaction": "Satisfaction"
+    },
+    "values": {
+      "trustFirst": "Trust First",
+      "trustFirstDesc": "Transparent pricing, verified products, and secure transactions.",
+      "innovateDaily": "Innovate Daily",
+      "innovateDailyDesc": "We constantly explore technologies that improve everyday life.",
+      "customerObsessed": "Customer Obsessed",
+      "customerObsessedDesc": "Every decision starts with customer value and usability.",
+      "moveFast": "Move Fast",
+      "moveFastDesc": "We ship better experiences quickly and iterate with purpose."
+    }
+  },
+  "contact": {
+    "pageTitle": "Contact Us",
+    "title": "Get in Touch",
+    "subtitle": "We'd love to hear from you.",
+    "nameLabel": "Full Name",
+    "emailLabel": "Email",
+    "subjectLabel": "Subject",
+    "messageLabel": "Message",
+    "sendButton": "Send Message",
+    "sending": "Sending...",
+    "successMessage": "Message sent! We'll get back to you soon.",
+    "phone": "Phone",
+    "address": "Address",
+    "workingHours": "Working Hours"
+  },
+  "faq": {
+    "pageTitle": "FAQ",
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find answers to common questions below",
+    "noResults": "No questions found"
+  },
+  "blog": {
+    "pageTitle": "Blog",
+    "title": "Latest News & Insights",
+    "readMore": "Read More",
+    "publishedOn": "Published on",
+    "by": "by",
+    "noPosts": "No blog posts yet"
+  },
+  "notFound": {
+    "pageTitle": "404 - Page Not Found",
+    "title": "Page Not Found",
+    "message": "The page you are looking for doesn't exist or has been moved.",
+    "goHome": "Go to Homepage",
+    "goShop": "Browse Shop"
+  }
+}

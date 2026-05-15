@@ -1,0 +1,32 @@
+{
+  "cart": {
+    "productUnavailable": "Oomishni kun ammaa hin argamu",
+    "productCurrentlyUnavailable": "Oomishni kun yeroo ammaa hin argamu",
+    "onlyUnitsAvailable": "{{count}} xiqqoo qofa jira",
+    "onlyUnitsAvailable_plural": "{{count}} qofa jiru",
+    "insufficientStock": "Kuusaan ga'aa miti",
+    "cartNotFound": "Kuusaan kee hin fe'amne. Maaloo irra deebi'i yaali.",
+    "cartEmpty": "Kuusaan kee duwwaadha",
+    "couponInvalid": "Lakkoofsa kuupoonii kun sirrii miti",
+    "couponExpired": "Kuupoonniin kun yeroon isaa darbeera",
+    "couponNotApplicable": "Kuupoonniin kun kuusaa kee irratti hin fayyadamne",
+    "connectionError": "Dogoggora wal-qunnamtii. Interneettii kee mirkaneeffadhu irra deebi'i yaali.",
+    "loginRequired": "Kuusaa kee bulchuuf maaloo seeni",
+    "serverError": "Cinaa keenya irraa dogoggorri uumame. Maaloo booda yaali.",
+    "updateFailed": "Kuusaa haaromsuun hin danda'amne. Maaloo irra deebi'i yaali."
+  },
+  "general": {
+    "somethingWentWrong": "Dogoggorri uumame. Maaloo irra deebi'i yaali.",
+    "networkError": "Dogoggora Network. Wal-qunnamtii kee mirkaneeffadhu.",
+    "notFound": "Fuulli ykn qabeenya barbaacha jirtu hin argamne.",
+    "unauthorized": "Fuula kana ilaaluuf hayyama hin qabdu.",
+    "sessionExpired": "Yeroon seenshii kee darbeera. Maaloo irra deebi'i seeni.",
+    "validationFailed": "Maaloo galchi kee mirkaneeffadhu irra deebi'i yaali."
+  },
+  "boundary": {
+    "title": "Dogoggorri uumame",
+    "message": "Dogoggorri hin eegamne uumame. Maaloo fuula haaromsi.",
+    "refresh": "Fuula Haaromsi",
+    "goHome": "Gara Manaatti Deebi'i"
+  }
+}

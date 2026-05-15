@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { fetchProducts, Product } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,7 @@ interface POSItem {
 }
 
 const AdminPOSPage = () => {
+  const { t } = useTranslation(["admin", "checkout"]);
   const [search, setSearch] = useState("");
   const [cart, setCart] = useState<POSItem[]>([]);
 
@@ -43,8 +45,8 @@ const AdminPOSPage = () => {
   const checkout = () => {
     if (cart.length === 0) return;
     toast({
-      title: "Sale Complete!",
-      description: `Total: ${formatCurrency(total)}`,
+      title: t("admin:pos.saleComplete"),
+      description: t("admin:pos.saleTotal", { total: formatCurrency(total) }),
     });
     setCart([]);
   };
@@ -52,7 +54,7 @@ const AdminPOSPage = () => {
   return (
     <div>
       <h1 className="text-2xl font-display font-bold text-foreground mb-6">
-        Point of Sale
+        {t("admin:pos.title")}
       </h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -60,7 +62,7 @@ const AdminPOSPage = () => {
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search products..."
+              placeholder={t("admin:pos.searchProduct")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10 bg-card"
@@ -102,11 +104,11 @@ const AdminPOSPage = () => {
 
         <div className="bg-card rounded-lg border border-border p-4 h-fit sticky top-6">
           <h2 className="font-display font-semibold text-foreground mb-4">
-            Current Sale
+            {t("admin:pos.currentSale")}
           </h2>
           {cart.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">
-              No items added
+              {t("admin:pos.noItems")}
             </p>
           ) : (
             <div className="space-y-3 mb-4">
@@ -117,7 +119,7 @@ const AdminPOSPage = () => {
                       {product.name}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {formatCurrency(product.price)} each
+                      {formatCurrency(product.price)} {t("admin:pos.each")}
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
@@ -172,17 +174,23 @@ const AdminPOSPage = () => {
           )}
           <div className="border-t border-border pt-4 mb-4">
             <div className="flex justify-between text-sm mb-1">
-              <span className="text-muted-foreground">Subtotal</span>
+              <span className="text-muted-foreground">
+                {t("checkout:order.subtotal")}
+              </span>
               <span className="text-foreground">{formatCurrency(total)}</span>
             </div>
             <div className="flex justify-between text-sm mb-2">
-              <span className="text-muted-foreground">Tax (8%)</span>
+              <span className="text-muted-foreground">
+                {t("admin:pos.tax")}
+              </span>
               <span className="text-foreground">
                 {formatCurrency(total * 0.08)}
               </span>
             </div>
             <div className="flex justify-between font-display font-bold text-lg">
-              <span className="text-foreground">Total</span>
+              <span className="text-foreground">
+                {t("checkout:order.total")}
+              </span>
               <span className="text-foreground">
                 {formatCurrency(total * 1.08)}
               </span>
@@ -193,7 +201,8 @@ const AdminPOSPage = () => {
             disabled={cart.length === 0}
             className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-neon"
           >
-            <CreditCard className="h-4 w-4 mr-2" /> Complete Sale
+            <CreditCard className="h-4 w-4 mr-2" />{" "}
+            {t("admin:pos.completeSale")}
           </Button>
         </div>
       </div>

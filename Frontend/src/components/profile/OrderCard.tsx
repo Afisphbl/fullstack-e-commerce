@@ -3,13 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronDown } from "lucide-react";
 import { Order } from "@/lib/api";
 import { formatCurrency } from "@/lib/formatters";
-
-const statusColors: Record<string, string> = {
-  processing: "bg-warning/10 text-warning border-warning/30",
-  shipped: "bg-info/10 text-info border-info/30",
-  delivered: "bg-success/10 text-success border-success/30",
-  cancelled: "bg-destructive/10 text-destructive border-destructive/30",
-};
+import { useTranslation } from "react-i18next";
 
 const trackerSteps = ["placed", "processing", "shipped", "delivered"];
 
@@ -26,8 +20,16 @@ interface OrderCardProps {
 }
 
 export const OrderCard = ({ order }: OrderCardProps) => {
+  const { t } = useTranslation(["account", "common", "shop"]);
   const [isOpen, setIsOpen] = useState(false);
   const stepIndex = getStepIndex(order);
+
+  const statusColors: Record<string, string> = {
+    processing: "bg-warning/10 text-warning border-warning/30",
+    shipped: "bg-info/10 text-info border-info/30",
+    delivered: "bg-success/10 text-success border-success/30",
+    cancelled: "bg-destructive/10 text-destructive border-destructive/30",
+  };
 
   return (
     <article className="overflow-hidden rounded-lg border border-border bg-background">
@@ -35,21 +37,21 @@ export const OrderCard = ({ order }: OrderCardProps) => {
         type="button"
         className="flex w-full items-center justify-between gap-4 p-4 text-left"
         onClick={() => setIsOpen(!isOpen)}
-        aria-label={`Toggle details for order ${order.id}`}
+        aria-label={t("account:orders.toggleDetails", { id: order.id })}
       >
         <div>
           <p className="font-display font-semibold text-foreground">
             {order.id}
           </p>
           <p className="text-xs text-muted-foreground">
-            Placed on {order.date}
+            {t("account:orders.placedOn")} {order.date}
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Badge
             className={`${statusColors[order.status] || "bg-muted text-foreground"} border capitalize`}
           >
-            {order.status}
+            {t(`account:orders.status.${order.status}`)}
           </Badge>
           <span className="font-display font-bold text-foreground">
             {formatCurrency(order.total)}
@@ -64,7 +66,7 @@ export const OrderCard = ({ order }: OrderCardProps) => {
         <div className="border-t border-border p-4">
           <div className="mb-5">
             <div className="mb-2 text-xs uppercase tracking-wider text-muted-foreground">
-              Order Progress
+              {t("account:orders.progress")}
             </div>
             <div className="grid grid-cols-4 gap-2">
               {trackerSteps.map((step, idx) => (
@@ -75,7 +77,7 @@ export const OrderCard = ({ order }: OrderCardProps) => {
                   <p
                     className={`text-[11px] uppercase ${idx <= stepIndex ? "text-foreground font-medium" : "text-muted-foreground"}`}
                   >
-                    {step}
+                    {t(`account:orders.status.${step}`)}
                   </p>
                 </div>
               ))}
@@ -98,7 +100,7 @@ export const OrderCard = ({ order }: OrderCardProps) => {
                     {item.name}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Qty: {item.quantity}
+                    {t("shop:cart.quantity")}: {item.quantity}
                   </p>
                 </div>
                 <span className="text-sm font-semibold text-foreground">
@@ -109,9 +111,15 @@ export const OrderCard = ({ order }: OrderCardProps) => {
           </div>
 
           <div className="grid grid-cols-1 gap-2 text-sm text-muted-foreground sm:grid-cols-2">
-            <p>Shipping: {order.shippingAddress}</p>
-            <p>Tracking: {order.trackingNumber || "N/A"}</p>
-            <p>Estimated Delivery: {order.estimatedDelivery}</p>
+            <p>
+              {t("checkout:shipping.title")}: {order.shippingAddress}
+            </p>
+            <p>
+              {t("account:orders.tracking")}: {order.trackingNumber || "N/A"}
+            </p>
+            <p>
+              {t("account:orders.estimatedDelivery")}: {order.estimatedDelivery}
+            </p>
           </div>
         </div>
       )}

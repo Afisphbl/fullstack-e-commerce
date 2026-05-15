@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { fetchProducts, fetchOrders, fetchCategories } from "@/lib/api";
 import {
   DollarSign,
@@ -12,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/lib/formatters";
 
 const AdminSummaryPage = () => {
+  const { t } = useTranslation(["admin"]);
   const { data: productsData, isLoading: pLoading } = useQuery({
     queryKey: ["adminProducts"],
     queryFn: () => fetchProducts({ limit: 100 }),
@@ -34,36 +36,42 @@ const AdminSummaryPage = () => {
 
   const metrics = [
     {
-      label: "Total Revenue",
+      label: t("admin:summary.totalRevenue"),
       value: formatCurrency(revenue),
       icon: DollarSign,
       trend: "+15.3%",
       up: true,
     },
     {
-      label: "Total Orders",
+      label: t("admin:summary.totalOrders"),
       value: orders.length,
       icon: ShoppingCart,
       trend: "+8.1%",
       up: true,
     },
     {
-      label: "Average Order",
+      label: t("admin:summary.averageOrder"),
       value: formatCurrency(avgOrder),
       icon: TrendingUp,
       trend: "+4.2%",
       up: true,
     },
     {
-      label: "Products Listed",
+      label: t("admin:summary.productsListed"),
       value: products,
       icon: Package,
       trend: "+3",
       up: true,
     },
-    { label: "Categories", value: cats, icon: Tag, trend: "0", up: true },
     {
-      label: "Return Rate",
+      label: t("admin:summary.categories"),
+      value: cats,
+      icon: Tag,
+      trend: "0",
+      up: true,
+    },
+    {
+      label: t("admin:summary.returnRate"),
       value: "2.1%",
       icon: TrendingDown,
       trend: "-0.3%",
@@ -74,7 +82,7 @@ const AdminSummaryPage = () => {
   return (
     <div>
       <h1 className="text-2xl font-display font-bold text-foreground mb-6">
-        Business Summary
+        {t("admin:summary.title")}
       </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
@@ -122,7 +130,7 @@ const AdminSummaryPage = () => {
 
       <div className="bg-card rounded-lg border border-border p-6">
         <h2 className="font-display font-semibold text-foreground mb-4">
-          Monthly Performance
+          {t("admin:summary.monthlyPerformance")}
         </h2>
         <div className="space-y-4">
           {isLoading

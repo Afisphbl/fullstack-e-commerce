@@ -1,0 +1,65 @@
+{
+  "hero": {
+    "eyebrow": "ELEKTIROONIKISII DHALOOTA HAARAA",
+    "title": "Muuxannoo Qabaadhu",
+    "highlight": "Fuulduraa",
+    "subtitle": "Elektiroonikisii guddaa raawwii hin-wal-qixxneen argii. Laaptoopiiwwan AI-deetaawwan hanga agarsiftoota kuwaantamii — teeknooloojii boruu har'a fida.",
+    "ctaText": "Amma Bitaa"
+  },
+  "about": {
+    "eyebrow": "Eenyu Akka Taane",
+    "title": "Waa'ee",
+    "stats": {
+      "happyCustomers": "Maamiltoota Gammadan",
+      "countries": "Biyyoota",
+      "products": "Oomishaalee",
+      "satisfaction": "Quufinsa"
+    },
+    "values": {
+      "trustFirst": "Dursee Amanamummaa",
+      "trustFirstDesc": "Gatii ifa ta'e, oomishaalee mirkana'an, fi daldalaa nagaatiin.",
+      "innovateDaily": "Guyyuu Haaroomsi",
+      "innovateDailyDesc": "Teeknooloojii jireenyaa guyyaa guyyaa fooyyessitu yoo xiqqaate barbaanna.",
+      "customerObsessed": "Maamila Jaaladhaa",
+      "customerObsessedDesc": "Murteen hundumtuu gatii maamiltootaa fi salphummaa irraa eegala.",
+      "moveFast": "Dafii Ka'i",
+      "moveFastDesc": "Muuxannoowwan gaarii toltuu dhiyeessina, bayyanannaan hojjenna."
+    }
+  },
+  "contact": {
+    "pageTitle": "Nu Qunnamaa",
+    "title": "Walqunnamaa",
+    "subtitle": "Isinii dhaggeeffachuuf hawwina.",
+    "nameLabel": "Maqaa Guutuu",
+    "emailLabel": "Imeelii",
+    "subjectLabel": "Mata Duree",
+    "messageLabel": "Ergaa",
+    "sendButton": "Ergaa Ergi",
+    "sending": "Ergaa jira...",
+    "successMessage": "Ergaan ergiitameera! Yeroo gabaabaa keessatti deebii kenna.",
+    "phone": "Bilbila",
+    "address": "Teessoo",
+    "workingHours": "Sa'aatii Hojii"
+  },
+  "faq": {
+    "pageTitle": "Gaaffiilee",
+    "title": "Gaaffiilee Yeroo Hunda Gaafataman",
+    "subtitle": "Gaaffiilee baay'inaan gaafatamaniif deebii armaan gaditti argadha",
+    "noResults": "Gaaffileen hin argamne"
+  },
+  "blog": {
+    "pageTitle": "Barreeffama",
+    "title": "Oduu Dhiyoo",
+    "readMore": "Caalaatti Dubbisi",
+    "publishedOn": "Maxxanfame",
+    "by": "Kan",
+    "noPosts": "Barreeffamni hin jiru"
+  },
+  "notFound": {
+    "pageTitle": "404 - Fuulli Hin Argamne",
+    "title": "Fuulli Hin Argamne",
+    "message": "Fuulli barbaachan hin argamne ykn bakka jijjiirameera.",
+    "goHome": "Gara Fuula Manaatti Deemi",
+    "goShop": "Suuqii Ilaaladhu"
+  }
+}

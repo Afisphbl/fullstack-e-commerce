@@ -9,6 +9,7 @@ import {
   Loader2,
   Tag,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useCart } from "@/contexts/CartContext";
 import { formatCurrency } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,7 @@ const CartItemSkeleton = () => (
 );
 
 export const CartDrawer = () => {
+  const { t } = useTranslation("shop");
   const {
     items,
     isCartOpen,
@@ -89,14 +91,12 @@ export const CartDrawer = () => {
       >
         <SheetHeader className="border-b border-border p-6 pb-4 text-left">
           <SheetTitle className="flex items-center justify-between">
-            <span>Your Cart</span>
+            <span>{t("cart.title")}</span>
             <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-              {itemCount} items
+              {itemCount} {itemCount === 1 ? t("cart.item") : t("cart.items")}
             </span>
           </SheetTitle>
-          <SheetDescription>
-            Review your items and checkout when you are ready.
-          </SheetDescription>
+          <SheetDescription>{t("cart.empty")}</SheetDescription>
         </SheetHeader>
 
         {isLoading ? (
@@ -114,13 +114,13 @@ export const CartDrawer = () => {
           <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
             <ShoppingBag className="mb-4 h-14 w-14 text-muted-foreground" />
             <p className="mb-2 text-lg font-semibold text-foreground">
-              Your cart is empty
+              {t("cart.empty")}
             </p>
             <p className="mb-6 text-sm text-muted-foreground">
-              Add products to open up your checkout flow.
+              {t("cart.emptyHint")}
             </p>
             <Button onClick={closeCart} asChild>
-              <Link to="/shop">Browse products</Link>
+              <Link to="/shop">{t("cart.continueShopping")}</Link>
             </Button>
           </div>
         ) : (
@@ -217,13 +217,11 @@ export const CartDrawer = () => {
                       <Tag className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                       <Input
                         type="text"
-                        placeholder="Enter coupon code"
+                        placeholder={t("cart.coupon.placeholder")}
                         value={couponInput}
                         onChange={(e) => setCouponInput(e.target.value)}
                         onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            handleApplyCoupon();
-                          }
+                          if (e.key === "Enter") handleApplyCoupon();
                         }}
                         className="pl-9"
                         disabled={isApplyingCoupon}
@@ -237,7 +235,7 @@ export const CartDrawer = () => {
                       {isApplyingCoupon ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
-                        "Apply"
+                        t("cart.coupon.apply")
                       )}
                     </Button>
                   </div>
@@ -258,37 +256,47 @@ export const CartDrawer = () => {
                     onClick={handleRemoveCoupon}
                     className="text-sm text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200"
                   >
-                    Remove
+                    {t("cart.coupon.remove")}
                   </button>
                 </div>
               )}
 
               <div className="mb-3 space-y-1.5 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="text-muted-foreground">
+                    {t("cart.subtotal")}
+                  </span>
                   <span className="text-foreground">
                     {formatCurrency(subtotal || total)}
                   </span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-green-600 dark:text-green-400">
-                    <span>Discount</span>
+                    <span>{t("cart.coupon.discount")}</span>
                     <span>-{formatCurrency(discount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Shipping</span>
+                  <span className="text-muted-foreground">
+                    {t("checkout:order.shipping")}
+                  </span>
                   <span className="text-foreground">
-                    {shipping === 0 ? "Free" : formatCurrency(shipping)}
+                    {shipping === 0
+                      ? t("checkout:order.freeShipping")
+                      : formatCurrency(shipping)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Tax</span>
+                  <span className="text-muted-foreground">
+                    {t("checkout:order.tax")}
+                  </span>
                   <span className="text-foreground">{formatCurrency(tax)}</span>
                 </div>
               </div>
               <div className="mb-4 flex items-center justify-between border-t border-border pt-3">
-                <span className="font-semibold text-foreground">Total</span>
+                <span className="font-semibold text-foreground">
+                  {t("cart.total")}
+                </span>
                 <span className="text-lg font-bold text-foreground">
                   {formatCurrency(grandTotal)}
                 </span>
@@ -299,10 +307,11 @@ export const CartDrawer = () => {
                   className="flex-1"
                   onClick={clearCart}
                 >
-                  <Trash2 className="mr-2 h-4 w-4" /> Clear
+                  <Trash2 className="mr-2 h-4 w-4" />{" "}
+                  {t("common:buttons.delete")}
                 </Button>
                 <Button asChild className="flex-1" onClick={closeCart}>
-                  <Link to="/checkout">Checkout</Link>
+                  <Link to="/checkout">{t("cart.checkout")}</Link>
                 </Button>
               </div>
             </div>

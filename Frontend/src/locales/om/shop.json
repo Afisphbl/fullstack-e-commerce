@@ -1,0 +1,108 @@
+{
+  "pageTitle": "Suuqii",
+  "hero": {
+    "title": "Oomishaalee Hunda",
+    "subtitle": "Walitti qabinsa guutuu keenya ilaali"
+  },
+  "search": {
+    "placeholder": "Oomishaalee barbaadiMaaloo...",
+    "noResults": "\"{{query}}\" jedhuuf oomishaaleen hin argamne",
+    "clearSearch": "Barbaadii Haqaa"
+  },
+  "filters": {
+    "title": "Calalii",
+    "category": "Murteessa",
+    "allCategories": "Murteessa Hunda",
+    "priceRange": "Hanqina Gatii",
+    "rating": "Madaallii",
+    "sortBy": "Sadarkeessi",
+    "sortOptions": {
+      "newest": "Haaraa",
+      "priceAsc": "Gatii: Gadi - Ol",
+      "priceDesc": "Gatii: Ol - Gadi",
+      "rating": "Madaallii Gaarii",
+      "popular": "Beekamaa"
+    },
+    "inStockOnly": "Jiru Qofa",
+    "featuredOnly": "Filatamoota Qofa",
+    "apply": "Calalii Fayyadami",
+    "clear": "Hunda Haqaa"
+  },
+  "product": {
+    "addToCart": "Gara Kuusaatti Dabalii",
+    "addToWishlist": "Gara Hawwiitti Dabalii",
+    "removeFromWishlist": "Hawwii Keessaa Haqi",
+    "addToCompare": "Wal-bira Qabuuf Dabalii",
+    "removeFromCompare": "Wal-bira Qabuurraa Haqi",
+    "inStock": "Jira",
+    "outOfStock": "Fixaame",
+    "lowStock": "{{count}} qofa hafe",
+    "sale": "Hir'ina Gatii",
+    "featured": "Filatamoota",
+    "new": "Haaraa",
+    "rating": "Madaallii {{count}}",
+    "noReviews": "Madaallii hin jiru",
+    "by": "Kan",
+    "brand": "Maqaa Daldalaa",
+    "category": "Murteessa"
+  },
+  "results": {
+    "showing": "Oomishaalee {{count}} agarsifame",
+    "empty": "Oomishaaleen calalii hin guutne",
+    "emptyHint": "Barbaadii ykn calalii kee jijjiiri"
+  },
+  "detail": {
+    "pageTitle": "{{name}}",
+    "description": "Ibsa",
+    "specifications": "Faayidaalee",
+    "reviews": "Madaalliiwwan",
+    "relatedProducts": "Oomishaalee Walqabatan",
+    "quantity": "Baay'ina",
+    "sku": "SKU",
+    "shareProduct": "Qoodi",
+    "productImages": "Suuraa Oomishaa",
+    "addedToCart": "Gara kuusaatti dabalame!",
+    "addedToWishlist": "Gara hawwiitti dabalame",
+    "removedFromWishlist": "Hawwii keessaa haqqame"
+  },
+  "compare": {
+    "pageTitle": "Oomishaalee Wal-bira Qabi",
+    "empty": "Wal-bira qabuu hin jiru",
+    "emptyHint": "Suuqii irraa oomishaalee wal-bira qabuuf dabalii",
+    "clearAll": "Hunda Haqaa",
+    "addProduct": "Oomisha Dabalii",
+    "feature": "Amala"
+  },
+  "favorites": {
+    "pageTitle": "Jaalatamoo Koo",
+    "empty": "Jaalatamoon hin jiru",
+    "emptyHint": "Suuqii ilaalidh, oomishaalee gara jaalatamoo koo dabalii"
+  },
+  "cart": {
+    "title": "Kuusaa Kee",
+    "empty": "Kuusaan kee duwwaadha",
+    "emptyHint": "Eegaluuf oomishaalee dabalii",
+    "continueShopping": "Bitachuu Itti Fufaa",
+    "checkout": "Kaffalii",
+    "remove": "Haqi",
+    "quantity": "Baay'ina",
+    "subtotal": "Walakkaa Hanga",
+    "total": "Hanga Waligalaa",
+    "items": "Meeshaalee",
+    "item": "Meeshaa",
+    "coupon": {
+      "label": "Lakkoofsa Kuupoonii",
+      "placeholder": "Lakkoofsa kuupoonii galchi",
+      "apply": "Fayyadami",
+      "remove": "Haqi",
+      "applied": "Kuupoonniin fayyadame!",
+      "discount": "Hir'ina Gatii"
+    },
+    "toast": {
+      "added": "{{name}} gara kuusaatti dabalame",
+      "removed": "Meeshaan kuusaa irraa haqqame",
+      "updated": "Kuusaan haaromfame",
+      "cleared": "Kuusaan qulqullaa'e"
+    }
+  }
+}

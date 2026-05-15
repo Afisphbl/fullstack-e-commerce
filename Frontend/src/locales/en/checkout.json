@@ -1,0 +1,85 @@
+{
+  "pageTitle": "Checkout",
+  "steps": {
+    "shipping": "Shipping",
+    "payment": "Payment",
+    "review": "Review"
+  },
+  "shipping": {
+    "title": "Shipping Address",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Street Address",
+    "city": "City",
+    "state": "State / Region",
+    "zip": "ZIP / Postal Code",
+    "country": "Country",
+    "saveAddress": "Save this address"
+  },
+  "payment": {
+    "title": "Payment Method",
+    "chapa": "Pay with Chapa",
+    "cash": "Cash on Delivery",
+    "card": "Credit / Debit Card",
+    "payNow": "Pay Now",
+    "processing": "Processing payment...",
+    "secureNote": "Your payment is secured with 256-bit SSL encryption",
+    "verifying": "Verifying Payment...",
+    "confirmingNote": "Please wait while we confirm your payment status",
+    "verificationFailed": "Verification Failed",
+    "successTitle": "Payment Successful!",
+    "successMessage": "Your order has been confirmed and is being processed",
+    "pendingTitle": "Payment Pending",
+    "pendingMessage": "Your payment is being processed. This may take a few minutes.",
+    "pendingLongMessage": "Your payment is being verified. This usually takes a few minutes. You can check your order status in your orders page.",
+    "failedTitle": "Payment Failed",
+    "failedMessage": "We couldn't process your payment. Please try again.",
+    "failedLongMessage": "Your payment could not be processed. Your order has been created but not paid. You can try paying again from your order details page.",
+    "whatsNext": "What's Next?",
+    "emailNote": "You'll receive an order confirmation email shortly",
+    "trackNote": "Track your order status in your orders page",
+    "shipNote": "We'll notify you when your order ships",
+    "retryPayment": "Retry Payment",
+    "needHelp": "Need help?",
+    "status": {
+      "paid": "Paid",
+      "unpaid": "Unpaid",
+      "pending": "Pending",
+      "failed": "Failed"
+    }
+  },
+  "order": {
+    "summary": "Order Summary",
+    "items": "Items",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "tax": "Tax",
+    "discount": "Discount",
+    "total": "Total",
+    "freeShipping": "Free",
+    "placeOrder": "Place Order",
+    "placing": "Placing order..."
+  },
+  "success": {
+    "title": "Order Placed!",
+    "message": "Thank you for your order. We'll send a confirmation to your email.",
+    "orderNumber": "Order Number",
+    "continueShopping": "Continue Shopping",
+    "trackOrder": "Track Order",
+    "viewOrders": "View My Orders",
+    "details": "View Order Details"
+  },
+  "validation": {
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email",
+    "phoneRequired": "Phone number is required",
+    "addressRequired": "Street address is required",
+    "cityRequired": "City is required",
+    "zipRequired": "ZIP code is required",
+    "countryRequired": "Country is required"
+  }
+}

@@ -3,9 +3,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useMutation } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { apiFetch } from "@/lib/api-client";
 import { MessageResponse } from "@/lib/api";
 import { toast } from "sonner";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -24,16 +26,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-const forgotPasswordSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-});
-
 export default function ForgotPassword() {
+  const { t } = useTranslation("auth");
+  usePageTitle(t("forgotPassword.pageTitle"));
+
+  const forgotPasswordSchema = z.object({
+    email: z.string().email(t("validation.emailInvalid")),
+  });
+
   const form = useForm<z.infer<typeof forgotPasswordSchema>>({
     resolver: zodResolver(forgotPasswordSchema),
-    defaultValues: {
-      email: "",
-    },
+    defaultValues: { email: "" },
   });
 
   const mutation = useMutation({
@@ -43,7 +46,7 @@ export default function ForgotPassword() {
         body: JSON.stringify(values),
       }),
     onSuccess: (data) => {
-      toast.success(data.message || "Password reset email sent!");
+      toast.success(data.message || t("forgotPassword.successMessage"));
       form.reset();
     },
     onError: (error: Error) => {
@@ -56,47 +59,50 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className='flex items-center justify-center min-h-[calc(100vh-200px)] px-4 py-12'>
-      <Card className='w-full max-w-md'>
-        <CardHeader className='space-y-1 text-center'>
-          <CardTitle className='text-3xl font-bold'>Forgot Password</CardTitle>
-          <CardDescription>
-            Enter your email address and we'll send you a link to reset your
-            password.
-          </CardDescription>
+    <div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-4 py-12">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-3xl font-bold">
+            {t("forgotPassword.title")}
+          </CardTitle>
+          <CardDescription>{t("forgotPassword.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name='email'
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t("forgotPassword.emailLabel")}</FormLabel>
                     <FormControl>
-                      <Input placeholder='m@example.com' {...field} />
+                      <Input
+                        placeholder={t("forgotPassword.emailPlaceholder")}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <Button
-                type='submit'
-                className='w-full'
+                type="submit"
+                className="w-full"
                 disabled={mutation.isPending}
               >
-                {mutation.isPending ? "Sending..." : "Send Reset Link"}
+                {mutation.isPending
+                  ? t("forgotPassword.submitting")
+                  : t("forgotPassword.submitButton")}
               </Button>
             </form>
           </Form>
-          <div className='mt-4 text-center text-sm'>
-            Remember your password?{" "}
+          <div className="mt-4 text-center text-sm">
             <Link
-              to='/login'
-              className='text-primary hover:underline font-medium'
+              to="/login"
+              className="text-primary hover:underline font-medium"
             >
-              Back to login
+              {t("forgotPassword.backToLogin")}
             </Link>
           </div>
         </CardContent>

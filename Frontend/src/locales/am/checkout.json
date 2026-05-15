@@ -1,0 +1,85 @@
+{
+  "pageTitle": "ማጠቃለያ",
+  "steps": {
+    "shipping": "መላኪያ",
+    "payment": "ክፍያ",
+    "review": "ግምገማ"
+  },
+  "shipping": {
+    "title": "የመላኪያ አድራሻ",
+    "firstName": "የመጀመሪያ ስም",
+    "lastName": "የአባት ስም",
+    "email": "ኢሜይል",
+    "phone": "ስልክ",
+    "address": "የጎዳና አድራሻ",
+    "city": "ከተማ",
+    "state": "ክልል",
+    "zip": "የፖስታ ቁጥር",
+    "country": "ሀገር",
+    "saveAddress": "ይህን አድራሻ አስቀምጥ"
+  },
+  "payment": {
+    "title": "የክፍያ ዘዴ",
+    "chapa": "በቻፓ ክፈል",
+    "cash": "ሲደርስ ከፍሉ",
+    "card": "ክሬዲት / ዴቢት ካርድ",
+    "payNow": "አሁን ክፈሉ",
+    "processing": "ክፍያ በማካሄድ ላይ...",
+    "secureNote": "ክፍያዎ በ256-bit SSL ምስጠራ የተጠበቀ ነው",
+    "verifying": "ክፍያውን በማረጋገጥ ላይ...",
+    "confirmingNote": "እባክዎ የክፍያ ሁኔታን እስክናረጋግጥ ድረስ ይጠብቁ",
+    "verificationFailed": "ማረጋገጫ አልተሳካም",
+    "successTitle": "ክፍያ ተሳክቷል!",
+    "successMessage": "ትዕዛዝዎ ተረጋግጧል እና በሂደት ላይ ነው",
+    "pendingTitle": "ክፍያ በመጠባበቅ ላይ",
+    "pendingMessage": "ክፍያዎ በማካሄድ ላይ ነው። ይህ ጥቂት ደቂቃዎችን ሊወስድ ይችላል።",
+    "pendingLongMessage": "ክፍያዎ እየተረጋገጠ ነው። ይህ አብዛኛውን ጊዜ ጥቂት ደቂቃዎችን ይወስዳል። የትዕዛዝዎን ሁኔታ በትዕዛዝ ገጽዎ ላይ ማረጋገጥ ይችላሉ።",
+    "failedTitle": "ክፍያ አልተሳካም",
+    "failedMessage": "ክፍያዎን ማካሄድ አልቻልንም። እባክዎ እንደገና ይሞክሩ።",
+    "failedLongMessage": "ክፍያዎ ሊካሄድ አልቻለም። ትዕዛዝዎ ተፈጥሯል ግን ክፍያ አልተፈጸመም። ከትዕዛዝ ዝርዝር ገጽዎ እንደገና ክፍያ መሞከር ይችላሉ።",
+    "whatsNext": "ቀጥሎ ምንድነው?",
+    "emailNote": "በትክክል የትዕዛዝ ማረጋገጫ ኢሜይል ይደርሰዎታል",
+    "trackNote": "የትዕዛዝዎን ሁኔታ በትዕዛዝ ገጽዎ ላይ ይከታተሉ",
+    "shipNote": "ትዕዛዝዎ ሲላክ እናሳውቅዎታለን",
+    "retryPayment": "እንደገና ክፈሉ",
+    "needHelp": "እርዳታ ይፈልጋሉ?",
+    "status": {
+      "paid": "የተከፈለ",
+      "unpaid": "ያልተከፈለ",
+      "pending": "በመጠባበቅ ላይ",
+      "failed": "አልተሳካም"
+    }
+  },
+  "order": {
+    "summary": "የትዕዛዝ ማጠቃለያ",
+    "items": "ዕቃዎች",
+    "subtotal": "ንዑስ ድምር",
+    "shipping": "መላኪያ",
+    "tax": "ቀረጥ",
+    "discount": "ቅናሽ",
+    "total": "ድምር",
+    "freeShipping": "ነፃ",
+    "placeOrder": "ትዕዛዝ ስጥ",
+    "placing": "ትዕዛዝ በማስተናገድ ላይ..."
+  },
+  "success": {
+    "title": "ትዕዛዝ ተሰጥቷል!",
+    "message": "ለትዕዛዝዎ እናመሰግናለን። ማረጋገጫ ወደ ኢሜይልዎ እንልካለን።",
+    "orderNumber": "የትዕዛዝ ቁጥር",
+    "continueShopping": "ግዢ ቀጥሉ",
+    "trackOrder": "ትዕዛዝ ተከታተሉ",
+    "viewOrders": "ትዕዛዞቼን ይመልከቱ",
+    "details": "የትዕዛዝ ዝርዝሮችን ይመልከቱ"
+  },
+  "validation": {
+    "firstNameRequired": "የመጀመሪያ ስም ያስፈልጋል",
+    "lastNameRequired": "የአባት ስም ያስፈልጋል",
+    "emailRequired": "ኢሜይል ያስፈልጋል",
+    "emailInvalid": "እባክዎ ትክክለኛ ኢሜይል ያስገቡ",
+    "phoneRequired": "ስልክ ቁጥር ያስፈልጋል",
+    "addressRequired": "የጎዳና አድራሻ ያስፈልጋል",
+    "cityRequired": "ከተማ ያስፈልጋል",
+    "zipRequired": "የፖስታ ቁጥር ያስፈልጋል",
+    "countryRequired": "ሀገር ያስፈልጋል"
+  }
+}

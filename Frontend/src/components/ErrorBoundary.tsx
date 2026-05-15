@@ -1,7 +1,8 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { logger } from '@/lib/logger';
-import { Button } from '@/components/ui/button';
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { Component, ErrorInfo, ReactNode } from "react";
+import { logger } from "@/lib/logger";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle, RefreshCw, Home } from "lucide-react";
+import i18n from "@/lib/i18n";
 
 interface Props {
   children: ReactNode;
@@ -16,10 +17,10 @@ interface State {
 
 /**
  * Global Error Boundary Component
- * 
+ *
  * Catches React errors and prevents the entire app from crashing.
  * Provides a user-friendly error UI and logs errors for debugging.
- * 
+ *
  * Usage:
  * <ErrorBoundary>
  *   <App />
@@ -35,7 +36,7 @@ export class ErrorBoundary extends Component<Props, State> {
     };
   }
 
-  static getDerivedStateFromError(error: Error): Partial<State> {
+  static override getDerivedStateFromError(error: Error): Partial<State> {
     // Update state so the next render will show the fallback UI
     return {
       hasError: true,
@@ -43,9 +44,9 @@ export class ErrorBoundary extends Component<Props, State> {
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+  override componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     // Log error to monitoring service
-    logger.error('React Error Boundary caught an error', error, {
+    logger.error("React Error Boundary caught an error", error, {
       componentStack: errorInfo.componentStack,
       errorBoundary: true,
     });
@@ -69,10 +70,10 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   handleGoHome = (): void => {
-    window.location.href = '/';
+    window.location.href = "/";
   };
 
-  render(): ReactNode {
+  override render(): ReactNode {
     if (this.state.hasError) {
       // Custom fallback UI
       if (this.props.fallback) {
@@ -91,10 +92,10 @@ export class ErrorBoundary extends Component<Props, State> {
 
             <div className="space-y-2">
               <h1 className="text-2xl font-bold text-foreground">
-                Oops! Something went wrong
+                {i18n.t("errors:boundary.title")}
               </h1>
               <p className="text-muted-foreground">
-                We're sorry for the inconvenience. The application encountered an unexpected error.
+                {i18n.t("errors:boundary.message")}
               </p>
             </div>
 
@@ -123,7 +124,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 className="gap-2"
               >
                 <RefreshCw className="h-4 w-4" />
-                Try Again
+                {i18n.t("errors:boundary.refresh")}
               </Button>
               <Button
                 onClick={this.handleReload}
@@ -131,14 +132,11 @@ export class ErrorBoundary extends Component<Props, State> {
                 className="gap-2"
               >
                 <RefreshCw className="h-4 w-4" />
-                Reload Page
+                {i18n.t("errors:boundary.refresh")}
               </Button>
-              <Button
-                onClick={this.handleGoHome}
-                className="gap-2"
-              >
+              <Button onClick={this.handleGoHome} className="gap-2">
                 <Home className="h-4 w-4" />
-                Go Home
+                {i18n.t("errors:boundary.goHome")}
               </Button>
             </div>
 
