@@ -6,9 +6,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 
 export const LanguageSwitcher = () => {
   const { i18n } = useTranslation();
+  const { settings } = useSiteSettings();
 
   const handleLanguageChange = (newLang: string) => {
     i18n.changeLanguage(newLang);
@@ -27,6 +29,11 @@ export const LanguageSwitcher = () => {
     }
   };
 
+  const supported = settings.supportedLanguages || ["en", "am", "om"];
+
+  // If the current language was disabled, we might want to stay on it or default,
+  // but for the switcher, we only show what's allowed.
+
   return (
     <Select value={i18n.language} onValueChange={handleLanguageChange}>
       <SelectTrigger className="w-[65px] h-8 px-2 bg-transparent border-none hover:bg-accent/50 focus:ring-0 transition-colors">
@@ -37,15 +44,21 @@ export const LanguageSwitcher = () => {
         </SelectValue>
       </SelectTrigger>
       <SelectContent align="end" className="min-w-[120px]">
-        <SelectItem value="en" className="text-xs">
-          English (En)
-        </SelectItem>
-        <SelectItem value="am" className="text-xs font-sans">
-          አማርኛ (አማ)
-        </SelectItem>
-        <SelectItem value="om" className="text-xs">
-          Afaan Oromo (Or)
-        </SelectItem>
+        {supported.includes("en") && (
+          <SelectItem value="en" className="text-xs">
+            English (En)
+          </SelectItem>
+        )}
+        {supported.includes("am") && (
+          <SelectItem value="am" className="text-xs font-sans">
+            አማርኛ (አማ)
+          </SelectItem>
+        )}
+        {supported.includes("om") && (
+          <SelectItem value="om" className="text-xs">
+            Afaan Oromo (Or)
+          </SelectItem>
+        )}
       </SelectContent>
     </Select>
   );
