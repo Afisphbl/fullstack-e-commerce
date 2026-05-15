@@ -1,6 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const { multilingualString } = require('../utils/multilingualSchema');
 
 const specificationSchema = new mongoose.Schema(
   {
@@ -12,18 +13,10 @@ const specificationSchema = new mongoose.Schema(
     },
     details: [
       {
-        group: {
-          type: String,
-          required: [true, 'Specification group name is required.'],
-          trim: true,
-        },
+        group: multilingualString(true, 2, 100),
         specs: [
           {
-            name: {
-              type: String,
-              required: [true, 'Specification name is required.'],
-              trim: true,
-            },
+            name: multilingualString(true, 2, 100),
             value: {
               type: String,
               required: [true, 'Specification value is required.'],

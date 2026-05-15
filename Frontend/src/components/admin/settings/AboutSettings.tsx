@@ -22,6 +22,157 @@ interface AboutSettingsProps {
   ) => void;
 }
 
+// Helper component for multilingual text input
+const MultilingualField = ({
+  label,
+  value,
+  onChange,
+  hint,
+}: {
+  label: string;
+  value: { am: string; en: string; om: string } | string;
+  onChange: (val: { am: string; en: string; om: string }) => void;
+  hint?: string;
+}) => {
+  const multiValue =
+    typeof value === "string"
+      ? { am: value, en: value, om: value }
+      : value || { am: "", en: "", om: "" };
+
+  return (
+    <Field label={label} hint={hint}>
+      <div className="space-y-3 border rounded-lg p-4 bg-muted/30">
+        <div>
+          <label className="text-xs text-muted-foreground font-normal block mb-1.5">
+            አማርኛ (Amharic)
+          </label>
+          <Input
+            value={multiValue.am}
+            onChange={(e) => onChange({ ...multiValue, am: e.target.value })}
+            className="bg-background font-sans"
+          />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground font-normal block mb-1.5">
+            English
+          </label>
+          <Input
+            value={multiValue.en}
+            onChange={(e) => onChange({ ...multiValue, en: e.target.value })}
+            className="bg-background"
+          />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground font-normal block mb-1.5">
+            Afaan Oromo
+          </label>
+          <Input
+            value={multiValue.om}
+            onChange={(e) => onChange({ ...multiValue, om: e.target.value })}
+            className="bg-background"
+          />
+        </div>
+      </div>
+    </Field>
+  );
+};
+
+const MultilingualTextareaField = ({
+  label,
+  value,
+  onChange,
+  hint,
+}: {
+  label: string;
+  value: { am: string; en: string; om: string } | string;
+  onChange: (val: { am: string; en: string; om: string }) => void;
+  hint?: string;
+}) => {
+  const multiValue =
+    typeof value === "string"
+      ? { am: value, en: value, om: value }
+      : value || { am: "", en: "", om: "" };
+
+  return (
+    <Field label={label} hint={hint}>
+      <div className="space-y-3 border rounded-lg p-4 bg-muted/30">
+        <div>
+          <label className="text-xs text-muted-foreground font-normal block mb-1.5">
+            አማርኛ (Amharic)
+          </label>
+          <Textarea
+            value={multiValue.am}
+            onChange={(e) => onChange({ ...multiValue, am: e.target.value })}
+            className="bg-background font-sans resize-none"
+            rows={4}
+          />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground font-normal block mb-1.5">
+            English
+          </label>
+          <Textarea
+            value={multiValue.en}
+            onChange={(e) => onChange({ ...multiValue, en: e.target.value })}
+            className="bg-background resize-none"
+            rows={4}
+          />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground font-normal block mb-1.5">
+            Afaan Oromo
+          </label>
+          <Textarea
+            value={multiValue.om}
+            onChange={(e) => onChange({ ...multiValue, om: e.target.value })}
+            className="bg-background resize-none"
+            rows={4}
+          />
+        </div>
+      </div>
+    </Field>
+  );
+};
+
+// Helper for multilingual stat/value fields
+const MultilingualInlineInput = ({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: { am: string; en: string; om: string } | string;
+  onChange: (val: { am: string; en: string; om: string }) => void;
+  placeholder?: string;
+}) => {
+  const multiValue =
+    typeof value === "string"
+      ? { am: value, en: value, om: value }
+      : value || { am: "", en: "", om: "" };
+
+  return (
+    <div className="space-y-2">
+      <Input
+        placeholder={`${placeholder} (አማርኛ)`}
+        value={multiValue.am}
+        onChange={(e) => onChange({ ...multiValue, am: e.target.value })}
+        className="text-sm font-sans"
+      />
+      <Input
+        placeholder={`${placeholder} (English)`}
+        value={multiValue.en}
+        onChange={(e) => onChange({ ...multiValue, en: e.target.value })}
+        className="text-sm"
+      />
+      <Input
+        placeholder={`${placeholder} (Afaan Oromo)`}
+        value={multiValue.om}
+        onChange={(e) => onChange({ ...multiValue, om: e.target.value })}
+        className="text-sm"
+      />
+    </div>
+  );
+};
+
 export const AboutSettings = ({ draft, update }: AboutSettingsProps) => {
   const [aboutImagePreview, setAboutImagePreview] = useState<string>(
     draft.aboutImage,
@@ -65,7 +216,7 @@ export const AboutSettings = ({ draft, update }: AboutSettingsProps) => {
   const addStat = () =>
     update("aboutStats", [
       ...draft.aboutStats,
-      { value: "0", label: "New Stat" },
+      { value: "0", label: { am: "አዲስ ስታቲስቲክስ", en: "New Stat", om: "Stat Haaraa" } },
     ]);
 
   const removeStat = (idx: number) =>
@@ -83,7 +234,10 @@ export const AboutSettings = ({ draft, update }: AboutSettingsProps) => {
   const addValue = () =>
     update("aboutValues", [
       ...draft.aboutValues,
-      { title: "New Value", desc: "" },
+      { 
+        title: { am: "አዲስ እሴት", en: "New Value", om: "Gatii Haaraa" }, 
+        desc: { am: "", en: "", om: "" } 
+      },
     ]);
 
   const removeValue = (idx: number) =>
@@ -98,27 +252,21 @@ export const AboutSettings = ({ draft, update }: AboutSettingsProps) => {
       <div className='space-y-4'>
         <h3 className='text-lg font-semibold'>About Page Header</h3>
         <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-          <Field label='Eyebrow'>
-            <Input
-              value={draft.aboutEyebrow}
-              onChange={(e) => update("aboutEyebrow", e.target.value)}
-              className='bg-background'
-            />
-          </Field>
-          <Field label='Title (start)'>
-            <Input
-              value={draft.aboutTitle}
-              onChange={(e) => update("aboutTitle", e.target.value)}
-              className='bg-background'
-            />
-          </Field>
-          <Field label='Highlighted Word'>
-            <Input
-              value={draft.aboutHighlight}
-              onChange={(e) => update("aboutHighlight", e.target.value)}
-              className='bg-background'
-            />
-          </Field>
+          <MultilingualField
+            label='Eyebrow'
+            value={draft.aboutEyebrow}
+            onChange={(val) => update("aboutEyebrow", val)}
+          />
+          <MultilingualField
+            label='Title (start)'
+            value={draft.aboutTitle}
+            onChange={(val) => update("aboutTitle", val)}
+          />
+          <MultilingualField
+            label='Highlighted Word'
+            value={draft.aboutHighlight}
+            onChange={(val) => update("aboutHighlight", val)}
+          />
         </div>
         <Field label='Hero Image'>
           <div className='space-y-3'>
@@ -174,14 +322,11 @@ export const AboutSettings = ({ draft, update }: AboutSettingsProps) => {
             />
           </div>
         </Field>
-        <Field label='Intro Paragraph'>
-          <Textarea
-            value={draft.aboutIntro}
-            onChange={(e) => update("aboutIntro", e.target.value)}
-            rows={4}
-            className='bg-background'
-          />
-        </Field>
+        <MultilingualTextareaField
+          label='Intro Paragraph'
+          value={draft.aboutIntro}
+          onChange={(val) => update("aboutIntro", val)}
+        />
       </div>
 
       {/* Stats */}
@@ -191,31 +336,38 @@ export const AboutSettings = ({ draft, update }: AboutSettingsProps) => {
           {draft.aboutStats.map((s, i) => (
             <div
               key={i}
-              className='flex items-end gap-2 rounded-lg border border-border bg-background p-3'
+              className='rounded-lg border border-border bg-background p-3'
             >
-              <div className='flex-1'>
-                <Label className='text-xs'>Value</Label>
-                <Input
-                  value={s.value}
-                  onChange={(e) => updateStat(i, { value: e.target.value })}
-                />
+              <div className='mb-2 flex justify-between items-center'>
+                <Label className='text-xs'>Stat {i + 1}</Label>
+                <Button
+                  type='button'
+                  variant='ghost'
+                  size='sm'
+                  onClick={() => removeStat(i)}
+                  className='text-destructive h-7'
+                >
+                  <Trash2 className='h-3.5 w-3.5' />
+                </Button>
               </div>
-              <div className='flex-1'>
-                <Label className='text-xs'>Label</Label>
-                <Input
-                  value={s.label}
-                  onChange={(e) => updateStat(i, { label: e.target.value })}
-                />
+              <div className='space-y-3'>
+                <div>
+                  <Label className='text-xs text-muted-foreground'>Value</Label>
+                  <Input
+                    value={s.value}
+                    onChange={(e) => updateStat(i, { value: e.target.value })}
+                    placeholder='e.g., 1000+'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-muted-foreground'>Label (Multilingual)</Label>
+                  <MultilingualInlineInput
+                    value={s.label}
+                    onChange={(val) => updateStat(i, { label: val })}
+                    placeholder='Label'
+                  />
+                </div>
               </div>
-              <Button
-                type='button'
-                variant='ghost'
-                size='icon'
-                onClick={() => removeStat(i)}
-                className='text-destructive'
-              >
-                <Trash2 className='h-4 w-4' />
-              </Button>
             </div>
           ))}
         </div>
@@ -231,9 +383,10 @@ export const AboutSettings = ({ draft, update }: AboutSettingsProps) => {
           {draft.aboutValues.map((v, i) => (
             <div
               key={i}
-              className='rounded-lg border border-border bg-background p-3'
+              className='rounded-lg border border-border bg-background p-4'
             >
-              <div className='mb-2 flex justify-end'>
+              <div className='mb-3 flex justify-between items-center'>
+                <Label className='text-sm font-semibold'>Value {i + 1}</Label>
                 <Button
                   type='button'
                   variant='ghost'
@@ -244,17 +397,21 @@ export const AboutSettings = ({ draft, update }: AboutSettingsProps) => {
                   <Trash2 className='h-3.5 w-3.5' />
                 </Button>
               </div>
-              <div className='grid grid-cols-1 gap-2 md:grid-cols-3'>
-                <Input
-                  placeholder='Title'
-                  value={v.title}
-                  onChange={(e) => updateValue(i, { title: e.target.value })}
-                />
-                <div className='md:col-span-2'>
-                  <Input
-                    placeholder='Description'
+              <div className='space-y-3'>
+                <div>
+                  <Label className='text-xs text-muted-foreground'>Title (Multilingual)</Label>
+                  <MultilingualInlineInput
+                    value={v.title}
+                    onChange={(val) => updateValue(i, { title: val })}
+                    placeholder='Title'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-muted-foreground'>Description (Multilingual)</Label>
+                  <MultilingualInlineInput
                     value={v.desc}
-                    onChange={(e) => updateValue(i, { desc: e.target.value })}
+                    onChange={(val) => updateValue(i, { desc: val })}
+                    placeholder='Description'
                   />
                 </div>
               </div>

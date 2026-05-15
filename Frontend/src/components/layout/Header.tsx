@@ -17,16 +17,10 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSiteSettings } from "@/contexts/SiteSettingsContext";
 import { Button } from "@/components/ui/button";
+import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
+import { useLocalizedField } from "@/hooks/useLocalizedField";
 import { isAdminRole } from "@/lib/roles";
-
-const navLinks = [
-  { to: "/", label: "Home" },
-  { to: "/shop", label: "Shop" },
-  { to: "/blog", label: "Blog" },
-  { to: "/about", label: "About" },
-  { to: "/contact", label: "Contact" },
-  { to: "/faq", label: "FAQ" },
-];
+import { useTranslation } from "react-i18next";
 
 export const Header = () => {
   const { itemCount, openCart } = useCart();
@@ -36,6 +30,19 @@ export const Header = () => {
   const { user } = useAuth();
   const { settings } = useSiteSettings();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { t } = useTranslation('navigation');
+  
+  // Get localized company name
+  const localizedCompanyName = useLocalizedField(settings.companyName);
+
+  const navLinks = [
+    { to: "/", label: t('home') },
+    { to: "/shop", label: t('shop') },
+    { to: "/blog", label: t('blog') },
+    { to: "/about", label: t('about') },
+    { to: "/contact", label: t('contact') },
+    { to: "/faq", label: t('faq') },
+  ];
 
   return (
     <header className="sticky top-0 z-50 glass border-b border-border/50">
@@ -46,10 +53,10 @@ export const Header = () => {
             className="font-display text-xl font-bold text-gradient flex-shrink-0"
           >
             <span className="hidden sm:inline">
-              {settings.companyName.toUpperCase()}
+              {localizedCompanyName.toUpperCase()}
             </span>
             <span className="sm:hidden">
-              {settings.companyName
+              {localizedCompanyName
                 .split(/\s+/)
                 .map((word, i) => (i < 2 ? word[0] : ""))
                 .join("")
@@ -73,6 +80,7 @@ export const Header = () => {
           </nav>
 
           <div className="flex items-center gap-1 sm:gap-2">
+            <LanguageSwitcher />
             <Button
               variant="ghost"
               size="icon"
@@ -88,7 +96,7 @@ export const Header = () => {
             </Button>
             <NavLink
               to="/compare"
-              title="Compare"
+              title={t('compare')}
               className={({ isActive }) =>
                 `relative p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`
               }
@@ -102,7 +110,7 @@ export const Header = () => {
             </NavLink>
             <NavLink
               to="/favorites"
-              title="Favorites"
+              title={t('favorites')}
               className={({ isActive }) =>
                 `relative p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`
               }
@@ -116,9 +124,9 @@ export const Header = () => {
             </NavLink>
             <button
               onClick={openCart}
-              title="Cart"
+              title={t('cart')}
               className="relative p-2 text-muted-foreground hover:text-primary transition-colors"
-              aria-label="Open cart"
+              aria-label={t('cart')}
             >
               <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
               {itemCount > 0 && (
@@ -138,9 +146,9 @@ export const Header = () => {
               title={
                 user
                   ? isAdminRole(user.role)
-                    ? "Admin Dashboard"
-                    : "Profile"
-                  : "Login / Register"
+                    ? t('adminDashboard')
+                    : t('profile')
+                  : t('login')
               }
               className={({ isActive }) =>
                 `flex items-center gap-1 sm:gap-2 p-2 transition-colors ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary"}`

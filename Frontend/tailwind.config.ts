@@ -19,8 +19,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Roboto", "sans-serif"],
-        body: ["Roboto", "sans-serif"],
+        display: ["Roboto", "Noto Sans Ethiopic", "sans-serif"],
+        body: ["Roboto", "Noto Sans Ethiopic", "sans-serif"],
+        sans: ["Roboto", "Noto Sans Ethiopic", "system-ui", "-apple-system", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

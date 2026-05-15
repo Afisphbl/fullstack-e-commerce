@@ -51,7 +51,7 @@ export type {
 export interface RawProduct {
   _id: string;
   id?: string;
-  name: string;
+  name: string | { am?: string; en?: string; om?: string };
   slug: string;
   price: number;
   priceDiscount?: number;
@@ -60,7 +60,7 @@ export interface RawProduct {
   images?: string[];
   isFeatured?: boolean;
   featured?: boolean;
-  category: Category | string | null;
+  category: RawCategory | string | null;
   attributes?: Record<string, string>;
   specs?: Record<string, string>;
   specification?: Specification;
@@ -71,7 +71,8 @@ export interface RawProduct {
   isNew?: boolean;
   finalPrice?: number;
   brand?: string;
-  description?: string;
+  description?: string | { am?: string; en?: string; om?: string };
+  shortDescription?: string | { am?: string; en?: string; om?: string };
   stock?: number;
   tags?: string[];
   status?: ProductStatus;
@@ -82,7 +83,7 @@ export interface RawProduct {
 export interface RawCategory {
   _id: string;
   id?: string;
-  name: string;
+  name: string | { am?: string; en?: string; om?: string };
   slug: string;
   icon?: string;
   count?: number;
@@ -95,7 +96,7 @@ export interface RawOrder {
   user: string | { _id: string; name: string; email: string };
   orderItems: Array<{
     product: string;
-    name: string;
+    name: string | { am?: string; en?: string; om?: string };
     quantity: number;
     price: number;
     image?: string;
@@ -178,6 +179,20 @@ export interface AdminUsersResponse {
   recentEvents: AdminUserEvent[];
 }
 
+/**
+ * Helper to extract a display string from a localized field.
+ * Defaults to 'en', then first available key, then empty string.
+ */
+export const extractLocalized = (
+  value: string | { am?: string; en?: string; om?: string } | undefined | null
+): string => {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+
+  // For now, default to English. In the future, this can pull from a language context/state.
+  return value.en || value.am || value.om || "";
+};
+
 export const mapProduct = (p: RawProduct): Product => {
   const mapImage = (img: string | undefined): string => {
     if (!img)
@@ -194,7 +209,10 @@ export const mapProduct = (p: RawProduct): Product => {
     imageCover: p.imageCover,
     images: Array.isArray(p.images) ? p.images.map(mapImage) : [],
     featured: p.isFeatured !== undefined ? p.isFeatured : p.featured || false,
-    category: p.category,
+    category:
+      p.category && typeof p.category === "object"
+        ? mapCategory(p.category as RawCategory)
+        : p.category,
     originalPrice: p.originalPrice ?? (p.priceDiscount ? p.price : null),
     price: p.finalPrice ?? p.price,
     specs: (() => {
@@ -230,7 +248,9 @@ export const mapProduct = (p: RawProduct): Product => {
     })(),
     createdAt: p.createdAt,
     brand: p.brand || "",
-    description: p.description || "",
+    description: extractLocalized(p.description),
+    shortDescription: extractLocalized(p.shortDescription),
+    name: extractLocalized(p.name),
     stock: p.stock || 0,
     tags: p.tags || [],
   };
@@ -258,7 +278,7 @@ const mapOrder = (o: RawOrder): Order => ({
 
     return {
       productId: i.product,
-      name: i.name,
+      name: extractLocalized(i.name),
       quantity: i.quantity,
       price: i.price,
       image: mappedImage,
@@ -288,11 +308,11 @@ const mapCategory = (c: RawCategory): Category => {
   return {
     ...c,
     id: c._id || c.id || "",
-    name: c.name || "",
+    name: extractLocalized(c.name) || "",
     slug: c.slug || "",
     icon: c.icon || "Laptop",
     count: c.count || 0,
-    image: mapCategoryImage(c.image, c.name || ""),
+    image: mapCategoryImage(c.image, extractLocalized(c.name) || ""),
   };
 };
 

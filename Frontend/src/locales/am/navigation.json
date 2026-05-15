@@ -1,0 +1,20 @@
+{
+  "home": "መነሻ",
+  "shop": "ግዢ",
+  "blog": "ብሎግ",
+  "about": "ስለ እኛ",
+  "contact": "አግኙን",
+  "faq": "ተደጋጋሚ ጥያቄዎች",
+  "cart": "ጋሪ",
+  "favorites": "ተወዳጆች",
+  "wishlist": "የምኞት ዝርዝር",
+  "compare": "አወዳድር",
+  "profile": "መገለጫ",
+  "orders": "ትዕዛዞች",
+  "login": "ግባ",
+  "signup": "ተመዝገብ",
+  "logout": "ውጣ",
+  "adminDashboard": "የአስተዳዳሪ ዳሽቦርድ",
+  "myAccount": "የእኔ መለያ",
+  "settings": "ቅንብሮች"
+}

@@ -22,6 +22,7 @@ import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/layout/CartDrawer";
 import { isAdminRole } from "@/lib/roles";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+import { SEOHead } from "@/components/shared/SEOHead";
 import Index from "./pages/Index";
 
 // ── Storefront pages (lazy-loaded for code splitting) ─────────────────────────
@@ -63,8 +64,17 @@ const AdminMessagesPage = lazy(() => import("./pages/admin/AdminMessagesPage"));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 1,
-      staleTime: 30_000, // 30 seconds — prevents refetch on every component mount
+      // Stale-while-revalidate: data is served instantly from cache, then
+      // re-fetched silently in the background after the staleTime expires.
+      staleTime: 5 * 60 * 1_000, // 5 minutes — covers most browsing sessions
+      gcTime: 10 * 60 * 1_000, // 10 minutes — cache stays in memory longer
+      retry: (failureCount, error: unknown) => {
+        // Don't retry on 4xx client errors (auth, not-found, etc.)
+        const status = (error as { status?: number })?.status;
+        if (status && status >= 400 && status < 500) return false;
+        return failureCount < 2; // Retry network/server errors up to 2 times
+      },
+      refetchOnWindowFocus: true,
     },
   },
 });
@@ -94,8 +104,16 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
 
 const StorefrontLayout = () => (
   <div className="flex flex-col min-h-screen">
+    {/* Skip to main content — accessibility for keyboard / screen-reader users */}
+    <a
+      href="#main-content"
+      className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:rounded-md focus:bg-primary focus:text-primary-foreground focus:font-semibold focus:shadow-lg"
+    >
+      Skip to main content
+    </a>
+    <SEOHead />
     <Header />
-    <main className="flex-1" aria-label="Main content">
+    <main id="main-content" className="flex-1" aria-label="Main content">
       <Suspense
         fallback={
           <div className="flex flex-1 min-h-[50vh] items-center justify-center bg-background">

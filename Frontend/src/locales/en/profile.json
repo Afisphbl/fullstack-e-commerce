@@ -1,0 +1,31 @@
+{
+  "myAccount": "My Account",
+  "profile": "Profile",
+  "profileInfo": "Profile Information",
+  "password": "Password",
+  "changePassword": "Change Password",
+  "orders": "My Orders",
+  "wishlist": "Wishlist",
+  "fullName": "Full Name",
+  "email": "Email Address",
+  "phone": "Phone Number",
+  "saveChanges": "Save Changes",
+  "saving": "Saving...",
+  "currentPassword": "Current Password",
+  "newPassword": "New Password",
+  "confirmPassword": "Confirm New Password",
+  "updatePassword": "Update Password",
+  "noOrders": "You have no orders yet.",
+  "orderNumber": "Order #{{id}}",
+  "orderDate": "Placed on {{date}}",
+  "orderStatus": "Status",
+  "orderTotal": "Total",
+  "viewOrder": "View Order",
+  "emptyWishlist": "Your wishlist is empty.",
+  "profileUpdated": "Profile updated successfully!",
+  "passwordUpdated": "Password updated successfully!",
+  "seo": {
+    "title": "My Account",
+    "description": "Manage your account, orders, wishlist, and profile settings."
+  }
+}

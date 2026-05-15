@@ -11,7 +11,14 @@ const orderItemSchema = new mongoose.Schema(
       ref: 'Product',
       required: [true, 'Order item must reference a product.'],
     },
-    name: { type: String, required: true },
+    name: {
+      type: {
+        am: { type: String, required: true },
+        en: { type: String, required: true },
+        om: { type: String, required: true }
+      },
+      required: true
+    },
     imageCover: String,
     price: { type: Number, required: true },
     quantity: {

@@ -1,0 +1,41 @@
+{
+  "title": "ያግኙን",
+  "subtitle": "ጥያቄ፣ ​​የትዕዛዝ ችግር ወይም የሽርክና ጥያቄ አለዎት? ቡድናችን ለመርዳት ዝግጁ ነው።",
+  "fullName": "ሙሉ ስም",
+  "email": "ኢሜይል",
+  "phone": "ስልክ",
+  "phoneOptional": "(አማራጭ)",
+  "subject": "ርዕሰ ጉዳይ",
+  "message": "መልዕክት",
+  "sendMessage": "መልዕክት ላክ",
+  "sending": "በመላክ ላይ...",
+  "messageSent": "መልዕክት ተልኳል!",
+  "messageSentDesc": "በ24 ሰዓታት ውስጥ እንመልስልዎ።",
+  "messageFailed": "መልዕክቱን መላክ አልተሳካም",
+  "messageFailedDesc": "እባክዎ ቆይተው እንደገና ይሞክሩ።",
+  "emailLabel": "ኢሜይል",
+  "phoneLabel": "ስልክ",
+  "addressLabel": "አድራሻ",
+  "workingHours": "የሥራ ሰዓቶች",
+  "followUs": "ተከተሉን",
+  "contactSupport": "ድጋፍን ያግኙ",
+  "backHome": "ወደ መነሻ ተመለስ",
+  "placeholders": {
+    "name": "አበበ ከበደ",
+    "email": "abebe@example.com",
+    "phone": "+251 91 234 5678",
+    "subject": "የትዕዛዝ ጥያቄ፣ ​​ስለ ምርት ጥያቄ...",
+    "message": "መልዕክትዎን እዚህ ይጻፉ..."
+  },
+  "validation": {
+    "nameMin": "ስም ቢያንስ 2 ቁምፊዎች መሆን አለበት",
+    "emailInvalid": "እባክዎ ትክክለኛ ኢሜይል ያስገቡ",
+    "subjectMin": "ርዕሰ ጉዳይ ቢያንስ 3 ቁምፊዎች መሆን አለበት",
+    "messageMin": "መልዕክት ቢያንስ 10 ቁምፊዎች መሆን አለበት"
+  },
+  "seo": {
+    "title": "ያግኙን",
+    "description": "ስለ ትዕዛዞች፣ ምርቶች ወይም ሽርክናዎች ማንኛውም ጥያቄ ቢኖርዎት ከድጋፍ ቡድናችን ጋር ይገናኙ።",
+    "keywords": "ድጋፍ፣ እርዳታ፣ የደንበኛ አገልግሎት"
+  }
+}

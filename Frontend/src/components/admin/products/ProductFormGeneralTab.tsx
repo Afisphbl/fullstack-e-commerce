@@ -1,6 +1,5 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -17,6 +16,8 @@ import {
   FormMessage,
   FormDescription,
 } from "@/components/ui/form";
+import { MultilingualInput } from "@/components/shared/MultilingualInput";
+import { MultilingualTextarea } from "@/components/shared/MultilingualTextarea";
 import { Category } from "@/lib/api";
 import { Control } from "react-hook-form";
 import { ProductFormValues } from "./hooks/useProductForm";
@@ -32,116 +33,74 @@ export const ProductFormGeneralTab = ({
 }: ProductFormGeneralTabProps) => {
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormField
-          control={control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Product Name</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="brand"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Brand</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
+      {/* Multilingual Product Name */}
+      <MultilingualInput
+        name="name"
+        label="Product Name"
+        control={control}
+        required
+        placeholder="Enter product name"
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* <FormField
-          control={control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {categories
-                    ?.filter((c) => c._id || c.id)
-                    .map((c) => (
-                      <SelectItem key={c.id} value={c._id || c.id}>
-                        {c.name}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-        <FormField
-          control={control}
-          name="status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                  <SelectItem value="out_of_stock">Out of Stock</SelectItem>
-                  <SelectItem value="archived">Archived</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-
+      {/* Brand (non-multilingual) */}
       <FormField
         control={control}
+        name="brand"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Brand</FormLabel>
+            <FormControl>
+              <Input {...field} placeholder="e.g., Dell, Apple, Samsung" />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      {/* Status */}
+      <FormField
+        control={control}
+        name="status"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Status</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="out_of_stock">Out of Stock</SelectItem>
+                <SelectItem value="archived">Archived</SelectItem>
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      {/* Multilingual Short Description */}
+      <MultilingualInput
         name="shortDescription"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Short Description</FormLabel>
-            <FormControl>
-              <Input {...field} />
-            </FormControl>
-            <FormDescription>Brief summary for list views.</FormDescription>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <FormField
+        label="Short Description"
         control={control}
-        name="description"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Full Description</FormLabel>
-            <FormControl>
-              <Textarea rows={5} {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
+        placeholder="Brief summary for list views"
       />
 
+      {/* Multilingual Full Description */}
+      <MultilingualTextarea
+        name="description"
+        label="Full Description"
+        control={control}
+        required
+        rows={5}
+        placeholder="Detailed product description"
+      />
+
+      {/* Featured Toggle */}
       <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
         <div className="space-y-0.5">
           <Label>Featured Product</Label>

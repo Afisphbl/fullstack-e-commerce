@@ -1,48 +1,30 @@
 "use strict";
 
 const mongoose = require("mongoose");
+const { multilingualString } = require("../utils/multilingualSchema");
 
 const aboutStatSchema = new mongoose.Schema(
   {
-    value: { type: String, trim: true, default: "" },
-    label: { type: String, trim: true, default: "" },
+    value: multilingualString(false, 0, 50),
+    label: multilingualString(false, 0, 100),
   },
   { _id: false },
 );
 
 const aboutValueSchema = new mongoose.Schema(
   {
-    title: { type: String, trim: true, default: "" },
-    desc: { type: String, trim: true, default: "" },
+    title: multilingualString(false, 0, 100),
+    desc: multilingualString(false, 0, 300),
   },
   { _id: false },
 );
 
 const aboutSettingsSchema = new mongoose.Schema(
   {
-    aboutEyebrow: {
-      type: String,
-      trim: true,
-      default: "Who We Are",
-    },
-    aboutTitle: {
-      type: String,
-      trim: true,
-      maxlength: [120, "About title must be at most 120 characters."],
-      default: "About",
-    },
-    aboutHighlight: {
-      type: String,
-      trim: true,
-      maxlength: [60, "About highlight must be at most 60 characters."],
-      default: "VoltEdge",
-    },
-    aboutIntro: {
-      type: String,
-      trim: true,
-      maxlength: [1000, "About intro must be at most 1000 characters."],
-      default: "",
-    },
+    aboutEyebrow: multilingualString(false, 0, 50),
+    aboutTitle: multilingualString(false, 0, 120),
+    aboutHighlight: multilingualString(false, 0, 60),
+    aboutIntro: multilingualString(false, 0, 1000),
     aboutImage: {
       type: String,
       trim: true,

@@ -1,31 +1,21 @@
 "use strict";
 
 const { body } = require("express-validator");
+const { validateMultilingualField } = require("./productValidator");
 
 // ─── General ──────────────────────────────────────────────────────────────────
 const generalRules = [
-  body("companyName")
-    .optional()
-    .trim()
-    .notEmpty()
-    .withMessage("Company name cannot be blank.")
-    .isLength({ max: 80 })
-    .withMessage("Company name must be at most 80 characters."),
-  body("tagline")
-    .optional()
-    .trim()
-    .isLength({ max: 160 })
-    .withMessage("Tagline must be at most 160 characters."),
+  // Multilingual fields
+  ...validateMultilingualField("companyName", false, 80),
+  ...validateMultilingualField("tagline", false, 160),
+  ...validateMultilingualField("description", false, 500),
+  
+  // Non-multilingual fields
   body("logoUrl")
     .optional({ checkFalsy: true })
     .trim()
     .isURL({ require_tld: false })
     .withMessage("Logo URL must be a valid URL."),
-  body("description")
-    .optional()
-    .trim()
-    .isLength({ max: 500 })
-    .withMessage("Description must be at most 500 characters."),
   body("enableLocationRestriction")
     .optional()
     .isBoolean()
@@ -43,26 +33,17 @@ const generalRules = [
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 const heroRules = [
-  body("heroTitle")
+  // Multilingual fields
+  ...validateMultilingualField("heroEyebrow", false, 50),
+  ...validateMultilingualField("heroTitle", false, 120),
+  ...validateMultilingualField("heroHighlight", false, 60),
+  ...validateMultilingualField("heroSubtitle", false, 500),
+  ...validateMultilingualField("heroCtaText", false, 40),
+  
+  // Non-multilingual fields
+  body("heroCtaLink")
     .optional()
-    .trim()
-    .isLength({ max: 120 })
-    .withMessage("Hero title must be at most 120 characters."),
-  body("heroHighlight")
-    .optional()
-    .trim()
-    .isLength({ max: 60 })
-    .withMessage("Hero highlight must be at most 60 characters."),
-  body("heroSubtitle")
-    .optional()
-    .trim()
-    .isLength({ max: 500 })
-    .withMessage("Hero subtitle must be at most 500 characters."),
-  body("heroCtaText")
-    .optional()
-    .trim()
-    .isLength({ max: 40 })
-    .withMessage("CTA text must be at most 40 characters."),
+    .trim(),
   body("heroSlides")
     .optional()
     .isArray()
@@ -72,25 +53,24 @@ const heroRules = [
     .trim()
     .isURL({ require_tld: false })
     .withMessage("Each slide image must be a valid URL."),
+  // Multilingual slide fields
+  body("heroSlides.*.title.am").optional().trim(),
+  body("heroSlides.*.title.en").optional().trim(),
+  body("heroSlides.*.title.om").optional().trim(),
+  body("heroSlides.*.subtitle.am").optional().trim(),
+  body("heroSlides.*.subtitle.en").optional().trim(),
+  body("heroSlides.*.subtitle.om").optional().trim(),
 ];
 
 // ─── About ────────────────────────────────────────────────────────────────────
 const aboutRules = [
-  body("aboutTitle")
-    .optional()
-    .trim()
-    .isLength({ max: 120 })
-    .withMessage("About title must be at most 120 characters."),
-  body("aboutHighlight")
-    .optional()
-    .trim()
-    .isLength({ max: 60 })
-    .withMessage("About highlight must be at most 60 characters."),
-  body("aboutIntro")
-    .optional()
-    .trim()
-    .isLength({ max: 1000 })
-    .withMessage("About intro must be at most 1000 characters."),
+  // Multilingual fields
+  ...validateMultilingualField("aboutEyebrow", false, 50),
+  ...validateMultilingualField("aboutTitle", false, 120),
+  ...validateMultilingualField("aboutHighlight", false, 60),
+  ...validateMultilingualField("aboutIntro", false, 1000),
+  
+  // Non-multilingual fields
   body("aboutImage")
     .optional({ checkFalsy: true })
     .trim()
@@ -104,10 +84,29 @@ const aboutRules = [
     .optional()
     .isArray()
     .withMessage("aboutValues must be an array."),
+  // Multilingual stats fields
+  body("aboutStats.*.value.am").optional().trim(),
+  body("aboutStats.*.value.en").optional().trim(),
+  body("aboutStats.*.value.om").optional().trim(),
+  body("aboutStats.*.label.am").optional().trim(),
+  body("aboutStats.*.label.en").optional().trim(),
+  body("aboutStats.*.label.om").optional().trim(),
+  // Multilingual values fields
+  body("aboutValues.*.title.am").optional().trim(),
+  body("aboutValues.*.title.en").optional().trim(),
+  body("aboutValues.*.title.om").optional().trim(),
+  body("aboutValues.*.desc.am").optional().trim(),
+  body("aboutValues.*.desc.en").optional().trim(),
+  body("aboutValues.*.desc.om").optional().trim(),
 ];
 
 // ─── Contact ──────────────────────────────────────────────────────────────────
 const contactRules = [
+  // Multilingual fields
+  ...validateMultilingualField("contactAddress", false, 300),
+  ...validateMultilingualField("workingHours", false, 500),
+  
+  // Non-multilingual fields
   body("contactEmail")
     .optional()
     .trim()
@@ -115,16 +114,6 @@ const contactRules = [
     .withMessage("Must be a valid email address.")
     .normalizeEmail(),
   body("contactPhone").optional().trim(),
-  body("contactAddress")
-    .optional()
-    .trim()
-    .isLength({ max: 300 })
-    .withMessage("Address must be at most 300 characters."),
-  body("workingHours")
-    .optional()
-    .trim()
-    .isLength({ max: 500 })
-    .withMessage("Working hours must be at most 500 characters."),
   body("mapLat")
     .optional()
     .isFloat({ min: -90, max: 90 })

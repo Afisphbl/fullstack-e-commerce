@@ -7,7 +7,7 @@ import {
   useEffect,
   useRef,
 } from "react";
-import { Product } from "@/lib/api";
+import { Product, extractLocalized } from "@/lib/api";
 import { useAuth } from "./AuthContext";
 import {
   useCartQuery,
@@ -146,7 +146,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         (item: BackendCartItem) => ({
           product: {
             id: item.product._id,
-            name: item.product.name,
+            name: extractLocalized(item.product.name),
             slug: item.product.slug,
             brand: item.product.brand || "",
             price: item.product.finalPrice || item.product.price,

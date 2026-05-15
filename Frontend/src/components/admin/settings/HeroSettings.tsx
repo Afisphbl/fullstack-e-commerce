@@ -17,6 +17,159 @@ interface HeroSettingsProps {
   ) => void;
 }
 
+// Helper component for multilingual text input
+const MultilingualField = ({
+  label,
+  value,
+  onChange,
+  hint,
+}: {
+  label: string;
+  value: { am: string; en: string; om: string } | string;
+  onChange: (val: { am: string; en: string; om: string }) => void;
+  hint?: string;
+}) => {
+  const multiValue =
+    typeof value === "string"
+      ? { am: value, en: value, om: value }
+      : value || { am: "", en: "", om: "" };
+
+  return (
+    <Field label={label} hint={hint}>
+      <div className="space-y-3 border rounded-lg p-4 bg-muted/30">
+        <div>
+          <label className="text-xs text-muted-foreground font-normal block mb-1.5">
+            አማርኛ (Amharic)
+          </label>
+          <Input
+            value={multiValue.am}
+            onChange={(e) => onChange({ ...multiValue, am: e.target.value })}
+            className="bg-background font-sans"
+          />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground font-normal block mb-1.5">
+            English
+          </label>
+          <Input
+            value={multiValue.en}
+            onChange={(e) => onChange({ ...multiValue, en: e.target.value })}
+            className="bg-background"
+          />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground font-normal block mb-1.5">
+            Afaan Oromo
+          </label>
+          <Input
+            value={multiValue.om}
+            onChange={(e) => onChange({ ...multiValue, om: e.target.value })}
+            className="bg-background"
+          />
+        </div>
+      </div>
+    </Field>
+  );
+};
+
+const MultilingualTextareaField = ({
+  label,
+  value,
+  onChange,
+  hint,
+}: {
+  label: string;
+  value: { am: string; en: string; om: string } | string;
+  onChange: (val: { am: string; en: string; om: string }) => void;
+  hint?: string;
+}) => {
+  const multiValue =
+    typeof value === "string"
+      ? { am: value, en: value, om: value }
+      : value || { am: "", en: "", om: "" };
+
+  return (
+    <Field label={label} hint={hint}>
+      <div className="space-y-3 border rounded-lg p-4 bg-muted/30">
+        <div>
+          <label className="text-xs text-muted-foreground font-normal block mb-1.5">
+            አማርኛ (Amharic)
+          </label>
+          <Textarea
+            value={multiValue.am}
+            onChange={(e) => onChange({ ...multiValue, am: e.target.value })}
+            className="bg-background font-sans resize-none"
+          />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground font-normal block mb-1.5">
+            English
+          </label>
+          <Textarea
+            value={multiValue.en}
+            onChange={(e) => onChange({ ...multiValue, en: e.target.value })}
+            className="bg-background resize-none"
+          />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground font-normal block mb-1.5">
+            Afaan Oromo
+          </label>
+          <Textarea
+            value={multiValue.om}
+            onChange={(e) => onChange({ ...multiValue, om: e.target.value })}
+            className="bg-background resize-none"
+          />
+        </div>
+      </div>
+    </Field>
+  );
+};
+
+// Helper for multilingual slide fields
+const MultilingualSlideInput = ({
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  value: { am: string; en: string; om: string } | string;
+  onChange: (val: { am: string; en: string; om: string }) => void;
+  placeholder?: string;
+}) => {
+  const multiValue =
+    typeof value === "string"
+      ? { am: value, en: value, om: value }
+      : value || { am: "", en: "", om: "" };
+
+  return (
+    <div className="space-y-2">
+      <Label className="text-xs text-muted-foreground">{label}</Label>
+      <div className="space-y-2 border rounded-lg p-3 bg-muted/20">
+        <Input
+          placeholder={`${placeholder} (አማርኛ)`}
+          value={multiValue.am}
+          onChange={(e) => onChange({ ...multiValue, am: e.target.value })}
+          className="text-sm font-sans"
+        />
+        <Input
+          placeholder={`${placeholder} (English)`}
+          value={multiValue.en}
+          onChange={(e) => onChange({ ...multiValue, en: e.target.value })}
+          className="text-sm"
+        />
+        <Input
+          placeholder={`${placeholder} (Afaan Oromo)`}
+          value={multiValue.om}
+          onChange={(e) => onChange({ ...multiValue, om: e.target.value })}
+          className="text-sm"
+        />
+      </div>
+    </div>
+  );
+};
+
 export const HeroSettings = ({ draft, update }: HeroSettingsProps) => {
   const updateSlide = (idx: number, patch: Partial<HeroSlide>) => {
     const next = [...draft.heroSlides];
@@ -27,7 +180,11 @@ export const HeroSettings = ({ draft, update }: HeroSettingsProps) => {
   const addSlide = () =>
     update("heroSlides", [
       ...draft.heroSlides,
-      { image: "", title: "New Slide", subtitle: "" },
+      { 
+        image: "", 
+        title: { am: "አዲስ ስላይድ", en: "New Slide", om: "Slide Haaraa" }, 
+        subtitle: { am: "", en: "", om: "" } 
+      },
     ]);
 
   const removeSlide = (idx: number) =>
@@ -69,34 +226,27 @@ export const HeroSettings = ({ draft, update }: HeroSettingsProps) => {
       <div className='space-y-4'>
         <h3 className='text-lg font-semibold'>Homepage Hero Content</h3>
         <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-          <Field label='Eyebrow / Badge'>
-            <Input
-              value={draft.heroEyebrow}
-              onChange={(e) => update("heroEyebrow", e.target.value)}
-              className='bg-background'
-            />
-          </Field>
-          <Field label='CTA Button Text'>
-            <Input
-              value={draft.heroCtaText}
-              onChange={(e) => update("heroCtaText", e.target.value)}
-              className='bg-background'
-            />
-          </Field>
-          <Field label='Headline (start)'>
-            <Input
-              value={draft.heroTitle}
-              onChange={(e) => update("heroTitle", e.target.value)}
-              className='bg-background'
-            />
-          </Field>
-          <Field label='Highlighted Word' hint='Rendered with gradient.'>
-            <Input
-              value={draft.heroHighlight}
-              onChange={(e) => update("heroHighlight", e.target.value)}
-              className='bg-background'
-            />
-          </Field>
+          <MultilingualField
+            label='Eyebrow / Badge'
+            value={draft.heroEyebrow}
+            onChange={(val) => update("heroEyebrow", val)}
+          />
+          <MultilingualField
+            label='CTA Button Text'
+            value={draft.heroCtaText}
+            onChange={(val) => update("heroCtaText", val)}
+          />
+          <MultilingualField
+            label='Headline (start)'
+            value={draft.heroTitle}
+            onChange={(val) => update("heroTitle", val)}
+          />
+          <MultilingualField
+            label='Highlighted Word'
+            hint='Rendered with gradient.'
+            value={draft.heroHighlight}
+            onChange={(val) => update("heroHighlight", val)}
+          />
           <Field label='CTA Link'>
             <Input
               value={draft.heroCtaLink}
@@ -106,13 +256,11 @@ export const HeroSettings = ({ draft, update }: HeroSettingsProps) => {
             />
           </Field>
         </div>
-        <Field label='Subtitle'>
-          <Textarea
-            value={draft.heroSubtitle}
-            onChange={(e) => update("heroSubtitle", e.target.value)}
-            className='bg-background'
-          />
-        </Field>
+        <MultilingualTextareaField
+          label='Subtitle'
+          value={draft.heroSubtitle}
+          onChange={(val) => update("heroSubtitle", val)}
+        />
       </div>
 
       {/* Hero Slideshow */}
@@ -139,19 +287,19 @@ export const HeroSettings = ({ draft, update }: HeroSettingsProps) => {
                 </Button>
               </div>
               <div className='grid grid-cols-1 gap-4'>
-                {/* Text Fields */}
+                {/* Multilingual Text Fields */}
                 <div className='space-y-3'>
-                  <Input
-                    placeholder='Title'
+                  <MultilingualSlideInput
+                    label='Title'
                     value={s.title}
-                    onChange={(e) => updateSlide(i, { title: e.target.value })}
+                    onChange={(val) => updateSlide(i, { title: val })}
+                    placeholder='Slide title'
                   />
-                  <Input
-                    placeholder='Subtitle'
+                  <MultilingualSlideInput
+                    label='Subtitle'
                     value={s.subtitle}
-                    onChange={(e) =>
-                      updateSlide(i, { subtitle: e.target.value })
-                    }
+                    onChange={(val) => updateSlide(i, { subtitle: val })}
+                    placeholder='Slide subtitle'
                   />
                 </div>
 

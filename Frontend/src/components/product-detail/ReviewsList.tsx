@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Star as StarIcon, MessageSquare } from "lucide-react";
 import { Review } from "@/lib/api";
+import { useTranslation } from "react-i18next";
 
 interface ReviewsListProps {
   reviews: Review[];
@@ -17,6 +18,8 @@ export const ReviewsList = ({
   reviewLimit,
   onPageChange,
 }: ReviewsListProps) => {
+  const { t } = useTranslation('product');
+  
   // Guard against invalid reviewLimit to prevent division by zero
   const safeLimit = Math.max(1, reviewLimit);
   const totalPages = Math.max(1, Math.ceil(totalReviews / safeLimit));
@@ -28,7 +31,7 @@ export const ReviewsList = ({
     <div>
       <h2 className='text-2xl font-display font-bold text-foreground mb-6 flex items-center gap-2'>
         <MessageSquare className='h-6 w-6 text-primary' />
-        Customer Reviews ({totalReviews})
+        {t('customerReviews')} ({totalReviews})
       </h2>
 
       {reviews.length > 0 ? (
@@ -80,10 +83,10 @@ export const ReviewsList = ({
                 disabled={safePage === 1}
                 onClick={() => onPageChange(safePage - 1)}
               >
-                Previous
+                {t('previous')}
               </Button>
               <span className='flex items-center text-sm text-muted-foreground px-4'>
-                Page {safePage} of {totalPages}
+                {t('page')} {safePage} {t('of')} {totalPages}
               </span>
               <Button
                 variant='outline'
@@ -91,7 +94,7 @@ export const ReviewsList = ({
                 disabled={safePage === totalPages}
                 onClick={() => onPageChange(safePage + 1)}
               >
-                Next
+                {t('next')}
               </Button>
             </div>
           )}
@@ -99,7 +102,7 @@ export const ReviewsList = ({
       ) : (
         <div className='bg-muted/30 rounded-xl border border-dashed border-border p-12 text-center'>
           <p className='text-muted-foreground'>
-            No reviews yet. Be the first to share your thoughts!
+            {t('noReviews')}
           </p>
         </div>
       )}

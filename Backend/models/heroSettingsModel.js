@@ -1,47 +1,24 @@
 "use strict";
 
 const mongoose = require("mongoose");
+const { multilingualString } = require("../utils/multilingualSchema");
 
 const heroSlideSchema = new mongoose.Schema(
   {
     image: { type: String, trim: true, default: "" },
-    title: { type: String, trim: true, default: "" },
-    subtitle: { type: String, trim: true, default: "" },
+    title: multilingualString(false, 0, 100),
+    subtitle: multilingualString(false, 0, 200),
   },
   { _id: false },
 );
 
 const heroSettingsSchema = new mongoose.Schema(
   {
-    heroEyebrow: {
-      type: String,
-      trim: true,
-      default: "NEXT-GEN ELECTRONICS",
-    },
-    heroTitle: {
-      type: String,
-      trim: true,
-      maxlength: [120, "Hero title must be at most 120 characters."],
-      default: "Experience The",
-    },
-    heroHighlight: {
-      type: String,
-      trim: true,
-      maxlength: [60, "Hero highlight must be at most 60 characters."],
-      default: "Future",
-    },
-    heroSubtitle: {
-      type: String,
-      trim: true,
-      maxlength: [500, "Hero subtitle must be at most 500 characters."],
-      default: "Discover cutting-edge electronics with unmatched performance.",
-    },
-    heroCtaText: {
-      type: String,
-      trim: true,
-      maxlength: [40, "CTA text must be at most 40 characters."],
-      default: "Shop Now",
-    },
+    heroEyebrow: multilingualString(false, 0, 50),
+    heroTitle: multilingualString(false, 0, 120),
+    heroHighlight: multilingualString(false, 0, 60),
+    heroSubtitle: multilingualString(false, 0, 500),
+    heroCtaText: multilingualString(false, 0, 40),
     heroCtaLink: {
       type: String,
       trim: true,

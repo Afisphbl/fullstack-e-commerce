@@ -1,0 +1,31 @@
+{
+  "myAccount": "Herrega Koo",
+  "profile": "Profaayilii",
+  "profileInfo": "Odeeffannoo Profaayilii",
+  "password": "Jecha Darbii",
+  "changePassword": "Jecha Darbii Jijjiiri",
+  "orders": "Ajajawwan Koo",
+  "wishlist": "Tarree Hawwii",
+  "fullName": "Maqaa Guutuu",
+  "email": "Teessoo Imeelii",
+  "phone": "Lakkoofsa Bilbilaa",
+  "saveChanges": "Jijjiiramaa Kuusi",
+  "saving": "Kuufaa jira...",
+  "currentPassword": "Jecha Darbii Ammaa",
+  "newPassword": "Jecha Darbii Haaraa",
+  "confirmPassword": "Jecha Darbii Haaraa Mirkaneessi",
+  "updatePassword": "Jecha Darbii Haaressi",
+  "noOrders": "Ammaaf ajajawwan hin jiran.",
+  "orderNumber": "Ajaja #{{id}}",
+  "orderDate": "Guyyaa {{date}} irratti ajajame",
+  "orderStatus": "Haala",
+  "orderTotal": "Ida'ama",
+  "viewOrder": "Ajaja Ilaali",
+  "emptyWishlist": "Tarreen hawwii kee duwwaa dha.",
+  "profileUpdated": "Profaayiliin milkaa'inaan haareffame!",
+  "passwordUpdated": "Jecha darbii milkaa'inaan haareffame!",
+  "seo": {
+    "title": "Herrega Koo",
+    "description": "Herrega, ajajawwan, tarree hawwii fi qindaa'inaa profaayilii kee bulchi."
+  }
+}

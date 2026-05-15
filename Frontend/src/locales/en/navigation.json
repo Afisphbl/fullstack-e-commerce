@@ -1,0 +1,20 @@
+{
+  "home": "Home",
+  "shop": "Shop",
+  "blog": "Blog",
+  "about": "About",
+  "contact": "Contact",
+  "faq": "FAQ",
+  "cart": "Cart",
+  "favorites": "Favorites",
+  "wishlist": "Wishlist",
+  "compare": "Compare",
+  "profile": "Profile",
+  "orders": "Orders",
+  "login": "Login",
+  "signup": "Sign Up",
+  "logout": "Logout",
+  "adminDashboard": "Admin Dashboard",
+  "myAccount": "My Account",
+  "settings": "Settings"
+}

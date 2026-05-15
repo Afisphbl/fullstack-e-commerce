@@ -1,0 +1,31 @@
+{
+  "myAccount": "የእኔ መለያ",
+  "profile": "መገለጫ",
+  "profileInfo": "የመገለጫ መረጃ",
+  "password": "የይለፍ ቃል",
+  "changePassword": "የይለፍ ቃል ቀይር",
+  "orders": "ትዕዛዞቼ",
+  "wishlist": "የምኞት ዝርዝር",
+  "fullName": "ሙሉ ስም",
+  "email": "የኢሜይል አድራሻ",
+  "phone": "ስልክ ቁጥር",
+  "saveChanges": "ለውጦችን አስቀምጥ",
+  "saving": "በማስቀመጥ ላይ...",
+  "currentPassword": "የአሁኑ የይለፍ ቃል",
+  "newPassword": "አዲስ የይለፍ ቃል",
+  "confirmPassword": "አዲሱን የይለፍ ቃል አረጋግጥ",
+  "updatePassword": "የይለፍ ቃልን አዘምን",
+  "noOrders": "ገና ምንም ትዕዛዞች የሉዎትም።",
+  "orderNumber": "ትዕዛዝ #{{id}}",
+  "orderDate": "የቀረበበት ቀን {{date}}",
+  "orderStatus": "ሁኔታ",
+  "orderTotal": "ድምር",
+  "viewOrder": "ትዕዛዝ ተመልከት",
+  "emptyWishlist": "የምኞት ዝርዝርዎ ባዶ ነው።",
+  "profileUpdated": "መገለጫ በተሳካ ሁኔታ ተዘምኗል!",
+  "passwordUpdated": "የይለፍ ቃል በተሳካ ሁኔታ ተዘምኗል!",
+  "seo": {
+    "title": "የእኔ መለያ",
+    "description": "መለያዎን፣ ትዕዛዞችዎን፣ የምኞት ዝርዝርዎን እና የመገለጫ ቅንብሮችዎን ያቀናጁ።"
+  }
+}

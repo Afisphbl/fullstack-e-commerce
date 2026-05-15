@@ -4,6 +4,8 @@ const express = require('express');
 const categoryController = require('../controllers/categoryController');
 const { protect, restrictTo } = require('../middleware/auth');
 const { uploadCategoryImage, resizeCategoryImage } = require('../middleware/upload');
+const validate = require('../middleware/validate');
+const { createCategoryRules, updateCategoryRules } = require('../validators/categoryValidator');
 const ROLES = require('../constants/roles');
 
 const router = express.Router();
@@ -13,11 +15,11 @@ router.get('/tree', categoryController.getCategoryTree);
 
 router.route('/')
   .get(categoryController.getAllCategories)
-  .post(protect, restrictTo(ROLES.ADMIN), uploadCategoryImage, resizeCategoryImage, categoryController.createCategory);
+  .post(protect, restrictTo(ROLES.ADMIN), uploadCategoryImage, resizeCategoryImage, createCategoryRules, validate, categoryController.createCategory);
 
 router.route('/:id')
   .get(categoryController.getCategory)
-  .patch(protect, restrictTo(ROLES.ADMIN), uploadCategoryImage, resizeCategoryImage, categoryController.updateCategory)
+  .patch(protect, restrictTo(ROLES.ADMIN), uploadCategoryImage, resizeCategoryImage, updateCategoryRules, validate, categoryController.updateCategory)
   .delete(protect, restrictTo(ROLES.ADMIN), categoryController.deleteCategory);
 
 module.exports = router;

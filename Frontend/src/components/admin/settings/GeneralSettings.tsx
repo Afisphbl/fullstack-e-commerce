@@ -17,6 +17,118 @@ interface GeneralSettingsProps {
   ) => void;
 }
 
+// Helper component for multilingual text input
+const MultilingualField = ({
+  label,
+  value,
+  onChange,
+  hint,
+}: {
+  label: string;
+  value: { am: string; en: string; om: string } | string;
+  onChange: (val: { am: string; en: string; om: string }) => void;
+  hint?: string;
+}) => {
+  // Convert legacy string to multilingual object
+  const multiValue =
+    typeof value === "string"
+      ? { am: value, en: value, om: value }
+      : value || { am: "", en: "", om: "" };
+
+  return (
+    <Field label={label} hint={hint}>
+      <div className="space-y-3 border rounded-lg p-4 bg-muted/30">
+        <div>
+          <label className="text-xs text-muted-foreground font-normal block mb-1.5">
+            አማርኛ (Amharic)
+          </label>
+          <Input
+            value={multiValue.am}
+            onChange={(e) => onChange({ ...multiValue, am: e.target.value })}
+            className="bg-background font-sans"
+          />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground font-normal block mb-1.5">
+            English
+          </label>
+          <Input
+            value={multiValue.en}
+            onChange={(e) => onChange({ ...multiValue, en: e.target.value })}
+            className="bg-background"
+          />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground font-normal block mb-1.5">
+            Afaan Oromo
+          </label>
+          <Input
+            value={multiValue.om}
+            onChange={(e) => onChange({ ...multiValue, om: e.target.value })}
+            className="bg-background"
+          />
+        </div>
+      </div>
+    </Field>
+  );
+};
+
+// Helper component for multilingual textarea
+const MultilingualTextareaField = ({
+  label,
+  value,
+  onChange,
+  hint,
+}: {
+  label: string;
+  value: { am: string; en: string; om: string } | string;
+  onChange: (val: { am: string; en: string; om: string }) => void;
+  hint?: string;
+}) => {
+  // Convert legacy string to multilingual object
+  const multiValue =
+    typeof value === "string"
+      ? { am: value, en: value, om: value }
+      : value || { am: "", en: "", om: "" };
+
+  return (
+    <Field label={label} hint={hint}>
+      <div className="space-y-3 border rounded-lg p-4 bg-muted/30">
+        <div>
+          <label className="text-xs text-muted-foreground font-normal block mb-1.5">
+            አማርኛ (Amharic)
+          </label>
+          <Textarea
+            value={multiValue.am}
+            onChange={(e) => onChange({ ...multiValue, am: e.target.value })}
+            className="bg-background font-sans resize-none"
+          />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground font-normal block mb-1.5">
+            English
+          </label>
+          <Textarea
+            value={multiValue.en}
+            onChange={(e) => onChange({ ...multiValue, en: e.target.value })}
+            className="bg-background resize-none"
+          />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground font-normal block mb-1.5">
+            Afaan Oromo
+          </label>
+          <Textarea
+            value={multiValue.om}
+            onChange={(e) => onChange({ ...multiValue, om: e.target.value })}
+            className="bg-background resize-none"
+          />
+        </div>
+      </div>
+    </Field>
+  );
+};
+
 export const GeneralSettings = ({ draft, update }: GeneralSettingsProps) => {
   const [logoPreview, setLogoPreview] = useState<string>(draft.logoUrl);
   const [isUploading, setIsUploading] = useState(false);
@@ -54,20 +166,16 @@ export const GeneralSettings = ({ draft, update }: GeneralSettingsProps) => {
   return (
     <div className="grid grid-cols-1 gap-4">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Field label="Company Name">
-          <Input
-            value={draft.companyName}
-            onChange={(e) => update("companyName", e.target.value)}
-            className="bg-background"
-          />
-        </Field>
-        <Field label="Tagline">
-          <Input
-            value={draft.tagline}
-            onChange={(e) => update("tagline", e.target.value)}
-            className="bg-background"
-          />
-        </Field>
+        <MultilingualField
+          label="Company Name"
+          value={draft.companyName}
+          onChange={(val) => update("companyName", val)}
+        />
+        <MultilingualField
+          label="Tagline"
+          value={draft.tagline}
+          onChange={(val) => update("tagline", val)}
+        />
       </div>
       <Field label="Logo" hint="Upload your company logo (optional).">
         <div className="space-y-3">
@@ -127,13 +235,11 @@ export const GeneralSettings = ({ draft, update }: GeneralSettingsProps) => {
           />
         </div>
       </Field>
-      <Field label="Short Description">
-        <Textarea
-          value={draft.description}
-          onChange={(e) => update("description", e.target.value)}
-          className="bg-background"
-        />
-      </Field>
+      <MultilingualTextareaField
+        label="Short Description"
+        value={draft.description}
+        onChange={(val) => update("description", val)}
+      />
 
       <div className="pt-4 border-t border-border mt-4">
         <h3 className="text-lg font-semibold text-foreground mb-4">

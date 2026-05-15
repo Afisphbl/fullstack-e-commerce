@@ -1,0 +1,33 @@
+{
+  "hero": {
+    "defaultEyebrow": "Dukkanaa Elektirooniksii Ol-aanaa",
+    "defaultTitle": "Jireenya Dijitaalaa Kee",
+    "defaultHighlight": "Guddisuuf",
+    "defaultSubtitle": "Elektirooniksii haaraa arkaadii — laaptoppii fi foonidhaa hanga meeshaalee sagalee fi mana cimaa.",
+    "defaultCta": "Amma Bitadhu"
+  },
+  "features": {
+    "freeShipping": "Geejjiba Bilisaa",
+    "freeShippingDesc": "Ajaja $100 ol",
+    "warranty": "Warraaantii Waggaa 2",
+    "warrantyDesc": "Eegumsa Dheeraa",
+    "fastSupport": "Deeggarsa 24/7",
+    "fastSupportDesc": "Gargaarsa ogeessa yeroo kamiyyuu"
+  },
+  "sections": {
+    "shopByBrand": "Maqaa Oomishaadhaan Biti",
+    "featuredProducts": "Oomishaalee Filatamoo",
+    "newArrivals": "Haaraa Dhufan",
+    "viewAll": "Hunda Ilaali"
+  },
+  "cta": {
+    "title": "Haaressuuf Qophaa'aa?",
+    "subtitle": "Elektirooniksii haaraa argachuuf nutti amaname kan jiranis kumootaatti makamu.",
+    "button": "Kutaa Sakatta'i"
+  },
+  "seo": {
+    "title": "Fuula Jalqabaa | Dukkanaa Elektirooniksii Ol-aanaa",
+    "description": "Elektirooniksii ol-aanaa, laaptoppii, fooni, meeshaalee fi oomishaalee teknoolojii biti. Geejjiba ariifataa, gatii dorgommii, fi oomishaalee dhugaa.",
+    "keywords": "dukkanaa elektirooniksii, laaptoppii, fooni, meeshaalee teknoolojii"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "hero": {
+    "defaultEyebrow": "Premium Electronics Store",
+    "defaultTitle": "Power Your",
+    "defaultHighlight": "Digital Life",
+    "defaultSubtitle": "Discover the latest in consumer electronics — from laptops and smartphones to audio gear and smart home devices.",
+    "defaultCta": "Shop Now"
+  },
+  "features": {
+    "freeShipping": "Free Shipping",
+    "freeShippingDesc": "On orders over $100",
+    "warranty": "2 Year Warranty",
+    "warrantyDesc": "Extended protection",
+    "fastSupport": "24/7 Support",
+    "fastSupportDesc": "Expert help anytime"
+  },
+  "sections": {
+    "shopByBrand": "Shop by Brand",
+    "featuredProducts": "Featured Products",
+    "newArrivals": "New Arrivals",
+    "viewAll": "View All"
+  },
+  "cta": {
+    "title": "Ready to Upgrade?",
+    "subtitle": "Join thousands of tech enthusiasts who trust us for the latest in consumer electronics.",
+    "button": "Explore Collection"
+  },
+  "seo": {
+    "title": "Home | Premium Electronics Store",
+    "description": "Shop premium electronics, laptops, smartphones, accessories, and tech gadgets. Fast delivery, competitive prices, and authentic products.",
+    "keywords": "electronics store, laptops, smartphones, tech gadgets, computer accessories, premium electronics, online electronics shop"
+  }
+}

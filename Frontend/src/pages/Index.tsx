@@ -1,13 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Zap, Shield, Truck, ChevronRight } from "lucide-react";
-import {
-  fetchFeaturedProducts,
-  fetchCategories,
-  fetchProducts,
-  Product,
-  Category,
-} from "@/lib/api";
+import { fetchFeaturedProducts, fetchProducts, Product } from "@/lib/api";
 import { ProductCard } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -16,19 +10,21 @@ import { isAdminRole } from "@/lib/roles";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { OptimizedImage } from "@/components/shared/OptimizedImage";
 import { buildSrcSet, optimizeImageUrl, preloadImage } from "@/lib/images";
+import { useLocalizedField } from "@/hooks/useLocalizedField";
+import { useTranslation } from "react-i18next";
+import { SEOHead } from "@/components/shared/SEOHead";
 
 const Index = () => {
-  usePageTitle("Home");
+  const { t } = useTranslation(["common", "home"]);
   const { settings } = useSiteSettings();
   const heroSlides = settings.heroSlides?.length > 0 ? settings.heroSlides : [];
   const { user } = useAuth();
+  usePageTitle(t("home:sections.featuredProducts"));
   const [featured, setFeatured] = useState<Product[]>([]);
   const [newArrivals, setNewArrivals] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [slideIndex, setSlideIndex] = useState(0);
   const [loadingFeatured, setLoadingFeatured] = useState(true);
   const [loadingNewArrivals, setLoadingNewArrivals] = useState(true);
-  const [loadingCategories, setLoadingCategories] = useState(true);
   const activeHeroSlide = heroSlides[slideIndex];
   const heroSizes = "(min-width: 1024px) 50vw, 100vw";
   const heroSrcSet = activeHeroSlide?.image
@@ -37,6 +33,17 @@ const Index = () => {
         crop: "fill",
       })
     : undefined;
+
+  // Get localized hero content
+  const localizedHeroEyebrow = useLocalizedField(settings.heroEyebrow);
+  const localizedHeroTitle = useLocalizedField(settings.heroTitle);
+  const localizedHeroHighlight = useLocalizedField(settings.heroHighlight);
+  const localizedHeroSubtitle = useLocalizedField(settings.heroSubtitle);
+  const localizedHeroCtaText = useLocalizedField(settings.heroCtaText);
+  const localizedSlideTitle = useLocalizedField(heroSlides[slideIndex]?.title);
+  const localizedSlideSubtitle = useLocalizedField(
+    heroSlides[slideIndex]?.subtitle
+  );
 
   useEffect(() => {
     setLoadingFeatured(true);
@@ -101,7 +108,14 @@ const Index = () => {
   }, [activeHeroSlide?.image, heroSizes, heroSrcSet]);
 
   return (
-    <div className="min-h-screen">
+    <>
+      <SEOHead
+        title={t("home:seo.title")}
+        description={t("home:seo.description")}
+        keywords={t("home:seo.keywords")}
+        type="website"
+      />
+      <div className="min-h-screen">
       {/* Hero */}
       <section className="bg-gradient-hero text-primary-foreground relative overflow-hidden">
         <div className="absolute inset-0 opacity-20">
@@ -112,14 +126,14 @@ const Index = () => {
           <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
             <div className="max-w-2xl animate-slide-up">
               <p className="text-accent font-display text-sm tracking-widest mb-4 uppercase">
-                {settings.heroEyebrow}
+                {localizedHeroEyebrow}
               </p>
               <h1 className="text-4xl md:text-6xl font-display font-bold mb-6 leading-tight whitespace-pre-wrap">
-                {settings.heroTitle}{" "}
-                <span className="text-gradient">{settings.heroHighlight}</span>
+                {localizedHeroTitle}{" "}
+                <span className="text-gradient">{localizedHeroHighlight}</span>
               </h1>
               <p className="text-lg text-primary-foreground/70 mb-8 font-body whitespace-pre-wrap">
-                {settings.heroSubtitle}
+                {localizedHeroSubtitle}
               </p>
               <div className="flex gap-4">
                 <Button
@@ -128,7 +142,7 @@ const Index = () => {
                   className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-neon font-display text-sm"
                 >
                   <Link to={settings.heroCtaLink || "/shop"}>
-                    {settings.heroCtaText || "Shop Now"}{" "}
+                    {localizedHeroCtaText || t("common.shopNow")}{" "}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
@@ -138,7 +152,7 @@ const Index = () => {
                   size="lg"
                   className="border-border bg-background/90 text-foreground hover:bg-background font-display text-sm"
                 >
-                  <Link to="/about">Learn More</Link>
+                  <Link to="/about">{t("common.learnMore")}</Link>
                 </Button>
               </div>
             </div>
@@ -149,7 +163,7 @@ const Index = () => {
                   <OptimizedImage
                     key={activeHeroSlide.image}
                     src={activeHeroSlide.image}
-                    alt={activeHeroSlide.title}
+                    alt={localizedSlideTitle}
                     widths={[640, 960, 1280, 1600]}
                     sizes={heroSizes}
                     optimizeWidth={1280}
@@ -163,13 +177,13 @@ const Index = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
                   <p className="text-xs uppercase tracking-[0.15em] text-accent">
-                    Featured
+                    {t("common.featured")}
                   </p>
                   <h3 className="text-xl font-display font-bold text-white">
-                    {heroSlides[slideIndex]?.title}
+                    {localizedSlideTitle}
                   </h3>
                   <p className="text-sm text-white/80">
-                    {heroSlides[slideIndex]?.subtitle}
+                    {localizedSlideSubtitle}
                   </p>
                 </div>
               </div>
@@ -189,29 +203,33 @@ const Index = () => {
       </section>
 
       {/* Features */}
-      <section className="py-12 border-b border-border bg-card">
+      <section className="py-12 border-b border-border bg-card" aria-label="Store features">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
                 icon: Truck,
-                title: "Free Shipping",
-                desc: "On orders over $100",
+                titleKey: "home:features.freeShipping",
+                descKey: "home:features.freeShippingDesc",
               },
               {
                 icon: Shield,
-                title: "2 Year Warranty",
-                desc: "Extended protection",
+                titleKey: "home:features.warranty",
+                descKey: "home:features.warrantyDesc",
               },
-              { icon: Zap, title: "Fast Support", desc: "24/7 expert help" },
-            ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="flex items-center gap-4">
-                <div className="p-3 rounded-lg bg-primary/10">
+              {
+                icon: Zap,
+                titleKey: "home:features.fastSupport",
+                descKey: "home:features.fastSupportDesc",
+              },
+            ].map(({ icon: Icon, titleKey, descKey }) => (
+              <div key={titleKey} className="flex items-center gap-4">
+                <div className="p-3 rounded-lg bg-primary/10" aria-hidden="true">
                   <Icon className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">{title}</h3>
-                  <p className="text-sm text-muted-foreground">{desc}</p>
+                  <h3 className="font-semibold text-foreground">{t(titleKey)}</h3>
+                  <p className="text-sm text-muted-foreground">{t(descKey)}</p>
                 </div>
               </div>
             ))}
@@ -220,17 +238,17 @@ const Index = () => {
       </section>
 
       {/* Brands */}
-      <section className="py-16 bg-background">
+      <section className="py-16 bg-background" aria-label={t("home:sections.shopByBrand")}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-display font-bold text-foreground">
-              Shop by Brand
+              {t("home:sections.shopByBrand")}
             </h2>
             <Link
               to="/shop"
               className="text-sm text-primary hover:underline flex items-center gap-1"
             >
-              View All <ChevronRight className="h-4 w-4" />
+              {t("home:sections.viewAll")} <ChevronRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -330,17 +348,17 @@ const Index = () => {
       </section> */}
 
       {/* Featured Products */}
-      <section className="py-16 bg-card">
+      <section className="py-16 bg-card" aria-label={t("home:sections.featuredProducts")}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-display font-bold text-foreground">
-              Featured Products
+              {t("home:sections.featuredProducts")}
             </h2>
             <Link
               to="/shop"
               className="text-sm text-primary hover:underline flex items-center gap-1"
             >
-              View All <ChevronRight className="h-4 w-4" />
+              {t("home:sections.viewAll")} <ChevronRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -383,17 +401,17 @@ const Index = () => {
       </section>
 
       {/* New Arrivals */}
-      <section className="py-16 bg-background">
+      <section className="py-16 bg-background" aria-label={t("home:sections.newArrivals")}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-display font-bold text-foreground">
-              New Arrivals
+              {t("home:sections.newArrivals")}
             </h2>
             <Link
               to="/shop"
               className="text-sm text-primary hover:underline flex items-center gap-1"
             >
-              View All <ChevronRight className="h-4 w-4" />
+              {t("home:sections.viewAll")} <ChevronRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -432,16 +450,15 @@ const Index = () => {
 
       {/* CTA */}
       <section className="py-20 bg-gradient-hero text-primary-foreground relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 opacity-10" aria-hidden="true">
           <div className="absolute top-0 right-0 w-96 h-96 bg-primary rounded-full blur-3xl" />
         </div>
         <div className="container mx-auto px-4 text-center relative z-10">
           <h2 className="text-3xl font-display font-bold mb-4">
-            Ready to Upgrade?
+            {t("home:cta.title")}
           </h2>
           <p className="text-primary-foreground/70 mb-8 max-w-xl mx-auto">
-            Join thousands of tech enthusiasts who trust VoltEdge for the latest
-            in consumer electronics.
+            {t("home:cta.subtitle")}
           </p>
           <Button
             asChild
@@ -449,13 +466,13 @@ const Index = () => {
             className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-neon font-display text-sm"
           >
             <Link to="/shop">
-              Explore Collection <ArrowRight className="ml-2 h-4 w-4" />
+              {t("home:cta.button")} <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
             </Link>
           </Button>
         </div>
       </section>
     </div>
-  );
+  </>);
 };
 
 export default Index;

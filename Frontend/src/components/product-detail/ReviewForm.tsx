@@ -11,6 +11,7 @@ import {
   Review,
 } from "@/lib/api";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface ReviewFormProps {
   productId: string;
@@ -24,6 +25,7 @@ export const ReviewForm = ({
   onReviewSubmitted,
 }: ReviewFormProps) => {
   const { user, isAuthenticated } = useAuth();
+  const { t } = useTranslation('product');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
@@ -49,13 +51,13 @@ export const ReviewForm = ({
           rating,
           review: comment,
         });
-        toast.success("Review updated successfully!");
+        toast.success(t('reviewUpdated'));
       } else {
         await createReview(productId, {
           rating,
           review: comment,
         });
-        toast.success("Review submitted successfully!");
+        toast.success(t('reviewSubmitted'));
       }
 
       onReviewSubmitted();
@@ -63,7 +65,7 @@ export const ReviewForm = ({
       const errorMessage =
         error instanceof Error
           ? error.message
-          : "Failed to save review. Please try again.";
+          : t('reviewError');
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -73,29 +75,29 @@ export const ReviewForm = ({
   return (
     <div className='bg-card rounded-xl border border-border p-6 shadow-sm sticky top-24'>
       <h3 className='text-xl font-display font-bold text-foreground mb-6'>
-        {existingReview ? "Update Your Review" : "Write a Review"}
+        {existingReview ? t('updateReview') : t('writeReview')}
       </h3>
 
       {!isAuthenticated ? (
         <div className='text-center py-4 space-y-4'>
           <p className='text-sm text-muted-foreground'>
-            Please log in to share your experience with this product.
+            {t('loginToReview')}
           </p>
           <Button asChild variant='outline' className='w-full'>
-            <Link to='/login'>Log In</Link>
+            <Link to='/login'>{t('logIn')}</Link>
           </Button>
         </div>
       ) : user?.role !== "user" ? (
         <div className='text-center py-4'>
           <p className='text-sm text-muted-foreground'>
-            Only customers can leave reviews.
+            {t('onlyCustomers')}
           </p>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className='space-y-4'>
           <div className='space-y-2'>
             <label className='text-sm font-medium text-muted-foreground'>
-              Your Rating
+              {t('yourRating')}
             </label>
             <StarRating
               key={existingReview?._id || "new"}
@@ -110,9 +112,9 @@ export const ReviewForm = ({
               htmlFor='review'
               className='text-sm font-medium text-muted-foreground'
             >
-              Your Review{" "}
+              {t('yourReview')}{" "}
               <span className='text-xs text-muted-foreground'>
-                (min. 10 chars)
+                {t('minChars')}
               </span>
             </label>
             <textarea
@@ -120,7 +122,7 @@ export const ReviewForm = ({
               rows={4}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder='Share your experience with this product...'
+              placeholder={t('reviewPlaceholder')}
               className='w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
               required
               minLength={10}
@@ -136,10 +138,10 @@ export const ReviewForm = ({
               <LoadingSpinner size='sm' className='py-0' />
             ) : null}
             {isSubmitting
-              ? "Saving..."
+              ? t('saving')
               : existingReview
-                ? "Update Review"
-                : "Submit Review"}
+                ? t('updateReview')
+                : t('submitReview')}
           </Button>
         </form>
       )}

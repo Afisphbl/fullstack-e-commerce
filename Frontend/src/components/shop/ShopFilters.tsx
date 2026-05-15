@@ -8,6 +8,8 @@ import {
 } from "@/components/ui/select";
 import { SlidersHorizontal } from "lucide-react";
 import { Category } from "@/lib/api";
+import { useTranslation } from "react-i18next";
+import { useLocalizedField } from "@/hooks/useLocalizedField";
 
 interface ShopFiltersProps {
   categories: Category[];
@@ -46,14 +48,16 @@ export const ShopFilters = ({
   onNewChange,
   onClearFilters,
 }: ShopFiltersProps) => {
+  const { t } = useTranslation();
+  
   return (
     <aside className="h-fit rounded-2xl border border-border/70 bg-gradient-to-b from-card to-card/70 p-5 shadow-card">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-          <SlidersHorizontal className="h-4 w-4" /> Filters
+          <SlidersHorizontal className="h-4 w-4" /> {t('shop.filters')}
         </h2>
         <Button variant="ghost" size="sm" onClick={onClearFilters}>
-          Reset
+          {t('shop.reset')}
         </Button>
       </div>
 
@@ -80,14 +84,14 @@ export const ShopFilters = ({
 
       <div className="mb-5 space-y-2 border-b border-border/70 pb-5">
         <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          Brand
+          {t('shop.brand')}
         </h3>
         <Select value={selectedBrand} onValueChange={onBrandChange}>
           <SelectTrigger className="w-full bg-background/70">
-            <SelectValue placeholder="Select brand" />
+            <SelectValue placeholder={t('shop.selectBrand')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Brands</SelectItem>
+            <SelectItem value="all">{t('shop.allBrands')}</SelectItem>
             {brands
               .filter((brand) => brand)
               .map((brand) => (
@@ -102,10 +106,10 @@ export const ShopFilters = ({
       <div className="mb-5 border-b border-border/70 pb-5">
         <div className="mb-3 flex items-center justify-between">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Price Range
+            {t('shop.priceRange')}
           </h3>
           <span className="text-xs font-medium text-foreground">
-            Up to ${maxPrice.toFixed(0)}
+            {t('shop.upTo')} ${maxPrice.toFixed(0)}
           </span>
         </div>
         <input
@@ -121,7 +125,7 @@ export const ShopFilters = ({
 
       <div className="space-y-3">
         <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          Quick Filters
+          {t('shop.quickFilters')}
         </h3>
         <div className="flex flex-wrap gap-2">
           <Button
@@ -130,7 +134,7 @@ export const ShopFilters = ({
             onClick={() => onInStockChange(!inStockOnly)}
             className="rounded-full"
           >
-            In Stock
+            {t('shop.inStock')}
           </Button>
           <Button
             size="sm"
@@ -138,7 +142,7 @@ export const ShopFilters = ({
             onClick={() => onDiscountChange(!discountOnly)}
             className="rounded-full"
           >
-            On Sale
+            {t('shop.onSale')}
           </Button>
           <Button
             size="sm"
@@ -146,7 +150,7 @@ export const ShopFilters = ({
             onClick={() => onNewChange(!newOnly)}
             className="rounded-full"
           >
-            New Arrivals
+            {t('shop.newArrivals')}
           </Button>
         </div>
       </div>

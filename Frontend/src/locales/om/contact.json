@@ -1,0 +1,41 @@
+{
+  "title": "Nuyi Quunnamaa",
+  "subtitle": "Gaaffii, rakkoo ajajaa, yookiin gaaffii hirmaannaa qabdaa? Gareen keenya gargaaruuf qophaa'aa dha.",
+  "fullName": "Maqaa Guutuu",
+  "email": "Imeelii",
+  "phone": "Bilbilaa",
+  "phoneOptional": "(filannoo)",
+  "subject": "Mata-duree",
+  "message": "Ergaa",
+  "sendMessage": "Ergaa Ergi",
+  "sending": "Ergaa jira...",
+  "messageSent": "Ergaan ergame!",
+  "messageSentDesc": "Sa'aatii 24 keessatti deebii siif kennina.",
+  "messageFailed": "Ergaa erguun hin milkoofne",
+  "messageFailedDesc": "Mee booda irra deebi'ii yaali.",
+  "emailLabel": "Imeelii",
+  "phoneLabel": "Bilbilaa",
+  "addressLabel": "Teessoo",
+  "workingHours": "Sa'aatii Hojii",
+  "followUs": "Nu Hordofi",
+  "contactSupport": "Deeggarsa Quunnamaa",
+  "backHome": "Fuula Jalqabaatti Deebi'i",
+  "placeholders": {
+    "name": "Lamma Girma",
+    "email": "lamma@example.com",
+    "phone": "+251 91 234 5678",
+    "subject": "Gaaffii ajajaa, gaaffii oomishaa...",
+    "message": "Ergaa kee as barreessi..."
+  },
+  "validation": {
+    "nameMin": "Maqaan yoo xiqqaate qubee 2 qabaachuu qaba",
+    "emailInvalid": "Mee imeelii sirrii galchi",
+    "subjectMin": "Mata-dureen yoo xiqqaate qubee 3 qabaachuu qaba",
+    "messageMin": "Ergaan yoo xiqqaate qubee 10 qabaachuu qaba"
+  },
+  "seo": {
+    "title": "Nuyi Quunnamaa",
+    "description": "Ajajawwan, oomishaalee yookiin hirmaannaa irratti gaaffii kamiyyuu qabaattee gareen deeggarsa keenyaatti quunnamaa.",
+    "keywords": "quunnamaa, deeggarsa, gargaarsa, tajaajila maamilaa"
+  }
+}

@@ -4,10 +4,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Product, SpecGroup, ProductStatus } from "@/lib/api";
 
+// Multilingual field schema
+const multilingualSchema = z.object({
+  am: z.string().min(1, "Amharic translation is required"),
+  en: z.string().min(1, "English translation is required"),
+  om: z.string().min(1, "Afaan Oromo translation is required"),
+});
+
+const multilingualOptionalSchema = z.object({
+  am: z.string().optional(),
+  en: z.string().optional(),
+  om: z.string().optional(),
+});
+
 const productSchema = z.object({
-  name: z.string().min(2, "Name is required"),
-  description: z.string().min(10, "Description is required"),
-  shortDescription: z.string().optional(),
+  name: multilingualSchema,
+  description: multilingualSchema,
+  shortDescription: multilingualOptionalSchema,
   price: z.coerce.number().min(0),
   discountPercent: z.coerce.number().min(0).max(100).default(0),
   stock: z.coerce.number().min(0),
@@ -53,9 +66,9 @@ export const useProductForm = (editingProduct: Product | null) => {
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      shortDescription: "",
+      name: { am: "", en: "", om: "" },
+      description: { am: "", en: "", om: "" },
+      shortDescription: { am: "", en: "", om: "" },
       price: 0,
       discountPercent: 0,
       stock: 0,
@@ -83,10 +96,28 @@ export const useProductForm = (editingProduct: Product | null) => {
     if (editingProduct) {
       const groups: SpecGroup[] = editingProduct.specification?.details || [];
 
+      // Helper to convert string or multilingual object to multilingual format
+      const toMultilingual = (field: any) => {
+        if (typeof field === "string") {
+          // Legacy data - use same value for all languages
+          return { am: field, en: field, om: field };
+        }
+        if (field && typeof field === "object" && "am" in field) {
+          // Already multilingual
+          return {
+            am: field.am || "",
+            en: field.en || "",
+            om: field.om || "",
+          };
+        }
+        // Empty/undefined
+        return { am: "", en: "", om: "" };
+      };
+
       form.reset({
-        name: editingProduct.name,
-        description: editingProduct.description,
-        shortDescription: editingProduct.shortDescription || "",
+        name: toMultilingual(editingProduct.name),
+        description: toMultilingual(editingProduct.description),
+        shortDescription: toMultilingual(editingProduct.shortDescription),
         price: editingProduct.price,
         discountPercent: editingProduct.discountPercent || 0,
         stock: editingProduct.stock,
@@ -105,9 +136,9 @@ export const useProductForm = (editingProduct: Product | null) => {
       });
     } else {
       form.reset({
-        name: "",
-        description: "",
-        shortDescription: "",
+        name: { am: "", en: "", om: "" },
+        description: { am: "", en: "", om: "" },
+        shortDescription: { am: "", en: "", om: "" },
         price: 0,
         discountPercent: 0,
         stock: 0,

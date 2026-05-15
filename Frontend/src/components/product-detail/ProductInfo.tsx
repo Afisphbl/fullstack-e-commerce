@@ -2,12 +2,16 @@ import { Badge } from "@/components/ui/badge";
 import { Star as StarIcon } from "lucide-react";
 import { Product } from "@/lib/api";
 import { formatCurrency } from "@/lib/formatters";
+import { useLocalizedField } from "@/hooks/useLocalizedField";
 
 interface ProductInfoProps {
   product: Product;
 }
 
 export const ProductInfo = ({ product }: ProductInfoProps) => {
+  const localizedName = useLocalizedField(product.name);
+  const localizedDescription = useLocalizedField(product.description);
+  
   const discount = product.originalPrice
     ? Math.round((1 - product.price / product.originalPrice) * 100)
     : 0;
@@ -16,7 +20,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
     <div>
       <p className="text-sm text-muted-foreground mb-1">{product.brand}</p>
       <h1 className="text-3xl font-display font-bold text-foreground mb-2">
-        {product.name}
+        {localizedName}
       </h1>
 
       <div className="flex items-center gap-4 mb-6">
@@ -62,7 +66,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
       </div>
 
       <div className="text-muted-foreground mb-6 leading-relaxed space-y-2">
-        {product.description
+        {localizedDescription
           ?.split(/\.(?!\d)/)
           .filter((s) => s.trim())
           .map((sentence, i) => (

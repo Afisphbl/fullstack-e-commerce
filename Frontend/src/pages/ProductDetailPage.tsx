@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   fetchProductBySlug,
@@ -23,24 +23,35 @@ import { useAuth } from "@/contexts/AuthContext";
 import { isAdminRole } from "@/lib/roles";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { useLocationCheck } from "@/hooks/useLocationCheck";
+import { SEOHead } from "@/components/shared/SEOHead";
+import {
+  buildProductStructuredData,
+  buildBreadcrumbStructuredData,
+} from "@/hooks/useSEO";
+import { useLocalizedField } from "@/hooks/useLocalizedField";
+import { useTranslation } from "react-i18next";
 
 const ProductDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
+  const { t } = useTranslation("product");
   const { isLoading: isLocationLoading } = useLocationCheck();
   const [product, setProduct] = useState<Product | null>(null);
   const [related, setRelated] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [reviews, setReviews] = useState<Review[]>([]);
 
-  usePageTitle(product?.name || "Product Details");
+  // Localized product name / description for SEO
+  const localizedName = useLocalizedField(product?.name);
+  const localizedDescription = useLocalizedField(product?.description);
+
+  usePageTitle(localizedName || t("product"));
   const [totalReviews, setTotalReviews] = useState(0);
   const [reviewPage, setReviewPage] = useState(1);
   const reviewLimit = 10;
 
   const loadProductDetails = useCallback(async () => {
     if (!slug) {
-      // Clear stale state when slug is missing
       setProduct(null);
       setRelated([]);
       setIsLoading(false);
@@ -51,7 +62,6 @@ const ProductDetailPage = () => {
     try {
       const p = await fetchProductBySlug(slug);
       if (!p) {
-        // Clear stale state when product not found
         setProduct(null);
         setRelated([]);
         return;
@@ -59,7 +69,6 @@ const ProductDetailPage = () => {
 
       setProduct(p);
 
-      // Fetch related products from the same category
       const getCategoryId = (cat: Category | string | null): string => {
         if (!cat) return "";
         if (typeof cat === "string") return cat;
@@ -85,7 +94,7 @@ const ProductDetailPage = () => {
 
           return { item, score };
         })
-        .filter((entry) => entry.score > 0) // Only show items with some similarity
+        .filter((entry) => entry.score > 0)
         .sort(
           (a, b) =>
             b.score - a.score ||
@@ -102,7 +111,6 @@ const ProductDetailPage = () => {
 
   const loadReviews = useCallback(async () => {
     if (!slug || !product) {
-      // Clear reviews when slug is missing or product not loaded
       setReviews([]);
       setTotalReviews(0);
       return;
@@ -123,24 +131,44 @@ const ProductDetailPage = () => {
     }
   }, [slug, product, reviewPage, reviewLimit]);
 
-  // Load product details when slug changes
   useEffect(() => {
     if (slug) {
       loadProductDetails();
     }
   }, [slug, loadProductDetails]);
 
-  // Load reviews when product is loaded or review page changes
   useEffect(() => {
     if (product) {
       loadReviews();
     }
   }, [product, loadReviews]);
 
+  // Build JSON-LD structured data for the product
+  const structuredData = useMemo(() => {
+    if (!product) return undefined;
+    return [
+      buildProductStructuredData({
+        name: localizedName,
+        description: localizedDescription,
+        images: product.images,
+        price: product.price,
+        brand: product.brand,
+        ratingsAverage: product.ratingsAverage,
+        ratingsCount: product.ratingsQuantity,
+        stock: product.stock,
+        slug: product.slug,
+      }),
+      buildBreadcrumbStructuredData([
+        { name: "Home", url: window.location.origin },
+        { name: "Shop", url: `${window.location.origin}/shop` },
+        { name: localizedName, url: window.location.href },
+      ]),
+    ];
+  }, [product, localizedName, localizedDescription]);
+
   const existingReview = reviews.find((r) => r.user?._id === user?._id);
 
   const handleReviewSubmitted = async () => {
-    // Reload reviews after submission
     await loadReviews();
   };
 
@@ -149,7 +177,7 @@ const ProductDetailPage = () => {
   if (!product) {
     return (
       <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">
-        Product not found.
+        {t("noProductsFound")}
       </div>
     );
   }
@@ -158,56 +186,65 @@ const ProductDetailPage = () => {
   if (product.stock === 0 && !isAdminRole(user?.role)) {
     return (
       <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">
-        Product not found.
+        {t("noProductsFound")}
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Link
-        to="/shop"
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-6"
-      >
-        <ChevronLeft className="h-4 w-4" /> Back to Shop
-      </Link>
+    <>
+      <SEOHead
+        title={localizedName}
+        description={localizedDescription}
+        image={product.images?.[0]}
+        type="product"
+        structuredData={structuredData}
+      />
+      <div className="container mx-auto px-4 py-8">
+        <Link
+          to="/shop"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-6"
+        >
+          <ChevronLeft className="h-4 w-4" /> {t("previous", { ns: "common" })}
+        </Link>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-        <ProductImageGallery
-          images={product.images}
-          productName={product.name}
-        />
-
-        <div>
-          <ProductInfo product={product} />
-          <ProductActions product={product} />
-          <ProductSpecifications product={product} />
-        </div>
-      </div>
-
-      {/* Reviews Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16">
-        <div className="lg:col-span-2 space-y-8">
-          <ReviewsList
-            reviews={reviews}
-            totalReviews={totalReviews}
-            currentPage={reviewPage}
-            reviewLimit={reviewLimit}
-            onPageChange={setReviewPage}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+          <ProductImageGallery
+            images={product.images}
+            productName={product.name}
           />
+
+          <div>
+            <ProductInfo product={product} />
+            <ProductActions product={product} />
+            <ProductSpecifications product={product} />
+          </div>
         </div>
 
-        <div className="space-y-6">
-          <ReviewForm
-            productId={product.id}
-            existingReview={existingReview}
-            onReviewSubmitted={handleReviewSubmitted}
-          />
+        {/* Reviews Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16">
+          <div className="lg:col-span-2 space-y-8">
+            <ReviewsList
+              reviews={reviews}
+              totalReviews={totalReviews}
+              currentPage={reviewPage}
+              reviewLimit={reviewLimit}
+              onPageChange={setReviewPage}
+            />
+          </div>
+
+          <div className="space-y-6">
+            <ReviewForm
+              productId={product.id}
+              existingReview={existingReview}
+              onReviewSubmitted={handleReviewSubmitted}
+            />
+          </div>
         </div>
+
+        <RelatedProducts products={related} />
       </div>
-
-      <RelatedProducts products={related} />
-    </div>
+    </>
   );
 };
 

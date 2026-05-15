@@ -21,6 +21,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { useTranslation } from "react-i18next";
+import { useLocalizedField } from "@/hooks/useLocalizedField";
 
 // Skeleton loader component for cart items
 const CartItemSkeleton = () => (
@@ -58,6 +60,8 @@ export const CartDrawer = () => {
     isLoading,
   } = useCart();
 
+  const { t } = useTranslation('cart');
+  const getLocalizedField = useLocalizedField();
   const [couponInput, setCouponInput] = useState("");
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
 
@@ -89,13 +93,13 @@ export const CartDrawer = () => {
       >
         <SheetHeader className="border-b border-border p-6 pb-4 text-left">
           <SheetTitle className="flex items-center justify-between">
-            <span>Your Cart</span>
+            <span>{t('yourCart')}</span>
             <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-              {itemCount} items
+              {itemCount} {t('items')}
             </span>
           </SheetTitle>
           <SheetDescription>
-            Review your items and checkout when you are ready.
+            {t('reviewItems')}
           </SheetDescription>
         </SheetHeader>
 
@@ -104,7 +108,7 @@ export const CartDrawer = () => {
             className="flex-1 space-y-3 overflow-y-auto px-4 py-4"
             role="status"
             aria-live="polite"
-            aria-label="Loading cart items"
+            aria-label={t('loadingCart')}
           >
             <CartItemSkeleton key="skeleton-1" />
             <CartItemSkeleton key="skeleton-2" />
@@ -114,13 +118,13 @@ export const CartDrawer = () => {
           <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
             <ShoppingBag className="mb-4 h-14 w-14 text-muted-foreground" />
             <p className="mb-2 text-lg font-semibold text-foreground">
-              Your cart is empty
+              {t('cartEmpty')}
             </p>
             <p className="mb-6 text-sm text-muted-foreground">
-              Add products to open up your checkout flow.
+              {t('addProducts')}
             </p>
             <Button onClick={closeCart} asChild>
-              <Link to="/shop">Browse products</Link>
+              <Link to="/shop">{t('browseProducts')}</Link>
             </Button>
           </div>
         ) : (
@@ -139,7 +143,7 @@ export const CartDrawer = () => {
                     >
                       <img
                         src={product.image}
-                        alt={product.name}
+                        alt={getLocalizedField(product.name)}
                         className="h-full w-full object-cover"
                       />
                     </Link>
@@ -150,12 +154,12 @@ export const CartDrawer = () => {
                           onClick={closeCart}
                           className="line-clamp-2 text-sm font-semibold text-foreground hover:text-primary transition-colors duration-200"
                         >
-                          {product.name}
+                          {getLocalizedField(product.name)}
                         </Link>
                         <button
                           type="button"
                           onClick={() => removeFromCart(product.id)}
-                          aria-label={`Remove ${product.name} from cart`}
+                          aria-label={t('removeItem', { name: getLocalizedField(product.name) })}
                           className="text-muted-foreground transition-all duration-200 hover:text-destructive hover:scale-110"
                         >
                           <X className="h-4 w-4" />
@@ -171,7 +175,7 @@ export const CartDrawer = () => {
                             onClick={() =>
                               updateQuantity(product.id, quantity - 1)
                             }
-                            aria-label={`Decrease quantity of ${product.name}`}
+                            aria-label={t('decreaseQuantity', { name: getLocalizedField(product.name) })}
                             className="p-1.5 text-muted-foreground hover:text-foreground transition-colors duration-150"
                           >
                             <Minus className="h-3.5 w-3.5" />
@@ -179,7 +183,7 @@ export const CartDrawer = () => {
                           <span
                             className="px-2 text-sm font-medium text-foreground transition-all duration-300"
                             aria-live="polite"
-                            aria-label={`Quantity: ${quantity}`}
+                            aria-label={t('quantity', { quantity })}
                           >
                             {quantity}
                           </span>
@@ -188,7 +192,7 @@ export const CartDrawer = () => {
                             onClick={() =>
                               updateQuantity(product.id, quantity + 1)
                             }
-                            aria-label={`Increase quantity of ${product.name}`}
+                            aria-label={t('increaseQuantity', { name: getLocalizedField(product.name) })}
                             className="p-1.5 text-muted-foreground hover:text-foreground transition-colors duration-150"
                           >
                             <Plus className="h-3.5 w-3.5" />
@@ -197,7 +201,7 @@ export const CartDrawer = () => {
                         <span
                           className="text-sm font-bold text-foreground transition-all duration-300"
                           aria-live="polite"
-                          aria-label={`Item total: ${formatCurrency(product.price * quantity)}`}
+                          aria-label={t('itemTotal', { total: formatCurrency(product.price * quantity) })}
                         >
                           {formatCurrency(product.price * quantity)}
                         </span>
@@ -217,7 +221,7 @@ export const CartDrawer = () => {
                       <Tag className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                       <Input
                         type="text"
-                        placeholder="Enter coupon code"
+                        placeholder={t('enterCoupon')}
                         value={couponInput}
                         onChange={(e) => setCouponInput(e.target.value)}
                         onKeyDown={(e) => {
@@ -237,7 +241,7 @@ export const CartDrawer = () => {
                       {isApplyingCoupon ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
-                        "Apply"
+                        t('apply')
                       )}
                     </Button>
                   </div>
@@ -258,37 +262,37 @@ export const CartDrawer = () => {
                     onClick={handleRemoveCoupon}
                     className="text-sm text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200"
                   >
-                    Remove
+                    {t('remove')}
                   </button>
                 </div>
               )}
 
               <div className="mb-3 space-y-1.5 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="text-muted-foreground">{t('subtotal')}</span>
                   <span className="text-foreground">
                     {formatCurrency(subtotal || total)}
                   </span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-green-600 dark:text-green-400">
-                    <span>Discount</span>
+                    <span>{t('discount')}</span>
                     <span>-{formatCurrency(discount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Shipping</span>
+                  <span className="text-muted-foreground">{t('shipping')}</span>
                   <span className="text-foreground">
-                    {shipping === 0 ? "Free" : formatCurrency(shipping)}
+                    {shipping === 0 ? t('free') : formatCurrency(shipping)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Tax</span>
+                  <span className="text-muted-foreground">{t('tax')}</span>
                   <span className="text-foreground">{formatCurrency(tax)}</span>
                 </div>
               </div>
               <div className="mb-4 flex items-center justify-between border-t border-border pt-3">
-                <span className="font-semibold text-foreground">Total</span>
+                <span className="font-semibold text-foreground">{t('total')}</span>
                 <span className="text-lg font-bold text-foreground">
                   {formatCurrency(grandTotal)}
                 </span>
@@ -299,10 +303,10 @@ export const CartDrawer = () => {
                   className="flex-1"
                   onClick={clearCart}
                 >
-                  <Trash2 className="mr-2 h-4 w-4" /> Clear
+                  <Trash2 className="mr-2 h-4 w-4" /> {t('clear')}
                 </Button>
                 <Button asChild className="flex-1" onClick={closeCart}>
-                  <Link to="/checkout">Checkout</Link>
+                  <Link to="/checkout">{t('checkout')}</Link>
                 </Button>
               </div>
             </div>

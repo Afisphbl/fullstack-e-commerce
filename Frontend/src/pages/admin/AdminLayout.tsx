@@ -14,6 +14,7 @@ import { apiFetch, removeAuthToken } from "@/lib/api-client";
 import { getUnreadMessagesCount } from "@/lib/api";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import {
   LayoutDashboard,
   Package,
@@ -244,6 +245,7 @@ const AdminLayout = () => {
               </h1>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
+              <LanguageSwitcher />
               <Button
                 variant="outline"
                 size="icon"

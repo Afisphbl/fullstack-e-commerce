@@ -2,6 +2,7 @@
 
 const mongoose = require("mongoose");
 const validator = require("validator");
+const { multilingualString } = require("../utils/multilingualSchema");
 
 const contactSettingsSchema = new mongoose.Schema(
   {
@@ -17,18 +18,8 @@ const contactSettingsSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
-    contactAddress: {
-      type: String,
-      trim: true,
-      maxlength: [300, "Address must be at most 300 characters."],
-      default: "",
-    },
-    workingHours: {
-      type: String,
-      trim: true,
-      maxlength: [500, "Working hours must be at most 500 characters."],
-      default: "",
-    },
+    contactAddress: multilingualString(false, 0, 300),
+    workingHours: multilingualString(false, 0, 500),
     mapLat: {
       type: Number,
       min: -90,

@@ -11,10 +11,19 @@ import {
 } from "lucide-react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { useSiteSettings } from "@/contexts/SiteSettingsContext";
+import { useLocalizedField } from "@/hooks/useLocalizedField";
+import { useTranslation } from "react-i18next";
 
 const AboutPage = () => {
   usePageTitle("About Us");
+  const { t } = useTranslation();
   const { settings } = useSiteSettings();
+  
+  // Get localized about content
+  const localizedAboutEyebrow = useLocalizedField(settings.aboutEyebrow);
+  const localizedAboutTitle = useLocalizedField(settings.aboutTitle);
+  const localizedAboutHighlight = useLocalizedField(settings.aboutHighlight);
+  const localizedAboutIntro = useLocalizedField(settings.aboutIntro);
 
   return (
     <div>
@@ -23,14 +32,14 @@ const AboutPage = () => {
           <div className='grid grid-cols-1 items-center gap-10 lg:grid-cols-2'>
             <div>
               <p className='mb-3 text-xs uppercase tracking-[0.2em] text-accent'>
-                {settings.aboutEyebrow}
+                {localizedAboutEyebrow}
               </p>
               <h1 className='mb-4 text-4xl font-display font-bold md:text-5xl'>
-                {settings.aboutTitle}{" "}
-                <span className='text-gradient'>{settings.aboutHighlight}</span>
+                {localizedAboutTitle}{" "}
+                <span className='text-gradient'>{localizedAboutHighlight}</span>
               </h1>
               <p className='text-lg text-primary-foreground/75 whitespace-pre-wrap'>
-                {settings.aboutIntro}
+                {localizedAboutIntro}
               </p>
             </div>
             <div className='overflow-hidden rounded-2xl border border-white/20 shadow-2xl'>
@@ -53,13 +62,14 @@ const AboutPage = () => {
             {settings.aboutStats?.map((stat, idx) => {
               const icons = [Users, Globe, Zap, Award];
               const Icon = icons[idx % icons.length];
+              const localizedLabel = useLocalizedField(stat.label);
               return (
                 <div key={idx}>
                   <Icon className='h-8 w-8 text-primary mx-auto mb-3' />
                   <p className='text-3xl font-display font-bold text-foreground'>
                     {stat.value}
                   </p>
-                  <p className='text-sm text-muted-foreground'>{stat.label}</p>
+                  <p className='text-sm text-muted-foreground'>{localizedLabel}</p>
                 </div>
               );
             })}
@@ -71,11 +81,10 @@ const AboutPage = () => {
         <div className='container mx-auto px-4'>
           <div className='mx-auto mb-10 max-w-2xl text-center'>
             <h2 className='mb-3 text-2xl font-display font-bold text-foreground'>
-              Our Core Values
+              {t('about.coreValues')}
             </h2>
             <p className='text-muted-foreground'>
-              The principles that shape every product, partnership, and customer
-              experience at VoltEdge.
+              {t('about.coreValuesDesc')}
             </p>
           </div>
 
@@ -83,6 +92,8 @@ const AboutPage = () => {
             {settings.aboutValues?.map((val, idx) => {
               const icons = [ShieldCheck, Lightbulb, Handshake, Rocket];
               const Icon = icons[idx % icons.length];
+              const localizedTitle = useLocalizedField(val.title);
+              const localizedDesc = useLocalizedField(val.desc);
               return (
                 <div
                   key={idx}
@@ -92,10 +103,10 @@ const AboutPage = () => {
                     <Icon className='h-5 w-5 text-primary' />
                   </div>
                   <h3 className='mb-1 font-display font-semibold text-foreground'>
-                    {val.title}
+                    {localizedTitle}
                   </h3>
                   <p className='text-sm text-muted-foreground whitespace-pre-wrap'>
-                    {val.desc}
+                    {localizedDesc}
                   </p>
                 </div>
               );
@@ -104,21 +115,21 @@ const AboutPage = () => {
 
           <div className='mt-12 rounded-2xl border border-border bg-background p-6 md:p-8'>
             <h3 className='mb-5 text-xl font-display font-bold text-foreground'>
-              Strategic Pillars
+              {t('about.strategicPillars')}
             </h3>
             <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
               {[
                 {
-                  title: "Curated Selection",
-                  text: "Only high-value devices with practical, real-world performance.",
+                  title: t('about.pillar1Title'),
+                  text: t('about.pillar1Text'),
                 },
                 {
-                  title: "Premium Support",
-                  text: "Fast and informed pre-sale and post-sale support for every customer.",
+                  title: t('about.pillar2Title'),
+                  text: t('about.pillar2Text'),
                 },
                 {
-                  title: "Reliable Fulfillment",
-                  text: "Strong logistics operations with dependable and traceable delivery.",
+                  title: t('about.pillar3Title'),
+                  text: t('about.pillar3Text'),
                 },
               ].map((pillar) => (
                 <div

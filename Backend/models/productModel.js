@@ -3,22 +3,14 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const { PRODUCT_STATUS } = require('../constants/enums');
+const { multilingualString, multilingualStringOptional } = require('../utils/multilingualSchema');
 
 const productSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: [true, 'Product name is required.'],
-      trim: true,
-      maxlength: [200, 'Product name must be at most 200 characters.'],
-    },
+    name: multilingualString(true, 2, 200),
     slug: { type: String, index: true },
-    description: {
-      type: String,
-      required: [true, 'Product description is required.'],
-      trim: true,
-    },
-    shortDescription: { type: String, trim: true, maxlength: 300 },
+    description: multilingualString(true, 10),
+    shortDescription: multilingualStringOptional(300),
     price: {
       type: Number,
       required: [true, 'Product price is required.'],
@@ -99,7 +91,11 @@ productSchema.virtual('inStock').get(function () {
 // ─── Pre-save middleware ──────────────────────────────────────────────────────
 productSchema.pre('save', function (next) {
   if (this.isModified('name')) {
-    this.slug = slugify(this.name, { lower: true, strict: true });
+    // Use English name for slug, fallback to Amharic or Afaan Oromo
+    const nameForSlug = typeof this.name === 'object' 
+      ? (this.name.en || this.name.am || this.name.om)
+      : this.name;
+    this.slug = slugify(nameForSlug, { lower: true, strict: true });
   }
 
   // Sync discount price if percentage is provided or changed
@@ -124,6 +120,16 @@ productSchema.pre(/^find/, function (next) {
     select: '-product -__v',
   });
   next();
+});
+
+// ─── Text search index for multilingual fields ────────────────────────────────
+productSchema.index({ 
+  'name.am': 'text', 
+  'name.en': 'text', 
+  'name.om': 'text',
+  'description.am': 'text',
+  'description.en': 'text',
+  'description.om': 'text'
 });
 
 const Product = mongoose.model('Product', productSchema);

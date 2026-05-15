@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { OptimizedImage } from "@/components/shared/OptimizedImage";
 import { formatCurrency } from "@/lib/formatters";
 import { useLocationCheck } from "@/hooks/useLocationCheck";
+import { useLocalizedField } from "@/hooks/useLocalizedField";
 
 interface ProductCardProps {
   product: Product;
@@ -28,6 +29,9 @@ export const ProductCard = ({
   const { isFavorite, toggleFavorite } = useFavorites();
   const { isInCompare, addToCompare, removeFromCompare } = useCompare();
   const { isDeliveryAvailable, isLoading: isLocChecking } = useLocationCheck();
+  
+  // Get localized product name
+  const localizedName = useLocalizedField(product.name);
 
   // Hide zero-stock products from non-admin users
   if (product.stock === 0 && !isAdminRole(user?.role)) {
@@ -50,7 +54,7 @@ export const ProductCard = ({
         <Link to={`/product/${product.slug}`}>
           <OptimizedImage
             src={product.image}
-            alt={product.name}
+            alt={localizedName}
             widths={[240, 360, 480, 640]}
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
             optimizeWidth={480}
@@ -116,7 +120,7 @@ export const ProductCard = ({
         </div>
         <Link to={`/product/${product.slug}`}>
           <h3 className="mb-2 line-clamp-2 text-sm font-semibold text-foreground transition-colors hover:text-primary">
-            {product.name}
+            {localizedName}
           </h3>
         </Link>
         <div className="mt-auto flex items-center justify-between gap-2">
