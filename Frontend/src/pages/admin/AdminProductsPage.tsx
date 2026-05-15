@@ -10,9 +10,11 @@ import {
 } from "@/components/admin/products";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { ShopPagination } from "@/components/shop/ShopPagination";
+import { useTranslation } from "react-i18next";
 
 const AdminProductsPage = () => {
-  usePageTitle("Admin - Products");
+  const { t } = useTranslation("admin");
+  usePageTitle(`${t("products")} - Admin`);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("all");

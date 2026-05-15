@@ -8,12 +8,13 @@ import { Field } from "./Field";
 import { toast } from "sonner";
 import { apiFetch } from "@/lib/api-client";
 import { UploadResponse } from "@/lib/api";
+import { useTranslation } from "react-i18next";
 
 interface HeroSettingsProps {
   draft: SiteSettings;
   update: <K extends keyof SiteSettings>(
     key: K,
-    value: SiteSettings[K],
+    value: SiteSettings[K]
   ) => void;
 }
 
@@ -29,6 +30,7 @@ const MultilingualField = ({
   onChange: (val: { am: string; en: string; om: string }) => void;
   hint?: string;
 }) => {
+  const { t } = useTranslation("admin");
   const multiValue =
     typeof value === "string"
       ? { am: value, en: value, om: value }
@@ -39,7 +41,7 @@ const MultilingualField = ({
       <div className="space-y-3 border rounded-lg p-4 bg-muted/30">
         <div>
           <label className="text-xs text-muted-foreground font-normal block mb-1.5">
-            አማርኛ (Amharic)
+            {t("amharic")}
           </label>
           <Input
             value={multiValue.am}
@@ -49,7 +51,7 @@ const MultilingualField = ({
         </div>
         <div>
           <label className="text-xs text-muted-foreground font-normal block mb-1.5">
-            English
+            {t("english")}
           </label>
           <Input
             value={multiValue.en}
@@ -59,7 +61,7 @@ const MultilingualField = ({
         </div>
         <div>
           <label className="text-xs text-muted-foreground font-normal block mb-1.5">
-            Afaan Oromo
+            {t("afaanOromo")}
           </label>
           <Input
             value={multiValue.om}
@@ -83,6 +85,7 @@ const MultilingualTextareaField = ({
   onChange: (val: { am: string; en: string; om: string }) => void;
   hint?: string;
 }) => {
+  const { t } = useTranslation("admin");
   const multiValue =
     typeof value === "string"
       ? { am: value, en: value, om: value }
@@ -93,7 +96,7 @@ const MultilingualTextareaField = ({
       <div className="space-y-3 border rounded-lg p-4 bg-muted/30">
         <div>
           <label className="text-xs text-muted-foreground font-normal block mb-1.5">
-            አማርኛ (Amharic)
+            {t("amharic")}
           </label>
           <Textarea
             value={multiValue.am}
@@ -103,7 +106,7 @@ const MultilingualTextareaField = ({
         </div>
         <div>
           <label className="text-xs text-muted-foreground font-normal block mb-1.5">
-            English
+            {t("english")}
           </label>
           <Textarea
             value={multiValue.en}
@@ -113,7 +116,7 @@ const MultilingualTextareaField = ({
         </div>
         <div>
           <label className="text-xs text-muted-foreground font-normal block mb-1.5">
-            Afaan Oromo
+            {t("afaanOromo")}
           </label>
           <Textarea
             value={multiValue.om}
@@ -138,6 +141,7 @@ const MultilingualSlideInput = ({
   onChange: (val: { am: string; en: string; om: string }) => void;
   placeholder?: string;
 }) => {
+  const { t } = useTranslation("admin");
   const multiValue =
     typeof value === "string"
       ? { am: value, en: value, om: value }
@@ -148,19 +152,19 @@ const MultilingualSlideInput = ({
       <Label className="text-xs text-muted-foreground">{label}</Label>
       <div className="space-y-2 border rounded-lg p-3 bg-muted/20">
         <Input
-          placeholder={`${placeholder} (አማርኛ)`}
+          placeholder={`${placeholder} (${t("amharic")})`}
           value={multiValue.am}
           onChange={(e) => onChange({ ...multiValue, am: e.target.value })}
           className="text-sm font-sans"
         />
         <Input
-          placeholder={`${placeholder} (English)`}
+          placeholder={`${placeholder} (${t("english")})`}
           value={multiValue.en}
           onChange={(e) => onChange({ ...multiValue, en: e.target.value })}
           className="text-sm"
         />
         <Input
-          placeholder={`${placeholder} (Afaan Oromo)`}
+          placeholder={`${placeholder} (${t("afaanOromo")})`}
           value={multiValue.om}
           onChange={(e) => onChange({ ...multiValue, om: e.target.value })}
           className="text-sm"
@@ -171,38 +175,40 @@ const MultilingualSlideInput = ({
 };
 
 export const HeroSettings = ({ draft, update }: HeroSettingsProps) => {
+  const { t } = useTranslation("admin");
+
   const updateSlide = (idx: number, patch: Partial<HeroSlide>) => {
     const next = [...draft.heroSlides];
-    next[idx] = { ...next[idx], ...patch };
+    next[idx] = { ...next[idx], ...patch } as HeroSlide;
     update("heroSlides", next);
   };
 
   const addSlide = () =>
     update("heroSlides", [
       ...draft.heroSlides,
-      { 
-        image: "", 
-        title: { am: "አዲስ ስላይድ", en: "New Slide", om: "Slide Haaraa" }, 
-        subtitle: { am: "", en: "", om: "" } 
+      {
+        image: "",
+        title: { am: "አዲስ ስላይድ", en: "New Slide", om: "Slide Haaraa" },
+        subtitle: { am: "", en: "", om: "" },
       },
     ]);
 
   const removeSlide = (idx: number) =>
     update(
       "heroSlides",
-      draft.heroSlides.filter((_, i) => i !== idx),
+      draft.heroSlides.filter((_, i) => i !== idx)
     );
 
   const handleSlideImageUpload = async (
     idx: number,
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = e.target.files?.[0];
     if (file) {
       const formData = new FormData();
       formData.append("image", file);
 
-      const toastId = toast.loading("Uploading image...");
+      const toastId = toast.loading(t("uploadingImage"));
       try {
         const response = await apiFetch<UploadResponse>("/api/v1/upload", {
           method: "POST",
@@ -211,105 +217,109 @@ export const HeroSettings = ({ draft, update }: HeroSettingsProps) => {
 
         if (response.status === "success") {
           updateSlide(idx, { image: response.url });
-          toast.success("Image uploaded successfully!", { id: toastId });
+          toast.success(t("imageUploaded"), { id: toastId });
         }
       } catch (error) {
         const err = error as Error;
-        toast.error(err.message || "Failed to upload image", { id: toastId });
+        toast.error(err.message || t("uploadError"), { id: toastId });
       }
     }
   };
 
   return (
-    <div className='space-y-6'>
+    <div className="space-y-6">
       {/* Hero Content */}
-      <div className='space-y-4'>
-        <h3 className='text-lg font-semibold'>Homepage Hero Content</h3>
-        <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-foreground">
+          {t("homepageHeroContent")}
+        </h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <MultilingualField
-            label='Eyebrow / Badge'
+            label={t("heroEyebrow")}
             value={draft.heroEyebrow}
             onChange={(val) => update("heroEyebrow", val)}
           />
           <MultilingualField
-            label='CTA Button Text'
+            label={t("heroCtaText")}
             value={draft.heroCtaText}
             onChange={(val) => update("heroCtaText", val)}
           />
           <MultilingualField
-            label='Headline (start)'
+            label={t("heroTitleStart")}
             value={draft.heroTitle}
             onChange={(val) => update("heroTitle", val)}
           />
           <MultilingualField
-            label='Highlighted Word'
-            hint='Rendered with gradient.'
+            label={t("heroHighlight")}
+            hint={t("heroHighlightHint")}
             value={draft.heroHighlight}
             onChange={(val) => update("heroHighlight", val)}
           />
-          <Field label='CTA Link'>
+          <Field label={t("heroCtaLink")}>
             <Input
               value={draft.heroCtaLink}
               onChange={(e) => update("heroCtaLink", e.target.value)}
-              placeholder='/shop'
-              className='bg-background'
+              placeholder="/shop"
+              className="bg-background"
             />
           </Field>
         </div>
         <MultilingualTextareaField
-          label='Subtitle'
+          label={t("heroSubtitle")}
           value={draft.heroSubtitle}
           onChange={(val) => update("heroSubtitle", val)}
         />
       </div>
 
       {/* Hero Slideshow */}
-      <div className='space-y-4 grid place-content-center'>
-        <h3 className='text-lg font-semibold'>Hero Slideshow</h3>
-        <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-foreground">
+          {t("heroSlideshow")}
+        </h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {draft.heroSlides.map((s, i) => (
             <div
               key={i}
-              className='rounded-lg border border-border bg-background p-4'
+              className="rounded-lg border border-border bg-background p-4"
             >
-              <div className='mb-3 flex items-center justify-between'>
-                <span className='text-xs font-semibold text-muted-foreground'>
-                  SLIDE {i + 1}
+              <div className="mb-3 flex items-center justify-between">
+                <span className="text-xs font-semibold text-muted-foreground uppercase">
+                  {t("slideNumber", { number: i + 1 })}
                 </span>
                 <Button
-                  type='button'
-                  variant='ghost'
-                  size='sm'
+                  type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => removeSlide(i)}
-                  className='text-destructive'
+                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
                 >
-                  <Trash2 className='h-3.5 w-3.5' />
+                  <Trash2 className="h-3.5 w-3.5" />
                 </Button>
               </div>
-              <div className='grid grid-cols-1 gap-4'>
+              <div className="grid grid-cols-1 gap-4">
                 {/* Multilingual Text Fields */}
-                <div className='space-y-3'>
+                <div className="space-y-3">
                   <MultilingualSlideInput
-                    label='Title'
+                    label={t("title")}
                     value={s.title}
                     onChange={(val) => updateSlide(i, { title: val })}
-                    placeholder='Slide title'
+                    placeholder={t("slideTitlePlaceholder")}
                   />
                   <MultilingualSlideInput
-                    label='Subtitle'
+                    label={t("subtitle")}
                     value={s.subtitle}
                     onChange={(val) => updateSlide(i, { subtitle: val })}
-                    placeholder='Slide subtitle'
+                    placeholder={t("slideSubtitlePlaceholder")}
                   />
                 </div>
 
                 {/* Image Upload */}
                 <div>
-                  <Label className='text-xs text-muted-foreground mb-2 block'>
-                    Slide Image
+                  <Label className="text-xs text-muted-foreground mb-2 block">
+                    {t("slideImage")}
                   </Label>
                   <div
-                    className='relative group aspect-video rounded-lg border-2 border-dashed border-border/50 bg-muted/30 flex flex-col items-center justify-center overflow-hidden hover:border-primary/50 transition-colors cursor-pointer'
+                    className="relative group aspect-video rounded-lg border-2 border-dashed border-border/50 bg-muted/30 flex flex-col items-center justify-center overflow-hidden hover:border-primary/50 transition-colors cursor-pointer"
                     onClick={() =>
                       document.getElementById(`slide-upload-${i}`)?.click()
                     }
@@ -318,42 +328,42 @@ export const HeroSettings = ({ draft, update }: HeroSettingsProps) => {
                       <>
                         <img
                           src={s.image}
-                          alt=''
-                          className='w-full h-full object-cover'
+                          alt=""
+                          className="w-full h-full object-cover"
                         />
-                        <div className='absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center'>
-                          <p className='text-white text-xs font-medium'>
-                            Change
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <p className="text-white text-xs font-medium">
+                            {t("change")}
                           </p>
                         </div>
                         <button
-                          type='button'
-                          aria-label='Remove slide image'
+                          type="button"
+                          aria-label={t("removeSlideImage")}
                           onClick={(e) => {
                             e.stopPropagation();
                             updateSlide(i, { image: "" });
                           }}
-                          className='absolute top-1 right-1 p-1 bg-background/80 backdrop-blur rounded-full text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors'
+                          className="absolute top-1 right-1 p-1 bg-background/80 backdrop-blur rounded-full text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors"
                         >
-                          <X className='h-3 w-3' />
+                          <X className="h-3 w-3" />
                         </button>
                       </>
                     ) : (
                       <>
-                        <div className='p-2 rounded-full bg-background shadow-sm border border-border mb-1'>
-                          <Upload className='h-3 w-3 text-muted-foreground' />
+                        <div className="p-2 rounded-full bg-background shadow-sm border border-border mb-1">
+                          <Upload className="h-3 w-3 text-muted-foreground" />
                         </div>
-                        <p className='text-xs font-medium text-foreground'>
-                          Upload
+                        <p className="text-xs font-medium text-foreground">
+                          {t("upload")}
                         </p>
                       </>
                     )}
                   </div>
                   <Input
                     id={`slide-upload-${i}`}
-                    type='file'
-                    accept='image/*'
-                    className='hidden'
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
                     onChange={(e) => handleSlideImageUpload(i, e)}
                   />
                 </div>
@@ -361,9 +371,16 @@ export const HeroSettings = ({ draft, update }: HeroSettingsProps) => {
             </div>
           ))}
         </div>
-        <Button className='' type='button' variant='outline' onClick={addSlide}>
-          <Plus className='h-4 w-4 mr-2' /> Add Slide
-        </Button>
+        <div className="flex justify-center mt-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={addSlide}
+            className="rounded-xl"
+          >
+            <Plus className="h-4 w-4 mr-2" /> {t("addSlide")}
+          </Button>
+        </div>
       </div>
     </div>
   );

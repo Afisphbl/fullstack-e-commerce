@@ -3,15 +3,20 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
-import { ProfileSidebar, AccountTab } from "@/components/profile/ProfileSidebar";
+import {
+  ProfileSidebar,
+  AccountTab,
+} from "@/components/profile/ProfileSidebar";
 import { ProfileInfoForm } from "@/components/profile/ProfileInfoForm";
 import { PasswordChangeForm } from "@/components/profile/PasswordChangeForm";
 import { OrdersList } from "@/components/profile/OrdersList";
 import { WishlistGrid } from "@/components/profile/WishlistGrid";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { useTranslation } from "react-i18next";
 
 const ProfilePage = () => {
-  usePageTitle("My Account");
+  const { t } = useTranslation("profile");
+  usePageTitle(t("myAccount"));
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<AccountTab>("profile");
 
@@ -33,10 +38,12 @@ const ProfilePage = () => {
     // Normalize tab based on validity and user role
     if (tab === "profile" || tab === "password") {
       normalizedTab = tab;
-    } else if ((tab === "orders" || tab === "wishlist") && user.role === "user") {
+    } else if (
+      (tab === "orders" || tab === "wishlist") &&
+      user.role === "user"
+    ) {
       normalizedTab = tab;
     }
-    // Any unsupported or unauthorized tab defaults to "profile"
 
     setActiveTab(normalizedTab);
   }, [searchParams, user]);
@@ -44,7 +51,10 @@ const ProfilePage = () => {
   if (isLoading || !user) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <LoadingSpinner size="lg" label="Loading your profile details..." />
+        <LoadingSpinner
+          size="lg"
+          label={t("loadingProfile") || "Loading profile..."}
+        />
       </div>
     );
   }

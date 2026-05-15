@@ -1,19 +1,21 @@
 import { Product } from "@/lib/api";
 import { useTranslation } from "react-i18next";
-import { useLocalizedField } from "@/hooks/useLocalizedField";
+import { extractLocalizedField } from "@/hooks/useLocalizedField";
 
 interface ProductSpecificationsProps {
   product: Product;
 }
 
-export const ProductSpecifications = ({ product }: ProductSpecificationsProps) => {
-  const { t } = useTranslation('product');
-  const getLocalizedField = useLocalizedField();
-  
+export const ProductSpecifications = ({
+  product,
+}: ProductSpecificationsProps) => {
+  const { t, i18n } = useTranslation("product");
+  const lang = i18n.language as "am" | "en" | "om";
+
   return (
     <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
       <h3 className="text-xl font-display font-semibold text-foreground mb-6">
-        {t('specifications')}
+        {t("specifications")}
       </h3>
       <div className="space-y-6">
         {product.specification ? (
@@ -21,7 +23,7 @@ export const ProductSpecifications = ({ product }: ProductSpecificationsProps) =
           product.specification.details.map((group, groupIdx) => (
             <div key={groupIdx} className="space-y-3">
               <h4 className="text-sm font-bold text-primary uppercase tracking-wider">
-                {getLocalizedField(group.group)}
+                {extractLocalizedField(group.group, lang)}
               </h4>
               <div className="space-y-2">
                 {group.specs.map((spec, specIdx) => (
@@ -29,7 +31,9 @@ export const ProductSpecifications = ({ product }: ProductSpecificationsProps) =
                     key={specIdx}
                     className="flex justify-between text-sm py-2 border-b border-border/50 last:border-0"
                   >
-                    <span className="text-muted-foreground">{getLocalizedField(spec.name)}</span>
+                    <span className="text-muted-foreground">
+                      {extractLocalizedField(spec.name, lang)}
+                    </span>
                     <span className="font-medium text-foreground">
                       {spec.value}
                     </span>

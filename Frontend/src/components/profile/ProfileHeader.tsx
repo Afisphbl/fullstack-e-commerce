@@ -4,8 +4,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch, removeAuthToken } from "@/lib/api-client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export const ProfileHeader = () => {
+  const { t } = useTranslation(["profile", "navigation", "admin"]);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -17,7 +19,7 @@ export const ProfileHeader = () => {
     onSuccess: () => {
       // Remove the token from localStorage
       removeAuthToken();
-      toast.success("Logged out successfully");
+      toast.success(t("admin:loggedOutSuccess") || "Logged out successfully");
       // Clear all user-related data from cache
       queryClient.setQueryData(["currentUser"], null);
       queryClient.removeQueries({ queryKey: ["wishlist"] });
@@ -33,7 +35,7 @@ export const ProfileHeader = () => {
   return (
     <div className="flex justify-between items-center mb-8">
       <h1 className="text-3xl font-display font-bold text-foreground">
-        My Profile
+        {t("profile:myAccount")}
       </h1>
       <Button
         variant="outline"
@@ -42,7 +44,9 @@ export const ProfileHeader = () => {
         disabled={logoutMutation.isPending}
       >
         <LogOut className="h-4 w-4" />
-        {logoutMutation.isPending ? "Logging out..." : "Logout"}
+        {logoutMutation.isPending
+          ? t("admin:loggingOut") || "Logging out..."
+          : t("navigation:logout")}
       </Button>
     </div>
   );

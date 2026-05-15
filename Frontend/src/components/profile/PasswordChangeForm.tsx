@@ -6,8 +6,8 @@ import * as z from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api-client";
 import { toast } from "sonner";
-import { User } from "@/contexts/AuthContext";
 import { ProfileResponse } from "@/lib/api";
+import { useTranslation } from "react-i18next";
 import {
   Form,
   FormControl,
@@ -29,6 +29,7 @@ const updatePasswordSchema = z
   });
 
 export const PasswordChangeForm = () => {
+  const { t } = useTranslation("profile");
   const queryClient = useQueryClient();
 
   const passwordForm = useForm<z.infer<typeof updatePasswordSchema>>({
@@ -47,7 +48,7 @@ export const PasswordChangeForm = () => {
         body: JSON.stringify(values),
       }),
     onSuccess: (data) => {
-      toast.success("Password updated successfully!");
+      toast.success(t("passwordUpdated"));
       queryClient.setQueryData(["currentUser"], data.data.user);
       passwordForm.reset();
     },
@@ -58,24 +59,24 @@ export const PasswordChangeForm = () => {
 
   return (
     <>
-      <h2 className='font-display font-semibold text-foreground mb-6 text-xl'>
-        Change Password
+      <h2 className="font-display font-semibold text-foreground mb-6 text-xl">
+        {t("changePassword")}
       </h2>
       <Form {...passwordForm}>
         <form
           onSubmit={passwordForm.handleSubmit((values) =>
-            updatePasswordMutation.mutate(values),
+            updatePasswordMutation.mutate(values)
           )}
-          className='space-y-4 max-w-md'
+          className="space-y-4 max-w-md"
         >
           <FormField
             control={passwordForm.control}
-            name='passwordCurrent'
+            name="passwordCurrent"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Current Password</FormLabel>
+                <FormLabel>{t("currentPassword")}</FormLabel>
                 <FormControl>
-                  <Input type='password' {...field} />
+                  <Input type="password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -83,12 +84,12 @@ export const PasswordChangeForm = () => {
           />
           <FormField
             control={passwordForm.control}
-            name='password'
+            name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>New Password</FormLabel>
+                <FormLabel>{t("newPassword")}</FormLabel>
                 <FormControl>
-                  <Input type='password' {...field} />
+                  <Input type="password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -96,25 +97,25 @@ export const PasswordChangeForm = () => {
           />
           <FormField
             control={passwordForm.control}
-            name='passwordConfirm'
+            name="passwordConfirm"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Confirm New Password</FormLabel>
+                <FormLabel>{t("confirmPassword")}</FormLabel>
                 <FormControl>
-                  <Input type='password' {...field} />
+                  <Input type="password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           <Button
-            type='submit'
+            type="submit"
             disabled={updatePasswordMutation.isPending}
-            className='mt-4'
+            className="mt-4"
           >
             {updatePasswordMutation.isPending
-              ? "Updating..."
-              : "Update Password"}
+              ? t("saving")
+              : t("updatePassword")}
           </Button>
         </form>
       </Form>

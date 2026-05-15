@@ -8,12 +8,14 @@ import { useCompare } from "@/contexts/CompareContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { isAdminRole } from "@/lib/roles";
 import { useLocationCheck } from "@/hooks/useLocationCheck";
+import { useTranslation } from "react-i18next";
 
 interface ProductActionsProps {
   product: Product;
 }
 
 export const ProductActions = ({ product }: ProductActionsProps) => {
+  const { t } = useTranslation("product");
   const [quantity, setQuantity] = useState(1);
   const { user } = useAuth();
   const { addToCart } = useCart();
@@ -69,7 +71,7 @@ export const ProductActions = ({ product }: ProductActionsProps) => {
             type="button"
             onClick={() => setQuantity((q) => Math.max(1, q - 1))}
             disabled={quantity <= 1}
-            aria-label="Decrease quantity"
+            aria-label={t("decreaseQuantity") || "Decrease quantity"}
             className="p-2 text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Minus className="h-4 w-4" />
@@ -79,7 +81,7 @@ export const ProductActions = ({ product }: ProductActionsProps) => {
             type="button"
             onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
             disabled={quantity >= product.stock || product.stock === 0}
-            aria-label="Increase quantity"
+            aria-label={t("increaseQuantity") || "Increase quantity"}
             className="p-2 text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Plus className="h-4 w-4" />
@@ -104,12 +106,12 @@ export const ProductActions = ({ product }: ProductActionsProps) => {
         >
           <ShoppingCart className="h-5 w-5 mr-2" />
           {isLocChecking
-            ? "Checking availability..."
+            ? t("checkingAvailability")
             : !isDeliveryAvailable
-              ? "Delivery not available in your region"
+              ? t("deliveryNotAvailable")
               : product.stock === 0
-                ? "Out of Stock"
-                : "Add to Cart"}
+                ? t("outOfStock")
+                : t("addToCart")}
         </Button>
         <Button
           variant="outline"

@@ -51,6 +51,14 @@ import authAm from "./am/auth.json";
 import authEn from "./en/auth.json";
 import authOm from "./om/auth.json";
 
+import adminAm from "./am/admin.json";
+import adminEn from "./en/admin.json";
+import adminOm from "./om/admin.json";
+
+import compareAm from "./am/compare.json";
+import compareEn from "./en/compare.json";
+import compareOm from "./om/compare.json";
+
 // Configure i18next
 i18n
   .use(LanguageDetector) // Detect user language
@@ -70,6 +78,8 @@ i18n
         contact: contactAm,
         faq: faqAm,
         auth: authAm,
+        admin: adminAm,
+        compare: compareAm,
       },
       en: {
         common: commonEn,
@@ -84,6 +94,8 @@ i18n
         contact: contactEn,
         faq: faqEn,
         auth: authEn,
+        admin: adminEn,
+        compare: compareEn,
       },
       om: {
         common: commonOm,
@@ -98,6 +110,8 @@ i18n
         contact: contactOm,
         faq: faqOm,
         auth: authOm,
+        admin: adminOm,
+        compare: compareOm,
       },
     },
     fallbackLng: "am", // Amharic as default
@@ -115,6 +129,8 @@ i18n
       "contact",
       "faq",
       "auth",
+      "admin",
+      "compare",
     ],
 
     interpolation: {

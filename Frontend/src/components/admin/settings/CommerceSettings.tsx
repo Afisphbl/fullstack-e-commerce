@@ -8,48 +8,56 @@ import {
 } from "@/components/ui/select";
 import { SiteSettings } from "@/contexts/SiteSettingsContext";
 import { Field } from "./Field";
+import { useTranslation } from "react-i18next";
 
 interface CommerceSettingsProps {
   draft: SiteSettings;
-  update: <K extends keyof SiteSettings>(key: K, value: SiteSettings[K]) => void;
+  update: <K extends keyof SiteSettings>(
+    key: K,
+    value: SiteSettings[K]
+  ) => void;
 }
 
 export const CommerceSettings = ({ draft, update }: CommerceSettingsProps) => {
+  const { t } = useTranslation("admin");
+
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Commerce Settings</h3>
+      <h3 className="text-lg font-semibold text-foreground">
+        {t("commerceSettings")}
+      </h3>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Field label="Tax Rate (%)">
+        <Field label={t("taxRatePercent")}>
           <Input
             value={draft.taxRate}
             onChange={(e) => update("taxRate", e.target.value)}
             className="bg-background"
           />
         </Field>
-        <Field label="Free Shipping Min">
+        <Field label={t("freeShippingMin")}>
           <Input
             value={draft.freeShippingMin}
             onChange={(e) => update("freeShippingMin", e.target.value)}
             className="bg-background"
           />
         </Field>
-        <Field label="Currency">
+        <Field label={t("currency")}>
           <Select
             value={draft.currency}
             onValueChange={(value) => update("currency", value)}
           >
             <SelectTrigger className="bg-background">
-              <SelectValue placeholder="Select currency" />
+              <SelectValue placeholder={t("selectCurrency")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ETB">ETB - Ethiopian Birr</SelectItem>
-              <SelectItem value="USD">USD - US Dollar</SelectItem>
-              <SelectItem value="EUR">EUR - Euro</SelectItem>
-              <SelectItem value="GBP">GBP - British Pound</SelectItem>
-              <SelectItem value="KES">KES - Kenyan Shilling</SelectItem>
-              <SelectItem value="TZS">TZS - Tanzanian Shilling</SelectItem>
-              <SelectItem value="UGX">UGX - Ugandan Shilling</SelectItem>
-              <SelectItem value="ZAR">ZAR - South African Rand</SelectItem>
+              <SelectItem value="ETB">ETB - {t("currencyETB")}</SelectItem>
+              <SelectItem value="USD">USD - {t("currencyUSD")}</SelectItem>
+              <SelectItem value="EUR">EUR - {t("currencyEUR")}</SelectItem>
+              <SelectItem value="GBP">GBP - {t("currencyGBP")}</SelectItem>
+              <SelectItem value="KES">KES - {t("currencyKES")}</SelectItem>
+              <SelectItem value="TZS">TZS - {t("currencyTZS")}</SelectItem>
+              <SelectItem value="UGX">UGX - {t("currencyUGX")}</SelectItem>
+              <SelectItem value="ZAR">ZAR - {t("currencyZAR")}</SelectItem>
             </SelectContent>
           </Select>
         </Field>

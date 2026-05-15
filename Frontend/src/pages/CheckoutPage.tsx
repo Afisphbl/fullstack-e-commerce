@@ -387,33 +387,38 @@ const CheckoutPage = () => {
                 Order Review
               </h2>
               <div className="space-y-3 mb-6">
-                {items.map(({ product, quantity }) => (
-                  <div
-                    key={product.id}
-                    className="flex gap-4 py-3 border-b border-border last:border-0"
-                  >
-                    <div className="w-16 h-16 rounded overflow-hidden bg-muted">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                      />
+                {items.map(({ product, quantity }) => {
+                  const localizedName = typeof product.name === 'string'
+                    ? product.name
+                    : product.name?.en || product.name?.am || product.name?.om || '';
+                  return (
+                    <div
+                      key={product.id}
+                      className="flex gap-4 py-3 border-b border-border last:border-0"
+                    >
+                      <div className="w-16 h-16 rounded overflow-hidden bg-muted">
+                        <img
+                          src={product.image}
+                          alt={localizedName}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-foreground">
+                          {localizedName}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Quantity: {quantity}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-bold text-foreground">
+                          {formatCurrency(product.price * quantity)}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-foreground">
-                        {product.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Quantity: {quantity}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-bold text-foreground">
-                        {formatCurrency(product.price * quantity)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div className="bg-muted/30 rounded-xl p-5 border border-border/50">
@@ -505,25 +510,30 @@ const CheckoutPage = () => {
             <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest mb-2">
               Cart Preview
             </div>
-            {items.slice(0, 3).map(({ product, quantity }) => (
-              <div key={product.id} className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded bg-muted overflow-hidden">
-                  <img
-                    src={product.image}
-                    alt=""
-                    className="w-full h-full object-cover"
-                  />
+            {items.slice(0, 3).map(({ product, quantity }) => {
+              const localizedName = typeof product.name === 'string'
+                ? product.name
+                : product.name?.en || product.name?.am || product.name?.om || '';
+              return (
+                <div key={product.id} className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded bg-muted overflow-hidden">
+                    <img
+                      src={product.image}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold truncate">
+                      {localizedName}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground">
+                      {quantity} unit(s)
+                    </p>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold truncate">
-                    {product.name}
-                  </p>
-                  <p className="text-[10px] text-muted-foreground">
-                    {quantity} unit(s)
-                  </p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
             {items.length > 3 && (
               <p className="text-[10px] text-center text-muted-foreground">
                 +{items.length - 3} more items

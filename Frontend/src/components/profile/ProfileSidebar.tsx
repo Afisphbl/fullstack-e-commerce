@@ -1,5 +1,6 @@
 import { User, Package, Heart, Lock, LucideIcon } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export type AccountTab = "profile" | "password" | "orders" | "wishlist";
 
@@ -20,16 +21,17 @@ export const ProfileSidebar = ({
   onTabChange,
   userRole,
 }: ProfileSidebarProps) => {
+  const { t } = useTranslation("profile");
   const [, setSearchParams] = useSearchParams();
 
   const sidebarItems: SidebarItem[] = [
-    { key: "profile", icon: User, label: "Profile" },
-    { key: "password", icon: Lock, label: "Password" },
+    { key: "profile", icon: User, label: t("profile") },
+    { key: "password", icon: Lock, label: t("password") },
   ];
 
   if (userRole === "user") {
-    sidebarItems.push({ key: "orders", icon: Package, label: "Orders" });
-    sidebarItems.push({ key: "wishlist", icon: Heart, label: "Wishlist" });
+    sidebarItems.push({ key: "orders", icon: Package, label: t("orders") });
+    sidebarItems.push({ key: "wishlist", icon: Heart, label: t("wishlist") });
   }
 
   const handleTabClick = (key: AccountTab) => {

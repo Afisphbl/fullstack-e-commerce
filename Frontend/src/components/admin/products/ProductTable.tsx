@@ -1,6 +1,7 @@
 import { Product } from "@/lib/api";
 import { ProductTableRow } from "./ProductTableRow";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
+import { useTranslation } from "react-i18next";
 
 interface ProductTableProps {
   products: Product[];
@@ -15,6 +16,7 @@ export const ProductTable = ({
   onEdit,
   onDelete,
 }: ProductTableProps) => {
+  const { t } = useTranslation("admin");
   return (
     <div className="bg-card rounded-lg border border-border overflow-hidden">
       <div className="overflow-x-auto">
@@ -22,22 +24,22 @@ export const ProductTable = ({
           <thead className="bg-muted">
             <tr>
               <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-                Product
+                {t("products")}
               </th>
               <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-                Price
+                {t("price")}
               </th>
               <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-                Stock
+                {t("stock")}
               </th>
               <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-                Category
+                {t("category")}
               </th>
               <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-                Status
+                {t("status")}
               </th>
               <th className="text-right p-4 text-sm font-medium text-muted-foreground">
-                Actions
+                {t("actions")}
               </th>
             </tr>
           </thead>
@@ -50,7 +52,7 @@ export const ProductTable = ({
                   colSpan={6}
                   className="p-8 text-center text-muted-foreground"
                 >
-                  No products found.
+                  {t("noProductsFound")}
                 </td>
               </tr>
             ) : (

@@ -19,8 +19,10 @@ import { Eye, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { formatCurrency } from "@/lib/formatters";
+import { useTranslation } from "react-i18next";
 
 const AdminOrdersPage = () => {
+  const { t } = useTranslation("admin");
   const [selected, setSelected] = useState<Order | null>(null);
   const [statusFilter, setStatusFilter] = useState("all");
   const queryClient = useQueryClient();
@@ -79,7 +81,7 @@ const AdminOrdersPage = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-2xl font-display font-bold text-foreground">
-          Orders ({filteredOrders.length})
+          {t("orders")} ({filteredOrders.length})
         </h1>
 
         {/* Status Filter */}
@@ -87,10 +89,10 @@ const AdminOrdersPage = () => {
           <Filter className="h-4 w-4 text-muted-foreground" />
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by status" />
+              <SelectValue placeholder={t("filterByStatus")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Orders</SelectItem>
+              <SelectItem value="all">{t("allOrders")}</SelectItem>
               <SelectItem value="placed">Placed</SelectItem>
               <SelectItem value="processing">Processing</SelectItem>
               <SelectItem value="shipped">Shipped</SelectItem>
@@ -106,25 +108,25 @@ const AdminOrdersPage = () => {
           <thead className="bg-muted">
             <tr>
               <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">
-                Order ID
+                {t("orderId")}
               </th>
               <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">
-                User
+                {t("user")}
               </th>
               <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">
-                Date
+                {t("date")}
               </th>
               <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">
-                Items
+                {t("items")}
               </th>
               <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">
-                Total
+                {t("total")}
               </th>
               <th className="text-left p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">
-                Status
+                {t("status")}
               </th>
               <th className="text-right p-3 text-sm font-medium text-muted-foreground whitespace-nowrap">
-                Actions
+                {t("actions")}
               </th>
             </tr>
           </thead>
@@ -137,8 +139,9 @@ const AdminOrdersPage = () => {
                   colSpan={7}
                   className="p-8 text-center text-muted-foreground"
                 >
-                  No orders found
-                  {statusFilter !== "all" && ` with status "${statusFilter}"`}
+                  {t("noOrdersFound")}
+                  {statusFilter !== "all" &&
+                    ` ${t("withStatus")} "${statusFilter}"`}
                 </td>
               </tr>
             ) : (

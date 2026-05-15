@@ -15,6 +15,16 @@ export const ProductTableRow = ({
   onEdit,
   onDelete,
 }: ProductTableRowProps) => {
+  // Extract localized values at the component level (not inside render)
+  const localizedName = typeof product.name === 'string'
+    ? product.name
+    : product.name?.en || product.name?.am || product.name?.om || '';
+  const localizedCategoryName = typeof product.category === "object"
+    ? (typeof product.category.name === 'string'
+        ? product.category.name
+        : product.category.name?.en || product.category.name?.am || product.category.name?.om || '')
+    : product.category;
+  
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this product?")) {
       onDelete(product.id);
@@ -27,12 +37,12 @@ export const ProductTableRow = ({
         <div className="flex items-center gap-3">
           <img
             src={product.imageCover || product.image}
-            alt={product.name}
+            alt={localizedName}
             className="w-10 h-10 rounded-lg object-cover bg-muted"
           />
           <div>
             <p className="text-sm font-semibold text-foreground">
-              {product.name}
+              {localizedName}
             </p>
             <p className="text-xs text-muted-foreground">{product.brand}</p>
           </div>
@@ -57,9 +67,7 @@ export const ProductTableRow = ({
         </Badge>
       </td>
       <td className="p-4 text-sm text-muted-foreground capitalize">
-        {typeof product.category === "object"
-          ? product.category.name
-          : product.category}
+        {localizedCategoryName}
       </td>
       <td className="p-4">
         <Badge variant="outline" className="capitalize">

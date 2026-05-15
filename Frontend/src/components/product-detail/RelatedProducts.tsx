@@ -3,14 +3,16 @@ import { ProductCard } from "@/components/ProductCard";
 import { Product } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { isAdminRole } from "@/lib/roles";
+import { useTranslation } from "react-i18next";
 
 interface RelatedProductsProps {
   products: Product[];
 }
 
 export const RelatedProducts = ({ products }: RelatedProductsProps) => {
+  const { t } = useTranslation("product");
   const { user } = useAuth();
-  
+
   // Filter out zero-stock products for non-admin users
   const visibleProducts = products.filter(
     (product) => product.stock > 0 || isAdminRole(user?.role)
@@ -23,17 +25,17 @@ export const RelatedProducts = ({ products }: RelatedProductsProps) => {
       <div className="mb-6 flex items-end justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-            Recommended For You
+            {t("recommendedForYou")}
           </p>
           <h2 className="text-2xl font-display font-bold text-foreground">
-            Similar Items You May Like
+            {t("similarItems")}
           </h2>
         </div>
         <Link
           to="/shop"
           className="text-sm font-medium text-primary hover:underline"
         >
-          View all products
+          {t("viewAllProducts")}
         </Link>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

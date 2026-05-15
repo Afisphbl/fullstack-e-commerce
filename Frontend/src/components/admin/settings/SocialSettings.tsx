@@ -5,13 +5,18 @@ import { Label } from "@/components/ui/label";
 import { Plus, Trash2 } from "lucide-react";
 import { SiteSettings } from "@/contexts/SiteSettingsContext";
 import { Field } from "./Field";
+import { useTranslation } from "react-i18next";
 
 interface SocialSettingsProps {
   draft: SiteSettings;
-  update: <K extends keyof SiteSettings>(key: K, value: SiteSettings[K]) => void;
+  update: <K extends keyof SiteSettings>(
+    key: K,
+    value: SiteSettings[K]
+  ) => void;
 }
 
 export const SocialSettings = ({ draft, update }: SocialSettingsProps) => {
+  const { t } = useTranslation("admin");
   const [customSocialLinks, setCustomSocialLinks] = useState(
     draft.social.custom || []
   );
@@ -33,7 +38,10 @@ export const SocialSettings = ({ draft, update }: SocialSettingsProps) => {
     value: string
   ) => {
     const updated = [...customSocialLinks];
-    updated[idx] = { ...updated[idx], [field]: value };
+    updated[idx] = { ...updated[idx], [field]: value } as {
+      platform: string;
+      url: string;
+    };
     setCustomSocialLinks(updated);
     update("social", { ...draft.social, custom: updated });
   };
@@ -46,32 +54,36 @@ export const SocialSettings = ({ draft, update }: SocialSettingsProps) => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Social Media Links</h3>
+      <h3 className="text-lg font-semibold text-foreground">
+        {t("socialMediaLinks")}
+      </h3>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {(["facebook", "instagram", "twitter", "linkedin", "youtube"] as const).map(
-          (k) => (
-            <Field key={k} label={k.charAt(0).toUpperCase() + k.slice(1)}>
-              <Input
-                value={draft.social[k]}
-                onChange={(e) =>
-                  update("social", { ...draft.social, [k]: e.target.value })
-                }
-                placeholder={`https://${k}.com/yourbrand`}
-                className="bg-background"
-              />
-            </Field>
-          )
-        )}
+        {(
+          ["facebook", "instagram", "twitter", "linkedin", "youtube"] as const
+        ).map((k) => (
+          <Field key={k} label={t(`platforms.${k}`)}>
+            <Input
+              value={draft.social[k]}
+              onChange={(e) =>
+                update("social", { ...draft.social, [k]: e.target.value })
+              }
+              placeholder={`https://${k}.com/yourbrand`}
+              className="bg-background"
+            />
+          </Field>
+        ))}
       </div>
 
       {customSocialLinks.length > 0 && (
         <div className="mt-4 space-y-3">
-          <Label className="text-sm font-semibold">Custom Social Links</Label>
+          <Label className="text-sm font-semibold">
+            {t("customSocialLinks")}
+          </Label>
           {customSocialLinks.map((link, idx) => (
             <div key={idx} className="flex gap-2 items-end">
               <div className="flex-1">
                 <Input
-                  placeholder="Platform name (e.g., TikTok)"
+                  placeholder={t("platformPlaceholder")}
                   value={link.platform}
                   onChange={(e) =>
                     updateCustomSocialLink(idx, "platform", e.target.value)
@@ -94,7 +106,7 @@ export const SocialSettings = ({ draft, update }: SocialSettingsProps) => {
                 variant="ghost"
                 size="icon"
                 onClick={() => removeCustomSocialLink(idx)}
-                className="text-destructive"
+                className="text-destructive h-10 w-10 hover:bg-destructive/10"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -107,9 +119,9 @@ export const SocialSettings = ({ draft, update }: SocialSettingsProps) => {
         type="button"
         variant="outline"
         onClick={addCustomSocialLink}
-        className="mt-2"
+        className="mt-2 rounded-xl"
       >
-        <Plus className="h-4 w-4 mr-2" /> Add Another Social Link
+        <Plus className="h-4 w-4 mr-2" /> {t("addAnotherSocialLink")}
       </Button>
     </div>
   );
