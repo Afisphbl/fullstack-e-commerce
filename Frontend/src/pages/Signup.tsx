@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/card";
 import { isAdminRole } from "@/lib/roles";
 import { useTranslation } from "react-i18next";
+import { mapAuthErrorMessage } from "@/lib/auth-error-messages";
 
 export default function Signup() {
   const { t } = useTranslation("auth");
@@ -41,7 +42,9 @@ export default function Signup() {
         .max(60, t("validation.nameMax")),
       email: z.string().email(t("validation.emailInvalid")),
       password: z.string().min(8, t("validation.passwordMin")),
-      passwordConfirm: z.string().min(8, t("validation.confirmPasswordRequired")),
+      passwordConfirm: z
+        .string()
+        .min(8, t("validation.confirmPasswordRequired")),
       country: z.string().optional(),
       city: z.string().optional(),
     })
@@ -113,7 +116,8 @@ export default function Signup() {
       }
     },
     onError: (error: Error) => {
-      toast.error(error.message);
+      const errorKey = mapAuthErrorMessage(error.message);
+      toast.error(t(errorKey));
     },
   });
 
@@ -128,9 +132,7 @@ export default function Signup() {
           <CardTitle className="text-3xl font-bold">
             {t("createAccount")}
           </CardTitle>
-          <CardDescription>
-            {t("createAccountDescription")}
-          </CardDescription>
+          <CardDescription>{t("createAccountDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>

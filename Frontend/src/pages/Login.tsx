@@ -26,6 +26,7 @@ import {
 import { isAdminRole } from "@/lib/roles";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { useTranslation } from "react-i18next";
+import { mapAuthErrorMessage } from "@/lib/auth-error-messages";
 
 export default function Login() {
   const { t } = useTranslation("auth");
@@ -91,7 +92,8 @@ export default function Login() {
       }
     },
     onError: (error: Error) => {
-      toast.error(error.message);
+      const errorKey = mapAuthErrorMessage(error.message);
+      toast.error(t(errorKey));
     },
   });
 
@@ -104,9 +106,7 @@ export default function Login() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-3xl font-bold">{t("signIn")}</CardTitle>
-          <CardDescription>
-            {t("signInDescription")}
-          </CardDescription>
+          <CardDescription>{t("signInDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>

@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/card";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { useTranslation } from "react-i18next";
+import { mapAuthErrorMessage } from "@/lib/auth-error-messages";
 
 export default function ResetPassword() {
   const { t } = useTranslation("auth");
@@ -36,7 +37,9 @@ export default function ResetPassword() {
   const resetPasswordSchema = z
     .object({
       password: z.string().min(8, t("validation.passwordMin")),
-      passwordConfirm: z.string().min(8, t("validation.confirmPasswordRequired")),
+      passwordConfirm: z
+        .string()
+        .min(8, t("validation.confirmPasswordRequired")),
     })
     .refine((data) => data.password === data.passwordConfirm, {
       message: t("validation.passwordsNoMatch"),
@@ -63,7 +66,8 @@ export default function ResetPassword() {
       navigate("/profile");
     },
     onError: (error: Error) => {
-      toast.error(error.message);
+      const errorKey = mapAuthErrorMessage(error.message);
+      toast.error(t(errorKey));
     },
   });
 
@@ -72,24 +76,26 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className='flex items-center justify-center min-h-[calc(100vh-200px)] px-4 py-12'>
-      <Card className='w-full max-w-md'>
-        <CardHeader className='space-y-1 text-center'>
-          <CardTitle className='text-3xl font-bold'>{t("resetPassword")}</CardTitle>
+    <div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-4 py-12">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-3xl font-bold">
+            {t("resetPassword")}
+          </CardTitle>
           <CardDescription>{t("resetPasswordDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name='password'
+                name="password"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t("newPassword")}</FormLabel>
                     <FormControl>
                       <Input
-                        type='password'
+                        type="password"
                         placeholder={t("passwordPlaceholder")}
                         {...field}
                       />
@@ -100,13 +106,13 @@ export default function ResetPassword() {
               />
               <FormField
                 control={form.control}
-                name='passwordConfirm'
+                name="passwordConfirm"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t("confirmNewPassword")}</FormLabel>
                     <FormControl>
                       <Input
-                        type='password'
+                        type="password"
                         placeholder={t("passwordPlaceholder")}
                         {...field}
                       />
@@ -116,18 +122,18 @@ export default function ResetPassword() {
                 )}
               />
               <Button
-                type='submit'
-                className='w-full'
+                type="submit"
+                className="w-full"
                 disabled={mutation.isPending}
               >
                 {mutation.isPending ? t("resetting") : t("resetPassword")}
               </Button>
             </form>
           </Form>
-          <div className='mt-4 text-center text-sm'>
+          <div className="mt-4 text-center text-sm">
             <Link
-              to='/'
-              className='text-muted-foreground hover:text-primary hover:underline'
+              to="/"
+              className="text-muted-foreground hover:text-primary hover:underline"
             >
               ← {t("backToHome")}
             </Link>
