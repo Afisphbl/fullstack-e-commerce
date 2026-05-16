@@ -188,9 +188,21 @@ export const extractLocalized = (
 ): string => {
   if (!value) return "";
   if (typeof value === "string") return value;
-
-  // For now, default to English. In the future, this can pull from a language context/state.
   return value.en || value.am || value.om || "";
+};
+
+/**
+ * Extract a localized value based on a specific language key.
+ * Falls back through the requested language -> en -> am -> om -> ''
+ */
+export const extractLocalizedByLang = (
+  value: string | { am?: string; en?: string; om?: string } | undefined | null,
+  lang: string
+): string => {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  const l = lang as keyof typeof value;
+  return value[l] || value.en || value.am || value.om || "";
 };
 
 export const mapProduct = (p: RawProduct): Product => {
@@ -202,6 +214,11 @@ export const mapProduct = (p: RawProduct): Product => {
     return `/img/products/${img}`;
   };
 
+  const mappedCategory =
+    p.category && typeof p.category === "object"
+      ? mapCategory(p.category as RawCategory)
+      : p.category;
+
   return {
     ...p,
     id: p._id || p.id || "",
@@ -209,10 +226,7 @@ export const mapProduct = (p: RawProduct): Product => {
     imageCover: p.imageCover,
     images: Array.isArray(p.images) ? p.images.map(mapImage) : [],
     featured: p.isFeatured !== undefined ? p.isFeatured : p.featured || false,
-    category:
-      p.category && typeof p.category === "object"
-        ? mapCategory(p.category as RawCategory)
-        : p.category,
+    category: mappedCategory,
     originalPrice: p.originalPrice ?? (p.priceDiscount ? p.price : null),
     price: p.finalPrice ?? p.price,
     specs: (() => {
@@ -248,6 +262,10 @@ export const mapProduct = (p: RawProduct): Product => {
     })(),
     createdAt: p.createdAt,
     brand: p.brand || "",
+    rawName: p.name,
+    rawDescription: p.description,
+    rawShortDescription: p.shortDescription,
+    rawCategory: p.category,
     description: extractLocalized(p.description),
     shortDescription: extractLocalized(p.shortDescription),
     name: extractLocalized(p.name),
@@ -315,6 +333,8 @@ const mapCategory = (c: RawCategory): Category => {
     image: mapCategoryImage(c.image, extractLocalized(c.name) || ""),
   };
 };
+
+
 
 const mapAdminUser = (user: RawAdminUser): AdminUser => ({
   ...user,

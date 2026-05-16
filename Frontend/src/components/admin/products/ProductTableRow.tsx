@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit, Trash2 } from "lucide-react";
-import { Product } from "@/lib/api";
+import { Product, extractLocalizedByLang } from "@/lib/api";
 import { formatCurrency } from "@/lib/formatters";
+import { useTranslation } from "react-i18next";
 
 interface ProductTableRowProps {
   product: Product;
@@ -15,16 +16,25 @@ export const ProductTableRow = ({
   onEdit,
   onDelete,
 }: ProductTableRowProps) => {
-  // Extract localized values at the component level (not inside render)
-  const localizedName = typeof product.name === 'string'
-    ? product.name
-    : product.name?.en || product.name?.am || product.name?.om || '';
-  const localizedCategoryName = typeof product.category === "object"
-    ? (typeof product.category.name === 'string'
-        ? product.category.name
-        : product.category.name?.en || product.category.name?.am || product.category.name?.om || '')
-    : product.category;
-  
+  const { i18n } = useTranslation("admin");
+  const lang = i18n.language?.split("-")[0] || "en";
+
+  const localizedName = extractLocalizedByLang(product.rawName, lang) || product.name;
+
+  const localizedCategoryName = (() => {
+    if (typeof product.category === "object" && product.category) {
+      const rawCat = product.rawCategory;
+      if (rawCat && typeof rawCat === "object" && "name" in rawCat) {
+        return extractLocalizedByLang(
+          (rawCat as { name?: string | { am?: string; en?: string; om?: string } }).name,
+          lang
+        ) || product.category.name;
+      }
+      return product.category.name;
+    }
+    return product.category || "";
+  })();
+
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this product?")) {
       onDelete(product.id);
@@ -60,7 +70,7 @@ export const ProductTableRow = ({
       </td>
       <td className="p-4">
         <Badge
-          variant={product.stock > 10 ? "secondary" : "destructive"}
+          variant={product.stock > 10 ? "secondary" : product.stock > 0 ? "outline" : "destructive"}
           className="font-mono"
         >
           {product.stock}

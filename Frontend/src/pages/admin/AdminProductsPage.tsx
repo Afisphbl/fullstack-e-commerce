@@ -6,6 +6,8 @@ import {
   ProductSearchBar,
   ProductTable,
   ProductFormDialog,
+  StockFilterTabs,
+  StockTab,
   useProductMutations,
 } from "@/components/admin/products";
 import { usePageTitle } from "@/hooks/usePageTitle";
@@ -19,6 +21,7 @@ const AdminProductsPage = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedBrand, setSelectedBrand] = useState("all");
+  const [stockFilter, setStockFilter] = useState<StockTab | null>(null);
   const [search, setSearch] = useState("");
   const deferredSearch = useDeferredValue(search);
   const [sortBy, setSortBy] = useState("newest");
@@ -30,6 +33,7 @@ const AdminProductsPage = () => {
       "adminProducts",
       selectedCategory,
       selectedBrand,
+      stockFilter,
       deferredSearch,
       sortBy,
       currentPage,
@@ -42,6 +46,15 @@ const AdminProductsPage = () => {
         ...(selectedBrand !== "all" && { brand: selectedBrand }),
         ...(deferredSearch && { search: deferredSearch }),
       };
+
+      if (stockFilter === "in_stock") {
+        backendParams["stock[gt]"] = 0;
+      } else if (stockFilter === "out_of_stock") {
+        backendParams["stock"] = 0;
+      } else if (stockFilter === "low_stock") {
+        backendParams["stock[gt]"] = 0;
+        backendParams["stock[lte]"] = 10;
+      }
 
       if (sortBy === "name-asc") backendParams.sort = "name";
       else if (sortBy === "name-desc") backendParams.sort = "-name";
@@ -72,7 +85,7 @@ const AdminProductsPage = () => {
   // Reset to first page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedCategory, selectedBrand, deferredSearch]);
+  }, [selectedCategory, selectedBrand, stockFilter, deferredSearch]);
 
   const handleAddProduct = () => {
     setEditingProduct(null);
@@ -114,6 +127,8 @@ const AdminProductsPage = () => {
       />
 
       <ProductSearchBar value={search} onChange={setSearch} />
+
+      <StockFilterTabs activeTab={stockFilter} onTabChange={setStockFilter} />
 
       <ProductTable
         products={productsData?.products || []}

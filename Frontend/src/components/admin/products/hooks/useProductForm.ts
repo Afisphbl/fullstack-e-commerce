@@ -96,6 +96,11 @@ export const useProductForm = (editingProduct: Product | null) => {
     if (editingProduct) {
       const groups: SpecGroup[] = editingProduct.specification?.details || [];
 
+      // Use raw multilingual data first, fall back to extracted string
+      const rawName = editingProduct.rawName ?? editingProduct.name;
+      const rawDescription = editingProduct.rawDescription ?? editingProduct.description;
+      const rawShortDescription = editingProduct.rawShortDescription ?? editingProduct.shortDescription;
+
       // Helper to convert string or multilingual object to multilingual format
       const toMultilingual = (field: any) => {
         if (typeof field === "string") {
@@ -136,9 +141,9 @@ export const useProductForm = (editingProduct: Product | null) => {
       }));
 
       form.reset({
-        name: toMultilingual(editingProduct.name),
-        description: toMultilingual(editingProduct.description),
-        shortDescription: toMultilingual(editingProduct.shortDescription),
+        name: toMultilingual(rawName),
+        description: toMultilingual(rawDescription),
+        shortDescription: toMultilingual(rawShortDescription),
         price: editingProduct.price,
         discountPercent: editingProduct.discountPercent || 0,
         stock: editingProduct.stock,

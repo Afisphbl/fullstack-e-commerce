@@ -8,6 +8,8 @@ export { ProductFormInventoryTab } from "./ProductFormInventoryTab";
 export { ProductFormMediaTab } from "./ProductFormMediaTab";
 export { ProductFormSpecsTab } from "./ProductFormSpecsTab";
 export { ProductSpecificationFields } from "./ProductSpecificationFields";
+export { StockFilterTabs } from "./StockFilterTabs";
+export type { StockTab } from "./StockFilterTabs";
 
 export { useProductFilters } from "./hooks/useProductFilters";
 export { useProductForm } from "./hooks/useProductForm";
