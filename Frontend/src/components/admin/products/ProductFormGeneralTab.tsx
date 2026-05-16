@@ -57,6 +57,32 @@ export const ProductFormGeneralTab = ({
         )}
       />
 
+      {/* Category */}
+      <FormField
+        control={control}
+        name="category"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Category *</FormLabel>
+            <Select onValueChange={field.onChange} value={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {categories?.map((cat) => (
+                  <SelectItem key={cat.id || cat._id} value={cat.id || cat._id || ""}>
+                    {typeof cat.name === 'string' ? cat.name : cat.name?.en || cat.name?.am || cat.name?.om || 'Unknown'}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
       {/* Status */}
       <FormField
         control={control}
@@ -64,7 +90,7 @@ export const ProductFormGeneralTab = ({
         render={({ field }) => (
           <FormItem>
             <FormLabel>Status</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select onValueChange={field.onChange} value={field.value}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue />

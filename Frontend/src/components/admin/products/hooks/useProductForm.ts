@@ -114,6 +114,27 @@ export const useProductForm = (editingProduct: Product | null) => {
         return { am: "", en: "", om: "" };
       };
 
+      // Helper to extract string from multilingual or string field
+      const toString = (field: any): string => {
+        if (typeof field === "string") {
+          return field;
+        }
+        if (field && typeof field === "object") {
+          // Prefer English, fallback to other languages
+          return field.en || field.am || field.om || "";
+        }
+        return "";
+      };
+
+      // Convert specification groups - extract strings from multilingual fields
+      const normalizedGroups = groups.map((group) => ({
+        group: toString(group.group),
+        specs: group.specs.map((spec) => ({
+          name: toString(spec.name),
+          value: spec.value,
+        })),
+      }));
+
       form.reset({
         name: toMultilingual(editingProduct.name),
         description: toMultilingual(editingProduct.description),
@@ -132,7 +153,7 @@ export const useProductForm = (editingProduct: Product | null) => {
         tags: editingProduct.tags?.join(", ") || "",
         status: (editingProduct.status as ProductStatus) || "active",
         isFeatured: editingProduct.isFeatured || false,
-        specGroups: groups,
+        specGroups: normalizedGroups,
       });
     } else {
       form.reset({

@@ -20,10 +20,16 @@ export const useProductMutations = (
 
   const saveMutation = useMutation({
     mutationFn: async (values: ProductFormValues) => {
+      console.log('=== MUTATION START ===');
+      console.log('Form values:', values);
+      
       // 1. Prepare Product Payload
       const { specGroups, ...productData } = values;
 
       const formData = new FormData();
+
+      // Multilingual field keys
+      const multilingualKeys = ["name", "description", "shortDescription"] as const;
 
       // Append basic fields
       Object.entries(productData).forEach(([key, value]) => {
@@ -31,8 +37,6 @@ export const useProductMutations = (
           if (value instanceof File) {
             formData.append("imageCover", value);
           } else if (typeof value === "string") {
-            // If it's a string (URL), we only send it if it's the existing one
-            // Actually, the backend might expect it in req.body if not a file
             formData.append("imageCover", value);
           }
         } else if (key === "images") {
@@ -52,21 +56,47 @@ export const useProductMutations = (
           }
         } else if (key === "tags") {
           formData.append("tags", values.tags || "");
+        } else if ((multilingualKeys as readonly string[]).includes(key)) {
+          // Handle multilingual objects as field[lang] keys
+          // e.g. name[en], name[am], name[om]
+          const ml = value as { am?: string; en?: string; om?: string };
+          console.log(`Processing multilingual field ${key}:`, ml);
+          if (ml && typeof ml === "object") {
+            (["en", "am", "om"] as const).forEach((lang) => {
+              const langValue = ml[lang] ?? "";
+              console.log(`  ${key}[${lang}] = "${langValue}"`);
+              formData.append(`${key}[${lang}]`, langValue);
+            });
+          }
+        } else if (key === "isFeatured") {
+          // Backend isBoolean() validator rejects "true"/"false" strings.
+          // Send "1" for true and "0" for false
+          formData.append("isFeatured", value ? "1" : "0");
         } else {
           formData.append(key, String(value));
         }
       });
 
+      // Log FormData contents
+      console.log('=== FormData Contents ===');
+      for (const [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+
       let updatedOrCreated;
       if (editingProduct) {
+        console.log('Updating product:', editingProduct.id);
         updatedOrCreated = await updateProduct(editingProduct.id, formData);
       } else {
+        console.log('Creating new product');
         updatedOrCreated = await createProduct(formData);
       }
+      console.log('Product saved:', updatedOrCreated);
 
       // 2. Handle Specifications
       try {
         if (specGroups && specGroups.length > 0) {
+          console.log('Processing specifications:', specGroups);
           if (editingProduct?.specification) {
             await updateSpecification(
               editingProduct.specification._id ||
@@ -80,10 +110,12 @@ export const useProductMutations = (
             });
           }
         } else if (editingProduct?.specification) {
+          console.log('Deleting specifications');
           await deleteSpecification(
             editingProduct.specification._id || editingProduct.specification.id,
           );
         }
+        console.log('=== MUTATION SUCCESS ===');
         return updatedOrCreated;
       } catch (specError) {
         console.error("Specification error:", specError);

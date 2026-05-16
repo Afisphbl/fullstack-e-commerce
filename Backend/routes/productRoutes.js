@@ -7,6 +7,7 @@ const { protect, restrictTo } = require('../middleware/auth');
 const validate = require('../middleware/validate');
 const { createProductRules, updateProductRules } = require('../validators/productValidator');
 const { uploadProductImages, resizeProductImages } = require('../middleware/upload');
+const parseMultilingualFields = require('../middleware/parseMultilingual');
 const ROLES = require('../constants/roles');
 
 const router = express.Router();
@@ -22,11 +23,11 @@ router.get('/stats',    protect, restrictTo(ROLES.ADMIN), productController.getP
 
 router.route('/')
   .get(productController.resolveCategoryFilter, productController.getAllProducts)
-  .post(protect, restrictTo(ROLES.ADMIN), uploadProductImages, resizeProductImages, createProductRules, validate, productController.createProduct);
+  .post(protect, restrictTo(ROLES.ADMIN), uploadProductImages, resizeProductImages, parseMultilingualFields, createProductRules, validate, productController.createProduct);
 
 router.route('/:id')
   .get(productController.getProduct)
-  .patch(protect, restrictTo(ROLES.ADMIN), uploadProductImages, resizeProductImages, updateProductRules, validate, productController.updateProduct)
+  .patch(protect, restrictTo(ROLES.ADMIN), uploadProductImages, resizeProductImages, parseMultilingualFields, updateProductRules, validate, productController.updateProduct)
   .delete(protect, restrictTo(ROLES.ADMIN), productController.deleteProduct);
 
 
@@ -37,6 +38,7 @@ router.patch(
   restrictTo(ROLES.ADMIN),
   uploadProductImages,
   resizeProductImages,
+  parseMultilingualFields,
   productController.updateProduct
 );
 
